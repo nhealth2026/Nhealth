@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhealth - Healthcare at Home</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- ==================== DESKTOP-ONLY HEADER / NAVBAR ==================== -->
+    <header class="navbar-wrapper desktop-only" id="mainHeader">
+        <div class="nav-container">
+            <!-- Brand Logo -->
+            <a href="/" class="brand-logo" aria-label="Nhealth Home">
+                <div class="logo-mark">
+                    <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img">
+                </div>
+                <div class="logo-text">
+                    <span class="brand-name">Nhealth</span>
+                    <span class="brand-tagline">— Healthcare at Home —</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                
+                <div class="nav-dropdown-item">
+                    <a href="#services" class="nav-link dropdown-toggle" id="servicesDropdownBtn">
+                        Our Services <i class="fa-solid fa-chevron-down nav-chevron"></i>
+                    </a>
+                    <div class="dropdown-panel" id="servicesDropdownMenu">
+                        <div class="dropdown-grid">
+                            {% for service in services %}
+                            <a href="javascript:void(0)" class="dropdown-service-card" onclick="openBookingModal('{{ service.title }}')">
+                                <div class="dropdown-icon" style="background: {{ service.bg_tint }}; color: {{ service.color }};">
+                                    <i class="fa-solid fa-{{ service.icon }}"></i>
+                                </div>
+                                <div class="dropdown-info">
+                                    <span class="d-title">{{ service.title }}</span>
+                                    <span class="d-desc">{{ service.badge }}</span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#about-us" class="nav-link">About Us</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+
+            <!-- Navbar Right Actions -->
+            <div class="nav-actions">
+                <button class="icon-btn search-btn" id="searchTriggerBtn" title="Search services, doctors, lab tests" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="btn-outline-pill login-btn" id="loginModalBtn" onclick="openLoginModal()">Login</button>
+                <button class="btn-solid-teal book-now-btn" id="bookNowNavBtn" onclick="openBookingModal()">Book Now</button>
+                
+                <!-- Mobile Hamburger Toggle -->
+                <button class="mobile-toggle-btn" id="mobileMenuToggle" aria-label="Toggle navigation menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <div class="mobile-drawer-logo">
+                <span class="brand-name">Nhealth</span>
+            </div>
+            <button class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
+        </div>
+        <div class="mobile-drawer-body">
+            <a href="#home" class="m-link active">Home</a>
+            <a href="#services" class="m-link" onclick="toggleMobileSubmenu(event)">
+                <span>Our Services</span> <i class="fa-solid fa-chevron-down"></i>
+            </a>
+            <div class="mobile-submenu" id="mobileSubmenu">
+                {% for service in services %}
+                <a href="javascript:void(0)" onclick="openBookingModal('{{ service.title }}'); closeMobileDrawer();" class="m-sublink">
+                    {{ service.title }}
+                </a>
+                {% endfor %}
+            </div>
+            <a href="#how-it-works" class="m-link" onclick="closeMobileDrawer()">How It Works</a>
+            <a href="#about-us" class="m-link" onclick="closeMobileDrawer()">About Us</a>
+            <a href="#contact" class="m-link" onclick="closeMobileDrawer()">Contact</a>
+            
+            <div class="mobile-drawer-footer">
+                <button class="btn-outline-pill w-100 mb-2" onclick="openLoginModal(); closeMobileDrawer();">Login</button>
+                <button class="btn-solid-teal w-100" onclick="openBookingModal(); closeMobileDrawer();">Book Consultation</button>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-backdrop" id="mobileBackdrop"></div>
+
+
+    <!-- ==================== DESKTOP-ONLY MAIN PAGE CONTAINER (UNTOUCHED) ==================== -->
+    <main class="page-container desktop-only" id="home">
+        
+        <!-- HERO TOP BANNER (Contains living room on left & India Map on right) -->
+        <section class="hero-top-banner">
+            <div class="hero-content-container">
+                <div class="hero-grid">
+                    
+                    <!-- HERO LEFT COLUMN -->
+                    <div class="hero-left">
+                        <!-- Pill Tag Badge -->
+                        <div class="hero-pill-badge">
+                            <span class="pill-dot"></span>
+                            <span class="pill-text">Complete Healthcare &bull; All in One Place</span>
+                        </div>
+
+                        <!-- Secondary Brand Mark in Hero -->
+                        <div class="hero-brand-block">
+                            <div class="hero-logo-mark">
+                                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="hero-logo-img">
+                            </div>
+                            <div class="hero-brand-titles">
+                                <h2 class="hero-brand-name">Nhealth</h2>
+                                <p class="hero-brand-sub">— Healthcare at Home —</p>
+                            </div>
+                        </div>
+
+                        <!-- Main Dynamic Headline -->
+                        <h1 class="hero-main-title">
+                            Powering the Future of<br>
+                            <span class="title-dark">Healthcare at</span> <span class="title-highlight">Home</span>
+                        </h1>
+
+                        <!-- Hero Subtitle -->
+                        <p class="hero-description">
+                            Expert doctors, trusted labs, quality medicines and complete home healthcare — all in one platform. Because your health should never be out of reach.
+                        </p>
+
+                        <!-- Hero Action Buttons -->
+                        <div class="hero-cta-group">
+                            <button class="btn-hero-primary" onclick="openBookingModal()">
+                                <span>Get Started</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            
+                            <button class="btn-hero-video" onclick="openVideoModal()" aria-label="Watch Nhealth Video">
+                                <div class="play-icon-circle">
+                                    <i class="fa-solid fa-play"></i>
+                                </div>
+                                <span>Watch Video</span>
+                            </button>
+                        </div>
+
+                        <!-- Quick Trust Pill Row for Mobile -->
+                        <div class="mobile-quick-pills">
+                            <span class="m-pill"><i class="fa-solid fa-certificate"></i> ISO Certified</span>
+                            <span class="m-pill"><i class="fa-solid fa-shield-halved"></i> 100% Safe Care</span>
+                            <span class="m-pill"><i class="fa-solid fa-clock"></i> 24/7 Support</span>
+                        </div>
+                    </div>
+
+                    <!-- HERO RIGHT COLUMN: Interactive Overlay Area over Map Background -->
+                    <div class="hero-right">
+                        <div class="map-overlay-zone" id="mapOverlayZone">
+                            <!-- Calligraphy Overlay: "Proudly from Andhra Pradesh" -->
+                            <div class="ap-proud-calligraphy">
+                                <div class="script-line-1">Proudly</div>
+                                <div class="script-line-2">from</div>
+                                <div class="script-line-3">Andhra Pradesh</div>
+                            </div>
+
+                            <!-- Invisible Clickable Area over Andhra Pradesh for info tooltip -->
+                            <div class="ap-hover-zone" onclick="highlightAP()" title="Click to view Andhra Pradesh coverage"></div>
+
+                            <!-- Interactive AP City Tooltip -->
+                            <div class="ap-interactive-tooltip" id="apTooltip">
+                                <div class="tooltip-header">
+                                    <span class="ap-badge-tag"><i class="fa-solid fa-location-dot"></i> Andhra Pradesh</span>
+                                    <span class="ap-hq-status">HQ &amp; Core Network</span>
+                                </div>
+                                <p class="ap-coverage-text">Active across 15+ major cities including Vijayawada, Vizag, Guntur, Tirupati &amp; Kurnool.</p>
+                                <div class="ap-quick-stats">
+                                    <span><strong>850+</strong> Doctors</span>
+                                    <span><strong>220+</strong> Labs</span>
+                                    <span><strong>30 Min</strong> Dispatch</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HERO BOTTOM CONTROLS SECTION (Services Bar & Stats Bar) ==================== -->
+        <section class="hero-bottom-section">
+            
+            <!-- FLOATING SERVICES BAR (10 ICONS) -->
+            <div class="services-floating-container" id="services">
+                <div class="services-card-bar">
+                    
+                    <!-- 1. Online Doctor Consultation -->
+                    <div class="service-item" onclick="openBookingModal('Online Doctor Consultation')" title="Book Online Doctor Consultation">
+                        <div class="service-icon-circle icon-bg-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <span class="service-label">Online Doctor<br>Consultation</span>
+                    </div>
+
+                    <!-- 2. Doctor Home Visits -->
+                    <div class="service-item" onclick="openBookingModal('Doctor Home Visits')" title="Book Doctor Home Visit">
+                        <div class="service-icon-circle icon-bg-teal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                <path d="M12 7v4M10 9h4"></path>
+                            </svg>
+                        </div>
+                        <span class="service-label">Doctor<br>Home Visits</span>
+                    </div>
+
+                    <!-- 3. Lab Tests at Home -->
+                    <div class="service-item" onclick="openBookingModal('Lab Tests at Home')" title="Book Blood & Lab Tests">
+                        <div class="service-icon-circle icon-bg-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <path d="M10 2v7.31L4.62 17.5A2 2 0 0 0 6.32 20h11.36a2 2 0 0 0 1.7-2.5L14 9.31V2"></path>
+                                <line x1="8" y1="2" x2="16" y2="2"></line>
+                                <line x1="9" y1="12" x2="15" y2="12"></line>
+                            </svg>
+                        </div>
+                        <span class="service-label">Lab Tests<br>at Home</span>
+                    </div>
+
+                    <!-- 4. X-Ray at Home -->
+                    <div class="service-item" onclick="openBookingModal('X-Ray at Home')" title="Book Portable Digital X-Ray">
+                        <div class="service-icon-circle icon-bg-purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                                <path d="M8 8l8 8M16 8l-8 8"></path>
+                                <line x1="12" y1="7" x2="12" y2="17"></line>
+                            </svg>
+                        </div>
+                        <span class="service-label">X-Ray<br>at Home</span>
+                    </div>
+
+                    <!-- 5. Pharmacy to Home -->
+                    <div class="service-item" onclick="openBookingModal('Pharmacy to Home')" title="Order Medicines to Home">
+                        <div class="service-icon-circle icon-bg-green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+                                <path d="m8.5 8.5 7 7"></path>
+                            </svg>
+                        </div>
+                        <span class="service-label">Pharmacy<br>to Home</span>
+                    </div>
+
+                    <!-- 6. Premium OPD Memberships -->
+                    <div class="service-item" onclick="openBookingModal('Premium OPD Memberships')" title="Explore Premium OPD Plans">
+                        <div class="service-icon-circle icon-bg-gold">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"></path>
+                            </svg>
+                        </div>
+                        <span class="service-label">Premium OPD<br>Memberships</span>
+                    </div>
+
+                    <!-- 7. Eldercare -->
+                    <div class="service-item" onclick="openBookingModal('Eldercare')" title="Book Eldercare Nursing Support">
+                        <div class="service-icon-circle icon-bg-pink">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <circle cx="12" cy="7" r="4"></circle>
+                                <path d="M6 21v-2a6 6 0 0 1 12 0v2"></path>
+                                <path d="M12 13a4 4 0 0 0-4-4"></path>
+                            </svg>
+                        </div>
+                        <span class="service-label">Eldercare</span>
+                    </div>
+
+                    <!-- 8. Bedside Assistant -->
+                    <div class="service-item" onclick="openBookingModal('Bedside Assistant')" title="Book Bedside Medical Attendant">
+                        <div class="service-icon-circle icon-bg-teal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path>
+                            </svg>
+                        </div>
+                        <span class="service-label">Bedside<br>Assistant</span>
+                    </div>
+
+                    <!-- 9. Physiotherapy -->
+                    <div class="service-item" onclick="openBookingModal('Physiotherapy')" title="Book Home Physiotherapy">
+                        <div class="service-icon-circle icon-bg-purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <circle cx="12" cy="5" r="2"></circle>
+                                <path d="m9 20 3-6 3 6M6 10l6-2 6 2M12 8v6"></path>
+                            </svg>
+                        </div>
+                        <span class="service-label">Physiotherapy</span>
+                    </div>
+
+                    <!-- 10. + and more... -->
+                    <div class="service-item service-more-item" onclick="openAllServicesModal()" title="Explore all 20+ Healthcare Services">
+                        <div class="service-icon-circle icon-bg-cyan">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="svg-icon">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
+                        <span class="service-label">and more...</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- TRUST METRICS & STATS BAR -->
+            <div class="trust-stats-section">
+                <div class="stats-container">
+                    <div class="stats-grid">
+                        
+                        <!-- Stat 1: 10,000+ Happy Families -->
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="stat-svg">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label-sub">Trusted by</span>
+                                <h3 class="stat-number" data-target="10000">10,000+</h3>
+                                <span class="stat-title">Happy Families</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-divider"></div>
+
+                        <!-- Stat 2: 1500+ Verified Doctors & Specialists -->
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-cyan">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="stat-svg">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M19 8v6M22 11h-6"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" data-target="1500">1500+</h3>
+                                <span class="stat-title">Verified Doctors &amp; Specialists</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-divider"></div>
+
+                        <!-- Stat 3: 500+ Diagnostic Partners -->
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-teal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="stat-svg">
+                                    <path d="M10 2v7.31L4.62 17.5A2 2 0 0 0 6.32 20h11.36a2 2 0 0 0 1.7-2.5L14 9.31V2"></path>
+                                    <line x1="8" y1="2" x2="16" y2="2"></line>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" data-target="500">500+</h3>
+                                <span class="stat-title">Diagnostic Partners</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-divider"></div>
+
+                        <!-- Stat 4: 200+ Pharmacy Partners -->
+                        <div class="stat-card">
+                            <div class="stat-icon-wrap icon-gold">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="stat-svg">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" data-target="200">200+</h3>
+                                <span class="stat-title">Pharmacy Partners</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ==================== SECTION 1: COMPREHENSIVE HEALTHCARE SUITE ==================== -->
+        <section class="suite-section-container" id="services-suite">
+            <div class="suite-header-block">
+                <span class="suite-badge-tag"><i class="fa-solid fa-layer-group text-teal"></i> All-In-One Healthcare</span>
+                <h2 class="suite-main-title">Comprehensive Healthcare Suite</h2>
+                <p class="suite-sub-title">Everything You Need For Your Family's Health &bull; Six integrated healthcare verticals unified under the trusted NHealth ecosystem.</p>
+            </div>
+
+            <div class="suite-cards-grid">
+                
+                <!-- 1. Doctor Consultation -->
+                <div class="suite-card" onclick="openBookingModal('Doctor Video Consultation')">
+                    <div class="suite-card-top">
+                        <div class="suite-icon-box suite-blue">
+                            <span>🩺</span>
+                        </div>
+                        <span class="suite-price-badge">Starts at ₹499</span>
+                    </div>
+                    <h3 class="suite-card-title">Doctor Consultation</h3>
+                    <p class="suite-card-desc">Connect with 500+ board-certified general physicians and super-specialists via HD video or book priority in-clinic visits.</p>
+                    <ul class="suite-features-list">
+                        <li><i class="fa-solid fa-circle-check"></i> 15-Minute Instant Telemedicine</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Free Follow-Up For 7 Days</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Digital E-Prescription with WhatsApp Delivery</li>
+                    </ul>
+                    <button class="btn-suite-action">Consult Now <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- 2. Doorstep E-Pharmacy -->
+                <div class="suite-card" onclick="openBookingModal('Prescription Medicine Order')">
+                    <div class="suite-card-top">
+                        <div class="suite-icon-box suite-green">
+                            <span>💊</span>
+                        </div>
+                        <span class="suite-price-badge">Express Free &gt; ₹500</span>
+                    </div>
+                    <h3 class="suite-card-title">Doorstep E-Pharmacy</h3>
+                    <p class="suite-card-desc">Upload your prescription for instant pharmacist validation. Enjoy authentic temperature-controlled doorstep medicine delivery.</p>
+                    <ul class="suite-features-list">
+                        <li><i class="fa-solid fa-circle-check"></i> 100% Genuine Certified Medicines</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 2-Hour Express Delivery Guarantee</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Flat 20% Discount on Monthly Refills</li>
+                    </ul>
+                    <button class="btn-suite-action">Order Medicines <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- 3. Home Diagnostics -->
+                <div class="suite-card" onclick="openBookingModal('Home Diagnostics & Lab Tests')">
+                    <div class="suite-card-top">
+                        <div class="suite-icon-box suite-teal">
+                            <span>🔬</span>
+                        </div>
+                        <span class="suite-price-badge">Packages from ₹699</span>
+                    </div>
+                    <h3 class="suite-card-title">Home Diagnostics</h3>
+                    <p class="suite-card-desc">Certified phlebotomists arrive at your doorstep with sealed vacutainer kits for blood, urine, and pathology sample collection.</p>
+                    <ul class="suite-features-list">
+                        <li><i class="fa-solid fa-circle-check"></i> NABL &amp; CAP Accredited Testing</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 100% Painless Safe Blood Draw</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Verified Smart PDF Reports in 6 Hours</li>
+                    </ul>
+                    <button class="btn-suite-action">Book Lab Test <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- 4. Specialized Nursing -->
+                <div class="suite-card" onclick="openBookingModal('Home Nursing Care Attendant')">
+                    <div class="suite-card-top">
+                        <div class="suite-icon-box suite-pink">
+                            <span>👩‍⚕️</span>
+                        </div>
+                        <span class="suite-price-badge">Per Shift from ₹1,200</span>
+                    </div>
+                    <h3 class="suite-card-title">Specialized Nursing</h3>
+                    <p class="suite-card-desc">Compassionate, qualified nurses for post-operative recovery, elderly assistance, wound dressing, catheter management, and home ICU.</p>
+                    <ul class="suite-features-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Background-Verified Registered Nurses</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 12-Hour &amp; 24-Hour Attendant Shifts</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Vital Monitoring &amp; Medication Management</li>
+                    </ul>
+                    <button class="btn-suite-action">Book Nurse <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- 5. 24/7 Smart Ambulance -->
+                <div class="suite-card suite-highlight-card" onclick="triggerEmergencySOS()">
+                    <div class="suite-card-top">
+                        <div class="suite-icon-box suite-red">
+                            <span>🚑</span>
+                        </div>
+                        <span class="suite-price-badge badge-emergency">Emergency Toll-Free SOS</span>
+                    </div>
+                    <h3 class="suite-card-title">24/7 Smart Ambulance</h3>
+                    <p class="suite-card-desc">Emergency GPS dispatch linking you to the nearest Advanced Life Support (ALS) and Basic Life Support (BLS) ambulances.</p>
+                    <ul class="suite-features-list">
+                        <li><i class="fa-solid fa-circle-check"></i> 8-Minute Average Arrival Time</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Onboard Ventilator, Defibrillator &amp; O2</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Hospital Emergency Room Pre-Sync</li>
+                    </ul>
+                    <button class="btn-suite-action btn-emergency-sos">🚨 Dispatch SOS <i class="fa-solid fa-phone-volume"></i></button>
+                </div>
+
+                <!-- 6. Full Body Screening -->
+                <div class="suite-card" onclick="openBookingModal('Full Body Preventive Health Checkup')">
+                    <div class="suite-card-top">
+                        <div class="suite-icon-box suite-gold">
+                            <span>🛡️</span>
+                        </div>
+                        <span class="suite-price-badge">Comprehensive ₹1,999</span>
+                    </div>
+                    <h3 class="suite-card-title">Full Body Screening</h3>
+                    <p class="suite-card-desc">Comprehensive annual preventive health packages covering 85+ parameters including Cardiac Risk, Liver, Kidney, and Diabetes.</p>
+                    <ul class="suite-features-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Free Doctor Consultation Included</li>
+                        <li><i class="fa-solid fa-circle-check"></i> AI-Powered Health Risk Assessment</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Complete Family Health Passports</li>
+                    </ul>
+                    <button class="btn-suite-action">Book Package <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==================== SECTION 2: NEXT-GEN TELEMEDICINE VIRTUAL CLINIC ==================== -->
+        <section class="telemed-section-container" id="telemedicine">
+            <div class="suite-header-block">
+                <span class="suite-badge-tag"><i class="fa-solid fa-video text-teal"></i> Digital Health Infrastructure</span>
+                <h2 class="suite-main-title">Next-Gen Telemedicine</h2>
+                <p class="suite-sub-title">Virtual Clinic Video Consultation &bull; Real-time encrypted consultation room with synchronized vitals telemetry and instant digital prescription generation.</p>
+            </div>
+
+            <div class="telemed-room-card">
+                <div class="telemed-room-header">
+                    <div class="telemed-header-left">
+                        <span class="live-pulse-dot"></span>
+                        <span class="telemed-doctor-header">Dr. Priya Sharma (Cardiology) &bull; Consultation #NH-7821</span>
+                    </div>
+                    <div class="telemed-header-right">
+                        <span class="live-timer-badge">● LIVE 14:32</span>
+                    </div>
+                </div>
+
+                <div class="telemed-room-grid">
+                    <!-- Left: Doctor Video Frame & Patient PiP -->
+                    <div class="telemed-video-area">
+                        <div class="telemed-main-stream">
+                            <img src="{{ url_for('static', filename='images/doctor_banner.jpg') }}" alt="Dr. Priya Sharma" class="telemed-doctor-img">
+                            
+                            <div class="telemed-stream-overlay">
+                                <div class="stream-doctor-badge">
+                                    <span class="s-doc-icon">🩺</span>
+                                    <div>
+                                        <h4 class="s-doc-name">Dr. Priya Sharma, MD</h4>
+                                        <p class="s-doc-role">Senior Consultant Cardiologist &bull; Fortis Healthcare Partner</p>
+                                    </div>
+                                    <span class="s-verified-tag"><i class="fa-solid fa-circle-check"></i> Verified MD</span>
+                                </div>
+
+                                <!-- Live Telemetry Strip -->
+                                <div class="telemetry-bar">
+                                    <div class="telemetry-item"><span class="t-icon">❤️</span> <span class="t-label">Pulse:</span> <strong class="t-val">75 BPM</strong></div>
+                                    <div class="telemetry-item"><span class="t-icon">🫁</span> <span class="t-label">SpO2:</span> <strong class="t-val">99% Normal</strong></div>
+                                    <div class="telemetry-item"><span class="t-icon">🩸</span> <span class="t-label">BP:</span> <strong class="t-val">120/80 mmHg</strong></div>
+                                </div>
+                            </div>
+
+                            <!-- Patient PiP Window -->
+                            <div class="patient-pip-window">
+                                <div class="pip-avatar">👤</div>
+                                <div class="pip-info">
+                                    <span class="pip-name">Rahul Verma (You)</span>
+                                    <span class="pip-status">Audio/Video Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Live Consultation Chat & Prescription -->
+                    <div class="telemed-interaction-area">
+                        <div class="telemed-tabs-nav">
+                            <button class="t-tab-btn active" onclick="switchTelemedTab('chat', this)">💬 Consultation Chat</button>
+                            <button class="t-tab-btn" onclick="switchTelemedTab('rx', this)">📋 Prescription</button>
+                        </div>
+
+                        <!-- Chat Tab Content -->
+                        <div class="telemed-tab-pane active" id="telemedChatPane">
+                            <div class="chat-messages-scroll" id="chatMessagesScroll">
+                                <div class="chat-bubble doc-msg">
+                                    <div class="chat-sender">Dr. Priya Sharma</div>
+                                    <div class="chat-text">Hello Rahul! I can see your ECG telemetry is stable today. How is the mild chest heaviness you mentioned?</div>
+                                    <div class="chat-time">10:14 AM</div>
+                                </div>
+                                <div class="chat-bubble patient-msg">
+                                    <div class="chat-sender">You</div>
+                                    <div class="chat-text">Good morning Doctor! Much better since yesterday, no shortness of breath, but slight fatigue after lunch.</div>
+                                    <div class="chat-time">10:15 AM</div>
+                                </div>
+                                <div class="chat-bubble doc-msg">
+                                    <div class="chat-sender">Dr. Priya Sharma</div>
+                                    <div class="chat-text">Good to hear. I've sent a 10-day refill for your cardiorespiratory medication directly to your WhatsApp and registered pharmacy.</div>
+                                    <div class="chat-time">10:16 AM</div>
+                                </div>
+                            </div>
+                            <form class="chat-input-bar" onsubmit="sendTelemedChatMessage(event)">
+                                <input type="text" id="telemedChatInput" placeholder="Type message to Doctor..." class="chat-text-input">
+                                <button type="submit" class="btn-chat-send">Send <i class="fa-solid fa-paper-plane"></i></button>
+                            </form>
+                        </div>
+
+                        <!-- Prescription Tab Content -->
+                        <div class="telemed-tab-pane" id="telemedRxPane" style="display: none;">
+                            <div class="rx-digital-card">
+                                <div class="rx-header">
+                                    <div class="rx-logo-mark">N+health Rx</div>
+                                    <span class="rx-id">Rx-#NH-2026-CARDIO-7821</span>
+                                </div>
+                                <div class="rx-body">
+                                    <p><strong>Patient:</strong> Rahul Verma (Age: 38, M)</p>
+                                    <p><strong>Diagnosis:</strong> Mild Exertional Fatigue &bull; Stable Telemetry</p>
+                                    <div class="rx-meds-list">
+                                        <div class="rx-med-item">
+                                            <span>1. Cardiosync Tab 5mg</span>
+                                            <em>1 Tab &bull; Morning (After Breakfast) &bull; 10 Days</em>
+                                        </div>
+                                        <div class="rx-med-item">
+                                            <span>2. Vit-D3 + CoQ10 Capsule</span>
+                                            <em>1 Cap &bull; Daily Night &bull; 15 Days</em>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rx-footer">
+                                    <span class="rx-signed"><i class="fa-solid fa-signature"></i> Digitally Signed by Dr. Priya Sharma, MD</span>
+                                    <button class="btn-solid-teal" onclick="showToast('📲 E-Prescription sent to your WhatsApp number!', 'success')">WhatsApp Rx</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== SECTION 3: DATA-DRIVEN HEALTHCARE ANALYTICS ==================== -->
+        <section class="analytics-section-container" id="analytics">
+            <div class="suite-header-block">
+                <span class="suite-badge-tag"><i class="fa-solid fa-chart-line text-teal"></i> Platform Performance</span>
+                <h2 class="suite-main-title">Data-Driven Healthcare</h2>
+                <p class="suite-sub-title">Investor &amp; Operational Analytics &bull; Real-time metrics rendered using the dynamic brand palette extracted from the NHealth logo.</p>
+            </div>
+
+            <div class="analytics-cards-grid">
+                <!-- Metric 1: Monthly Platform GMV -->
+                <div class="analytics-card">
+                    <div class="a-card-header">
+                        <div>
+                            <h4 class="a-metric-title">Monthly Platform GMV &amp; Revenue Growth</h4>
+                            <p class="a-metric-sub">Navy to Mint Gradient Spectrum</p>
+                        </div>
+                        <span class="a-growth-badge">+24.6% YoY</span>
+                    </div>
+                    <div class="a-chart-visual">
+                        <div class="chart-y-axis">
+                            <span>$400k</span>
+                            <span>$200k</span>
+                            <span>$0</span>
+                        </div>
+                        <div class="chart-bars-wrap">
+                            <div class="chart-bar" style="height: 35%;" data-label="Jan"></div>
+                            <div class="chart-bar" style="height: 42%;" data-label="Feb"></div>
+                            <div class="chart-bar" style="height: 48%;" data-label="Mar"></div>
+                            <div class="chart-bar" style="height: 55%;" data-label="Apr"></div>
+                            <div class="chart-bar" style="height: 62%;" data-label="May"></div>
+                            <div class="chart-bar" style="height: 70%;" data-label="Jun"></div>
+                            <div class="chart-bar" style="height: 75%;" data-label="Jul"></div>
+                            <div class="chart-bar" style="height: 82%;" data-label="Aug"></div>
+                            <div class="chart-bar" style="height: 88%;" data-label="Sep"></div>
+                            <div class="chart-bar" style="height: 92%;" data-label="Oct"></div>
+                            <div class="chart-bar" style="height: 96%;" data-label="Nov"></div>
+                            <div class="chart-bar active-bar" style="height: 100%;" data-label="Dec"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metric 2: Weekly Telemedicine Consultations -->
+                <div class="analytics-card">
+                    <div class="a-card-header">
+                        <div>
+                            <h4 class="a-metric-title">Weekly Telemedicine Consultations</h4>
+                            <p class="a-metric-sub">Daily Completed Sessions</p>
+                        </div>
+                        <span class="a-highlight-badge">480 Peak</span>
+                    </div>
+                    <div class="weekly-sessions-chart">
+                        <div class="w-bar-col"><span class="w-val">120</span><div class="w-bar" style="height: 25%;"></div><span class="w-day">Mon</span></div>
+                        <div class="w-bar-col"><span class="w-val">185</span><div class="w-bar" style="height: 38%;"></div><span class="w-day">Tue</span></div>
+                        <div class="w-bar-col"><span class="w-val">240</span><div class="w-bar" style="height: 50%;"></div><span class="w-day">Wed</span></div>
+                        <div class="w-bar-col"><span class="w-val">290</span><div class="w-bar" style="height: 60%;"></div><span class="w-day">Thu</span></div>
+                        <div class="w-bar-col"><span class="w-val">340</span><div class="w-bar" style="height: 70%;"></div><span class="w-day">Fri</span></div>
+                        <div class="w-bar-col"><span class="w-val">410</span><div class="w-bar" style="height: 85%;"></div><span class="w-day">Sat</span></div>
+                        <div class="w-bar-col active-col"><span class="w-val">480</span><div class="w-bar" style="height: 100%;"></div><span class="w-day">Sun</span></div>
+                    </div>
+                </div>
+
+                <!-- Metric 3: Consultation Volume by Specialty -->
+                <div class="analytics-card">
+                    <div class="a-card-header">
+                        <div>
+                            <h4 class="a-metric-title">Consultation Volume by Specialty</h4>
+                            <p class="a-metric-sub">Top Clinical Categories</p>
+                        </div>
+                        <span class="a-specialty-badge">Cardiology #1</span>
+                    </div>
+                    <div class="specialty-progress-list">
+                        <div class="sp-row">
+                            <div class="sp-label"><span>Cardiology</span><strong>32%</strong></div>
+                            <div class="sp-bar-track"><div class="sp-bar-fill" style="width: 32%; background: #0066eb;"></div></div>
+                        </div>
+                        <div class="sp-row">
+                            <div class="sp-label"><span>General Physician</span><strong>28%</strong></div>
+                            <div class="sp-bar-track"><div class="sp-bar-fill" style="width: 28%; background: #00b4d8;"></div></div>
+                        </div>
+                        <div class="sp-row">
+                            <div class="sp-label"><span>Pediatrics</span><strong>18%</strong></div>
+                            <div class="sp-bar-track"><div class="sp-bar-fill" style="width: 18%; background: #00d2ba;"></div></div>
+                        </div>
+                        <div class="sp-row">
+                            <div class="sp-label"><span>Dermatology</span><strong>14%</strong></div>
+                            <div class="sp-bar-track"><div class="sp-bar-fill" style="width: 14%; background: #ca8a04;"></div></div>
+                        </div>
+                        <div class="sp-row">
+                            <div class="sp-label"><span>Neurology</span><strong>8%</strong></div>
+                            <div class="sp-bar-track"><div class="sp-bar-fill" style="width: 8%; background: #8b5cf6;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metric 4: Pharmacy Express Delivery Volume -->
+                <div class="analytics-card">
+                    <div class="a-card-header">
+                        <div>
+                            <h4 class="a-metric-title">Pharmacy Express Delivery Volume</h4>
+                            <p class="a-metric-sub">Prescriptions Filled by Time of Day</p>
+                        </div>
+                        <span class="a-speed-badge"><i class="fa-solid fa-truck-fast"></i> Avg 28 Mins</span>
+                    </div>
+                    <div class="pharmacy-timeline-visual">
+                        <div class="time-point"><span class="t-dot"></span><span class="t-time">8am</span></div>
+                        <div class="time-point"><span class="t-dot"></span><span class="t-time">10am</span></div>
+                        <div class="time-point active-pt"><span class="t-dot"></span><span class="t-time">12pm</span></div>
+                        <div class="time-point"><span class="t-dot"></span><span class="t-time">2pm</span></div>
+                        <div class="time-point"><span class="t-dot"></span><span class="t-time">4pm</span></div>
+                        <div class="time-point active-pt"><span class="t-dot"></span><span class="t-time">6pm</span></div>
+                        <div class="time-point"><span class="t-dot"></span><span class="t-time">8pm</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== SECTION 4: FRICTIONLESS PATIENT ENGAGEMENT & WHATSAPP ==================== -->
+        <section class="whatsapp-section-container" id="whatsapp-engagement">
+            <div class="suite-header-block">
+                <span class="suite-badge-tag"><i class="fa-brands fa-whatsapp text-teal"></i> Direct WhatsApp Integration</span>
+                <h2 class="suite-main-title">Frictionless Patient Engagement</h2>
+                <p class="suite-sub-title">WhatsApp &amp; Real-Time Alerts &bull; Patients receive verifiable booking links, e-prescriptions, and ambulance GPS updates directly via official WhatsApp.</p>
+            </div>
+
+            <div class="whatsapp-features-grid">
+                <!-- Left: Live Interactive WhatsApp Card -->
+                <div class="whatsapp-mock-phone">
+                    <div class="wa-chat-header">
+                        <div class="wa-header-avatar">💬</div>
+                        <div class="wa-header-info">
+                            <h4 class="wa-title">NHealth Technologies Verified</h4>
+                            <span class="wa-status">Official Healthcare Account ✔</span>
+                        </div>
+                        <span class="wa-notif-pill">Instant Notification</span>
+                    </div>
+
+                    <div class="wa-chat-body">
+                        <div class="wa-msg-bubble">
+                            <div class="wa-booking-head">
+                                <strong>NHealth Technologies Booking Confirmation</strong>
+                            </div>
+                            <p>Dear <strong>Rahul Verma</strong>, your telemedicine consultation is confirmed with <strong>Dr. Priya Sharma (Cardiology)</strong>.</p>
+                            <div class="wa-info-lines">
+                                <p>📅 <strong>Date:</strong> Today, 11 Sep 2026</p>
+                                <p>⏰ <strong>Time:</strong> 10:30 AM (15 Mins)</p>
+                                <p>🔗 <strong>Secure Room:</strong> <span class="text-teal">nhealth.tech/v/cardio-7821</span></p>
+                            </div>
+                            <p class="wa-note">Doctor is reviewing your vitals. You will receive an SMS reminder 5 minutes prior.</p>
+                            <div class="wa-msg-meta">
+                                <span>10:25 AM</span>
+                                <span class="wa-ticks">✓✓</span>
+                            </div>
+                        </div>
+
+                        <div class="wa-quick-actions-row">
+                            <button class="btn-wa-action" onclick="showToast('Connecting to secure video room...', 'success')"><i class="fa-solid fa-video"></i> Join Video Call</button>
+                            <button class="btn-wa-action" onclick="showToast('Prescription resent to your WhatsApp!', 'info')"><i class="fa-solid fa-file-prescription"></i> Resend Rx</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Omnichannel Patient Lifecycle -->
+                <div class="omnichannel-content-box">
+                    <h3 class="omni-title">Omnichannel Patient Lifecycle</h3>
+                    <p class="omni-desc">NHealth integrates enterprise SMS, automated WhatsApp Business API webhooks, and push notifications to eliminate no-shows and keep patients informed at every step of their treatment journey.</p>
+                    
+                    <div class="omni-features-list">
+                        <div class="omni-feature-card">
+                            <div class="omni-icon-wrap omni-green">✓</div>
+                            <div>
+                                <h4 class="omni-f-title">Immediate Instant Confirmation</h4>
+                                <p class="omni-f-desc">Sent within 1.2 seconds of appointment booking with automated Google &amp; Apple calendar invites.</p>
+                            </div>
+                        </div>
+
+                        <div class="omni-feature-card">
+                            <div class="omni-icon-wrap omni-blue">📍</div>
+                            <div>
+                                <h4 class="omni-f-title">Live GPS Tracking For Emergency &amp; Pharmacy</h4>
+                                <p class="omni-f-desc">Watch your ambulance or medicine delivery rider navigate to your doorstep in real-time on live maps.</p>
+                            </div>
+                        </div>
+
+                        <div class="omni-feature-card">
+                            <div class="omni-icon-wrap omni-purple">📄</div>
+                            <div>
+                                <h4 class="omni-f-title">NABL Lab Reports Direct Download</h4>
+                                <p class="omni-f-desc">Tamper-proof encrypted PDF reports sent immediately upon senior pathologist sign-off.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== SECTION 5: CERTIFICATIONS & TRUSTED FOOTER ==================== -->
+        <footer class="site-main-footer" id="contact">
+            <div class="footer-top-container">
+                <div class="footer-brand-col">
+                    <a href="/" class="brand-logo footer-logo" aria-label="Nhealth Home">
+                        <div class="logo-mark">
+                            <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img">
+                        </div>
+                        <div class="logo-text">
+                            <span class="brand-name">Nhealth</span>
+                            <span class="brand-tagline">— Healthcare at Home —</span>
+                        </div>
+                    </a>
+                    <p class="footer-bio-text">NHealth Technologies is an enterprise healthcare marketplace and digital telemedicine infrastructure pioneer, connecting patients, doctors, pharmacies, diagnostics, and emergency ambulance providers nationwide.</p>
+                    <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> support@nhealthtechnologies.com</p>
+                </div>
+
+                <!-- Col 2: Healthcare Services -->
+                <div class="footer-links-col">
+                    <h4 class="footer-heading">Healthcare Services</h4>
+                    <ul class="f-links">
+                        <li><a href="#services-suite" onclick="openBookingModal('Doctor Video Consultation')">Doctor Video Consultation</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Prescription Medicine Order')">Doorstep E-Pharmacy Refills</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Home Diagnostics & Lab Tests')">Home Pathology Diagnostics</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Home Nursing Care Attendant')">Specialized Home Nursing</a></li>
+                        <li><a href="#services-suite" onclick="triggerEmergencySOS()">24/7 Smart Ambulance SOS</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Full Body Preventive Health Checkup')">Executive Preventive Packages</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Company -->
+                <div class="footer-links-col">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul class="f-links">
+                        <li><a href="#home">About NHealth</a></li>
+                        <li><a href="#services-suite">Our Services</a></li>
+                        <li><a href="javascript:void(0)" onclick="showToast('Careers portal: We are hiring clinicians and engineers!', 'info')">Careers</a></li>
+                        <li><a href="javascript:void(0)" onclick="openLoginModal()">Partner With Us</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Certifications & Trust -->
+                <div class="footer-links-col">
+                    <h4 class="footer-heading">Certifications &amp; Trust</h4>
+                    <ul class="f-links">
+                        <li><a href="javascript:void(0)" onclick="showToast('🔒 HIPAA Privacy & Security standard verified', 'info')">HIPAA Privacy &amp; Security Rules</a></li>
+                        <li><a href="javascript:void(0)" onclick="showToast('🛡️ ISO 27001 Information Security certified', 'info')">ISO 27001 Information Security</a></li>
+                        <li><a href="javascript:void(0)" onclick="showToast('🧪 NABL Accredited Pathology Protocol active', 'info')">NABL Accredited Pathology Protocol</a></li>
+                        <li><a href="javascript:void(0)" onclick="showToast('🇮🇳 Ayushman Bharat Digital Mission compliant', 'info')">Ayushman Bharat Digital Mission (ABDM)</a></li>
+                        <li><a href="javascript:void(0)" onclick="showToast('💬 Verified WhatsApp Business API active', 'info')">Verified WhatsApp Business API</a></li>
+                        <li><a href="javascript:void(0)" onclick="showToast('👨‍⚕️ 100% Doctor Verification Standards enforced', 'info')">Doctor Verification Standards</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Compliance Trust Row -->
+            <div class="footer-trust-strip">
+                <div class="trust-badge-pill">✓ HIPAA Compliant</div>
+                <div class="trust-badge-pill">✓ ISO 27001 Certified</div>
+                <div class="trust-badge-pill">✓ NABL Accredited Labs</div>
+                <div class="trust-badge-pill">✓ 256-Bit SSL Encryption</div>
+            </div>
+
+            <div class="footer-bottom-bar">
+                <p>&copy; 2026 NHealth Technologies Inc. All rights reserved. Healthcare at Your Doorstep.</p>
+            </div>
+        </footer>
+
+    </main>
+ 
+    <!-- ==================== MOBILE-ONLY APP VIEW (1:1 Match to Screenshot) ==================== -->
+    <div class="mobile-app-layout mobile-only">
+        
+        <!-- Mobile Top Header Bar -->
+        <header class="mobile-top-header">
+            <a href="/" class="brand-logo" aria-label="Nhealth Home">
+                <div class="logo-mark">
+                    <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img">
+                </div>
+                <div class="logo-text">
+                    <span class="brand-name">Nhealth</span>
+                    <span class="brand-tagline">— HEALTHCARE AT HOME —</span>
+                </div>
+            </a>
+        </header>
+
+        <!-- Mobile Hero Section with Backdrop Artwork -->
+        <section class="mobile-hero-section">
+            <div class="m-hero-content">
+                <!-- Tagline Badge -->
+                <div class="m-hero-tag">
+                    <span>YOUR HEALTH &bull; OUR PRIORITY</span>
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="m-hero-title">
+                    Powering the Future of<br>
+                    <span class="title-dark">Healthcare at</span> <span class="title-highlight">Home</span>
+                </h1>
+
+                <!-- Subtitle Description -->
+                <p class="m-hero-desc">
+                    Expert doctors, trusted labs, quality medicines and complete home healthcare — all in one platform. Because your health should never be out of reach.
+                </p>
+
+                <!-- Floating AI Symptom Search Pill Bar -->
+                <div class="m-symptom-search-bar" onclick="openSearchOverlay()">
+                    <div class="m-sparkle-icon">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div class="m-search-text-col">
+                        <span class="m-search-prompt">Tell us what's troubling you...</span>
+                        <span class="m-search-sub">e.g. fever, cough, stomach pain</span>
+                    </div>
+                    <button class="m-search-go-btn" aria-label="Search symptoms">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- AP Highlight Pill / Calligraphy on the mobile backdrop -->
+            <div class="m-map-ap-badge">
+                <div class="m-ap-pin-pill" onclick="highlightAP()">
+                    <i class="fa-solid fa-location-dot"></i> Andhra Pradesh
+                </div>
+                <div class="m-ap-calligraphy">
+                    <div class="m-c-1">Proudly</div>
+                    <div class="m-c-2">from</div>
+                    <div class="m-c-3">Andhra Pradesh</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mobile "Our Services" Card / Sheet -->
+        <section class="m-services-sheet" id="mServicesSheet">
+            <div class="m-services-header">
+                <h2 class="m-services-title">Our Services</h2>
+                <a href="javascript:void(0)" class="m-view-all-link" onclick="openAllServicesModal()">
+                    View All <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- 4-Column Grid of 11 Services + 1 Doctor Banner Tile -->
+            <div class="m-services-grid-4">
+                
+                <!-- 1. Online Doctor Consultation -->
+                <div class="m-service-card" onclick="openBookingModal('Online Doctor Consultation')">
+                    <div class="m-icon-circle icon-bg-blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Online Doctor Consultation</h3>
+                    <p class="m-srv-sub">Video &bull; Audio &bull; Chat</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 2. Doctor Home Visits -->
+                <div class="m-service-card" onclick="openBookingModal('Doctor Home Visits')">
+                    <div class="m-icon-circle icon-bg-teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            <path d="M12 7v4M10 9h4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Doctor Home Visits</h3>
+                    <p class="m-srv-sub">At your doorstep</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 3. Lab Tests at Home -->
+                <div class="m-service-card" onclick="openBookingModal('Lab Tests at Home')">
+                    <div class="m-icon-circle icon-bg-blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <path d="M10 2v7.31L4.62 17.5A2 2 0 0 0 6.32 20h11.36a2 2 0 0 0 1.7-2.5L14 9.31V2"></path>
+                            <line x1="8" y1="2" x2="16" y2="2"></line>
+                            <line x1="9" y1="12" x2="15" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Lab Tests at Home</h3>
+                    <p class="m-srv-sub">Safe &bull; Accurate</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 4. X-Ray at Home -->
+                <div class="m-service-card" onclick="openBookingModal('X-Ray at Home')">
+                    <div class="m-icon-circle icon-bg-purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                            <path d="M8 8l8 8M16 8l-8 8"></path>
+                            <line x1="12" y1="7" x2="12" y2="17"></line>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">X-Ray at Home</h3>
+                    <p class="m-srv-sub">Digital &bull; Reliable</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 5. Pharmacy to Home -->
+                <div class="m-service-card" onclick="openBookingModal('Pharmacy to Home')">
+                    <div class="m-icon-circle icon-bg-green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+                            <path d="m8.5 8.5 7 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Pharmacy to Home</h3>
+                    <p class="m-srv-sub">Genuine &bull; Fast</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 6. Premium OPD Memberships -->
+                <div class="m-service-card" onclick="openBookingModal('Premium OPD Memberships')">
+                    <div class="m-icon-circle icon-bg-gold">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Premium OPD Memberships</h3>
+                    <p class="m-srv-sub">More care &bull; Less worry</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 7. Eldercare -->
+                <div class="m-service-card" onclick="openBookingModal('Eldercare')">
+                    <div class="m-icon-circle icon-bg-pink">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <circle cx="12" cy="7" r="4"></circle>
+                            <path d="M6 21v-2a6 6 0 0 1 12 0v2"></path>
+                            <path d="M12 13a4 4 0 0 0-4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Eldercare</h3>
+                    <p class="m-srv-sub">Compassionate care</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 8. Bedside Assistant -->
+                <div class="m-service-card" onclick="openBookingModal('Bedside Assistant')">
+                    <div class="m-icon-circle icon-bg-teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Bedside Assistant</h3>
+                    <p class="m-srv-sub">Support at home</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 9. Physiotherapy -->
+                <div class="m-service-card" onclick="openBookingModal('Physiotherapy')">
+                    <div class="m-icon-circle icon-bg-blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <circle cx="12" cy="5" r="2"></circle>
+                            <path d="m9 20 3-6 3 6M6 10l6-2 6 2M12 8v6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Physiotherapy</h3>
+                    <p class="m-srv-sub">Move Better &bull; Live Better</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 10. Nursing Services -->
+                <div class="m-service-card" onclick="openBookingModal('Nursing Services')">
+                    <div class="m-icon-circle icon-bg-purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5z"></path>
+                            <line x1="12" y1="13" x2="12" y2="17"></line>
+                            <line x1="10" y1="15" x2="14" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">Nursing Services</h3>
+                    <p class="m-srv-sub">Skilled &bull; Trusted</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 11. and More... -->
+                <div class="m-service-card" onclick="openAllServicesModal()">
+                    <div class="m-icon-circle icon-bg-cyan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="m-svg-icon">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3 class="m-srv-name">and More...</h3>
+                    <p class="m-srv-sub">Complete healthcare</p>
+                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                </div>
+
+                <!-- 12. Doctor Banner Promo Card -->
+                <div class="m-doctor-banner-card" onclick="openBookingModal('General Physician')">
+                    <div class="m-promo-text-wrap">
+                        <h4 class="m-promo-title">Your Health<br>Our Priority</h4>
+                        <p class="m-promo-sub">Personalized care.<br>Seamless experience.<br>Always.</p>
+                        <span class="m-promo-heart"><i class="fa-solid fa-heart"></i></span>
+                    </div>
+                    <div class="m-promo-img-wrap">
+                        <img src="{{ url_for('static', filename='images/doctor_banner.jpg') }}" alt="Doctor" class="m-doc-photo">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div class="m-quick-actions-section">
+                <div class="m-quick-actions-header">
+                    <i class="fa-solid fa-bolt text-teal"></i>
+                    <span>Quick Actions</span>
+                </div>
+                <div class="m-quick-actions-grid">
+                    <button class="m-quick-btn q-blue" onclick="openBookingModal()">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span>Book Appointment</span>
+                    </button>
+                    <button class="m-quick-btn q-green" onclick="showToast('📋 Health records portal loaded.', 'info')">
+                        <i class="fa-regular fa-folder-open"></i>
+                        <span>My Health Records</span>
+                    </button>
+                    <button class="m-quick-btn q-purple" onclick="showToast('📍 Active bookings tracking updated.', 'info')">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                        <span>Track Bookings</span>
+                    </button>
+                    <button class="m-quick-btn q-orange" onclick="showToast('🎧 Connecting to 24/7 Nhealth Care line...', 'info')">
+                        <i class="fa-solid fa-headset"></i>
+                        <span>24/7 Support</span>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Floating Bottom App Bar Navigation -->
+        <nav class="m-bottom-nav-bar">
+            <a href="#home" class="m-nav-tab active">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="javascript:void(0)" class="m-nav-tab" onclick="openAllServicesModal()">
+                <i class="fa-solid fa-stethoscope"></i>
+                <span>Services</span>
+            </a>
+            <div class="m-fab-book-wrap" onclick="openBookingModal()">
+                <div class="m-fab-book-btn">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                </div>
+                <span class="m-fab-label">Book</span>
+            </div>
+            <a href="javascript:void(0)" class="m-nav-tab" onclick="showToast('📂 Health records portal: Access patient files and lab reports.', 'info')">
+                <i class="fa-regular fa-clipboard"></i>
+                <span>My Records</span>
+            </a>
+            <a href="javascript:void(0)" class="m-nav-tab" onclick="openMobileDrawer()">
+                <i class="fa-solid fa-bars"></i>
+                <span>More</span>
+            </a>
+        </nav>
+
+    </div>
+
+
+    <!-- ==================== MODALS & POPUPS ==================== -->
+
+    <!-- 1. APPOINTMENT / HOME HEALTHCARE BOOKING MODAL -->
+    <div class="custom-modal-backdrop" id="bookingModalBackdrop">
+        <div class="custom-modal-card booking-modal-card">
+            <div class="modal-card-header">
+                <div class="modal-header-brand">
+                    <div class="mini-logo-mark">
+                        <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="mini-logo-img">
+                    </div>
+                    <div>
+                        <h3 class="modal-title">Book Healthcare at Home</h3>
+                        <p class="modal-sub">Fast &amp; verified medical care across Andhra Pradesh</p>
+                    </div>
+                </div>
+                <button class="modal-close-btn" onclick="closeBookingModal()">&times;</button>
+            </div>
+
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="modal-form-body">
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="bookName"><i class="fa-solid fa-user"></i> Patient Full Name *</label>
+                        <input type="text" id="bookName" name="name" required placeholder="e.g. Ramesh Varma" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookPhone"><i class="fa-solid fa-phone"></i> Mobile Number *</label>
+                        <input type="tel" id="bookPhone" name="phone" required placeholder="e.g. 9876543210" maxlength="10" pattern="[0-9]{10}" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="bookService"><i class="fa-solid fa-stethoscope"></i> Select Service *</label>
+                        <select id="bookService" name="service" required class="form-control">
+                            <option value="">-- Choose Healthcare Service --</option>
+                            {% for service in services %}
+                            <option value="{{ service.title }}">{{ service.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookCity"><i class="fa-solid fa-location-dot"></i> Andhra Pradesh City *</label>
+                        <select id="bookCity" name="city" required class="form-control">
+                            <option value="">-- Choose City --</option>
+                            {% for city in locations %}
+                            <option value="{{ city }}">{{ city }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="bookDate"><i class="fa-solid fa-calendar-day"></i> Preferred Date</label>
+                        <input type="date" id="bookDate" name="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookTime"><i class="fa-solid fa-clock"></i> Preferred Slot</label>
+                        <select id="bookTime" name="time_slot" class="form-control">
+                            <option value="Morning (08:00 AM - 12:00 PM)">Morning (08:00 AM - 12:00 PM)</option>
+                            <option value="Afternoon (12:00 PM - 04:00 PM)">Afternoon (12:00 PM - 04:00 PM)</option>
+                            <option value="Evening (04:00 PM - 08:00 PM)">Evening (04:00 PM - 08:00 PM)</option>
+                            <option value="Urgent (Within 60 Mins)">Urgent (Within 60 Mins)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookSymptoms"><i class="fa-solid fa-notes-medical"></i> Symptoms / Health Concern</label>
+                    <input type="text" id="bookSymptoms" name="symptoms" placeholder="e.g. Fever, Blood Pressure Check, Medicine Refill" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="bookAddress"><i class="fa-solid fa-house"></i> Home Address / Landmark</label>
+                    <input type="text" id="bookAddress" name="address" placeholder="House/Flat No., Colony, Street, Landmark" class="form-control">
+                </div>
+
+                <!-- Price Breakdown & Discount Card -->
+                <div class="booking-price-summary">
+                    <div class="price-row">
+                        <span>Consultation / Service Base Fee:</span>
+                        <span class="price-val">₹499</span>
+                    </div>
+                    <div class="price-row price-discount">
+                        <span><i class="fa-solid fa-tag"></i> Digital Health Pass Discount:</span>
+                        <span class="price-val">-₹100</span>
+                    </div>
+                    <div class="price-row price-total">
+                        <span>Total Payable at Confirmation:</span>
+                        <strong class="price-total-val">₹399</strong>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Live Alert Opt-in -->
+                <div class="whatsapp-alert-optin">
+                    <label class="wa-checkbox-label">
+                        <input type="checkbox" id="waAlertCheck" name="wa_alert" checked>
+                        <span class="wa-custom-checkbox"></span>
+                        <span class="wa-optin-text"><i class="fa-brands fa-whatsapp text-wa-green"></i> Send instant booking confirmation &amp; digital prescription to my WhatsApp</span>
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeBookingModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm-booking" id="submitBookingBtn">
+                        <span id="btnText">Confirm &amp; Pay ₹399</span>
+                        <i class="fa-solid fa-arrow-right" id="btnIcon"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Success Confirmation Screen -->
+            <div class="booking-success-view" id="bookingSuccessView" style="display: none;">
+                <div class="success-icon-wrap">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 class="success-title">Appointment Confirmed!</h3>
+                <p class="success-msg" id="successMsgText">Our verified medical team in Andhra Pradesh has received your request.</p>
+                
+                <div class="booking-ticket-card">
+                    <div class="ticket-row">
+                        <span>Booking ID:</span>
+                        <strong id="ticketId" class="ticket-badge">NH-2026-XXXX</strong>
+                    </div>
+                    <div class="ticket-row">
+                        <span>Service:</span>
+                        <strong id="ticketService">-</strong>
+                    </div>
+                    <div class="ticket-row">
+                        <span>Location:</span>
+                        <strong id="ticketCity">-</strong>
+                    </div>
+                    <div class="ticket-row">
+                        <span>Date &amp; Slot:</span>
+                        <strong id="ticketSlot">-</strong>
+                    </div>
+                </div>
+
+                <button class="btn-solid-teal w-100 mt-3" onclick="closeBookingModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== FULLSCREEN FIRST-TIME INTRO VIDEO OVERLAY ==================== -->
+    <div class="intro-video-overlay" id="introVideoOverlay">
+        <!-- Fullscreen Video Element -->
+        <video id="introVideoPlayer" playsinline autoplay muted preload="auto" class="fullscreen-intro-video">
+            <source src="{{ url_for('static', filename='videos/intro.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- Top Right "Skip Intro »" Button -->
+        <button class="btn-skip-intro-pill" id="skipIntroBtn" onclick="closeIntroVideo()">
+            <span>Skip Intro &raquo;</span>
+        </button>
+
+        <!-- Bottom Right Audio Toggle -->
+        <button class="intro-audio-toggle-btn" id="introAudioToggle" onclick="toggleIntroAudio()" title="Toggle Audio">
+            <i class="fa-solid fa-volume-xmark" id="introAudioIcon"></i>
+        </button>
+    </div>
+
+
+    <!-- 2. WATCH VIDEO SHOWCASE MODAL -->
+    <div class="custom-modal-backdrop" id="videoModalBackdrop">
+        <div class="custom-modal-card video-modal-card">
+            <div class="modal-card-header">
+                <h3 class="modal-title"><i class="fa-solid fa-play-circle text-teal"></i> How Nhealth Works</h3>
+                <button class="modal-close-btn" onclick="closeVideoModal()">&times;</button>
+            </div>
+            <div class="video-container-body">
+                <div class="video-modal-player-wrap">
+                    <video id="modalVideoPlayer" controls playsinline preload="auto" class="modal-video-tag">
+                        <source src="{{ url_for('static', filename='videos/intro.mp4') }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-features-row">
+                    <div class="v-feat"><i class="fa-solid fa-user-doctor"></i> MD Specialists</div>
+                    <div class="v-feat"><i class="fa-solid fa-vial"></i> NABL Certified Labs</div>
+                    <div class="v-feat"><i class="fa-solid fa-truck-fast"></i> 2-Hour Medicines</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 3. LOGIN MODAL -->
+    <div class="custom-modal-backdrop" id="loginModalBackdrop">
+        <div class="custom-modal-card login-modal-card">
+            <div class="modal-card-header">
+                <h3 class="modal-title">Login to Nhealth</h3>
+                <button class="modal-close-btn" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div class="modal-form-body">
+                <div class="login-tabs">
+                    <button class="l-tab active" onclick="switchLoginTab('otp', this)">Mobile OTP</button>
+                    <button class="l-tab" onclick="switchLoginTab('email', this)">Doctor / Partner Login</button>
+                </div>
+
+                <div id="otpLoginForm">
+                    <div class="form-group mt-3">
+                        <label>Enter 10-digit Mobile Number</label>
+                        <div class="input-with-prefix">
+                            <span class="phone-prefix">+91</span>
+                            <input type="tel" id="loginPhoneInput" placeholder="9876543210" maxlength="10" class="form-control prefix-input">
+                        </div>
+                    </div>
+                    <button class="btn-solid-teal w-100 mt-3" onclick="sendMockOtp()">Send OTP</button>
+                </div>
+
+                <div id="emailLoginForm" style="display: none;">
+                    <div class="form-group mt-3">
+                        <label>Registered Email</label>
+                        <input type="email" placeholder="doctor@nhealth.in" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="••••••••" class="form-control">
+                    </div>
+                    <button class="btn-solid-teal w-100 mt-3" onclick="handlePartnerLogin()">Sign In</button>
+                </div>
+
+                <p class="login-terms">By continuing, you agree to Nhealth's Terms of Service &amp; Privacy Policy.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 4. SEARCH POPUP OVERLAY -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-modal-box">
+            <div class="search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="liveSearchInput" placeholder="Search services (e.g. ECG, Doctor, X-Ray, Blood Test)..." oninput="handleSearchQuery(this.value)">
+                <button class="close-search-btn" onclick="closeSearchOverlay()">&times;</button>
+            </div>
+            <div class="search-results-list" id="searchResultsList">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 5. ALL SERVICES FULL MODAL -->
+    <div class="custom-modal-backdrop" id="allServicesModalBackdrop">
+        <div class="custom-modal-card all-services-modal-card">
+            <div class="modal-card-header">
+                <div>
+                    <h3 class="modal-title">All Healthcare Services</h3>
+                    <p class="modal-sub">Comprehensive medical care delivered at your home</p>
+                </div>
+                <button class="modal-close-btn" onclick="closeAllServicesModal()">&times;</button>
+            </div>
+            <div class="all-services-grid">
+                {% for service in services %}
+                <div class="all-service-tile" onclick="openBookingModal('{{ service.title }}'); closeAllServicesModal();">
+                    <div class="tile-icon" style="background: {{ service.bg_tint }}; color: {{ service.color }};">
+                        <i class="fa-solid fa-{{ service.icon }}"></i>
+                    </div>
+                    <div class="tile-info">
+                        <span class="t-badge">{{ service.category }}</span>
+                        <h4>{{ service.title }}</h4>
+                        <p>{{ service.description }}</p>
+                    </div>
+                    <button class="tile-action-btn">Book <i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== FLOATING WHATSAPP BUTTON & CHAT WIDGET ==================== -->
+    <div class="floating-whatsapp-container" id="floatingWhatsappContainer">
+        <!-- Floating Green WhatsApp Button (Matches media_1789582685665.png) -->
+        <button class="floating-whatsapp-btn" id="floatingWhatsappBtn" onclick="toggleWhatsAppWidget()" aria-label="Chat on WhatsApp" title="Chat with Nhealth on WhatsApp">
+            <span class="whatsapp-pulse-ring"></span>
+            <svg viewBox="0 0 32 32" class="whatsapp-btn-svg" fill="currentColor">
+                <path d="M16 2a13.9 13.9 0 0 0-12 20.9L2 30l7.3-1.9A13.9 13.9 0 1 0 16 2zm0 25.5a11.5 11.5 0 0 1-5.9-1.6l-.4-.3-4.4 1.1 1.2-4.3-.3-.4A11.6 11.6 0 1 1 16 27.5zm6.4-8.6c-.3-.2-2-.1-2.4-1.1-.3-.2-.5-.3-.7.1-.3.3-.9 1.1-1.1 1.3-.2.2-.4.2-.7.1a8.9 8.9 0 0 1-2.6-1.6 9.8 9.8 0 0 1-1.8-2.3c-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.7-1-2.3c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.2 1.2-1.2 2.9 1.2 3.4 1.4 3.6c.2.3 2.4 3.7 5.8 5.1 3.4 1.4 3.4 1 4 1 .6 0 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4z"/>
+            </svg>
+        </button>
+
+        <!-- Interactive WhatsApp Chat Card Popup -->
+        <div class="whatsapp-chat-widget" id="whatsappChatWidget">
+            <div class="wa-widget-header">
+                <div class="wa-widget-brand">
+                    <div class="wa-header-avatar-circle">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div class="wa-widget-title-col">
+                        <h4 class="wa-widget-name">Nhealth Care Support <i class="fa-solid fa-circle-check text-verified"></i></h4>
+                        <span class="wa-widget-status">● Online &bull; Instant Verified Reply</span>
+                    </div>
+                </div>
+                <button class="wa-widget-close" onclick="toggleWhatsAppWidget()" aria-label="Close WhatsApp chat">&times;</button>
+            </div>
+
+            <div class="wa-widget-body">
+                <div class="wa-widget-bubble">
+                    <p>👋 Hello! Welcome to <strong>Nhealth Healthcare at Home</strong>.</p>
+                    <p>How can we assist you today? You can book doctors, order medicines, or request lab tests directly on WhatsApp.</p>
+                    <span class="wa-bubble-time">Just now</span>
+                </div>
+
+                <!-- Quick Action Chips -->
+                <div class="wa-quick-chips">
+                    <button type="button" class="wa-chip" onclick="selectWhatsAppQuickTopic('Doctor Video Consultation')">🩺 Book Doctor (₹399)</button>
+                    <button type="button" class="wa-chip" onclick="selectWhatsAppQuickTopic('Home Diagnostics & Lab Tests')">🔬 Book Lab Test</button>
+                    <button type="button" class="wa-chip" onclick="selectWhatsAppQuickTopic('Doorstep E-Pharmacy')">💊 Order Medicines</button>
+                    <button type="button" class="wa-chip" onclick="selectWhatsAppQuickTopic('24/7 Smart Ambulance SOS')">🚨 Emergency SOS</button>
+                </div>
+            </div>
+
+            <div class="wa-widget-footer">
+                <a href="https://wa.me/919876543210?text=Hello%20Nhealth%20Team%2C%20I%20would%20like%20to%20book%20a%20home%20healthcare%20service." target="_blank" rel="noopener noreferrer" class="btn-open-wa-chat">
+                    <i class="fa-brands fa-whatsapp"></i> Chat on Official WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== FLOATING TOAST NOTIFICATION ==================== -->
+    <div class="toast-notification" id="toastNotification">
+        <i class="fa-solid fa-circle-check toast-icon" id="toastIcon"></i>
+        <span class="toast-message" id="toastMsg">Notification message</span>
+    </div>
+
+    <!-- Main JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+[
+  {
+    "booking_id": "NH-20260916-26302D",
+    "created_at": "2026-09-16T22:48:10.698310",
+    "name": "Rohit",
+    "phone": "9876543210",
+    "email": "",
+    "service": "Online Doctor Consultation",
+    "city": "Vijayawada",
+    "address": "",
+    "preferred_date": "2026-09-16",
+    "time_slot": "Morning (9:00 AM - 1:00 PM)",
+    "notes": "",
+    "status": "Confirmed"
+  },
+  {
+    "booking_id": "NH-20260916-66D11A",
+    "created_at": "2026-09-16T23:56:01.406974",
+    "name": "Rahul Test",
+    "phone": "9876543210",
+    "email": "",
+    "service": "Doctor Video Consultation",
+    "city": "Vijayawada",
+    "address": "Benz Circle, Vijayawada",
+    "preferred_date": "2026-09-17",
+    "time_slot": "Morning (08:00 AM - 12:00 PM)",
+    "notes": "",
+    "status": "Confirmed"
+  }
+]
