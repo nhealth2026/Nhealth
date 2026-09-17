@@ -130,12 +130,9 @@ function highlightAP() {
    4. STATS COUNTER ANIMATION
    ========================================================================== */
 function initStatsCounter() {
-    const statNumbers = document.querySelectorAll('.stat-number');
-    let hasAnimated = false;
-
     const animateCount = (el, target, suffix = "+") => {
         let count = 0;
-        const speed = target / 60; // 60 steps
+        const speed = Math.max(1, target / 60); // 60 steps
 
         const update = () => {
             count += speed;
@@ -149,26 +146,26 @@ function initStatsCounter() {
         update();
     };
 
-    const handleScrollObserver = (entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !hasAnimated) {
-                hasAnimated = true;
-                statNumbers.forEach(stat => {
-                    const target = parseInt(stat.getAttribute('data-target'), 10);
-                    if (!isNaN(target)) {
-                        animateCount(stat, target);
-                    }
-                });
-                observer.disconnect();
-            }
-        });
-    };
-
-    const statsSection = document.querySelector('.trust-stats-section');
-    if (statsSection) {
-        const observer = new IntersectionObserver(handleScrollObserver, { threshold: 0.2 });
-        observer.observe(statsSection);
-    }
+    const sections = document.querySelectorAll('.trust-stats-section, .m-trust-stats-section');
+    sections.forEach(section => {
+        let sectionAnimated = false;
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !sectionAnimated) {
+                    sectionAnimated = true;
+                    const statNumbers = section.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const target = parseInt(stat.getAttribute('data-target'), 10);
+                        if (!isNaN(target)) {
+                            animateCount(stat, target);
+                        }
+                    });
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        observer.observe(section);
+    });
 }
 
 
