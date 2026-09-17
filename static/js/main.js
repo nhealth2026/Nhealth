@@ -271,6 +271,26 @@ function initIntroVideo() {
     const introOverlay = document.getElementById('introVideoOverlay');
     const introVideo = document.getElementById('introVideoPlayer');
 
+    // Allow ?intro=1 or ?play_intro=1 to test intro video anytime
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('intro') || urlParams.has('play_intro')) {
+        sessionStorage.removeItem('nhealth_intro_viewed');
+    }
+
+    // Detect mobile screen (width <= 991px or mobile user agent)
+    const isMobile = window.innerWidth <= 991 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (introVideo) {
+        const targetSrc = isMobile ? introVideo.dataset.mobileSrc : introVideo.dataset.desktopSrc;
+        if (targetSrc) {
+            const currentSrc = introVideo.currentSrc || introVideo.src || '';
+            if (!currentSrc.includes(targetSrc)) {
+                introVideo.src = targetSrc;
+                introVideo.load();
+            }
+        }
+    }
+
     // Check if user has already visited in this session
     const hasSeenIntro = sessionStorage.getItem('nhealth_intro_viewed');
 
@@ -345,6 +365,12 @@ function openVideoModal() {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         if (video) {
+            const isMobile = window.innerWidth <= 991 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const targetSrc = isMobile ? video.dataset.mobileSrc : video.dataset.desktopSrc;
+            if (targetSrc && (!video.src || !video.src.includes(targetSrc))) {
+                video.src = targetSrc;
+                video.load();
+            }
             video.currentTime = 0;
             video.play().catch(e => console.log(e));
         }

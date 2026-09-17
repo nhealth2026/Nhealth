@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.1">
 </head>
 <body>
 
@@ -1420,8 +1420,10 @@
     <!-- ==================== FULLSCREEN FIRST-TIME INTRO VIDEO OVERLAY ==================== -->
     <div class="intro-video-overlay" id="introVideoOverlay">
         <!-- Fullscreen Video Element -->
-        <video id="introVideoPlayer" playsinline autoplay muted preload="auto" class="fullscreen-intro-video">
-            <source src="{{ url_for('static', filename='videos/intro.mp4') }}" type="video/mp4">
+        <video id="introVideoPlayer" playsinline autoplay muted preload="auto" class="fullscreen-intro-video"
+               data-mobile-src="{{ url_for('static', filename='videos/mobile_intro.mp4') }}"
+               data-desktop-src="{{ url_for('static', filename='videos/intro.mp4') }}">
+            <source id="introVideoSource" src="{{ url_for('static', filename='videos/intro.mp4') }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
 
@@ -1446,7 +1448,9 @@
             </div>
             <div class="video-container-body">
                 <div class="video-modal-player-wrap">
-                    <video id="modalVideoPlayer" controls playsinline preload="auto" class="modal-video-tag">
+                    <video id="modalVideoPlayer" controls playsinline preload="auto" class="modal-video-tag"
+                           data-mobile-src="{{ url_for('static', filename='videos/mobile_intro.mp4') }}"
+                           data-desktop-src="{{ url_for('static', filename='videos/intro.mp4') }}">
                         <source src="{{ url_for('static', filename='videos/intro.mp4') }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -1604,6 +1608,6 @@
     </div>
 
     <!-- Main JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.0"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.1"></script>
 </body>
 </html>

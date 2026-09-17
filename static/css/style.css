@@ -3066,6 +3066,28 @@ img, svg {
         overflow-x: hidden !important;
     }
 
+    /* 0. Mobile Fullscreen Intro Video */
+    .fullscreen-intro-video {
+        transform: translate(-50%, -50%) !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        object-fit: cover !important;
+    }
+
+    .btn-skip-intro-pill {
+        top: 1rem !important;
+        right: 1rem !important;
+        padding: 0.4rem 1.1rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .intro-audio-toggle-btn {
+        bottom: 1.2rem !important;
+        right: 1.2rem !important;
+        width: 38px !important;
+        height: 38px !important;
+    }
+
     /* 1. Mobile Top Header Bar */
     .mobile-top-header {
         display: flex;
