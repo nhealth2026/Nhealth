@@ -3142,6 +3142,8 @@ img, svg {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
+        text-align: center;
     }
 
     .m-brand-name {
@@ -3151,6 +3153,9 @@ img, svg {
         color: #0c2340;
         line-height: 1;
         letter-spacing: -0.4px;
+        text-align: center;
+        width: 100%;
+        display: block;
     }
 
     .m-brand-tagline {
@@ -3163,6 +3168,9 @@ img, svg {
         white-space: nowrap;
         margin-top: 2px;
         line-height: 1;
+        text-align: center;
+        width: 100%;
+        display: block;
     }
 
     /* 2. Mobile Hero Section with High-Res Artwork */
@@ -3508,9 +3516,9 @@ img, svg {
     .m-service-card {
         background: #ffffff;
         border: 1px solid #f1f5f9;
-        box-shadow: 0 2px 6px rgba(12, 35, 64, 0.03);
+        box-shadow: 0 2px 6px rgba(12, 35, 64, 0.04);
         border-radius: 12px;
-        padding: 0.5rem 0.15rem 0.4rem 0.15rem;
+        padding: 0.35rem 0.25rem 0.35rem 0.25rem;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -3526,6 +3534,32 @@ img, svg {
     .m-service-card:active {
         transform: scale(0.96);
         background: #f8fafc;
+    }
+
+    .m-srv-art-wrap {
+        width: 100%;
+        height: 48px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 0.28rem;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .m-srv-art-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        transition: transform 0.25s ease;
+    }
+
+    .m-service-card:active .m-srv-art-img {
+        transform: scale(1.05);
     }
 
     .m-icon-circle {
@@ -3547,11 +3581,11 @@ img, svg {
     .icon-bg-indigo { background: rgba(99, 102, 241, 0.12); color: #4338ca; }
 
     .m-srv-name {
-        font-size: 0.64rem;
+        font-size: 0.62rem;
         font-weight: 700;
         color: var(--color-navy-dark);
         line-height: 1.15;
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.12rem;
         min-height: 22px;
         width: 100%;
         display: -webkit-box;
@@ -3563,7 +3597,7 @@ img, svg {
     }
 
     .m-srv-sub {
-        font-size: 0.52rem;
+        font-size: 0.50rem;
         color: #64748b;
         line-height: 1.1;
         white-space: nowrap;
@@ -3575,12 +3609,19 @@ img, svg {
 
     .m-srv-arrow {
         position: absolute;
-        right: 3px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.5rem;
-        color: #cbd5e1;
-        opacity: 0.7;
+        right: 4px;
+        top: 6px;
+        font-size: 0.45rem;
+        color: #64748b;
+        background: rgba(255, 255, 255, 0.88);
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 2;
     }
 
     /* Doctor Promo Banner Card */
@@ -3588,7 +3629,7 @@ img, svg {
         background: linear-gradient(135deg, #dcfce7 0%, #ccfbf1 40%, #e0f2fe 100%);
         border: 1px solid #a7f3d0;
         border-radius: 12px;
-        padding: 0.45rem 0.25rem;
+        padding: 0.35rem 0.25rem 0.35rem 0.25rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -3602,6 +3643,24 @@ img, svg {
 
     .m-doctor-banner-card:active {
         transform: scale(0.96);
+    }
+
+    .m-promo-art-wrap {
+        width: 100%;
+        height: 48px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 0.2rem;
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .m-promo-art-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
     }
 
     .m-promo-text-wrap {
@@ -3621,7 +3680,7 @@ img, svg {
         font-size: 0.48rem;
         color: #047857;
         line-height: 1.08;
-        margin: 0.12rem 0;
+        margin: 0.1rem 0;
     }
 
     .m-promo-heart {
