@@ -3183,7 +3183,7 @@ img, svg {
         padding: 0.75rem 0.85rem 0.75rem 0.85rem;
         background: url('../images/mobile_hero_bg.jpg') no-repeat;
         background-size: cover;
-        background-position: calc(100% + 28px) 20%;
+        background-position: calc(100% + 40px) 20%;
         overflow: hidden;
         box-sizing: border-box;
         width: 100%;
@@ -3404,31 +3404,31 @@ img, svg {
         align-items: flex-start;
         position: absolute;
         right: 1.35rem;
-        top: 13.5rem;
+        top: 13.45rem;
         z-index: 15;
         pointer-events: none;
         font-family: 'Caveat', cursive;
-        transform: rotate(-10deg);
+        transform: rotate(-8deg);
         transform-origin: center center;
     }
 
     .m-script-line-1 {
         display: block !important;
-        font-size: 0.80rem;
+        font-size: 0.78rem;
         font-weight: 700;
         color: #ffffff;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
         line-height: 1;
         letter-spacing: 0.3px;
-        margin-left: 0.2rem;
+        margin-left: 0.45rem;
     }
 
     .m-script-line-2 {
         display: block !important;
-        font-size: 0.74rem;
+        font-size: 0.72rem;
         font-weight: 600;
         color: #ffffff;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
         line-height: 1;
         letter-spacing: 0.3px;
         margin-left: 0.65rem;
@@ -3439,19 +3439,20 @@ img, svg {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        font-size: 1.0rem;
+        font-size: 0.88rem;
         font-weight: 700;
         color: #ffffff !important;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85);
         line-height: 1;
         margin-top: 1px;
+        white-space: nowrap;
     }
 
     .m-proud-calligraphy .m-script-swoosh {
-        width: 88px;
-        height: 8px;
+        width: 76px;
+        height: 7px;
         margin-top: 2px;
-        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
     }
 
     /* 2.5 Mobile Trust Metrics & Stats Pill Bar (Matches Reference Image 1) */
