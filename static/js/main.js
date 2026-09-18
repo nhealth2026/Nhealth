@@ -271,10 +271,12 @@ function initIntroVideo() {
     const introOverlay = document.getElementById('introVideoOverlay');
     const introVideo = document.getElementById('introVideoPlayer');
 
-    // Allow ?intro=1 or ?play_intro=1 to test intro video anytime
+    // Allow ?intro=1 or ?play_intro=1 to test intro video anytime, or ?no_intro=1 to skip
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('intro') || urlParams.has('play_intro')) {
         sessionStorage.removeItem('nhealth_intro_viewed');
+    } else if (urlParams.has('no_intro') || urlParams.has('skip_intro')) {
+        sessionStorage.setItem('nhealth_intro_viewed', 'true');
     }
 
     // Detect mobile screen (width <= 991px or mobile user agent)

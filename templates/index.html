@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=5.5">
 </head>
 <body>
 
@@ -919,65 +919,67 @@
     <!-- ==================== MOBILE-ONLY APP VIEW (1:1 Match to Screenshot) ==================== -->
     <div class="mobile-app-layout mobile-only">
         
-        <!-- Mobile Top Header Bar -->
-        <header class="mobile-top-header">
-            <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
-                <div class="logo-mark m-logo-mark">
-                    <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
-                </div>
-                <div class="logo-text m-logo-text">
-                    <span class="brand-name m-brand-name">Nhealth</span>
-                    <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
-                </div>
-            </a>
-        </header>
-
         <!-- Mobile Hero Section with Backdrop Artwork -->
         <section class="mobile-hero-section">
-            <div class="m-hero-content">
-                <!-- Tagline Badge -->
-                <div class="m-hero-tag">
-                    <span>YOUR HEALTH &bull; OUR PRIORITY</span>
-                </div>
-
-                <!-- Main Title -->
-                <h1 class="m-hero-title">
-                    <span class="m-title-line1">Powering the Future of</span>
-                    <span class="m-title-line2"><span class="m-title-blue">Healthcare at</span> <span class="m-title-teal">Home</span></span>
-                </h1>
-
-                <!-- Subtitle Description -->
-                <p class="m-hero-desc">
-                    Expert doctors, trusted labs, quality medicines and complete home healthcare — all in one platform. Because your health should never be out of reach.
-                </p>
-
-                <!-- Floating AI Symptom Search Pill Bar -->
-                <div class="m-symptom-search-bar" onclick="openSearchOverlay()">
-                    <div class="m-sparkle-icon">
-                        <svg viewBox="0 0 24 24" class="m-star-svg" fill="currentColor">
-                            <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
-                        </svg>
+            <!-- Mobile Top Header Bar -->
+            <header class="mobile-top-header">
+                <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
+                    <div class="logo-mark m-logo-mark">
+                        <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
                     </div>
-                    <div class="m-search-text-col">
-                        <span class="m-search-prompt">Tell us what's troubling you...</span>
-                        <span class="m-search-sub">e.g. fever, cough, stomach pain</span>
+                    <div class="logo-text m-logo-text">
+                        <span class="brand-name m-brand-name">Nhealth</span>
+                        <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
                     </div>
-                    <button class="m-search-go-btn" aria-label="Search symptoms">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
+                </a>
+            </header>
+
+            <div class="m-hero-top-row">
+                <div class="m-hero-content">
+                    <!-- Tagline Badge -->
+                    <div class="m-hero-tag">
+                        <span>YOUR HEALTH &bull; OUR PRIORITY</span>
+                    </div>
+
+                    <!-- Main Title -->
+                    <h1 class="m-hero-title">
+                        <span class="m-title-line1">Powering the Future of</span>
+                        <span class="m-title-line2"><span class="m-title-blue">Healthcare at</span> <span class="m-title-teal">Home</span></span>
+                    </h1>
+
+                    <!-- Subtitle Description -->
+                    <p class="m-hero-desc">
+                        Expert doctors, trusted labs, quality medicines and complete home healthcare — all in one platform. Because your health should never be out of reach.
+                    </p>
                 </div>
             </div>
 
-            <!-- Calligraphy Overlay: "Proudly from Andhra Pradesh" -->
+            <!-- Calligraphy Overlay: "Proudly from Andhra Pradesh" in sky pocket beside map -->
             <div class="m-proud-calligraphy">
                 <div class="m-script-line-1">Proudly</div>
                 <div class="m-script-line-2">from</div>
                 <div class="m-script-line-3">
                     <span>Andhra Pradesh</span>
-                    <svg class="m-script-swoosh" viewBox="0 0 140 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M 2 4 C 45 10, 95 10, 138 2" stroke="#facc15" stroke-width="2.6" stroke-linecap="round" />
+                    <svg class="m-script-swoosh" viewBox="0 0 90 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 2 7 C 25 1.5, 60 1.5, 88 5.5" stroke="#facc15" stroke-width="2.6" stroke-linecap="round" />
                     </svg>
                 </div>
+            </div>
+
+            <!-- Floating AI Symptom Search Pill Bar (Below the Map) -->
+            <div class="m-symptom-search-bar" onclick="openSearchOverlay()">
+                <div class="m-sparkle-icon">
+                    <svg viewBox="0 0 24 24" class="m-star-svg" fill="currentColor">
+                        <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+                    </svg>
+                </div>
+                <div class="m-search-text-col">
+                    <span class="m-search-prompt">Tell us what's troubling you...</span>
+                    <span class="m-search-sub">e.g. fever, cough, stomach pain</span>
+                </div>
+                <button class="m-search-go-btn" aria-label="Search symptoms">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
             </div>
         </section>
 
@@ -1059,9 +1061,8 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_online_doctor.png') }}" alt="Online Doctor Consultation" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <h3 class="m-srv-name">Online Doctor Consultation</h3>
+                    <div class="m-srv-pill pill-blue">Online Doctor Consultation</div>
                     <p class="m-srv-sub">Video &bull; Audio &bull; Chat</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
                 </div>
 
                 <!-- 2. Doctor Home Visits -->
@@ -1069,69 +1070,62 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_doctor_home_visit.png') }}" alt="Doctor Home Visits" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <h3 class="m-srv-name">Doctor Home Visits</h3>
-                    <p class="m-srv-sub">Expert care at home</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                    <div class="m-srv-pill pill-green">Doctor Home Visits</div>
+                    <p class="m-srv-sub">Expert care, at your home.</p>
                 </div>
 
-                <!-- 3. Lab Tests at Home -->
-                <div class="m-service-card" onclick="openBookingModal('Lab Tests at Home')">
-                    <div class="m-srv-art-wrap">
-                        <img src="{{ url_for('static', filename='images/services/art_lab_tests.png') }}" alt="Lab Tests at Home" class="m-srv-art-img" loading="lazy">
-                    </div>
-                    <h3 class="m-srv-name">Lab Tests at Home</h3>
-                    <p class="m-srv-sub">Accurate results at home</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
-                </div>
-
-                <!-- 4. X-Ray at Home -->
-                <div class="m-service-card" onclick="openBookingModal('X-Ray at Home')">
-                    <div class="m-srv-art-wrap">
-                        <img src="{{ url_for('static', filename='images/services/art_xray_at_home.png') }}" alt="X-Ray at Home" class="m-srv-art-img" loading="lazy">
-                    </div>
-                    <h3 class="m-srv-name">X-Ray at Home</h3>
-                    <p class="m-srv-sub">Quick &bull; Safe &bull; Reliable</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
-                </div>
-
-                <!-- 5. Pharmacy to Home -->
-                <div class="m-service-card" onclick="openBookingModal('Pharmacy to Home')">
-                    <div class="m-srv-art-wrap">
-                        <img src="{{ url_for('static', filename='images/services/art_pharmacy_to_home.png') }}" alt="Pharmacy to Home" class="m-srv-art-img" loading="lazy">
-                    </div>
-                    <h3 class="m-srv-name">Pharmacy to Home</h3>
-                    <p class="m-srv-sub">Genuine medicines delivered</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
-                </div>
-
-                <!-- 6. Premium OPD Memberships -->
-                <div class="m-service-card" onclick="openBookingModal('Premium OPD Memberships')">
-                    <div class="m-srv-art-wrap">
-                        <img src="{{ url_for('static', filename='images/services/art_premium_opd.png') }}" alt="Premium OPD Memberships" class="m-srv-art-img" loading="lazy">
-                    </div>
-                    <h3 class="m-srv-name">Premium OPD Memberships</h3>
-                    <p class="m-srv-sub">More care &bull; Less waiting</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
-                </div>
-
-                <!-- 7. Eldercare -->
-                <div class="m-service-card" onclick="openBookingModal('Eldercare')">
-                    <div class="m-srv-art-wrap">
-                        <img src="{{ url_for('static', filename='images/services/art_eldercare.png') }}" alt="Eldercare" class="m-srv-art-img" loading="lazy">
-                    </div>
-                    <h3 class="m-srv-name">Eldercare</h3>
-                    <p class="m-srv-sub">Compassionate care</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
-                </div>
-
-                <!-- 8. Bedside Assistant -->
+                <!-- 3. Bedside Assistant -->
                 <div class="m-service-card" onclick="openBookingModal('Bedside Assistant')">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_bedside_assistant.png') }}" alt="Bedside Assistant" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <h3 class="m-srv-name">Bedside Assistant</h3>
-                    <p class="m-srv-sub">Personal care support</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                    <div class="m-srv-pill pill-purple">Bedside Assistant</div>
+                    <p class="m-srv-sub">Personal support for better care.</p>
+                </div>
+
+                <!-- 4. Lab Tests at Home -->
+                <div class="m-service-card" onclick="openBookingModal('Lab Tests at Home')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_lab_tests.png') }}" alt="Lab Tests at Home" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-orange">Lab Tests at Home</div>
+                    <p class="m-srv-sub">Accurate results, from home.</p>
+                </div>
+
+                <!-- 5. X-Ray at Home -->
+                <div class="m-service-card" onclick="openBookingModal('X-Ray at Home')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_xray_at_home.png') }}" alt="X-Ray at Home" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-teal">X-Ray at Home</div>
+                    <p class="m-srv-sub">Quick. Safe. Reliable.</p>
+                </div>
+
+                <!-- 6. Pharmacy to Home -->
+                <div class="m-service-card" onclick="openBookingModal('Pharmacy to Home')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_pharmacy_to_home.png') }}" alt="Pharmacy to Home" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-pink">Pharmacy to Home</div>
+                    <p class="m-srv-sub">Genuine medicines delivered</p>
+                </div>
+
+                <!-- 7. Premium OPD Memberships -->
+                <div class="m-service-card" onclick="openBookingModal('Premium OPD Memberships')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_premium_opd.png') }}" alt="Premium OPD Memberships" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-indigo">Premium OPD Memberships</div>
+                    <p class="m-srv-sub">More care. Less waiting.</p>
+                </div>
+
+                <!-- 8. Eldercare -->
+                <div class="m-service-card" onclick="openBookingModal('Eldercare')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_eldercare.png') }}" alt="Eldercare" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-coral">Eldercare</div>
+                    <p class="m-srv-sub">Compassionate care, every stage.</p>
                 </div>
 
                 <!-- 9. Physiotherapy -->
@@ -1139,9 +1133,8 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_physiotherapy.png') }}" alt="Physiotherapy" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <h3 class="m-srv-name">Physiotherapy</h3>
-                    <p class="m-srv-sub">Move better &bull; Live better</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                    <div class="m-srv-pill pill-skyblue">Physiotherapy</div>
+                    <p class="m-srv-sub">Move better. Live better.</p>
                 </div>
 
                 <!-- 10. Nursing Services -->
@@ -1149,9 +1142,8 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_nursing_services.png') }}" alt="Nursing Services" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <h3 class="m-srv-name">Nursing Services</h3>
-                    <p class="m-srv-sub">Skilled &bull; Trusted</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
+                    <div class="m-srv-pill pill-lightgreen">Nursing Services</div>
+                    <p class="m-srv-sub">Skilled. Trusted. Always there.</p>
                 </div>
 
                 <!-- 11. and More... -->
@@ -1159,9 +1151,8 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_and_more.png') }}" alt="and More..." class="m-srv-art-img" loading="lazy">
                     </div>
-                    <h3 class="m-srv-name">and More...</h3>
+                    <div class="m-srv-pill pill-deepindigo">and More...</div>
                     <p class="m-srv-sub">Complete healthcare</p>
-                    <i class="fa-solid fa-chevron-right m-srv-arrow"></i>
                 </div>
 
                 <!-- 12. Doctor Banner Promo Card -->
@@ -1170,9 +1161,8 @@
                         <img src="{{ url_for('static', filename='images/services/art_family_promo.png') }}" alt="Your Health Our Priority" class="m-promo-art-img" loading="lazy">
                     </div>
                     <div class="m-promo-text-wrap">
-                        <h4 class="m-promo-title">Your Health<br>Our Priority</h4>
+                        <h4 class="m-promo-title">Your Health,<br>Our Priority <i class="fa-solid fa-heart" style="color: #00b4a7; font-size: 0.52rem;"></i></h4>
                         <p class="m-promo-sub">Personalized care.<br>Always there.</p>
-                        <span class="m-promo-heart"><i class="fa-solid fa-heart"></i></span>
                     </div>
                 </div>
 

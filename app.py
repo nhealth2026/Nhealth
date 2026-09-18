@@ -12,6 +12,7 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'nhealth-super-secret-key-2026'
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 @app.after_request
 def add_header(response):
