@@ -5,8 +5,8 @@
 
 /* --- Root Design Tokens & Variables --- */
 :root {
-    --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    --font-primary: 'Poppins', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-heading: 'Poppins', 'Outfit', 'Urbanist', sans-serif;
     --font-script: 'Caveat', cursive, sans-serif;
 
     /* Color Palette Extracted Directly from Reference */
@@ -14,10 +14,10 @@
     --color-teal-dark: #008e84;
     --color-teal-light: #00d2ba;
     
-    --color-navy-dark: #0c2340;
-    --color-navy-deep: #081a30;
-    --color-text-main: #0c2340;
-    --color-text-muted: #586e85;
+    --color-navy-dark: #002a5c;
+    --color-navy-deep: #061e40;
+    --color-text-main: #002a5c;
+    --color-text-muted: #4a6785;
 
     --color-ap-gold: #facc15;
     --color-ap-gold-dark: #ca8a04;
@@ -88,15 +88,25 @@ img, svg {
    1. NAVBAR / HEADER (Sleek & Compact)
    ========================================================================== */
 .navbar-wrapper {
-    height: 58px;
-    flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 62px;
+    background: transparent;
+    border-bottom: none;
     z-index: 1000;
     display: flex;
     align-items: center;
+    transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.navbar-wrapper.scrolled {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 4px 20px rgba(12, 35, 64, 0.08);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .nav-container {
@@ -157,6 +167,8 @@ img, svg {
 .logo-text {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .brand-name {
@@ -165,23 +177,28 @@ img, svg {
     font-weight: 800;
     color: var(--color-navy-dark);
     line-height: 1;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
+    text-align: center;
 }
 
 .brand-tagline {
-    font-size: 0.62rem;
-    font-weight: 700;
+    font-family: var(--font-heading);
+    font-size: 0.64rem;
+    font-weight: 600;
     color: var(--color-text-muted);
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
+    letter-spacing: 1.2px;
     margin-top: 2px;
+    text-align: center;
+    width: 100%;
 }
 
 /* Desktop Navigation Menu */
 .nav-menu {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1.35rem;
+    margin-left: 3.5rem;
+    margin-right: auto;
 }
 
 .nav-link {
@@ -484,7 +501,7 @@ img, svg {
    2. MAIN HERO SECTION (Separated Top Banner & Bottom Action Cards)
    ========================================================================== */
 .page-container {
-    min-height: calc(100vh - 58px);
+    min-height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -493,13 +510,14 @@ img, svg {
 }
 
 .hero-top-banner {
-    min-height: calc(100vh - 58px - 165px);
+    min-height: calc(100vh - 165px);
     display: flex;
     align-items: center;
     background: url('../images/hero_bg.jpg') no-repeat center center;
     background-size: cover;
     position: relative;
-    padding: 0.35rem 0;
+    padding-top: 62px;
+    padding-bottom: 0.35rem;
 }
 
 .hero-content-container {
@@ -563,15 +581,9 @@ img, svg {
 /* Hero Secondary Brand Mark */
 .hero-brand-block {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 0.85rem;
-}
-
-.hero-brand-header {
-    display: flex;
     align-items: center;
     gap: 0.85rem;
+    margin-bottom: 0.85rem;
 }
 
 .hero-logo-mark {
@@ -588,21 +600,30 @@ img, svg {
     object-fit: contain;
 }
 
+.hero-brand-titles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
 .hero-brand-name {
     font-family: var(--font-heading);
     font-size: 3.8rem;
     font-weight: 800;
-    color: #00284d;
-    line-height: 0.85;
-    letter-spacing: -1.5px;
+    color: var(--color-navy-dark);
+    line-height: 0.88;
+    letter-spacing: -1px;
     margin: 0;
+    text-align: center;
 }
 
 .hero-brand-sub {
-    font-size: 1rem;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
     font-weight: 600;
-    color: #52667a;
-    letter-spacing: 0.6px;
+    color: var(--color-text-muted);
+    letter-spacing: 1.6px;
     margin-top: 0.35rem;
     width: 100%;
     text-align: center;
@@ -728,7 +749,7 @@ img, svg {
 .ap-proud-calligraphy {
     position: absolute;
     bottom: 12%;
-    right: 8%;
+    right: 0%;
     z-index: 10;
     user-select: none;
     transform: rotate(-8deg);
@@ -737,7 +758,7 @@ img, svg {
 
 @media (min-width: 1400px) {
     .ap-proud-calligraphy {
-        right: 8%;
+        right: 0%;
     }
 }
 
@@ -745,9 +766,9 @@ img, svg {
     font-family: var(--font-script);
     font-size: 1.85rem;
     font-weight: 700;
-    color: #eab308;
+    color: #ffffff;
     line-height: 0.9;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 0 10px rgba(250, 204, 21, 0.4);
+    text-shadow: 0 2px 10px rgba(0, 32, 70, 0.6), 0 0 12px rgba(2, 132, 199, 0.4);
 }
 
 .script-line-2 {
@@ -759,10 +780,10 @@ img, svg {
     font-family: var(--font-script);
     font-size: 2.35rem;
     font-weight: 700;
-    color: #facc15;
+    color: #ffffff;
     line-height: 0.95;
     margin-top: 0.1rem;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.18), 0 0 14px rgba(250, 204, 21, 0.5);
+    text-shadow: 0 2px 12px rgba(0, 32, 70, 0.7), 0 0 16px rgba(2, 132, 199, 0.5);
 }
 
 /* Invisible Hover/Click Area over Andhra Pradesh */
@@ -886,6 +907,32 @@ img, svg {
     transform: translateY(-2px);
 }
 
+.service-img-wrap {
+    width: 60px;
+    height: 38px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.service-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.service-item:hover .service-img-wrap {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 6px 14px rgba(2, 132, 199, 0.2);
+}
+
 .service-icon-circle {
     width: 38px;
     height: 38px;
@@ -915,15 +962,18 @@ img, svg {
 .icon-bg-cyan { background: rgba(6, 182, 212, 0.12); color: #0891b2; }
 
 .service-label {
-    font-size: 0.69rem;
-    font-weight: 700;
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 800;
     color: var(--color-navy-dark);
-    line-height: 1.18;
+    line-height: 1.22;
     text-align: center;
+    letter-spacing: -0.01em;
 }
 
 .service-more-item .service-label {
-    color: var(--color-text-muted);
+    color: #334155;
+    font-weight: 800;
 }
 
 
