@@ -7,6 +7,7 @@
 :root {
     --font-primary: 'Poppins', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-heading: 'Poppins', 'Outfit', 'Urbanist', sans-serif;
+    --font-brand: 'Poppins', sans-serif;
     --font-script: 'Caveat', cursive, sans-serif;
 
     /* Color Palette Extracted Directly from Reference */
@@ -172,24 +173,25 @@ img, svg {
 }
 
 .brand-name {
-    font-family: var(--font-heading);
+    font-family: var(--font-brand);
     font-size: 1.45rem;
     font-weight: 800;
-    color: var(--color-navy-dark);
+    color: #0c2340;
     line-height: 1;
     letter-spacing: -0.3px;
     text-align: center;
 }
 
 .brand-tagline {
-    font-family: var(--font-heading);
-    font-size: 0.64rem;
+    font-family: var(--font-brand);
+    font-size: 0.60rem;
     font-weight: 600;
-    color: var(--color-text-muted);
-    letter-spacing: 1.2px;
+    color: #4a6785;
+    letter-spacing: 0.12em;
     margin-top: 2px;
     text-align: center;
     width: 100%;
+    text-transform: none;
 }
 
 /* Desktop Navigation Menu */
@@ -608,10 +610,10 @@ img, svg {
 }
 
 .hero-brand-name {
-    font-family: var(--font-heading);
+    font-family: var(--font-brand);
     font-size: 3.8rem;
     font-weight: 800;
-    color: var(--color-navy-dark);
+    color: #0c2340;
     line-height: 0.88;
     letter-spacing: -1px;
     margin: 0;
@@ -619,14 +621,15 @@ img, svg {
 }
 
 .hero-brand-sub {
-    font-family: var(--font-heading);
+    font-family: var(--font-brand);
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--color-text-muted);
-    letter-spacing: 1.6px;
+    color: #4a6785;
+    letter-spacing: 0.12em;
     margin-top: 0.35rem;
     width: 100%;
     text-align: center;
+    text-transform: none;
 }
 
 /* Hero Main Title */
@@ -3116,20 +3119,23 @@ img, svg {
         padding: 0 !important;
         padding-bottom: 90px !important;
         overflow-y: auto !important;
-        background: #f0f7fa !important;
+        background: #eef4f8 !important;
     }
     
-    /* Mobile App Layout Wrapper */
+    /* Mobile App Layout Wrapper - Strictly constrained to standard 412px mobile frame (Never distorts or stretches on screen resize) */
     .mobile-app-layout {
-        width: 100% !important;
-        max-width: 100% !important;
+        width: 412px !important;
+        min-width: 412px !important;
+        max-width: 412px !important;
+        margin: 0 auto !important;
         box-sizing: border-box !important;
-        margin: 0 !important;
         padding: 0 !important;
         display: block !important;
-        background: #f0f7fa;
+        background: #f0f7fa !important;
         position: relative;
         overflow-x: hidden !important;
+        box-shadow: 0 0 35px rgba(12, 35, 64, 0.12);
+        min-height: 100vh;
     }
 
     /* 0. Mobile Fullscreen Intro Video */
@@ -3154,18 +3160,31 @@ img, svg {
         height: 38px !important;
     }
 
-    /* 1. Mobile Top Header Bar (Integrated with Hero Sky - Matches Reference Image 2) */
+    /* 1. Mobile Top Header Bar (Transparent & Frozen Fixed on Scroll, Centered within 412px Mobile Container) */
     .mobile-top-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 1.25rem 0 0.45rem 0;
+        padding: 0.65rem 0.95rem;
         background: transparent;
-        position: relative;
-        z-index: 500;
-        box-sizing: border-box;
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100%;
-        border-bottom: none;
+        max-width: 412px;
+        z-index: 1000;
+        box-sizing: border-box;
+        border-bottom: 1px solid transparent;
+        transition: background-color 0.25s ease, backdrop-filter 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .mobile-top-header.scrolled {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 4px 20px rgba(12, 35, 64, 0.06);
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
     }
 
     .m-brand-logo {
@@ -3195,49 +3214,85 @@ img, svg {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: flex-start;
-        text-align: left;
-        margin-top: 3px;
+        align-items: center;
+        text-align: center;
+        margin-top: 2px;
     }
 
     .m-brand-name {
-        font-family: var(--font-heading);
-        font-size: 1.55rem;
+        font-family: var(--font-brand);
+        font-size: 1.45rem;
         font-weight: 800;
         color: #0c2340;
         line-height: 1;
         letter-spacing: -0.4px;
-        text-align: left;
+        text-align: center;
         display: block;
+        width: 100%;
     }
 
     .m-brand-tagline {
-        font-family: var(--font-primary);
-        font-size: 0.62rem;
+        font-family: var(--font-brand);
+        font-size: 0.58rem;
         font-weight: 600;
-        color: #475569;
-        letter-spacing: 0.25px;
+        color: #4a6785;
+        letter-spacing: 0.12em;
         text-transform: none !important;
         white-space: nowrap;
-        margin-top: 3px;
+        margin-top: 2px;
         line-height: 1;
-        text-align: left;
+        text-align: center;
         display: block;
-        position: relative;
-        left: -4px;
+        width: 100%;
+    }
+
+    /* Right Action Buttons in Mobile Header */
+    .m-header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .m-header-login-btn {
+        padding: 0.38rem 1.05rem;
+        border-radius: 9999px;
+        border: none;
+        background: linear-gradient(135deg, #0284c7 0%, #00b4a7 100%);
+        color: #ffffff;
+        font-family: var(--font-brand);
+        font-weight: 700;
+        font-size: 0.78rem;
+        cursor: pointer;
+        box-shadow: 0 3px 10px rgba(0, 180, 167, 0.32);
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        line-height: 1;
+        outline: none;
+    }
+
+    .m-header-login-btn:active {
+        transform: scale(0.94);
+        box-shadow: 0 1px 4px rgba(0, 180, 167, 0.2);
+        opacity: 0.92;
+    }
+
+    .m-header-login-btn i {
+        font-size: 0.75rem;
+        color: #ffffff;
     }
 
     /* 2. Mobile Hero Section with High-Res Artwork (Clean Separation: Text on Left, Map on Right) */
     .mobile-hero-section {
         position: relative;
-        padding: 0.75rem 0.85rem 0.75rem 0.85rem;
-        background: url('../images/mobile_hero_bg.jpg') no-repeat;
+        padding: 3.8rem 1rem 0.85rem 1rem;
+        background: url('../images/mobile_hero_bg.jpg') no-repeat center top;
         background-size: cover;
-        background-position: calc(100% + 40px) 20%;
         overflow: hidden;
         box-sizing: border-box;
         width: 100%;
-        min-height: 345px;
+        min-height: 335px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -3256,28 +3311,31 @@ img, svg {
     .m-hero-content {
         position: relative;
         z-index: 5;
-        width: 48%;
-        max-width: 168px;
+        width: 200px;
+        max-width: 200px;
+        flex-shrink: 0;
         box-sizing: border-box;
-        margin-top: 1.5rem;
+        margin-top: 30px;
     }
 
     .m-hero-tag {
-        font-size: 0.50rem;
+        font-family: var(--font-brand);
+        font-size: 9px;
         font-weight: 700;
         color: #475569;
-        letter-spacing: 0.6px;
+        letter-spacing: 0.9px;
         text-transform: uppercase;
-        margin-bottom: 0.28rem;
+        margin-bottom: 5px;
+        white-space: nowrap;
     }
 
     .m-hero-title {
-        font-family: var(--font-heading);
-        font-size: clamp(0.92rem, 3.9vw, 1.05rem);
+        font-family: var(--font-brand);
+        font-size: 17px;
         font-weight: 800;
-        line-height: 1.2;
-        margin-bottom: 0.35rem;
-        letter-spacing: -0.2px;
+        line-height: 1.22;
+        margin-bottom: 7px;
+        letter-spacing: -0.3px;
     }
 
     .m-title-line1 {
@@ -3301,12 +3359,13 @@ img, svg {
 
     .m-hero-desc {
         font-family: var(--font-primary);
-        font-size: 0.52rem;
-        line-height: 1.34;
+        font-size: 10.5px;
+        line-height: 1.4;
         color: #334155;
-        margin-bottom: 0.35rem;
+        margin-bottom: 10px;
         font-weight: 500;
-        max-width: 160px;
+        width: 190px;
+        max-width: 190px;
         word-break: normal;
     }
 
@@ -3327,11 +3386,149 @@ img, svg {
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         box-sizing: border-box;
-        width: 100%;
-        max-width: 235px;
+        width: 240px;
         align-self: flex-start;
         margin-top: auto;
-        margin-bottom: 0;
+        margin-bottom: 48px;
+    }
+
+    /* Health Support Rider Circular Emblem Badge (Bottom-Left Corner) */
+    .m-hero-rider-badge {
+        position: absolute;
+        bottom: 5px;
+        left: 14px;
+        width: 56px;
+        height: 56px;
+        z-index: 25;
+        cursor: pointer;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(12, 35, 64, 0.25), 0 2px 5px rgba(0, 0, 0, 0.12);
+        border: 1.5px solid rgba(255, 255, 255, 0.95);
+        background: #ffffff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        line-height: 0;
+        display: block;
+    }
+
+    .m-hero-rider-badge:active {
+        transform: scale(0.93);
+        box-shadow: 0 2px 6px rgba(12, 35, 64, 0.18);
+    }
+
+    .m-rider-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 50%;
+    }
+
+    /* Health Support Rider Animated Scooter (Always Starts from Back of Badge & Rides to Right) */
+    .m-hero-animated-bike {
+        position: absolute;
+        bottom: 0;
+        left: 18px;
+        width: 90px;
+        height: auto;
+        z-index: 20;
+        cursor: pointer;
+        opacity: 0;
+        visibility: visible;
+        display: block;
+        transform-origin: left bottom;
+        filter: drop-shadow(0 4px 10px rgba(12, 35, 64, 0.28));
+        will-change: transform, opacity;
+        animation: bikeEmergeAndRide 14s linear infinite;
+        pointer-events: auto;
+    }
+
+    .m-hero-animated-bike:active {
+        transform: scale(0.97);
+    }
+
+    .m-hero-animated-bike .m-bike-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transform: none;
+    }
+
+    .m-bike-bubble {
+        position: absolute;
+        top: -19px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(12, 35, 64, 0.88);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        color: #ffffff;
+        font-family: var(--font-brand);
+        font-size: 7.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 9999px;
+        white-space: nowrap;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+        pointer-events: none;
+        opacity: 0;
+        animation: bubbleVisibility 14s linear infinite;
+    }
+
+    .m-bike-bubble::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 3.5px solid transparent;
+        border-right: 3.5px solid transparent;
+        border-top: 3.5px solid rgba(12, 35, 64, 0.88);
+    }
+
+    @keyframes bubbleVisibility {
+        0%, 5% { opacity: 0; }
+        9%, 75% { opacity: 1; }
+        81%, 100% { opacity: 0; }
+    }
+
+    @keyframes bikeEmergeAndRide {
+        0% {
+            opacity: 0;
+            transform: translateX(0) scale(0.2);
+        }
+        2.5% {
+            opacity: 0.85;
+            transform: translateX(6px) scale(0.5);
+        }
+        6% {
+            opacity: 1;
+            transform: translateX(20px) scale(0.88);
+        }
+        10% {
+            opacity: 1;
+            transform: translateX(40px) scale(1);
+        }
+        82% {
+            opacity: 1;
+            transform: translateX(390px) scale(1);
+        }
+        83.5% {
+            opacity: 0;
+            transform: translateX(400px) scale(1);
+        }
+        83.6% {
+            opacity: 0;
+            transform: translateX(0) scale(0.2);
+        }
+        94% {
+            opacity: 0;
+            transform: translateX(0) scale(0.2);
+        }
+        100% {
+            opacity: 0;
+            transform: translateX(0) scale(0.2);
+        }
     }
 
     .m-symptom-search-bar:active {
@@ -3529,7 +3726,7 @@ img, svg {
         justify-content: space-between;
         box-sizing: border-box;
         width: 100%;
-        max-width: 416px;
+        max-width: 392px;
     }
 
     .m-stat-item {
@@ -3914,24 +4111,35 @@ img, svg {
         border: 1px solid #fed7aa;
     }
 
-    /* 5. Floating Bottom Navigation Bar */
+    /* =========================================================
+       FLOATING BOTTOM NAVIGATION
+       Always aligned to centered 412px mobile frame
+       ========================================================= */
     .m-bottom-nav-bar {
         position: fixed;
         bottom: 10px;
-        left: 10px;
-        right: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+
+        width: min(392px, calc(100vw - 20px));
+        max-width: 392px;
+
         background: #ffffff;
         border-radius: 40px;
-        box-shadow: 0 10px 30px rgba(12, 35, 64, 0.16), 0 0 1px 1px rgba(12, 35, 64, 0.05);
+
+        box-shadow:
+            0 10px 30px rgba(12, 35, 64, 0.16),
+            0 0 1px 1px rgba(12, 35, 64, 0.05);
+
         display: flex;
         align-items: center;
         justify-content: space-around;
+
         padding: 0.35rem 0.5rem;
-        z-index: 1000;
         border: 1px solid rgba(226, 232, 240, 0.85);
-        max-width: 480px;
-        margin: 0 auto;
+
         box-sizing: border-box;
+        z-index: 1000;
     }
 
     .m-nav-tab {
@@ -3989,10 +4197,29 @@ img, svg {
         margin-top: 0.1rem;
     }
 
-    /* Mobile WhatsApp Floating Button */
+    /* =========================================================
+       WHATSAPP BUTTON
+       Locked to RIGHT EDGE of centered 412px frame
+       ========================================================= */
     .floating-whatsapp-container {
+        position: fixed;
         bottom: 78px;
-        right: 16px;
+
+        /* Centered 412px frame calculation */
+        left: calc(50% + 190px);
+
+        transform: translateX(-100%);
+
+        z-index: 999;
+    }
+
+    /* Small screens: follow viewport edge */
+    @media (max-width: 412px) {
+        .floating-whatsapp-container {
+            left: auto;
+            right: 16px;
+            transform: none;
+        }
     }
 
     .floating-whatsapp-btn {
@@ -4012,3 +4239,163 @@ img, svg {
         max-width: 320px;
     }
 }
+
+/* =========================================================
+   HEALTH SUPPORT RIDER MODAL STYLING
+   ========================================================= */
+.rider-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(12, 35, 64, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.rider-modal-backdrop.active {
+    display: flex;
+}
+
+.rider-modal-dialog {
+    background: transparent;
+    border-radius: 0;
+    max-width: 320px;
+    width: 100%;
+    position: relative;
+    overflow: visible;
+    box-shadow: none;
+    padding: 0;
+    box-sizing: border-box;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: riderModalPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes riderModalPop {
+    0% { opacity: 0; transform: scale(0.92); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.rider-modal-img-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rider-modal-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+    border: none;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0c2340;
+    z-index: 10;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.rider-modal-close:active {
+    transform: scale(0.9);
+}
+
+.rider-modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.45));
+    box-shadow: none;
+}
+
+.rider-modal-info-card {
+    margin-top: 0.85rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 0.7rem 0.95rem;
+    box-shadow: 0 8px 24px rgba(12, 35, 64, 0.22), 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    width: 100%;
+    max-width: 290px;
+    box-sizing: border-box;
+}
+
+.rider-modal-info-text {
+    font-family: var(--font-brand);
+    font-size: 0.74rem;
+    line-height: 1.44;
+    font-weight: 700;
+    color: #0c2340;
+    margin: 0;
+    text-align: center;
+    letter-spacing: -0.1px;
+}
+
+.rider-modal-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    max-width: 290px;
+}
+
+.rider-modal-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.72rem 1rem;
+    border-radius: 9999px;
+    font-family: var(--font-brand);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+}
+
+.rider-modal-btn:active {
+    transform: scale(0.95);
+}
+
+.rider-btn-book {
+    background: linear-gradient(135deg, #0284c7 0%, #00b4a7 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 180, 167, 0.45);
+}
+
+.rider-btn-wa {
+    background: #25d366;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.45);
+}
+

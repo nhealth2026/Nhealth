@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            function syncMobileViewport() {
+                var vp = document.querySelector('meta[name="viewport"]');
+                if (!vp) return;
+                var w = window.innerWidth || screen.width;
+                if (w < 412 && window.innerWidth < 992) {
+                    var scale = (w / 412).toFixed(4);
+                    vp.setAttribute('content', 'width=412, initial-scale=' + scale + ', maximum-scale=2.0, user-scalable=no');
+                } else {
+                    vp.setAttribute('content', 'width=device-width, initial-scale=1.0');
+                }
+            }
+            syncMobileViewport();
+            window.addEventListener('resize', syncMobileViewport);
+            window.addEventListener('orientationchange', syncMobileViewport);
+        })();
+    </script>
     <title>Nhealth - Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +33,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=5.9">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7.7">
 </head>
 <body>
 
@@ -885,21 +904,26 @@
     <!-- ==================== MOBILE-ONLY APP VIEW (1:1 Match to Screenshot) ==================== -->
     <div class="mobile-app-layout mobile-only">
         
+        <!-- Mobile Top Header Bar (Transparent & Frozen Sticky/Fixed) -->
+        <header class="mobile-top-header" id="mobileHeader">
+            <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
+                <div class="logo-mark m-logo-mark">
+                    <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
+                </div>
+                <div class="logo-text m-logo-text">
+                    <span class="brand-name m-brand-name">Nhealth</span>
+                    <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
+                </div>
+            </a>
+            <div class="m-header-right">
+                <button class="m-header-login-btn" onclick="openLoginModal()" title="Login to Nhealth">
+                    <i class="fa-regular fa-user"></i> Login
+                </button>
+            </div>
+        </header>
+
         <!-- Mobile Hero Section with Backdrop Artwork -->
         <section class="mobile-hero-section">
-            <!-- Mobile Top Header Bar -->
-            <header class="mobile-top-header">
-                <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
-                    <div class="logo-mark m-logo-mark">
-                        <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
-                    </div>
-                    <div class="logo-text m-logo-text">
-                        <span class="brand-name m-brand-name">Nhealth</span>
-                        <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
-                    </div>
-                </a>
-            </header>
-
             <div class="m-hero-top-row">
                 <div class="m-hero-content">
                     <!-- Tagline Badge -->
@@ -947,6 +971,17 @@
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
+
+            <!-- Health Support Rider Circular Feature Badge (Positioned in Bottom-Left Free Space) -->
+            <div class="m-hero-rider-badge" onclick="openRiderModal()" title="Health Support Rider - Tap to view details">
+                <img src="{{ url_for('static', filename='images/health_support_rider_badge_round.png') }}" alt="Health Support Rider" class="m-rider-img" loading="lazy">
+            </div>
+
+            <!-- Health Support Rider Continuous Traveling Bike in Slow Motion -->
+            <div id="heroAnimatedBike" class="m-hero-animated-bike" onclick="openRiderModal()" title="Health Support Rider - Tap for details" aria-label="Health Support Rider traveling">
+                <div class="m-bike-bubble">🛵 Health Support Rider</div>
+                <img src="{{ url_for('static', filename='images/health_rider_bike_web.png') }}" alt="Health Support Rider" class="m-bike-img">
+            </div>
         </section>
 
         <!-- Mobile Trust Metrics & Stats Pill Bar (Matches Reference Image 1) -->
@@ -966,7 +1001,7 @@
 
                 <div class="m-stat-divider"></div>
 
-                <!-- Stat 2: 1500+ Verified Doctors & Specialists -->
+                <!-- Stat 2: 1,500+ Doctors -->
                 <div class="m-stat-item">
                     <div class="m-stat-icon-wrap icon-cyan">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="m-stat-svg">
@@ -975,13 +1010,13 @@
                             <path d="M19 8v6M22 11h-6"></path>
                         </svg>
                     </div>
-                    <div class="m-stat-number stat-number" data-target="1500">1500+</div>
-                    <div class="m-stat-label">Verified Doctors &amp; Specialists</div>
+                    <div class="m-stat-number stat-number" data-target="1500">1,500+</div>
+                    <div class="m-stat-label">Doctors</div>
                 </div>
 
                 <div class="m-stat-divider"></div>
 
-                <!-- Stat 3: 500+ Diagnostic Partners -->
+                <!-- Stat 3: 500+ Labs -->
                 <div class="m-stat-item">
                     <div class="m-stat-icon-wrap icon-teal">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="m-stat-svg">
@@ -990,12 +1025,12 @@
                         </svg>
                     </div>
                     <div class="m-stat-number stat-number" data-target="500">500+</div>
-                    <div class="m-stat-label">Diagnostic Partners</div>
+                    <div class="m-stat-label">Labs</div>
                 </div>
 
                 <div class="m-stat-divider"></div>
 
-                <!-- Stat 4: 200+ Pharmacy Partners -->
+                <!-- Stat 4: 200+ Pharmacies -->
                 <div class="m-stat-item">
                     <div class="m-stat-icon-wrap icon-purple">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="m-stat-svg">
@@ -1005,7 +1040,7 @@
                         </svg>
                     </div>
                     <div class="m-stat-number stat-number" data-target="200">200+</div>
-                    <div class="m-stat-label">Pharmacy Partners</div>
+                    <div class="m-stat-label">Pharmacies</div>
                 </div>
             </div>
         </div>
@@ -1027,7 +1062,7 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_online_doctor.png') }}" alt="Online Doctor Consultation" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <div class="m-srv-pill pill-blue">Online Doctor Consultation</div>
+                    <div class="m-srv-pill pill-blue">Doctor Consultation</div>
                     <p class="m-srv-sub">Video &bull; Audio &bull; Chat</p>
                 </div>
 
@@ -1036,7 +1071,7 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_doctor_home_visit.png') }}" alt="Doctor Home Visits" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <div class="m-srv-pill pill-green">Doctor Home Visits</div>
+                    <div class="m-srv-pill pill-green">Doctor Visit</div>
                     <p class="m-srv-sub">Expert care, at your home.</p>
                 </div>
 
@@ -1045,7 +1080,7 @@
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_bedside_assistant.png') }}" alt="Bedside Assistant" class="m-srv-art-img" loading="lazy">
                     </div>
-                    <div class="m-srv-pill pill-purple">Bedside Assistant</div>
+                    <div class="m-srv-pill pill-purple">Bedside Care</div>
                     <p class="m-srv-sub">Personal support for better care.</p>
                 </div>
 
@@ -1513,7 +1548,7 @@
             </div>
 
             <div class="wa-widget-footer">
-                <a href="https://wa.me/919393934621?text=Hello%20Nhealth%20Team%2C%20I%20would%20like%20to%20book%20a%20home%20healthcare%20service." target="_blank" rel="noopener noreferrer" class="btn-open-wa-chat">
+                <a href="https://api.whatsapp.com/send?phone=919393934621&text=Hello%20Nhealth%20Team%2C%20I%20would%20like%20to%20book%20a%20home%20healthcare%20service." target="_blank" rel="noopener noreferrer" class="btn-open-wa-chat" onclick="openWhatsAppSupport(); return false;">
                     <i class="fa-brands fa-whatsapp"></i> Chat on Official WhatsApp
                 </a>
             </div>
@@ -1527,7 +1562,33 @@
         <span class="toast-message" id="toastMsg">Notification message</span>
     </div>
 
+    <!-- ==================== HEALTH SUPPORT RIDER MODAL ==================== -->
+    <div id="riderModal" class="rider-modal-backdrop" onclick="closeRiderModal(event)">
+        <div class="rider-modal-dialog" onclick="event.stopPropagation()">
+            <div class="rider-modal-img-wrap" onclick="closeRiderModal(); openBookingModal('Health Support Rider');" style="cursor: pointer;" title="Tap to Book Health Support Rider">
+                <button type="button" class="rider-modal-close" onclick="closeRiderModal(event)" aria-label="Close modal">&times;</button>
+                <img src="{{ url_for('static', filename='images/health_support_rider_badge_round.png') }}" alt="Health Support Rider" class="rider-modal-img">
+            </div>
+
+            <!-- Health Support Rider Info Text Card -->
+            <div class="rider-modal-info-card">
+                <p class="rider-modal-info-text">
+                    Pick and Drop Support and handles entire hospital or healthcare procedure &mdash; medicine, reports, essentials at your doorstep
+                </p>
+            </div>
+
+            <div class="rider-modal-actions">
+                <button type="button" class="rider-modal-btn rider-btn-book" onclick="closeRiderModal(); openBookingModal('Health Support Rider');">
+                    <i class="fa-solid fa-calendar-check"></i> Book Now
+                </button>
+                <a href="https://api.whatsapp.com/send?phone=919393934621&text=Hello%20Nhealth%20Team%2C%20I%20want%20to%20book%20the%20Health%20Support%20Rider%20service." target="_blank" rel="noopener noreferrer" class="rider-modal-btn rider-btn-wa" onclick="closeRiderModal(); openWhatsAppSupport('Health Support Rider'); return false;">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Main JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.1"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.5"></script>
 </body>
 </html>

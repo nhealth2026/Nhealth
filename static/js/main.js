@@ -4,6 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    initMobileScale();
     initIntroVideo();
     initNavbarScroll();
     initStatsCounter();
@@ -14,15 +15,41 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
+   0. UNIVERSAL MOBILE SCREEN SCALING (Guarantees Exact Pixel Match on Every Screen)
+   ========================================================================== */
+function initMobileScale() {
+    function syncScale() {
+        const layout = document.querySelector('.mobile-app-layout');
+        if (!layout) return;
+        const winW = window.innerWidth;
+        if (winW >= 992) {
+            layout.style.zoom = '1';
+            return;
+        }
+        if (winW < 412) {
+            layout.style.zoom = (winW / 412).toFixed(4);
+        } else {
+            layout.style.zoom = '1';
+        }
+    }
+    syncScale();
+    window.addEventListener('resize', syncScale);
+    window.addEventListener('orientationchange', syncScale);
+}
+
+/* ==========================================================================
    1. NAVBAR SCROLL EFFECT & SMOOTH SCROLLING
    ========================================================================== */
 function initNavbarScroll() {
     const header = document.getElementById('mainHeader');
+    const mobileHeader = document.getElementById('mobileHeader') || document.querySelector('.mobile-top-header');
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 30) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+        const isScrolled = window.scrollY > 20;
+        if (header) {
+            header.classList.toggle('scrolled', isScrolled);
+        }
+        if (mobileHeader) {
+            mobileHeader.classList.toggle('scrolled', isScrolled);
         }
     });
 }
@@ -675,6 +702,7 @@ window.addEventListener('keydown', (e) => {
         closeAllServicesModal();
         closeSearchOverlay();
         closeMobileDrawer();
+        closeRiderModal();
         const waWidget = document.getElementById('whatsappChatWidget');
         if (waWidget) waWidget.classList.remove('active');
     }
@@ -688,3 +716,46 @@ document.querySelectorAll('.custom-modal-backdrop').forEach(backdrop => {
         }
     });
 });
+
+/* Health Support Rider Modal Controls */
+function openRiderModal() {
+    const modal = document.getElementById('riderModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeRiderModal(e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const modal = document.getElementById('riderModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function triggerBikeRide() {
+    openRiderModal();
+}
+
+/* ==========================================================================
+   13. WHATSAPP DIRECT INTEGRATION (Support: +91 9393934621)
+   ========================================================================== */
+function openWhatsAppSupport(serviceName = '') {
+    const phone = '919393934621';
+    let text = 'Hello Nhealth Team, I would like to inquire about your home healthcare services.';
+    if (serviceName) {
+        text = `Hello Nhealth Team, I want to book / inquire about the ${serviceName} service.`;
+    }
+    const encoded = encodeURIComponent(text);
+    // Universal WhatsApp deep-link that works on iOS, Android & Desktop
+    const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encoded}`;
+    const win = window.open(waUrl, '_blank');
+    if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = waUrl;
+    }
+}
+
+
+
