@@ -3196,7 +3196,11 @@ img, svg {
     }
     
     .mobile-only {
-        display: block !important;
+        display: block;
+    }
+    header.mobile-only,
+    nav.mobile-only {
+        display: flex !important;
     }
 
     html, body {
@@ -3224,6 +3228,7 @@ img, svg {
         overflow: hidden !important;
         display: flex !important;
         justify-content: center !important;
+        align-items: flex-start !important;
         position: relative !important;
         margin: 0 auto !important;
     }
@@ -3233,7 +3238,7 @@ img, svg {
         width: 412px !important;
         min-width: 412px !important;
         max-width: 412px !important;
-        margin: 0 auto !important;
+        margin: 0 !important;
         box-sizing: border-box !important;
         padding: 0 !important;
         display: block !important;
@@ -3242,6 +3247,7 @@ img, svg {
         overflow-x: hidden !important;
         box-shadow: 0 0 35px rgba(12, 35, 64, 0.12);
         min-height: 100vh;
+        flex-shrink: 0 !important;
         transform-origin: top center;
         will-change: transform;
         backface-visibility: hidden;
@@ -3272,9 +3278,9 @@ img, svg {
 
     /* 1. Mobile Top Header Bar (Transparent & Frozen Fixed on Scroll, Centered within 412px Mobile Container) */
     .mobile-top-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
         padding: 0.65rem 0.95rem;
         background: transparent;
         position: fixed;
@@ -4243,9 +4249,10 @@ img, svg {
             0 10px 30px rgba(12, 35, 64, 0.16),
             0 0 1px 1px rgba(12, 35, 64, 0.05);
 
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-around !important;
 
         padding: 0.35rem 0.5rem;
         border: 1px solid rgba(226, 232, 240, 0.85);
