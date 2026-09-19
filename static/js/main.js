@@ -757,5 +757,19 @@ function openWhatsAppSupport(serviceName = '') {
     }
 }
 
+/* ==========================================================================
+   14. INTERACTIVE HEALTHCARE BIKE DELIVERY ANIMATION
+   ========================================================================== */
+function toggleBikeDrive() {
+    const bike = document.getElementById('heroBikeWrapper');
+    if (!bike) return;
 
+    bike.classList.toggle('driving-right');
+    const isDriving = bike.classList.contains('driving-right');
 
+    if (isDriving) {
+        showToast("🛵 Nhealth Healthcare at Home on the way across Andhra Pradesh!", "success");
+    } else {
+        showToast("🛵 Nhealth Doctor Delivery returned to starting point!", "info");
+    }
+}

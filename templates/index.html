@@ -142,11 +142,8 @@
                     
                     <!-- HERO LEFT COLUMN -->
                     <div class="hero-left">
-                        <!-- Pill Tag Badge -->
-                        <div class="hero-pill-badge">
-                            <span class="pill-dot"></span>
-                            <span class="pill-text">Complete Healthcare &bull; All in One Place</span>
-                        </div>
+                        <!-- Empty Spacer (Preserves clean layout without shifting) -->
+                        <div class="hero-top-spacer"></div>
 
                         <!-- Secondary Brand Mark in Hero -->
                         <div class="hero-brand-block">
@@ -170,19 +167,17 @@
                             Expert doctors, trusted labs, quality medicines and complete home healthcare — all in one platform. Because your health should never be out of reach.
                         </p>
 
-                        <!-- Hero Action Buttons -->
-                        <div class="hero-cta-group">
-                            <button class="btn-hero-primary" onclick="openBookingModal()">
-                                <span>Get Started</span>
-                                <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                            
-                            <button class="btn-hero-video" onclick="openVideoModal()" aria-label="Watch Nhealth Video">
-                                <div class="play-icon-circle">
-                                    <i class="fa-solid fa-play"></i>
-                                </div>
-                                <span>Watch Video</span>
-                            </button>
+                        <!-- Hero Complete Healthcare Pill Badge -->
+                        <div class="hero-pill-badge">
+                            <span class="pill-bullet">•</span>
+                            <span class="pill-segment">Complete Healthcare</span>
+                            <span class="pill-bullet">•</span>
+                            <span class="pill-segment">All in One Place</span>
+                        </div>
+
+                        <!-- Health Support Rider Badge & Book Now (Desktop / Laptop) -->
+                        <div class="hero-rider-badge-wrap desktop-only" onclick="openBookingModal('Health Support Rider')" title="Book Health Support Rider">
+                            <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider - Book Now" class="hero-rider-badge-img">
                         </div>
 
                         <!-- Quick Trust Pill Row for Mobile -->
@@ -223,6 +218,11 @@
                     </div>
 
                 </div>
+            </div>
+
+            <!-- Continuous Slow Looping Healthcare Bike Delivery (Desktop/Laptop) -->
+            <div class="hero-bike-loop-track desktop-only" onclick="openBookingModal('Health Support Rider')" title="Nhealth Healthcare at Home - Click to Book Ride">
+                <img src="{{ url_for('static', filename='images/nhealth_bike.png') }}" alt="Nhealth Healthcare Bike Delivery" class="hero-bike-loop-img">
             </div>
         </section>
 
