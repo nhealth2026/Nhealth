@@ -2,25 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        (function() {
-            function syncMobileViewport() {
-                var vp = document.querySelector('meta[name="viewport"]');
-                if (!vp) return;
-                var w = window.innerWidth || screen.width;
-                if (w < 412 && window.innerWidth < 992) {
-                    var scale = (w / 412).toFixed(4);
-                    vp.setAttribute('content', 'width=412, initial-scale=' + scale + ', maximum-scale=2.0, user-scalable=no');
-                } else {
-                    vp.setAttribute('content', 'width=device-width, initial-scale=1.0');
-                }
-            }
-            syncMobileViewport();
-            window.addEventListener('resize', syncMobileViewport);
-            window.addEventListener('orientationchange', syncMobileViewport);
-        })();
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Nhealth - Healthcare at Home</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     
@@ -33,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7.7">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7.8">
 </head>
 <body>
 
@@ -902,25 +884,27 @@
     </main>
  
     <!-- ==================== MOBILE-ONLY APP VIEW (1:1 Match to Screenshot) ==================== -->
-    <div class="mobile-app-layout mobile-only">
-        
-        <!-- Mobile Top Header Bar (Transparent & Frozen Sticky/Fixed) -->
-        <header class="mobile-top-header" id="mobileHeader">
-            <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
-                <div class="logo-mark m-logo-mark">
-                    <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
-                </div>
-                <div class="logo-text m-logo-text">
-                    <span class="brand-name m-brand-name">Nhealth</span>
-                    <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
-                </div>
-            </a>
-            <div class="m-header-right">
-                <button class="m-header-login-btn" onclick="openLoginModal()" title="Login to Nhealth">
-                    <i class="fa-regular fa-user"></i> Login
-                </button>
+    <!-- Mobile Top Header Bar (Transparent & Frozen Sticky/Fixed to Viewport) -->
+    <header class="mobile-top-header mobile-only" id="mobileHeader">
+        <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
+            <div class="logo-mark m-logo-mark">
+                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
             </div>
-        </header>
+            <div class="logo-text m-logo-text">
+                <span class="brand-name m-brand-name">Nhealth</span>
+                <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
+            </div>
+        </a>
+        <div class="m-header-right">
+            <button class="m-header-login-btn" onclick="openLoginModal()" title="Login to Nhealth">
+                <i class="fa-regular fa-user"></i> Login
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Viewport Scaler Wrapper -->
+    <div class="mobile-viewport-wrapper mobile-only">
+        <div class="mobile-app-layout">
 
         <!-- Mobile Hero Section with Backdrop Artwork -->
         <section class="mobile-hero-section">
@@ -1197,33 +1181,34 @@
 
         </section>
 
-        <!-- Floating Bottom App Bar Navigation -->
-        <nav class="m-bottom-nav-bar">
-            <a href="#home" class="m-nav-tab active">
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span>
-            </a>
-            <a href="javascript:void(0)" class="m-nav-tab" onclick="openAllServicesModal()">
-                <i class="fa-solid fa-stethoscope"></i>
-                <span>Services</span>
-            </a>
-            <div class="m-fab-book-wrap" onclick="openBookingModal()">
-                <div class="m-fab-book-btn">
-                    <i class="fa-solid fa-calendar-plus"></i>
-                </div>
-                <span class="m-fab-label">Book</span>
-            </div>
-            <a href="javascript:void(0)" class="m-nav-tab" onclick="showToast('📂 Health records portal: Access patient files and lab reports.', 'info')">
-                <i class="fa-regular fa-clipboard"></i>
-                <span>My Records</span>
-            </a>
-            <a href="javascript:void(0)" class="m-nav-tab" onclick="openMobileDrawer()">
-                <i class="fa-solid fa-bars"></i>
-                <span>More</span>
-            </a>
-        </nav>
-
+        </div>
     </div>
+
+    <!-- Floating Bottom App Bar Navigation (Strictly fixed to device viewport) -->
+    <nav class="m-bottom-nav-bar mobile-only">
+        <a href="#home" class="m-nav-tab active">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="javascript:void(0)" class="m-nav-tab" onclick="openAllServicesModal()">
+            <i class="fa-solid fa-stethoscope"></i>
+            <span>Services</span>
+        </a>
+        <div class="m-fab-book-wrap" onclick="openBookingModal()">
+            <div class="m-fab-book-btn">
+                <i class="fa-solid fa-calendar-plus"></i>
+            </div>
+            <span class="m-fab-label">Book</span>
+        </div>
+        <a href="javascript:void(0)" class="m-nav-tab" onclick="showToast('📂 Health records portal: Access patient files and lab reports.', 'info')">
+            <i class="fa-regular fa-clipboard"></i>
+            <span>My Records</span>
+        </a>
+        <a href="javascript:void(0)" class="m-nav-tab" onclick="openMobileDrawer()">
+            <i class="fa-solid fa-bars"></i>
+            <span>More</span>
+        </a>
+    </nav>
 
 
     <!-- ==================== MODALS & POPUPS ==================== -->
@@ -1589,6 +1574,6 @@
     </div>
 
     <!-- Main JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.5"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.6"></script>
 </body>
 </html>
