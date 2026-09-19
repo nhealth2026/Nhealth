@@ -3249,9 +3249,8 @@ img, svg {
         min-height: 100vh;
         flex-shrink: 0 !important;
         transform-origin: top center;
-        will-change: transform;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
     }
 
     /* 0. Mobile Fullscreen Intro Video */
