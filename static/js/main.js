@@ -15,62 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   0. UNIVERSAL MOBILE SCREEN SCALING (Guarantees Exact Pixel Match on Every Screen)
+   0. UNIVERSAL MOBILE SCREEN SCALING & NATIVE CRISP RENDERING
    ========================================================================== */
 function initMobileScale() {
     const layout = document.querySelector('.mobile-app-layout');
     const wrapper = document.querySelector('.mobile-viewport-wrapper');
 
-    function syncScale() {
-        const winW = window.innerWidth || document.documentElement.clientWidth;
-        
-        // Desktop screens or Mobile Chrome "Desktop site" mode (>= 992px)
-        if (winW >= 992) {
-            document.documentElement.style.setProperty('--mobile-scale', '1');
-            if (layout) {
-                layout.style.transform = 'none';
-                layout.style.zoom = '1';
-            }
-            if (wrapper) {
-                wrapper.style.height = 'auto';
-            }
-            return;
-        }
-
-        // Mobile screens (< 992px): lock 412px canvas, scale proportionally below 412px
-        const scale = Math.min(1, winW / 412);
-        document.documentElement.style.setProperty('--mobile-scale', scale.toFixed(5));
-
-        if (layout) {
-            layout.style.zoom = '1'; // clear legacy zoom if present
-            if (scale < 1) {
-                layout.style.transform = `scale(${scale.toFixed(5)})`;
-                layout.style.transformOrigin = 'top center';
-                if (wrapper) {
-                    const rect = layout.getBoundingClientRect();
-                    wrapper.style.height = Math.ceil(rect.height) + 'px';
-                }
-            } else {
-                layout.style.transform = 'none';
-                if (wrapper) {
-                    wrapper.style.height = 'auto';
-                }
-            }
-        }
+    if (layout) {
+        layout.style.transform = 'none';
+        layout.style.zoom = '1';
     }
-
-    syncScale();
-    window.addEventListener('resize', syncScale);
-    window.addEventListener('orientationchange', syncScale);
-    window.addEventListener('load', syncScale);
-
-    if (window.ResizeObserver && layout) {
-        let rAF = null;
-        const ro = new ResizeObserver(() => {
-            if (rAF) cancelAnimationFrame(rAF);
-            rAF = requestAnimationFrame(syncScale);
-        });
-        ro.observe(layout);
+    if (wrapper) {
+        wrapper.style.height = 'auto';
     }
 }
 
