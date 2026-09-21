@@ -3427,8 +3427,8 @@ img, svg {
     .m-hero-content {
         position: relative;
         z-index: 5;
-        width: 200px;
-        max-width: 200px;
+        width: 165px;
+        max-width: 165px;
         flex-shrink: 0;
         box-sizing: border-box;
         margin-top: 25px;
@@ -3447,7 +3447,7 @@ img, svg {
 
     .m-hero-title {
         font-family: var(--font-brand);
-        font-size: 17px;
+        font-size: 16.5px;
         font-weight: 800;
         line-height: 1.22;
         margin-bottom: 7px;
@@ -3475,13 +3475,13 @@ img, svg {
 
     .m-hero-desc {
         font-family: var(--font-primary);
-        font-size: 10.5px;
-        line-height: 1.4;
+        font-size: 9.8px;
+        line-height: 1.36;
         color: #334155;
         margin-bottom: 10px;
         font-weight: 500;
-        width: 190px;
-        max-width: 190px;
+        width: 165px;
+        max-width: 165px;
         word-break: normal;
     }
 
@@ -3491,19 +3491,19 @@ img, svg {
         z-index: 20;
         background: #ffffff;
         border-radius: 9999px;
-        height: 36px;
-        padding: 0 0.35rem 0 0.45rem;
+        height: 34px;
+        padding: 0 0.30rem 0 0.40rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.3rem;
+        gap: 0.25rem;
         box-shadow: 0 3px 12px rgba(12, 35, 64, 0.12), 0 1px 2px rgba(12, 35, 64, 0.05);
         border: 1px solid rgba(226, 232, 240, 0.95);
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         box-sizing: border-box;
-        width: 195px;
-        max-width: 195px;
+        width: 165px;
+        max-width: 165px;
         align-self: flex-start;
         margin-top: auto;
         margin-bottom: 60px;
@@ -3767,18 +3767,19 @@ img, svg {
         flex-direction: column;
         align-items: flex-start;
         position: absolute;
-        right: 1.35rem;
-        top: 13.45rem;
+        right: 8px;
+        top: 240px;
         z-index: 15;
         pointer-events: none;
         font-family: 'Caveat', cursive;
         transform: rotate(-8deg);
         transform-origin: center center;
+        white-space: nowrap;
     }
 
     .m-script-line-1 {
         display: block !important;
-        font-size: 0.78rem;
+        font-size: 0.82rem;
         font-weight: 700;
         color: #ffffff;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
@@ -3789,7 +3790,7 @@ img, svg {
 
     .m-script-line-2 {
         display: block !important;
-        font-size: 0.72rem;
+        font-size: 0.74rem;
         font-weight: 600;
         color: #ffffff;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
@@ -3803,7 +3804,7 @@ img, svg {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        font-size: 0.88rem;
+        font-size: 0.92rem;
         font-weight: 700;
         color: #ffffff !important;
         text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85);
@@ -3813,10 +3814,26 @@ img, svg {
     }
 
     .m-proud-calligraphy .m-script-swoosh {
-        width: 76px;
+        width: 78px;
         height: 7px;
         margin-top: 2px;
         filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+    }
+
+    @media (max-width: 365px) {
+        .m-proud-calligraphy {
+            right: 6px;
+            top: 230px;
+            transform: rotate(-8deg) scale(0.92);
+        }
+    }
+
+    @media (max-width: 330px) {
+        .m-proud-calligraphy {
+            right: 4px;
+            top: 220px;
+            transform: rotate(-8deg) scale(0.85);
+        }
     }
 
     /* 2.5 Mobile Trust Metrics & Stats Pill Bar (Matches Reference Image 1) */
