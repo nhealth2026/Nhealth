@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13.9">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=14.0">
 </head>
 <body>
 
@@ -1214,16 +1214,26 @@
                     <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> <a href="mailto:support@nhealth.in" class="footer-email-link">support@nhealth.in</a></p>
                 </div>
 
-                <!-- Col 2: Healthcare Services -->
+                <!-- Col 2: Healthcare and Home Care Services -->
                 <div class="footer-links-col">
-                    <h4 class="footer-heading">Healthcare Services</h4>
-                    <ul class="f-links">
-                        <li><a href="#services-suite" onclick="openBookingModal('Doctor Video Consultation')">Doctor Video Consultation</a></li>
-                        <li><a href="#services-suite" onclick="openBookingModal('Prescription Medicine Order')">Doorstep E-Pharmacy Refills</a></li>
-                        <li><a href="#services-suite" onclick="openBookingModal('Home Diagnostics & Lab Tests')">Home Pathology Diagnostics</a></li>
+                    <h4 class="footer-heading">Healthcare and Home Care Services</h4>
+                    <ul class="f-links f-links-2col">
+                        <li><a href="#services-suite" onclick="openBookingModal('Online Doctor Consultation')">Doctor Video Consultation</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Doctor Home Visits')">Doctor Home Visits</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Pharmacy to Home')">Doorstep E-Pharmacy Refills</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Lab Tests at Home')">Home Diagnostics &amp; Lab Tests</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('X-Ray at Home')">X-Ray &amp; Portable ECG</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Home Nursing Care Attendant')">Specialized Home Nursing</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Bedside Assistant')">Bedside Patient Attendant</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Eldercare')">Eldercare &amp; Senior Support</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Physiotherapy')">Physiotherapy at Home</a></li>
                         <li><a href="#services-suite" onclick="triggerEmergencySOS()">24/7 Smart Ambulance SOS</a></li>
-                        <li><a href="#services-suite" onclick="openBookingModal('Full Body Preventive Health Checkup')">Executive Preventive Packages</a></li>
+                        <li><a href="#services-suite" onclick="openRiderModal()">Health Support Rider</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Home Vaccination Service')">Home Vaccination Service</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Full Body Preventive Health Checkup')">Full Body Health Packages</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Care Programmes')">Chronic Disease Care Plans</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Blood Bank')">Blood Bank &amp; Donor Network</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Mental Health Support')">Mental Health &amp; Counseling</a></li>
                     </ul>
                 </div>
 

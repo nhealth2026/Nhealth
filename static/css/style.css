@@ -3147,8 +3147,8 @@ img, svg {
     max-width: 1360px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: 1.15fr 1.85fr 0.85fr;
+    gap: 2.5rem;
     padding-bottom: 3rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -3203,10 +3203,33 @@ img, svg {
     gap: 0.65rem;
 }
 
+.f-links-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem 1.5rem;
+}
+
+@media (max-width: 991px) {
+    .footer-top-container {
+        grid-template-columns: 1fr;
+    }
+    .f-links-2col {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .f-links-2col {
+        grid-template-columns: 1fr;
+    }
+}
+
 .f-links li a {
     font-size: 0.86rem;
     color: #94a3b8;
     transition: color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .f-links li a:hover {
