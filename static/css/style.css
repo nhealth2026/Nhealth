@@ -96,22 +96,23 @@ img, svg {
     left: 0;
     width: 100%;
     height: 62px;
-    background: transparent !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     z-index: 1000;
     display: flex;
     align-items: center;
+    transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar-wrapper.scrolled {
-    background: transparent !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.95) !important;
+    box-shadow: 0 4px 20px rgba(12, 35, 64, 0.08) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
 }
 
 .nav-container {
@@ -3222,23 +3223,23 @@ img, svg {
         background: #eef4f8 !important;
     }
 
-    /* Mobile Viewport Scaler Wrapper - Centers scaled layout and contains its computed height */
+    /* Mobile Viewport Scaler Wrapper */
     .mobile-viewport-wrapper {
         width: 100% !important;
-        overflow: hidden !important;
         display: flex !important;
         justify-content: center !important;
         align-items: flex-start !important;
         position: relative !important;
         margin: 0 auto !important;
+        background: #eef4f8 !important;
     }
     
-    /* Mobile App Layout Wrapper - Strictly constrained to standard 412px mobile frame (Never distorts or stretches on screen resize) */
+    /* Mobile App Layout Wrapper (Fluid responsive on all mobile devices up to 480px max) */
     .mobile-app-layout {
-        width: 412px !important;
-        min-width: 412px !important;
-        max-width: 412px !important;
-        margin: 0 !important;
+        width: 100% !important;
+        max-width: 480px !important;
+        min-width: 0 !important;
+        margin: 0 auto !important;
         box-sizing: border-box !important;
         padding: 0 !important;
         display: block !important;
@@ -3248,7 +3249,7 @@ img, svg {
         box-shadow: 0 0 35px rgba(12, 35, 64, 0.12);
         min-height: 100vh;
         flex-shrink: 0 !important;
-        transform-origin: top center;
+        transform: none !important;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
     }
@@ -3275,20 +3276,19 @@ img, svg {
         height: 38px !important;
     }
 
-    /* 1. Mobile Top Header Bar (Transparent & Frozen Fixed on Scroll, Centered within 412px Mobile Container) */
+    /* 1. Mobile Top Header Bar (Transparent & Frozen Fixed on Scroll) */
     .mobile-top-header {
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        padding: 0.65rem 0.95rem;
+        padding: 0.65rem 1rem;
         background: transparent;
         position: fixed;
         top: 0;
         left: 50%;
-        transform: translateX(-50%) scale(var(--mobile-scale, 1));
-        transform-origin: top center;
-        width: 412px;
-        max-width: 100vw;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 480px;
         z-index: 1000;
         box-sizing: border-box;
         border-bottom: 1px solid transparent;
@@ -3296,7 +3296,7 @@ img, svg {
     }
 
     .mobile-top-header.scrolled {
-        background: rgba(255, 255, 255, 0.88);
+        background: rgba(255, 255, 255, 0.92);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         box-shadow: 0 4px 20px rgba(12, 35, 64, 0.06);
@@ -3402,13 +3402,13 @@ img, svg {
     /* 2. Mobile Hero Section with High-Res Artwork (Clean Separation: Text on Left, Map on Right) */
     .mobile-hero-section {
         position: relative;
-        padding: 3.8rem 1rem 0.85rem 1rem;
+        padding: 4.2rem 1rem 1rem 1rem;
         background: url('../images/mobile_hero_bg.jpg') no-repeat center top;
         background-size: cover;
         overflow: hidden;
         box-sizing: border-box;
         width: 100%;
-        min-height: 335px;
+        min-height: 355px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -3427,11 +3427,11 @@ img, svg {
     .m-hero-content {
         position: relative;
         z-index: 5;
-        width: 200px;
-        max-width: 200px;
+        width: 165px;
+        max-width: 165px;
         flex-shrink: 0;
         box-sizing: border-box;
-        margin-top: 30px;
+        margin-top: 25px;
     }
 
     .m-hero-tag {
@@ -3447,7 +3447,7 @@ img, svg {
 
     .m-hero-title {
         font-family: var(--font-brand);
-        font-size: 17px;
+        font-size: 16.5px;
         font-weight: 800;
         line-height: 1.22;
         margin-bottom: 7px;
@@ -3475,37 +3475,38 @@ img, svg {
 
     .m-hero-desc {
         font-family: var(--font-primary);
-        font-size: 10.5px;
-        line-height: 1.4;
+        font-size: 9.8px;
+        line-height: 1.36;
         color: #334155;
         margin-bottom: 10px;
         font-weight: 500;
-        width: 190px;
-        max-width: 190px;
+        width: 165px;
+        max-width: 165px;
         word-break: normal;
     }
 
-    /* Floating AI Symptom Search Pill Bar (Positioned in the water strip below the map) */
+    /* Floating AI Symptom Search Pill Bar (Positioned strictly in the left half, never overlapping the map) */
     .m-symptom-search-bar {
         position: relative;
         z-index: 20;
         background: #ffffff;
         border-radius: 9999px;
-        height: 38px;
-        padding: 0 0.35rem 0 0.40rem;
+        height: 34px;
+        padding: 0 0.30rem 0 0.40rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.35rem;
-        box-shadow: 0 3px 12px rgba(12, 35, 64, 0.10), 0 1px 2px rgba(12, 35, 64, 0.05);
+        gap: 0.25rem;
+        box-shadow: 0 3px 12px rgba(12, 35, 64, 0.12), 0 1px 2px rgba(12, 35, 64, 0.05);
         border: 1px solid rgba(226, 232, 240, 0.95);
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         box-sizing: border-box;
-        width: 240px;
+        width: 165px;
+        max-width: 165px;
         align-self: flex-start;
         margin-top: auto;
-        margin-bottom: 48px;
+        margin-bottom: 60px;
     }
 
     /* Health Support Rider Circular Emblem Badge (Bottom-Left Corner) */
@@ -3652,8 +3653,8 @@ img, svg {
     }
 
     .m-sparkle-icon {
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         background: #eef4ff;
         color: #1d4ed8;
@@ -3664,8 +3665,8 @@ img, svg {
     }
 
     .m-star-svg {
-        width: 11px;
-        height: 11px;
+        width: 10px;
+        height: 10px;
         fill: #1d4ed8;
         display: block;
     }
@@ -3677,11 +3678,11 @@ img, svg {
         flex: 1;
         overflow: hidden;
         min-width: 0;
-        padding: 0 0.1rem;
+        padding: 0 0.15rem;
     }
 
     .m-search-prompt {
-        font-size: 0.58rem;
+        font-size: 0.52rem;
         font-weight: 700;
         color: #1e3a5f;
         white-space: nowrap;
@@ -3693,7 +3694,7 @@ img, svg {
     }
 
     .m-search-sub {
-        font-size: 0.44rem;
+        font-size: 0.40rem;
         color: #64748b;
         font-weight: 500;
         white-space: nowrap;
@@ -3705,10 +3706,10 @@ img, svg {
     }
 
     .m-search-go-btn {
-        width: 22px;
-        height: 22px;
-        min-width: 22px;
-        min-height: 22px;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
         border-radius: 50%;
         background: linear-gradient(135deg, #00b4a7 0%, #00998e 100%);
         color: #ffffff;
@@ -3716,7 +3717,7 @@ img, svg {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.58rem;
+        font-size: 0.52rem;
         line-height: 1;
         padding: 0;
         margin: 0;
@@ -3730,7 +3731,7 @@ img, svg {
         align-items: center;
         justify-content: center;
         line-height: 1;
-        font-size: 0.58rem;
+        font-size: 0.52rem;
         margin: 0;
         padding: 0;
     }
@@ -3766,18 +3767,19 @@ img, svg {
         flex-direction: column;
         align-items: flex-start;
         position: absolute;
-        right: 1.35rem;
-        top: 13.45rem;
+        right: 8px;
+        top: 240px;
         z-index: 15;
         pointer-events: none;
         font-family: 'Caveat', cursive;
         transform: rotate(-8deg);
         transform-origin: center center;
+        white-space: nowrap;
     }
 
     .m-script-line-1 {
         display: block !important;
-        font-size: 0.78rem;
+        font-size: 0.82rem;
         font-weight: 700;
         color: #ffffff;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
@@ -3788,7 +3790,7 @@ img, svg {
 
     .m-script-line-2 {
         display: block !important;
-        font-size: 0.72rem;
+        font-size: 0.74rem;
         font-weight: 600;
         color: #ffffff;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
@@ -3802,7 +3804,7 @@ img, svg {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        font-size: 0.88rem;
+        font-size: 0.92rem;
         font-weight: 700;
         color: #ffffff !important;
         text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85);
@@ -3812,10 +3814,26 @@ img, svg {
     }
 
     .m-proud-calligraphy .m-script-swoosh {
-        width: 76px;
+        width: 78px;
         height: 7px;
         margin-top: 2px;
         filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+    }
+
+    @media (max-width: 365px) {
+        .m-proud-calligraphy {
+            right: 6px;
+            top: 230px;
+            transform: rotate(-8deg) scale(0.92);
+        }
+    }
+
+    @media (max-width: 330px) {
+        .m-proud-calligraphy {
+            right: 4px;
+            top: 220px;
+            transform: rotate(-8deg) scale(0.85);
+        }
     }
 
     /* 2.5 Mobile Trust Metrics & Stats Pill Bar (Matches Reference Image 1) */
@@ -3842,7 +3860,7 @@ img, svg {
         justify-content: space-between;
         box-sizing: border-box;
         width: 100%;
-        max-width: 392px;
+        max-width: 100%;
     }
 
     .m-stat-item {
@@ -4229,33 +4247,24 @@ img, svg {
 
     /* =========================================================
        FLOATING BOTTOM NAVIGATION
-       Always aligned to centered 412px mobile frame
        ========================================================= */
     .m-bottom-nav-bar {
         position: fixed;
         bottom: calc(10px + env(safe-area-inset-bottom, 0px));
         left: 50%;
-        transform: translateX(-50%) scale(var(--mobile-scale, 1));
-        transform-origin: bottom center;
-
-        width: 392px;
-        max-width: calc(100vw - 16px);
-
+        transform: translateX(-50%);
+        width: min(440px, calc(100vw - 20px));
         background: #ffffff;
         border-radius: 40px;
-
         box-shadow:
             0 10px 30px rgba(12, 35, 64, 0.16),
             0 0 1px 1px rgba(12, 35, 64, 0.05);
-
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
         justify-content: space-around !important;
-
         padding: 0.35rem 0.5rem;
         border: 1px solid rgba(226, 232, 240, 0.85);
-
         box-sizing: border-box;
         z-index: 1000;
     }
@@ -4316,28 +4325,20 @@ img, svg {
     }
 
     /* =========================================================
-       WHATSAPP BUTTON
-       Locked to RIGHT EDGE of centered 412px frame
+       WHATSAPP BUTTON (Rock-Solid Across All Screen Sizes)
        ========================================================= */
     .floating-whatsapp-container {
         position: fixed;
-        bottom: calc(78px + env(safe-area-inset-bottom, 0px));
-
-        /* Centered 412px frame calculation */
-        left: calc(50% + 190px);
-
-        transform: translateX(-100%);
-
-        z-index: 999;
+        bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+        right: 16px;
+        left: auto;
+        transform: none;
+        z-index: 9999;
     }
 
-    /* Small screens: follow viewport edge */
-    @media (max-width: 412px) {
+    @media (min-width: 481px) and (max-width: 991px) {
         .floating-whatsapp-container {
-            left: auto;
-            right: 16px;
-            bottom: calc(78px + env(safe-area-inset-bottom, 0px));
-            transform: none;
+            right: calc((100vw - 480px) / 2 + 16px);
         }
     }
 
