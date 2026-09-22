@@ -4695,13 +4695,15 @@ img, svg {
     transform: scale(0.95);
 }
 
-.rider-btn-book {
+.rider-btn-book,
+.rider-btn-signup {
     background: linear-gradient(135deg, #0284c7 0%, #00b4a7 100%);
     color: #ffffff;
     box-shadow: 0 4px 14px rgba(0, 180, 167, 0.45);
 }
 
-.rider-btn-book:hover {
+.rider-btn-book:hover,
+.rider-btn-signup:hover {
     box-shadow: 0 6px 20px rgba(0, 180, 167, 0.6);
 }
 
