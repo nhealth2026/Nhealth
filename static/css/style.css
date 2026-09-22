@@ -1,13 +1,25 @@
-/* ==========================================================================
-   NHEALTH - POWERING THE FUTURE OF HEALTHCARE AT HOME
-   Pixel-Perfect Single Page (100vh Non-Scrolling Laptop View)
-   ========================================================================== */
+/* Local Nunito Rounded Font Definitions (Matching brand logo font & rounded edges) */
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url('../fonts/Nunito-ExtraBold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('../fonts/Nunito-Black.ttf') format('truetype');
+}
 
 /* --- Root Design Tokens & Variables --- */
 :root {
     --font-primary: 'Poppins', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-heading: 'Poppins', 'Outfit', 'Urbanist', sans-serif;
-    --font-brand: 'Poppins', sans-serif;
+    --font-brand: 'Nunito', 'Arial Rounded MT Bold', -apple-system, sans-serif;
     --font-script: 'Caveat', cursive, sans-serif;
 
     /* Color Palette Extracted Directly from Reference */
@@ -179,11 +191,11 @@ img, svg {
 
 .brand-name {
     font-family: var(--font-brand);
-    font-size: 1.45rem;
+    font-size: 1.48rem;
     font-weight: 800;
-    color: #0c2340;
+    color: #002d62;
     line-height: 1;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.015em;
     text-align: center;
 }
 
@@ -601,10 +613,10 @@ img, svg {
 .hero-brand-name {
     font-family: var(--font-brand);
     font-size: 3.8rem;
-    font-weight: 800;
-    color: #0c2340;
+    font-weight: 900;
+    color: #002d62;
     line-height: 0.88;
-    letter-spacing: -1px;
+    letter-spacing: -0.02em;
     margin: 0;
     text-align: center;
 }
@@ -3353,11 +3365,11 @@ img, svg {
 
     .m-brand-name {
         font-family: var(--font-brand);
-        font-size: 1.45rem;
+        font-size: 1.48rem;
         font-weight: 800;
-        color: #0c2340;
+        color: #002d62;
         line-height: 1;
-        letter-spacing: -0.4px;
+        letter-spacing: -0.015em;
         text-align: center;
         display: block;
         width: 100%;
