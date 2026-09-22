@@ -459,12 +459,52 @@ function closeVideoModal() {
 /* ==========================================================================
    7. LOGIN & AUTH MODAL
    ========================================================================== */
+function setAuthMode(mode) {
+    const modal = document.getElementById('loginModalBackdrop');
+    if (!modal) return;
+    modal.dataset.mode = mode;
+
+    const title = document.getElementById('authModalTitle');
+    const otpBtn = document.getElementById('otpSubmitBtn');
+    const switchText = document.getElementById('authSwitchText');
+    const switchLink = document.getElementById('authSwitchLink');
+
+    if (mode === 'signup') {
+        if (title) title.textContent = 'Sign Up for Nhealth';
+        if (otpBtn) otpBtn.textContent = 'Register & Send OTP';
+        if (switchText) switchText.textContent = 'Already have an account?';
+        if (switchLink) switchLink.textContent = 'Login';
+    } else {
+        if (title) title.textContent = 'Login to Nhealth';
+        if (otpBtn) otpBtn.textContent = 'Send OTP';
+        if (switchText) switchText.textContent = "Don't have an account?";
+        if (switchLink) switchLink.textContent = 'Sign Up';
+    }
+}
+
 function openLoginModal() {
+    setAuthMode('login');
     const modal = document.getElementById('loginModalBackdrop');
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
+}
+
+function openSignupModal() {
+    setAuthMode('signup');
+    const modal = document.getElementById('loginModalBackdrop');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function toggleAuthMode() {
+    const modal = document.getElementById('loginModalBackdrop');
+    if (!modal) return;
+    const currentMode = modal.dataset.mode || 'login';
+    setAuthMode(currentMode === 'login' ? 'signup' : 'login');
 }
 
 function closeLoginModal() {
@@ -497,10 +537,17 @@ function sendMockOtp() {
         showToast("⚠️ Please enter a valid 10-digit mobile number", "error");
         return;
     }
+    const modal = document.getElementById('loginModalBackdrop');
+    const isSignup = modal && modal.dataset.mode === 'signup';
+
     showToast(`📲 6-digit OTP sent to +91 ${phoneInput.value}`, "success");
     setTimeout(() => {
         closeLoginModal();
-        showToast("🎉 Welcome to Nhealth Healthcare Portal!", "success");
+        if (isSignup) {
+            showToast("🎉 Account created successfully! Welcome to Nhealth.", "success");
+        } else {
+            showToast("🎉 Welcome to Nhealth Healthcare Portal!", "success");
+        }
     }, 1500);
 }
 

@@ -69,7 +69,7 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
                 <button class="btn-outline-pill login-btn" id="loginModalBtn" onclick="openLoginModal()">Login</button>
-                <button class="btn-solid-teal book-now-btn" id="bookNowNavBtn" onclick="openBookingModal()">Book Now</button>
+                <button class="btn-outline-pill signup-btn" id="signupModalBtn" onclick="openSignupModal()">Sign Up</button>
                 
                 <!-- Mobile Hamburger Toggle -->
                 <button class="mobile-toggle-btn" id="mobileMenuToggle" aria-label="Toggle navigation menu">
@@ -107,7 +107,7 @@
             
             <div class="mobile-drawer-footer">
                 <button class="btn-outline-pill w-100 mb-2" onclick="openLoginModal(); closeMobileDrawer();">Login</button>
-                <button class="btn-solid-teal w-100" onclick="openBookingModal(); closeMobileDrawer();">Book Consultation</button>
+                <button class="btn-outline-pill w-100" onclick="openSignupModal(); closeMobileDrawer();">Sign Up</button>
             </div>
         </div>
     </div>
@@ -157,9 +157,9 @@
                             <span class="pill-segment">All in One Place</span>
                         </div>
 
-                        <!-- Health Support Rider Badge & Book Now (Desktop / Laptop) -->
-                        <div class="hero-rider-badge-wrap desktop-only" onclick="openBookingModal('Health Support Rider')" title="Book Health Support Rider">
-                            <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider - Book Now" class="hero-rider-badge-img">
+                        <!-- Health Support Rider Badge & Book Rider (Desktop / Laptop) -->
+                        <div class="hero-rider-badge-wrap desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to view details">
+                            <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider - Book Rider" class="hero-rider-badge-img">
                         </div>
 
                         <!-- Quick Trust Pill Row for Mobile -->
@@ -203,7 +203,7 @@
             </div>
 
             <!-- Continuous Slow Looping Healthcare Bike Delivery (Desktop/Laptop) -->
-            <div class="hero-bike-loop-track desktop-only" onclick="openBookingModal('Health Support Rider')" title="Nhealth Healthcare at Home - Click to Book Ride">
+            <div class="hero-bike-loop-track desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to view details">
                 <img src="{{ url_for('static', filename='images/nhealth_bike.png') }}" alt="Nhealth Healthcare Bike Delivery" class="hero-bike-loop-img">
             </div>
         </section>
@@ -958,7 +958,7 @@
 
             <!-- Health Support Rider Circular Feature Badge (Positioned in Bottom-Left Free Space) -->
             <div class="m-hero-rider-badge" onclick="openRiderModal()" title="Health Support Rider - Tap to view details">
-                <img src="{{ url_for('static', filename='images/health_support_rider_badge_round.png') }}" alt="Health Support Rider" class="m-rider-img" loading="lazy">
+                <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider" class="m-rider-img" loading="lazy">
             </div>
 
             <!-- Health Support Rider Continuous Traveling Bike in Slow Motion -->
@@ -1404,11 +1404,11 @@
     </div>
 
 
-    <!-- 3. LOGIN MODAL -->
-    <div class="custom-modal-backdrop" id="loginModalBackdrop">
+    <!-- 3. LOGIN & SIGN UP MODAL -->
+    <div class="custom-modal-backdrop" id="loginModalBackdrop" data-mode="login">
         <div class="custom-modal-card login-modal-card">
             <div class="modal-card-header">
-                <h3 class="modal-title">Login to Nhealth</h3>
+                <h3 class="modal-title" id="authModalTitle">Login to Nhealth</h3>
                 <button class="modal-close-btn" onclick="closeLoginModal()">&times;</button>
             </div>
             <div class="modal-form-body">
@@ -1419,13 +1419,13 @@
 
                 <div id="otpLoginForm">
                     <div class="form-group mt-3">
-                        <label>Enter 10-digit Mobile Number</label>
+                        <label id="phoneInputLabel">Enter 10-digit Mobile Number</label>
                         <div class="input-with-prefix">
                             <span class="phone-prefix">+91</span>
                             <input type="tel" id="loginPhoneInput" placeholder="9876543210" maxlength="10" class="form-control prefix-input">
                         </div>
                     </div>
-                    <button class="btn-solid-teal w-100 mt-3" onclick="sendMockOtp()">Send OTP</button>
+                    <button class="btn-solid-teal w-100 mt-3" id="otpSubmitBtn" onclick="sendMockOtp()">Send OTP</button>
                 </div>
 
                 <div id="emailLoginForm" style="display: none;">
@@ -1438,6 +1438,11 @@
                         <input type="password" placeholder="••••••••" class="form-control">
                     </div>
                     <button class="btn-solid-teal w-100 mt-3" onclick="handlePartnerLogin()">Sign In</button>
+                </div>
+
+                <div class="auth-switch-prompt" id="authSwitchPrompt" style="margin-top: 1rem; text-align: center; font-size: 0.85rem; color: #64748b;">
+                    <span id="authSwitchText">Don't have an account?</span> 
+                    <a href="javascript:void(0)" id="authSwitchLink" onclick="toggleAuthMode()" style="color: #0baaa2; font-weight: 600; text-decoration: underline;">Sign Up</a>
                 </div>
 
                 <p class="login-terms">By continuing, you agree to Nhealth's Terms of Service &amp; Privacy Policy.</p>
@@ -1551,8 +1556,8 @@
     <div id="riderModal" class="rider-modal-backdrop" onclick="closeRiderModal(event)">
         <div class="rider-modal-dialog" onclick="event.stopPropagation()">
             <div class="rider-modal-img-wrap" onclick="closeRiderModal(); openBookingModal('Health Support Rider');" style="cursor: pointer;" title="Tap to Book Health Support Rider">
-                <button type="button" class="rider-modal-close" onclick="closeRiderModal(event)" aria-label="Close modal">&times;</button>
-                <img src="{{ url_for('static', filename='images/health_support_rider_badge_round.png') }}" alt="Health Support Rider" class="rider-modal-img">
+                <button type="button" class="rider-modal-close" onclick="event.stopPropagation(); closeRiderModal(event);" aria-label="Close modal">&times;</button>
+                <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider" class="rider-modal-img">
             </div>
 
             <!-- Health Support Rider Info Text Card -->
