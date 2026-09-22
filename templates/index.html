@@ -2211,9 +2211,9 @@
             </div>
 
             <div class="rider-modal-actions">
-                <button type="button" class="rider-modal-btn rider-btn-signup" onclick="closeRiderModal(); openSignupModal();">
+                <a href="/signup" class="rider-modal-btn rider-btn-signup">
                     <i class="fa-solid fa-user-plus"></i> Sign Up
-                </button>
+                </a>
                 <a href="https://api.whatsapp.com/send?phone=919393934621&text=Hello%20Nhealth%20Team%2C%20I%20want%20to%20book%20the%20Health%20Support%20Rider%20service." target="_blank" rel="noopener noreferrer" class="rider-modal-btn rider-btn-wa" onclick="closeRiderModal(); openWhatsAppSupport('Health Support Rider'); return false;">
                     <i class="fa-brands fa-whatsapp"></i> WhatsApp
                 </a>
@@ -2222,6 +2222,6 @@
     </div>
 
     <!-- Main JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.8"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.9"></script>
 </body>
 </html>

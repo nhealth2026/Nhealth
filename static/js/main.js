@@ -448,21 +448,11 @@ function setAuthMode(mode) {
 }
 
 function openLoginModal() {
-    setAuthMode('login');
-    const modal = document.getElementById('loginModalBackdrop');
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    window.location.href = '/login';
 }
 
 function openSignupModal() {
-    setAuthMode('signup');
-    const modal = document.getElementById('loginModalBackdrop');
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    window.location.href = '/signup';
 }
 
 function toggleAuthMode() {
