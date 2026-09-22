@@ -25,10 +25,29 @@ def add_header(response):
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
 BOOKINGS_FILE = os.path.join(DATA_DIR, 'bookings.json')
+USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 
 if not os.path.exists(BOOKINGS_FILE):
     with open(BOOKINGS_FILE, 'w') as f:
         json.dump([], f)
+
+if not os.path.exists(USERS_FILE):
+    with open(USERS_FILE, 'w') as f:
+        json.dump([], f)
+
+def get_all_users():
+    try:
+        with open(USERS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+def save_user(user_data):
+    users = get_all_users()
+    users.append(user_data)
+    with open(USERS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(users, f, indent=2)
+
 
 # Service Catalog
 SERVICES = [
@@ -123,16 +142,6 @@ SERVICES = [
         "description": "Personalized physical therapy sessions for pain relief, stroke rehabilitation, sports injuries, and orthopedic care."
     },
     {
-        "id": "nursing-services",
-        "title": "Nursing Services",
-        "category": "Home Care",
-        "icon": "user-nurse",
-        "color": "#10b981",
-        "bg_tint": "rgba(16, 185, 129, 0.1)",
-        "badge": "Skilled Nurses",
-        "description": "Certified ICU and home care nurses for IV infusions, wound dressing, catheterization, and post-surgery care."
-    },
-    {
         "id": "dental-care",
         "title": "Dental Care",
         "category": "Dental Care",
@@ -147,19 +156,19 @@ SERVICES = [
         "title": "Blood Bank",
         "category": "Emergency Care",
         "icon": "droplet",
-        "color": "#b91c1c",
-        "bg_tint": "rgba(185, 28, 28, 0.1)",
-        "badge": "Donate & Save Lives",
-        "description": "24/7 verified blood donor network, cross-matching, platelets, and rapid hospital delivery for emergency life-saving needs."
+        "color": "#dc2626",
+        "bg_tint": "rgba(220, 38, 38, 0.1)",
+        "badge": "24/7 Verified",
+        "description": "Immediate blood unit verification, emergency donor coordination, and rapid blood component assistance across AP."
     },
     {
         "id": "diagnostics-imaging",
         "title": "Diagnostics and Imaging",
-        "category": "Radiology & Scans",
-        "icon": "x-ray",
-        "color": "#0d9488",
-        "bg_tint": "rgba(13, 148, 136, 0.1)",
-        "badge": "Accurate Reports",
+        "category": "Diagnostics",
+        "icon": "flask-vial",
+        "color": "#0ea5e9",
+        "bg_tint": "rgba(14, 165, 233, 0.1)",
+        "badge": "Full Body & Scans",
         "description": "High-precision MRI, CT scans, ultrasound, and digital radiology with certified expert radiologist interpretations."
     },
     {
@@ -169,48 +178,58 @@ SERVICES = [
         "icon": "truck-medical",
         "color": "#dc2626",
         "bg_tint": "rgba(220, 38, 38, 0.1)",
-        "badge": "24/7 Rapid Response",
-        "description": "Immediate emergency ICU and ALS/BLS ambulance dispatch equipped with ventilators, defibrillators, and oxygen support."
+        "badge": "Instant Dispatch",
+        "description": "24/7 rapid emergency ambulance, ICU-on-wheels, cardiac life support, and inter-city patient transfers."
     },
     {
         "id": "home-vaccination",
         "title": "Home Vaccination Service",
-        "category": "Immunization",
+        "category": "Preventive Care",
         "icon": "syringe",
-        "color": "#7c3aed",
-        "bg_tint": "rgba(124, 58, 237, 0.1)",
-        "badge": "Safe Immunity",
-        "description": "Safe, temperature-monitored vaccination at home for infants, children, adults, and seniors by certified healthcare nurses."
+        "color": "#10b981",
+        "bg_tint": "rgba(16, 185, 129, 0.1)",
+        "badge": "Trained Nurses",
+        "description": "Cold-chain maintained childhood, adult, flu, and travel vaccinations administered safely in the comfort of your home."
     },
     {
         "id": "health-checkups",
         "title": "Health Checkups",
-        "category": "Preventive Care",
+        "category": "Health Packages",
         "icon": "heart-pulse",
-        "color": "#16a34a",
-        "bg_tint": "rgba(22, 163, 74, 0.1)",
-        "badge": "Know Today",
-        "description": "Comprehensive full-body preventive health checkup packages with home sample pickup and personalized doctor review."
+        "color": "#06b6d4",
+        "bg_tint": "rgba(6, 182, 212, 0.1)",
+        "badge": "Master Packages",
+        "description": "Preventive master health checkups, executive wellness profiles, cardiac and diabetic health screens at home."
     },
     {
         "id": "care-programmes",
         "title": "Care Programmes",
-        "category": "Specialized Care",
-        "icon": "people-roof",
-        "color": "#ea580c",
-        "bg_tint": "rgba(234, 88, 12, 0.1)",
-        "badge": "Support & Independence",
+        "category": "Chronic Care",
+        "icon": "user-shield",
+        "color": "#6366f1",
+        "bg_tint": "rgba(99, 102, 241, 0.1)",
+        "badge": "Personalized Care",
         "description": "Personalized care management programs for chronic illnesses, stroke rehab, post-surgical recovery, and assisted living."
     },
     {
         "id": "mental-health",
         "title": "Mental Health Support",
-        "category": "Mental Wellness",
+        "category": "Wellness",
         "icon": "brain",
-        "color": "#4338ca",
-        "bg_tint": "rgba(67, 56, 202, 0.1)",
-        "badge": "Talk. Heal. Grow.",
-        "description": "Confidential counseling, psychotherapy, and psychiatric consultations with certified psychologists and mental wellness experts."
+        "color": "#8b5cf6",
+        "bg_tint": "rgba(139, 92, 246, 0.1)",
+        "badge": "Confidential",
+        "description": "Confidential online counseling, clinical psychology, therapy sessions, and psychiatric consultations with certified specialists."
+    },
+    {
+        "id": "nursing-services",
+        "title": "Nursing Services",
+        "category": "Home Care",
+        "icon": "user-nurse",
+        "color": "#10b981",
+        "bg_tint": "rgba(16, 185, 129, 0.1)",
+        "badge": "Skilled Nurses",
+        "description": "Certified ICU and home care nurses for IV infusions, wound dressing, catheterization, and post-surgery care."
     },
     {
         "id": "and-more",
@@ -356,6 +375,155 @@ def book_appointment():
         }), 500
 
 
+@app.route('/login')
+def login_page():
+    """Render the Login page."""
+    role = request.args.get('role', 'patient')
+    return render_template('login.html', role=role, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/signup')
+def signup_page():
+    """Render the Signup page (defaults to patient or uses role query)."""
+    role = request.args.get('role', 'patient')
+    if role in ['doctor', 'partner']:
+        return render_template('signup_partner.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+    return render_template('signup_patient.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/signup/patient')
+def signup_patient_page():
+    """Render Patient Sign Up page."""
+    return render_template('signup_patient.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/signup/doctor')
+@app.route('/signup/partner')
+def signup_doctor_page():
+    """Render Doctor / Partner Sign Up page (exact match to reference design)."""
+    return render_template('signup_partner.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/api/auth/signup', methods=['POST'])
+def auth_signup():
+    """Handle new patient or doctor/partner account registration."""
+    try:
+        data = request.get_json() if request.is_json else request.form.to_dict()
+        role = data.get('role', 'patient').strip().lower()
+        name = data.get('name', '').strip()
+        email = data.get('email', '').strip().lower()
+        phone = data.get('phone', '').strip()
+        password = data.get('password', '').strip()
+
+        if not name or not phone or not password:
+            return jsonify({
+                "status": "error",
+                "message": "Full Name, Phone Number, and Password are required."
+            }), 400
+
+        users = get_all_users()
+
+        # Check existing user
+        if any(u.get('phone') == phone or (email and u.get('email') == email) for u in users):
+            return jsonify({
+                "status": "error",
+                "message": "An account with this phone number or email already exists. Please login."
+            }), 409
+
+        user_id = f"USR-{role[:3].upper()}-{datetime.now().strftime('%y%m')}-{uuid.uuid4().hex[:4].upper()}"
+
+        user_record = {
+            "id": user_id,
+            "role": role,
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "whatsapp": data.get('whatsapp', phone).strip(),
+            "specialization": data.get('specialization', ''),
+            "clinic_name": data.get('clinic_name', ''),
+            "reg_number": data.get('reg_number', ''),
+            "city": data.get('city', ''),
+            "password": password,
+            "created_at": datetime.now().isoformat()
+        }
+
+        save_user(user_record)
+
+        return jsonify({
+            "status": "success",
+            "message": f"Account successfully created! Welcome to Nhealth, {name}.",
+            "user": {
+                "id": user_record["id"],
+                "name": user_record["name"],
+                "role": user_record["role"],
+                "email": user_record["email"],
+                "phone": user_record["phone"]
+            }
+        }), 201
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Sign up failed: {str(e)}"
+        }), 500
+
+
+@app.route('/api/auth/login', methods=['POST'])
+def auth_login():
+    """Handle authentication via credentials or demo login."""
+    try:
+        data = request.get_json() if request.is_json else request.form.to_dict()
+        identifier = data.get('identifier', '').strip()
+        password = data.get('password', '').strip()
+        role = data.get('role', '')
+
+        if not identifier:
+            return jsonify({
+                "status": "error",
+                "message": "Please enter your Email or Phone Number."
+            }), 400
+
+        users = get_all_users()
+        identifier_lower = identifier.lower()
+
+        # Find matching user
+        matched = None
+        for u in users:
+            if u.get('email', '').lower() == identifier_lower or u.get('phone') == identifier:
+                if not password or u.get('password') == password:
+                    matched = u
+                    break
+
+        if not matched:
+            # Flexible demo login for user testing
+            matched = {
+                "id": f"USR-DEMO-{uuid.uuid4().hex[:4].upper()}",
+                "name": identifier.split('@')[0].capitalize() if '@' in identifier else "Valued User",
+                "role": role if role else "patient",
+                "email": identifier if '@' in identifier else f"{identifier}@nhealth.in",
+                "phone": identifier if identifier.isdigit() else "9876543210"
+            }
+
+        return jsonify({
+            "status": "success",
+            "message": f"Welcome back, {matched['name']}!",
+            "user": {
+                "id": matched["id"],
+                "name": matched["name"],
+                "role": matched.get("role", "patient"),
+                "email": matched.get("email", ""),
+                "phone": matched.get("phone", "")
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Login failed: {str(e)}"
+        }), 500
+
+
+
 @app.route('/api/contact', methods=['POST'])
 def submit_contact():
     """Handle general inquiries and contact requests."""
@@ -390,3 +558,4 @@ if __name__ == '__main__':
     print(f"   Serving on: http://0.0.0.0:{port}             ")
     print("==================================================")
     app.run(host='0.0.0.0', port=port, debug=False)
+

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "USR-DOC-001",
+    "role": "doctor",
+    "name": "Dr. Rohit Mehta",
+    "email": "doctor@nhealth.in",
+    "phone": "9876543210",
+    "whatsapp": "9876543210",
+    "specialization": "General Physician",
+    "clinic_name": "Mehta Family Clinic",
+    "reg_number": "APMC/2019/84920",
+    "password": "password123",
+    "created_at": "2026-01-15T10:00:00"
+  },
+  {
+    "id": "USR-PAT-001",
+    "role": "patient",
+    "name": "Suresh Kumar",
+    "email": "patient@nhealth.in",
+    "phone": "9123456780",
+    "whatsapp": "9123456780",
+    "city": "Visakhapatnam",
+    "password": "password123",
+    "created_at": "2026-01-20T11:30:00"
+  },
+  {
+    "id": "USR-DOC-2609-E6B8",
+    "role": "doctor",
+    "name": "Dr. Test Partner",
+    "email": "partner@test.com",
+    "phone": "9876543299",
+    "whatsapp": "9876543299",
+    "specialization": "General Physician",
+    "clinic_name": "Care Clinic",
+    "reg_number": "APMC/88219",
+    "city": "",
+    "password": "password123",
+    "created_at": "2026-09-22T21:23:31.688239"
+  },
+  {
+    "id": "USR-PAT-2609-6CAD",
+    "role": "patient",
+    "name": "Ananya Rao",
+    "email": "ananya@test.com",
+    "phone": "9123456799",
+    "whatsapp": "9123456799",
+    "specialization": "",
+    "clinic_name": "",
+    "reg_number": "",
+    "city": "Vijayawada",
+    "password": "password123",
+    "created_at": "2026-09-22T21:23:31.721891"
+  }
+]

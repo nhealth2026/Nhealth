@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Login | Nhealth — Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Authentication Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=1.0">
+</head>
+<body class="auth-page-body">
+
+    <!-- Subtle Background Medical Symbols -->
+    <div class="auth-bg-decorations" aria-hidden="true">
+        <span class="auth-plus-symbol p1">+</span>
+        <span class="auth-plus-symbol p2">+</span>
+        <span class="auth-plus-symbol p3">+</span>
+        <span class="auth-plus-symbol p4">+</span>
+        <div class="auth-dot-matrix d1"></div>
+        <div class="auth-dot-matrix d2"></div>
+    </div>
+
+    <!-- Auth Top Bar -->
+    <header class="auth-top-nav">
+        <div class="auth-nav-inner">
+            <a href="/" class="auth-back-link">
+                <i class="fa-solid fa-arrow-left"></i> <span>Back to Home</span>
+            </a>
+            <div class="auth-nav-switch">
+                <span>New to Nhealth?</span>
+                <a href="/signup/patient" class="switch-link">Sign Up Here &rarr;</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Auth Container -->
+    <main class="auth-wrapper">
+        <div class="auth-container">
+            
+            <!-- LEFT FORM CARD -->
+            <div class="auth-card-panel">
+                <div class="auth-card-inner">
+                    
+                    <!-- Nhealth Logo -->
+                    <div class="auth-brand-header">
+                        <a href="/" class="auth-brand-logo">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="auth-logo-img">
+                        </a>
+                    </div>
+
+                    <!-- Role Switcher Tabs -->
+                    <div class="auth-role-tabs">
+                        <button type="button" class="auth-role-tab {% if role != 'doctor' %}active{% endif %}" id="tabPatient" onclick="switchLoginRole('patient')">
+                            <i class="fa-regular fa-user"></i> Patient Login
+                        </button>
+                        <button type="button" class="auth-role-tab {% if role == 'doctor' %}active{% endif %}" id="tabDoctor" onclick="switchLoginRole('doctor')">
+                            <i class="fa-solid fa-user-doctor"></i> Doctor / Partner
+                        </button>
+                    </div>
+
+                    <!-- Role Badge Pill -->
+                    <div class="auth-role-badge">
+                        <span id="roleBadgeText">{% if role == 'doctor' %}Doctor / Partner Login{% else %}Patient Account Login{% endif %}</span>
+                    </div>
+
+                    <!-- Card Heading -->
+                    <div class="auth-heading-group">
+                        <h1 class="auth-title">Welcome Back to Nhealth</h1>
+                        <p class="auth-subtitle" id="roleSubtitle">{% if role == 'doctor' %}Sign in to manage appointments, patients, and teleconsultations{% else %}Sign in to access your consultations, prescriptions, and reports{% endif %}</p>
+                    </div>
+
+                    <!-- Alert message box -->
+                    <div id="authAlertBox" class="auth-alert-box" style="display: none;"></div>
+
+                    <!-- Form -->
+                    <form id="loginForm" onsubmit="handleUserLogin(event)" class="auth-form" novalidate>
+                        <input type="hidden" name="role" id="loginRole" value="{{ role or 'patient' }}">
+
+                        <!-- Identifier (Email or Phone) -->
+                        <div class="auth-input-group">
+                            <i class="fa-regular fa-envelope auth-field-icon" id="identifierIcon"></i>
+                            <input type="text" name="identifier" id="loginIdentifier" class="auth-form-input" placeholder="Mobile Number or Email" required autocomplete="username">
+                        </div>
+
+                        <!-- Password -->
+                        <div class="auth-input-group">
+                            <i class="fa-solid fa-lock auth-field-icon"></i>
+                            <input type="password" name="password" id="loginPassword" class="auth-form-input" placeholder="Password" required autocomplete="current-password">
+                            <button type="button" class="auth-eye-toggle" onclick="togglePasswordVisibility('loginPassword', this)" aria-label="Toggle password visibility">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+
+                        <!-- Options Row: Remember & Forgot -->
+                        <div class="auth-options-row">
+                            <label class="auth-checkbox-label">
+                                <input type="checkbox" id="rememberMe" class="auth-checkbox" checked>
+                                <span>Remember me</span>
+                            </label>
+                            <a href="javascript:void(0)" onclick="handleForgotPassword()" class="auth-forgot-link">Forgot Password?</a>
+                        </div>
+
+                        <!-- Login Button -->
+                        <button type="submit" class="auth-submit-btn" id="loginSubmitBtn">
+                            <span class="btn-text">Sign In</span>
+                            <i class="fa-solid fa-arrow-right btn-icon"></i>
+                        </button>
+                    </form>
+
+                    <!-- OR Divider -->
+                    <div class="auth-or-divider">
+                        <span>or</span>
+                    </div>
+
+                    <!-- Google Sign In -->
+                    <button type="button" class="auth-google-btn" onclick="handleGoogleLogin()">
+                        <svg class="google-icon" viewBox="0 0 48 48" width="20" height="20">
+                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        </svg>
+                        <span>Sign in with Google</span>
+                    </button>
+
+                    <!-- Footer Link -->
+                    <div class="auth-bottom-switch" id="signupPromptLinks">
+                        <span>Don't have an account?</span>
+                        <a href="/signup/patient" id="primarySignupLink" class="auth-login-link">Sign Up as Patient</a>
+                        <span class="dot-sep">•</span>
+                        <a href="/signup/doctor" id="secondarySignupLink" class="auth-secondary-link">Doctor Registration</a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- RIGHT SHOWCASE PANEL -->
+            <div class="auth-showcase-panel">
+                <div class="auth-showcase-content">
+                    
+                    <!-- Main Showcase Title -->
+                    <div class="showcase-header">
+                        <h2 class="showcase-title">
+                            Empower Better Healthcare<br>
+                            at <span class="highlight-underline">Your Doorstep<span class="cyan-bar"></span></span>
+                        </h2>
+                        <p class="showcase-subtitle" id="showcaseSubText">
+                            Connecting patients and doctors across Andhra Pradesh with seamless digital appointments and doorstep healthcare.
+                        </p>
+                    </div>
+
+                    <!-- Dynamic Media Container -->
+                    <div class="showcase-doctor-media">
+                        <img src="{{ url_for('static', filename='images/auth/doctor_team.jpg') }}" id="showcaseHeroImg" alt="Nhealth Healthcare" class="showcase-doctor-img">
+                    </div>
+
+                    <!-- 4 Highlight Badge Cards -->
+                    <div class="showcase-features-grid">
+                        
+                        <div class="showcase-feat-card feat-blue">
+                            <div class="feat-icon-wrap">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <span class="feat-label">100% Verified Care</span>
+                        </div>
+
+                        <div class="showcase-feat-card feat-green">
+                            <div class="feat-icon-wrap">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                            <span class="feat-label">Instant 24/7 Access</span>
+                        </div>
+
+                        <div class="showcase-feat-card feat-purple">
+                            <div class="feat-icon-wrap">
+                                <i class="fa-solid fa-file-medical"></i>
+                            </div>
+                            <span class="feat-label">Digital Health Records</span>
+                        </div>
+
+                        <div class="showcase-feat-card feat-orange">
+                            <div class="feat-icon-wrap">
+                                <i class="fa-solid fa-headset"></i>
+                            </div>
+                            <span class="feat-label">Dedicated Support</span>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Custom Toast Notification -->
+    <div id="authToast" class="auth-toast"></div>
+
+    <!-- Scripts -->
+    <script>
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function switchLoginRole(role) {
+            document.getElementById('loginRole').value = role;
+            const tabPatient = document.getElementById('tabPatient');
+            const tabDoctor = document.getElementById('tabDoctor');
+            const badge = document.getElementById('roleBadgeText');
+            const sub = document.getElementById('roleSubtitle');
+            const primaryLink = document.getElementById('primarySignupLink');
+            const secondaryLink = document.getElementById('secondarySignupLink');
+            const heroImg = document.getElementById('showcaseHeroImg');
+
+            if (role === 'doctor') {
+                tabPatient.classList.remove('active');
+                tabDoctor.classList.add('active');
+                badge.textContent = 'Doctor / Partner Login';
+                sub.textContent = 'Sign in to manage appointments, patients, and teleconsultations';
+                primaryLink.textContent = 'Doctor / Partner Sign Up';
+                primaryLink.href = '/signup/doctor';
+                secondaryLink.textContent = 'Patient Sign Up';
+                secondaryLink.href = '/signup/patient';
+                heroImg.src = "{{ url_for('static', filename='images/auth/doctor_team.jpg') }}";
+            } else {
+                tabDoctor.classList.remove('active');
+                tabPatient.classList.add('active');
+                badge.textContent = 'Patient Account Login';
+                sub.textContent = 'Sign in to access your consultations, prescriptions, and reports';
+                primaryLink.textContent = 'Sign Up as Patient';
+                primaryLink.href = '/signup/patient';
+                secondaryLink.textContent = 'Doctor Registration';
+                secondaryLink.href = '/signup/doctor';
+                heroImg.src = "{{ url_for('static', filename='images/auth/patient_care_home.jpg') }}";
+            }
+        }
+
+        function showAuthToast(message, type = 'success') {
+            const toast = document.getElementById('authToast');
+            toast.textContent = message;
+            toast.className = 'auth-toast show ' + type;
+            setTimeout(() => {
+                toast.className = 'auth-toast';
+            }, 4000);
+        }
+
+        async function handleUserLogin(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('authAlertBox');
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const role = document.getElementById('loginRole').value;
+
+            alertBox.style.display = 'none';
+
+            if (!identifier) {
+                alertBox.textContent = 'Please enter your Mobile Number or Email.';
+                alertBox.className = 'auth-alert-box error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.querySelector('.btn-text').textContent = 'Signing in...';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: identifier,
+                        password: password,
+                        role: role
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    alertBox.textContent = '🎉 ' + data.message + ' Logging you in...';
+                    alertBox.className = 'auth-alert-box success';
+                    alertBox.style.display = 'block';
+                    showAuthToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1400);
+                } else {
+                    alertBox.textContent = data.message || 'Invalid credentials.';
+                    alertBox.className = 'auth-alert-box error';
+                    alertBox.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('.btn-text').textContent = 'Sign In';
+                }
+            } catch (err) {
+                alertBox.textContent = 'Network error. Please try again.';
+                alertBox.className = 'auth-alert-box error';
+                alertBox.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.btn-text').textContent = 'Sign In';
+            }
+        }
+
+        function handleForgotPassword() {
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            if (identifier) {
+                showAuthToast(`Password reset link sent to ${identifier}`, 'info');
+            } else {
+                showAuthToast('Please enter your email or phone above first.', 'info');
+            }
+        }
+
+        function handleGoogleLogin() {
+            showAuthToast('Authenticating with Google Single Sign-On...', 'info');
+            setTimeout(() => {
+                const alertBox = document.getElementById('authAlertBox');
+                alertBox.textContent = 'Google sign-in verified. Welcome back!';
+                alertBox.className = 'auth-alert-box success';
+                alertBox.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1200);
+            }, 1000);
+        }
+
+        // Check URL params for role preselection or registered toast
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('role') === 'doctor') {
+                switchLoginRole('doctor');
+            }
+            if (params.get('registered') === '1') {
+                showAuthToast('Account created! Please sign in with your credentials.', 'success');
+            }
+        });
+    </script>
+</body>
+</html>

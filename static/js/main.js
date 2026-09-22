@@ -110,6 +110,13 @@ function toggleMobileSubmenu(e) {
     }
 }
 
+function scrollToMobileSection(id) {
+    const el = document.getElementById(id) || document.getElementById(id.replace('m-', ''));
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 
 /* ==========================================================================
    3. ANDHRA PRADESH MAP INTERACTIVITY & TOOLTIP
