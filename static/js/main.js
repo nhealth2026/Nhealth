@@ -699,13 +699,13 @@ function sendTelemedChatMessage(e) {
         const docMsg = document.createElement('div');
         docMsg.className = 'chat-bubble doc-msg';
         docMsg.innerHTML = `
-            <div class="chat-sender">Dr. Priya Sharma</div>
+            <div class="chat-sender">Consulting Doctor</div>
             <div class="chat-text">Noted Rahul. Telemetry readings reflect stable cardiac rhythm. I've updated your digital chart accordingly.</div>
             <div class="chat-time">${timeStr}</div>
         `;
         scrollContainer.appendChild(docMsg);
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
-        showToast("💬 Dr. Priya Sharma responded to your message", "info");
+        showToast("💬 Doctor responded to your message", "info");
     }, 1100);
 }
 
@@ -824,7 +824,7 @@ function toggleBikeDrive() {
 }
 
 /* ==========================================================================
-   15. DESKTOP SERVICES CAROUSEL SCROLLER
+   15. DESKTOP SERVICES CAROUSEL SCROLLER & CATEGORY FILTERING
    ========================================================================== */
 function scrollServicesBar(direction) {
     const bar = document.getElementById('servicesCardBar') || document.querySelector('.services-card-bar');
@@ -832,3 +832,27 @@ function scrollServicesBar(direction) {
         bar.scrollBy({ left: direction * 360, behavior: 'smooth' });
     }
 }
+
+function filterServicesCategory(category, btnElement) {
+    const cards = document.querySelectorAll('.suite-card');
+    const tabs = document.querySelectorAll('.suite-filter-tab');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    cards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        if (category === 'all' || cardCat === category) {
+            card.style.display = 'flex';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 10);
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+

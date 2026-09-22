@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13.4">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13.9">
 </head>
 <body>
 
@@ -449,124 +449,69 @@
 
         </section>
 
-        <!-- ==================== SECTION 1: COMPREHENSIVE HEALTHCARE SUITE ==================== -->
+        <!-- ==================== SECTION 1: COMPREHENSIVE HEALTHCARE SUITE / OUR SERVICES ==================== -->
         <section class="suite-section-container" id="services-suite">
             <div class="suite-header-block">
-                <span class="suite-badge-tag"><i class="fa-solid fa-layer-group text-teal"></i> All-In-One Healthcare</span>
-                <h2 class="suite-main-title">Comprehensive Healthcare Suite</h2>
-                <p class="suite-sub-title">Everything You Need For Your Family's Health &bull; Six integrated healthcare verticals unified under the trusted NHealth ecosystem.</p>
+                <span class="suite-badge-tag"><i class="fa-solid fa-layer-group text-teal"></i> All-In-One Healthcare Platform</span>
+                <h2 class="suite-main-title">Our Healthcare Services</h2>
+                <p class="suite-sub-title">Everything You Need For Your Family's Health &bull; 19 comprehensive, integrated healthcare services delivered seamlessly at home and in-clinic across Andhra Pradesh.</p>
             </div>
 
-            <div class="suite-cards-grid">
-                
-                <!-- 1. Doctor Consultation -->
-                <div class="suite-card" onclick="openBookingModal('Doctor Video Consultation')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-blue">
-                            <span>🩺</span>
-                        </div>
-                        <span class="suite-price-badge">Starts at ₹499</span>
-                    </div>
-                    <h3 class="suite-card-title">Doctor Consultation</h3>
-                    <p class="suite-card-desc">Connect with 500+ board-certified general physicians and super-specialists via HD video or book priority in-clinic visits.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> 15-Minute Instant Telemedicine</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Free Follow-Up For 7 Days</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Digital E-Prescription with WhatsApp Delivery</li>
-                    </ul>
-                    <button class="btn-suite-action">Consult Now <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
+            <!-- Interactive Category Filter Tabs -->
+            <div class="suite-filter-tabs-wrap">
+                <button type="button" class="suite-filter-tab active" onclick="filterServicesCategory('all', this)">
+                    <i class="fa-solid fa-table-cells-large"></i> All Services (19)
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('doctor', this)">
+                    <i class="fa-solid fa-user-doctor"></i> Doctor &amp; Consultations
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('diagnostics', this)">
+                    <i class="fa-solid fa-flask-vial"></i> Diagnostics &amp; Lab
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('nursing', this)">
+                    <i class="fa-solid fa-user-nurse"></i> Home Care &amp; Nursing
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('pharmacy', this)">
+                    <i class="fa-solid fa-prescription-bottle-medical"></i> Pharmacy &amp; Medicines
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('emergency', this)">
+                    <i class="fa-solid fa-truck-medical"></i> Emergency &amp; Ambulance
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('rehab', this)">
+                    <i class="fa-solid fa-person-walking-with-cane"></i> Therapy &amp; Mental Health
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('preventive', this)">
+                    <i class="fa-solid fa-shield-heart"></i> Preventive &amp; Care Plans
+                </button>
+            </div>
 
-                <!-- 2. Doorstep E-Pharmacy -->
-                <div class="suite-card" onclick="openBookingModal('Prescription Medicine Order')">
+            <!-- 19 Services Detailed Grid -->
+            <div class="suite-cards-grid" id="suiteCardsGrid">
+                {% for s in services %}
+                <div class="suite-card {% if s.id == 'ambulance-services-247' %}suite-highlight-card{% endif %}" 
+                     data-category="{{ s.filter_cat }}"
+                     onclick="{{ s.action_fn }}">
                     <div class="suite-card-top">
-                        <div class="suite-icon-box suite-green">
-                            <span>💊</span>
+                        <div class="suite-icon-box" style="background: {{ s.bg_tint }}; color: {{ s.color }};">
+                            <span>{{ s.emoji }}</span>
                         </div>
-                        <span class="suite-price-badge">Express Free &gt; ₹500</span>
+                        <span class="suite-category-badge">{{ s.badge }}</span>
                     </div>
-                    <h3 class="suite-card-title">Doorstep E-Pharmacy</h3>
-                    <p class="suite-card-desc">Upload your prescription for instant pharmacist validation. Enjoy authentic temperature-controlled doorstep medicine delivery.</p>
+                    <div class="suite-meta-cat">{{ s.category }}</div>
+                    <h3 class="suite-card-title">{{ s.title }}</h3>
+                    <p class="suite-card-desc">{{ s.description }}</p>
+                    
                     <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> 100% Genuine Certified Medicines</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 2-Hour Express Delivery Guarantee</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Flat 20% Discount on Monthly Refills</li>
+                        {% for feat in s.features %}
+                        <li><i class="fa-solid fa-circle-check"></i> <span>{{ feat }}</span></li>
+                        {% endfor %}
                     </ul>
-                    <button class="btn-suite-action">Order Medicines <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
 
-                <!-- 3. Home Diagnostics -->
-                <div class="suite-card" onclick="openBookingModal('Home Diagnostics & Lab Tests')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-teal">
-                            <span>🔬</span>
-                        </div>
-                        <span class="suite-price-badge">Packages from ₹699</span>
-                    </div>
-                    <h3 class="suite-card-title">Home Diagnostics</h3>
-                    <p class="suite-card-desc">Certified phlebotomists arrive at your doorstep with sealed vacutainer kits for blood, urine, and pathology sample collection.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> NABL &amp; CAP Accredited Testing</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 100% Painless Safe Blood Draw</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Verified Smart PDF Reports in 6 Hours</li>
-                    </ul>
-                    <button class="btn-suite-action">Book Lab Test <i class="fa-solid fa-arrow-right"></i></button>
+                    <button class="btn-suite-action {% if s.id == 'ambulance-services-247' %}btn-emergency-sos{% endif %}">
+                        {{ s.action_label }} <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
-
-                <!-- 4. Specialized Nursing -->
-                <div class="suite-card" onclick="openBookingModal('Home Nursing Care Attendant')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-pink">
-                            <span>👩‍⚕️</span>
-                        </div>
-                        <span class="suite-price-badge">Per Shift from ₹1,200</span>
-                    </div>
-                    <h3 class="suite-card-title">Specialized Nursing</h3>
-                    <p class="suite-card-desc">Compassionate, qualified nurses for post-operative recovery, elderly assistance, wound dressing, catheter management, and home ICU.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> Background-Verified Registered Nurses</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 12-Hour &amp; 24-Hour Attendant Shifts</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Vital Monitoring &amp; Medication Management</li>
-                    </ul>
-                    <button class="btn-suite-action">Book Nurse <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-
-                <!-- 5. 24/7 Smart Ambulance -->
-                <div class="suite-card suite-highlight-card" onclick="triggerEmergencySOS()">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-red">
-                            <span>🚑</span>
-                        </div>
-                        <span class="suite-price-badge badge-emergency">Emergency Toll-Free SOS</span>
-                    </div>
-                    <h3 class="suite-card-title">24/7 Smart Ambulance</h3>
-                    <p class="suite-card-desc">Emergency GPS dispatch linking you to the nearest Advanced Life Support (ALS) and Basic Life Support (BLS) ambulances.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> 8-Minute Average Arrival Time</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Onboard Ventilator, Defibrillator &amp; O2</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Hospital Emergency Room Pre-Sync</li>
-                    </ul>
-                    <button class="btn-suite-action btn-emergency-sos">🚨 Dispatch SOS <i class="fa-solid fa-phone-volume"></i></button>
-                </div>
-
-                <!-- 6. Full Body Screening -->
-                <div class="suite-card" onclick="openBookingModal('Full Body Preventive Health Checkup')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-gold">
-                            <span>🛡️</span>
-                        </div>
-                        <span class="suite-price-badge">Comprehensive ₹1,999</span>
-                    </div>
-                    <h3 class="suite-card-title">Full Body Screening</h3>
-                    <p class="suite-card-desc">Comprehensive annual preventive health packages covering 85+ parameters including Cardiac Risk, Liver, Kidney, and Diabetes.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> Free Doctor Consultation Included</li>
-                        <li><i class="fa-solid fa-circle-check"></i> AI-Powered Health Risk Assessment</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Complete Family Health Passports</li>
-                    </ul>
-                    <button class="btn-suite-action">Book Package <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-
+                {% endfor %}
             </div>
         </section>
 
@@ -823,7 +768,7 @@
                 <div class="telemed-room-header">
                     <div class="telemed-header-left">
                         <span class="live-pulse-dot"></span>
-                        <span class="telemed-doctor-header">Dr. Priya Sharma (Cardiology) &bull; Consultation #NH-7821</span>
+                        <span class="telemed-doctor-header">Consulting Doctor (General Medicine) &bull; Consultation #NH-7821</span>
                     </div>
                     <div class="telemed-header-right">
                         <span class="live-timer-badge">● LIVE 14:32</span>
@@ -834,14 +779,14 @@
                     <!-- Left: Doctor Video Frame & Patient PiP -->
                     <div class="telemed-video-area">
                         <div class="telemed-main-stream">
-                            <img src="{{ url_for('static', filename='images/doctor_banner.jpg') }}" alt="Dr. Priya Sharma" class="telemed-doctor-img">
+                            <img src="{{ url_for('static', filename='images/doctor_banner.jpg') }}" alt="Nhealth Consulting Doctor" class="telemed-doctor-img">
                             
                             <div class="telemed-stream-overlay">
                                 <div class="stream-doctor-badge">
                                     <span class="s-doc-icon">🩺</span>
                                     <div>
-                                        <h4 class="s-doc-name">Dr. Priya Sharma, MD</h4>
-                                        <p class="s-doc-role">Senior Consultant Cardiologist &bull; Fortis Healthcare Partner</p>
+                                        <h4 class="s-doc-name">Consulting Doctor, MD</h4>
+                                        <p class="s-doc-role">Senior Consultant Physician &bull; Nhealth Verified Specialist</p>
                                     </div>
                                     <span class="s-verified-tag"><i class="fa-solid fa-circle-check"></i> Verified MD</span>
                                 </div>
@@ -876,7 +821,7 @@
                         <div class="telemed-tab-pane active" id="telemedChatPane">
                             <div class="chat-messages-scroll" id="chatMessagesScroll">
                                 <div class="chat-bubble doc-msg">
-                                    <div class="chat-sender">Dr. Priya Sharma</div>
+                                    <div class="chat-sender">Consulting Doctor</div>
                                     <div class="chat-text">Hello Rahul! I can see your ECG telemetry is stable today. How is the mild chest heaviness you mentioned?</div>
                                     <div class="chat-time">10:14 AM</div>
                                 </div>
@@ -886,7 +831,7 @@
                                     <div class="chat-time">10:15 AM</div>
                                 </div>
                                 <div class="chat-bubble doc-msg">
-                                    <div class="chat-sender">Dr. Priya Sharma</div>
+                                    <div class="chat-sender">Consulting Doctor</div>
                                     <div class="chat-text">Good to hear. I've sent a 10-day refill for your cardiorespiratory medication directly to your WhatsApp and registered pharmacy.</div>
                                     <div class="chat-time">10:16 AM</div>
                                 </div>
@@ -909,7 +854,7 @@
                                     <p><strong>Diagnosis:</strong> Mild Exertional Fatigue &bull; Stable Telemetry</p>
                                     <div class="rx-meds-list">
                                         <div class="rx-med-item">
-                                            <span>1. Cardiosync Tab 5mg</span>
+                                             <span>1. Cardiosync Tab 5mg</span>
                                             <em>1 Tab &bull; Morning (After Breakfast) &bull; 10 Days</em>
                                         </div>
                                         <div class="rx-med-item">
@@ -919,7 +864,7 @@
                                     </div>
                                 </div>
                                 <div class="rx-footer">
-                                    <span class="rx-signed"><i class="fa-solid fa-signature"></i> Digitally Signed by Dr. Priya Sharma, MD</span>
+                                    <span class="rx-signed"><i class="fa-solid fa-signature"></i> Digitally Signed by Verified Physician, MD</span>
                                     <button class="btn-solid-teal" onclick="showToast('📲 E-Prescription sent to your WhatsApp number!', 'success')">WhatsApp Rx</button>
                                 </div>
                             </div>
@@ -1072,7 +1017,7 @@
                             <div class="wa-booking-head">
                                 <strong>NHealth Technologies Booking Confirmation</strong>
                             </div>
-                            <p>Dear <strong>Rahul Verma</strong>, your telemedicine consultation is confirmed with <strong>Dr. Priya Sharma (Cardiology)</strong>.</p>
+                            <p>Dear <strong>Rahul Verma</strong>, your telemedicine consultation is confirmed with <strong>Consulting Doctor (General Medicine)</strong>.</p>
                             <div class="wa-info-lines">
                                 <p>📅 <strong>Date:</strong> Today, 11 Sep 2026</p>
                                 <p>⏰ <strong>Time:</strong> 10:30 AM (15 Mins)</p>
@@ -1265,8 +1210,8 @@
                     <a href="/" class="brand-logo footer-logo" aria-label="Nhealth Home">
                         <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal_light.png') }}" alt="Nhealth — Healthcare at Home" class="footer-logo-img-full">
                     </a>
-                    <p class="footer-bio-text">NHealth Technologies is an enterprise healthcare marketplace and digital telemedicine infrastructure pioneer, connecting patients, doctors, pharmacies, diagnostics, and emergency ambulance providers nationwide.</p>
-                    <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> support@nhealthtechnologies.com</p>
+                    <p class="footer-bio-text">Nhealth Technologies is an healthcare aggregator providing integrated healthcare services and at home through a single digital platform, connecting patients, doctors, pharmacies, diagnostics and emergency ambulance providers, eldercare, health packages, health riders, bedside assistants and at home, physiotherapy services and at home, blood availability checks, vaccination services nationwide, and also a digital telemedicine infrastructure pioneer.</p>
+                    <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> <a href="mailto:support@nhealth.in" class="footer-email-link">support@nhealth.in</a></p>
                 </div>
 
                 <!-- Col 2: Healthcare Services -->
@@ -1293,29 +1238,11 @@
                         <li><a href="#contact">Contact Us</a></li>
                     </ul>
                 </div>
-
-                <!-- Col 4: Certifications & Trust -->
-                <div class="footer-links-col">
-                    <h4 class="footer-heading">Certifications &amp; Trust</h4>
-                    <ul class="f-links">
-                        <li><a href="javascript:void(0)" onclick="showToast('🔒 HIPAA Privacy & Security standard verified', 'info')">HIPAA Privacy &amp; Security Rules</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('🛡️ ISO 27001 Information Security certified', 'info')">ISO 27001 Information Security</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('✓ NABL Accredited Laboratory Partner Network', 'info')">NABL Certified Labs</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('⭐ 100% Verified MD & MBBS Doctors', 'info')">AP Medical Council Verified</a></li>
-                    </ul>
-                </div>
             </div>
 
             <!-- Footer Bottom Strip -->
-            <div class="footer-bottom-row">
-                <p class="footer-copyright">&copy; 2026 Nhealth Healthcare Technologies Pvt. Ltd. All rights reserved.</p>
-                <div class="footer-legal-links">
-                    <a href="javascript:void(0)" onclick="showToast('Terms of Service: Full legal terms and usage conditions.', 'info')">Terms of Service</a>
-                    <span class="dot-divider">•</span>
-                    <a href="javascript:void(0)" onclick="showToast('Privacy Policy: We protect your healthcare data strictly.', 'info')">Privacy Policy</a>
-                    <span class="dot-divider">•</span>
-                    <a href="javascript:void(0)" onclick="showToast('Telemedicine Guidelines: Compliance with MoHFW protocols.', 'info')">Telemedicine Guidelines</a>
-                </div>
+            <div class="footer-bottom-row" style="display: flex; align-items: center; justify-content: center; text-align: center; padding-top: 1.75rem; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 2rem;">
+                <p class="footer-copyright" style="color: #94a3b8; font-size: 0.88rem; font-weight: 500; margin: 0;">Design and Developed and Owned by Nhealth Technologies Private Limited</p>
             </div>
         </footer>
 
@@ -1858,9 +1785,10 @@
                     <span class="brand-name m-brand-name">Nhealth</span>
                 </div>
                 <p class="m-footer-tagline">Powering the Future of Healthcare at Home</p>
+                <p class="m-footer-bio">Nhealth Technologies is an healthcare aggregator providing integrated healthcare services and at home through a single digital platform, connecting patients, doctors, pharmacies, diagnostics and emergency ambulance providers, eldercare, health packages, health riders, bedside assistants and at home, physiotherapy services and at home, blood availability checks, vaccination services nationwide, and also a digital telemedicine infrastructure pioneer.</p>
                 <div class="m-footer-contact">
                     <span><i class="fa-solid fa-phone"></i> +91 9393934621</span>
-                    <span><i class="fa-solid fa-envelope"></i> support@nhealthtechnologies.com</span>
+                    <span><i class="fa-solid fa-envelope"></i> <a href="mailto:support@nhealth.in" style="color: inherit; text-decoration: none;">support@nhealth.in</a></span>
                 </div>
                 <div class="m-footer-links">
                     <a href="#home">Home</a> &bull;
@@ -1868,7 +1796,7 @@
                     <a href="#m-how-it-works" onclick="scrollToMobileSection('m-how-it-works')">How It Works</a> &bull;
                     <a href="#m-about-us" onclick="scrollToMobileSection('m-about-us')">About Us</a>
                 </div>
-                <p class="m-footer-copy">&copy; 2026 NHealth Technologies Inc. All rights reserved.</p>
+                <p class="m-footer-copy">Design and Developed and Owned by Nhealth Technologies Private Limited</p>
             </footer>
 
         </div>
@@ -2173,7 +2101,7 @@
                         <i class="fa-solid fa-{{ service.icon }}"></i>
                     </div>
                     <div class="tile-info">
-                        <span class="t-badge">{{ service.category }}</span>
+                        <span class="t-badge">{{ service.badge }} &bull; {{ service.category }}</span>
                         <h4>{{ service.title }}</h4>
                         <p>{{ service.description }}</p>
                     </div>
