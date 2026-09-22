@@ -119,7 +119,7 @@ img, svg {
     max-width: 1360px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 clamp(0.75rem, 2vw, 2rem);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -203,13 +203,13 @@ img, svg {
 .nav-menu {
     display: flex;
     align-items: center;
-    gap: 1.35rem;
-    margin-left: 3.5rem;
+    gap: clamp(0.5rem, 1.2vw, 1.35rem);
+    margin-left: clamp(0.75rem, 2vw, 3.5rem);
     margin-right: auto;
 }
 
 .nav-link {
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 0.9vw, 0.9rem);
     font-weight: 500;
     color: #334155;
     position: relative;
@@ -217,6 +217,7 @@ img, svg {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -327,7 +328,8 @@ img, svg {
 .nav-actions {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
+    gap: clamp(0.4rem, 0.8vw, 0.85rem);
+    flex-shrink: 0;
 }
 
 .icon-btn.search-btn {
@@ -348,13 +350,14 @@ img, svg {
 }
 
 .btn-outline-pill {
-    padding: 0.45rem 1.4rem;
+    padding: 0.45rem clamp(0.75rem, 1vw, 1.4rem);
     border-radius: var(--radius-pill);
     border: 1.5px solid #cbd5e1;
     color: #1e293b;
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: clamp(0.78rem, 0.88vw, 0.88rem);
     background: #ffffff;
+    white-space: nowrap;
 }
 
 .btn-outline-pill:hover {
@@ -364,13 +367,14 @@ img, svg {
 }
 
 .btn-solid-teal {
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem clamp(0.85rem, 1.2vw, 1.5rem);
     border-radius: var(--radius-pill);
     background: linear-gradient(135deg, #0baaa2 0%, #04a79b 100%);
     color: #ffffff;
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: clamp(0.78rem, 0.88vw, 0.88rem);
     box-shadow: var(--shadow-teal-btn);
+    white-space: nowrap;
 }
 
 .btn-solid-teal:hover {
@@ -971,7 +975,7 @@ img, svg {
     max-width: 1360px;
     width: 100%;
     margin: 0.15rem auto 0 auto;
-    padding: 0 2rem;
+    padding: 0 clamp(0.75rem, 2vw, 2rem);
     flex-shrink: 0;
     z-index: 20;
 }
@@ -980,11 +984,11 @@ img, svg {
     background: #ffffff;
     border-radius: var(--radius-bar);
     box-shadow: 0 10px 30px -6px rgba(12, 35, 64, 0.07), 0 0 1px 1px rgba(12, 35, 64, 0.04);
-    padding: 0.45rem 0.75rem;
+    padding: 0.45rem clamp(0.35rem, 0.8vw, 0.75rem);
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(10, minmax(0, 1fr));
     align-items: flex-start;
-    gap: 0.25rem;
+    gap: clamp(0.1rem, 0.3vw, 0.25rem);
     border: 1px solid rgba(255, 255, 255, 0.95);
 }
 
@@ -998,6 +1002,7 @@ img, svg {
     cursor: pointer;
     transition: var(--transition-smooth);
     user-select: none;
+    min-width: 0;
 }
 
 .service-item:hover {
@@ -1006,8 +1011,8 @@ img, svg {
 }
 
 .service-img-wrap {
-    width: 56px;
-    height: 36px;
+    width: clamp(38px, 4.2vw, 56px);
+    height: clamp(26px, 2.8vw, 36px);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 0.25rem;
@@ -1017,6 +1022,7 @@ img, svg {
     background: #f8fafc;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    flex-shrink: 0;
 }
 
 .service-thumb-img {
@@ -1061,12 +1067,15 @@ img, svg {
 
 .service-label {
     font-family: var(--font-heading);
-    font-size: 0.72rem;
+    font-size: clamp(0.6rem, 0.72vw, 0.72rem);
     font-weight: 800;
     color: var(--color-navy-dark);
-    line-height: 1.22;
+    line-height: 1.15;
     text-align: center;
     letter-spacing: -0.01em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .service-more-item .service-label {
@@ -1345,6 +1354,13 @@ img, svg {
     grid-template-columns: 1fr 1fr;
     gap: 0.85rem;
     margin-bottom: 0.75rem;
+}
+
+@media (max-width: 520px) {
+    .form-row-2 {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
 }
 
 .form-group {
@@ -3234,10 +3250,10 @@ img, svg {
         background: #eef4f8 !important;
     }
     
-    /* Mobile App Layout Wrapper (Fluid responsive on all mobile devices up to 480px max) */
+    /* Mobile App Layout Wrapper (Fluid responsive on all mobile devices and tablets up to 640px) */
     .mobile-app-layout {
         width: 100% !important;
-        max-width: 480px !important;
+        max-width: min(100%, 640px) !important;
         min-width: 0 !important;
         margin: 0 auto !important;
         box-sizing: border-box !important;
@@ -3288,7 +3304,7 @@ img, svg {
         left: 50%;
         transform: translateX(-50%);
         width: 100%;
-        max-width: 480px;
+        max-width: min(100%, 640px);
         z-index: 1000;
         box-sizing: border-box;
         border-bottom: 1px solid transparent;
@@ -3427,8 +3443,8 @@ img, svg {
     .m-hero-content {
         position: relative;
         z-index: 5;
-        width: 165px;
-        max-width: 165px;
+        width: 100%;
+        max-width: min(54%, 280px);
         flex-shrink: 0;
         box-sizing: border-box;
         margin-top: 25px;
@@ -3436,7 +3452,7 @@ img, svg {
 
     .m-hero-tag {
         font-family: var(--font-brand);
-        font-size: 9px;
+        font-size: clamp(8px, 2.3vw, 9.5px);
         font-weight: 700;
         color: #475569;
         letter-spacing: 0.9px;
@@ -3447,7 +3463,7 @@ img, svg {
 
     .m-hero-title {
         font-family: var(--font-brand);
-        font-size: 16.5px;
+        font-size: clamp(14px, 4.3vw, 20px);
         font-weight: 800;
         line-height: 1.22;
         margin-bottom: 7px;
@@ -3457,12 +3473,12 @@ img, svg {
     .m-title-line1 {
         display: block;
         color: #0c2340;
-        white-space: nowrap;
+        white-space: normal;
     }
 
     .m-title-line2 {
         display: block;
-        white-space: nowrap;
+        white-space: normal;
     }
 
     .m-title-blue {
@@ -3475,13 +3491,13 @@ img, svg {
 
     .m-hero-desc {
         font-family: var(--font-primary);
-        font-size: 9.8px;
+        font-size: clamp(8.5px, 2.5vw, 10.5px);
         line-height: 1.36;
         color: #334155;
         margin-bottom: 10px;
         font-weight: 500;
-        width: 165px;
-        max-width: 165px;
+        width: 100%;
+        max-width: 100%;
         word-break: normal;
     }
 
@@ -3502,8 +3518,8 @@ img, svg {
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         box-sizing: border-box;
-        width: 165px;
-        max-width: 165px;
+        width: 100%;
+        max-width: min(56%, 290px);
         align-self: flex-start;
         margin-top: auto;
         margin-bottom: 60px;
@@ -3628,11 +3644,11 @@ img, svg {
         }
         82% {
             opacity: 1;
-            transform: translateX(390px) scale(1);
+            transform: translateX(min(calc(100vw - 110px), 530px)) scale(1);
         }
         83.5% {
             opacity: 0;
-            transform: translateX(400px) scale(1);
+            transform: translateX(min(calc(100vw - 100px), 540px)) scale(1);
         }
         83.6% {
             opacity: 0;
@@ -3767,8 +3783,8 @@ img, svg {
         flex-direction: column;
         align-items: flex-start;
         position: absolute;
-        right: 8px;
-        top: 240px;
+        right: clamp(6px, 2.5vw, 16px);
+        bottom: clamp(65px, 22%, 95px);
         z-index: 15;
         pointer-events: none;
         font-family: 'Caveat', cursive;
@@ -3779,7 +3795,7 @@ img, svg {
 
     .m-script-line-1 {
         display: block !important;
-        font-size: 0.82rem;
+        font-size: clamp(0.72rem, 2.2vw, 0.85rem);
         font-weight: 700;
         color: #ffffff;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
@@ -3790,7 +3806,7 @@ img, svg {
 
     .m-script-line-2 {
         display: block !important;
-        font-size: 0.74rem;
+        font-size: clamp(0.65rem, 2vw, 0.76rem);
         font-weight: 600;
         color: #ffffff;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
@@ -3804,7 +3820,7 @@ img, svg {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        font-size: 0.92rem;
+        font-size: clamp(0.8rem, 2.5vw, 0.95rem);
         font-weight: 700;
         color: #ffffff !important;
         text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85);
@@ -3814,26 +3830,10 @@ img, svg {
     }
 
     .m-proud-calligraphy .m-script-swoosh {
-        width: 78px;
+        width: clamp(64px, 18vw, 80px);
         height: 7px;
         margin-top: 2px;
         filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
-    }
-
-    @media (max-width: 365px) {
-        .m-proud-calligraphy {
-            right: 6px;
-            top: 230px;
-            transform: rotate(-8deg) scale(0.92);
-        }
-    }
-
-    @media (max-width: 330px) {
-        .m-proud-calligraphy {
-            right: 4px;
-            top: 220px;
-            transform: rotate(-8deg) scale(0.85);
-        }
     }
 
     /* 2.5 Mobile Trust Metrics & Stats Pill Bar (Matches Reference Image 1) */
@@ -4210,11 +4210,34 @@ img, svg {
     }
 
     .m-quick-btn span {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
+        line-height: 1.15;
+        text-align: center;
+        word-break: break-word;
         max-width: 100%;
-        font-size: 0.56rem;
+        font-size: clamp(0.52rem, 1.6vw, 0.6rem);
+    }
+
+    @media (max-width: 340px) {
+        .m-services-grid-4 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.4rem 0.25rem;
+        }
+        .m-quick-actions-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.35rem;
+        }
+    }
+
+    @media (min-width: 580px) and (max-width: 991px) {
+        .m-services-grid-4 {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0.6rem 0.4rem;
+        }
+        .m-quick-actions-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.5rem;
+        }
     }
 
     .m-quick-btn:active {
@@ -4330,16 +4353,10 @@ img, svg {
     .floating-whatsapp-container {
         position: fixed;
         bottom: calc(76px + env(safe-area-inset-bottom, 0px));
-        right: 16px;
+        right: clamp(12px, 3vw, 24px);
         left: auto;
         transform: none;
         z-index: 9999;
-    }
-
-    @media (min-width: 481px) and (max-width: 991px) {
-        .floating-whatsapp-container {
-            right: calc((100vw - 480px) / 2 + 16px);
-        }
     }
 
     .floating-whatsapp-btn {
