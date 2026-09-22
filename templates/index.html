@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=9.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13.0">
 </head>
 <body>
 
@@ -24,13 +24,7 @@
         <div class="nav-container">
             <!-- Brand Logo -->
             <a href="/" class="brand-logo" aria-label="Nhealth Home">
-                <div class="logo-mark">
-                    <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img">
-                </div>
-                <div class="logo-text">
-                    <span class="brand-name">Nhealth</span>
-                    <span class="brand-tagline">— Healthcare at Home —</span>
-                </div>
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="brand-logo-img-full">
             </a>
 
             <!-- Desktop Navigation Links -->
@@ -85,7 +79,7 @@
     <div class="mobile-drawer" id="mobileDrawer">
         <div class="mobile-drawer-header">
             <div class="mobile-drawer-logo">
-                <span class="brand-name">Nhealth</span>
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="m-drawer-logo-img">
             </div>
             <button class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
         </div>
@@ -129,13 +123,7 @@
 
                         <!-- Secondary Brand Mark in Hero -->
                         <div class="hero-brand-block">
-                            <div class="hero-logo-mark">
-                                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="hero-logo-img">
-                            </div>
-                            <div class="hero-brand-titles">
-                                <h2 class="hero-brand-name">Nhealth</h2>
-                                <p class="hero-brand-sub">— Healthcare at Home —</p>
-                            </div>
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="hero-trademark-logo">
                         </div>
 
                         <!-- Main Dynamic Headline -->
@@ -212,90 +200,170 @@
         <!-- ==================== HERO BOTTOM CONTROLS SECTION (Services Bar & Stats Bar) ==================== -->
         <section class="hero-bottom-section">
             
-            <!-- FLOATING SERVICES BAR (10 ILLUSTRATED SERVICES SIDE BY SIDE) -->
+            <!-- FLOATING SERVICES BAR (ILLUSTRATED SERVICES CAROUSEL) -->
             <div class="services-floating-container" id="services">
-                <div class="services-card-bar">
-                    
-                    <!-- 1. Online Doctor Consultation -->
-                    <div class="service-item" onclick="openBookingModal('Online Doctor Consultation')" title="Book Online Doctor Consultation">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_online_consult.png') }}" alt="Online Doctor Consultation" class="service-thumb-img">
+                <div class="services-bar-wrapper">
+                    <button class="services-nav-arrow prev" onclick="scrollServicesBar(-1)" aria-label="Previous services">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <div class="services-card-bar" id="servicesCardBar">
+                        
+                        <!-- 1. Online Doctor Consultation -->
+                        <div class="service-item" onclick="openBookingModal('Online Doctor Consultation')" title="Book Online Doctor Consultation">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_online_consult.png') }}" alt="Online Doctor Consultation" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Online Doctor<br>Consultation</span>
                         </div>
-                        <span class="service-label">Online Doctor<br>Consultation</span>
-                    </div>
 
-                    <!-- 2. Doctor Home Visits -->
-                    <div class="service-item" onclick="openBookingModal('Doctor Home Visits')" title="Book Doctor Home Visit">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_doctor_visit.png') }}" alt="Doctor Home Visits" class="service-thumb-img">
+                        <!-- 2. Doctor Home Visits -->
+                        <div class="service-item" onclick="openBookingModal('Doctor Home Visits')" title="Book Doctor Home Visit">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_doctor_visit.png') }}" alt="Doctor Home Visits" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Doctor<br>Home Visits</span>
                         </div>
-                        <span class="service-label">Doctor<br>Home Visits</span>
-                    </div>
 
-                    <!-- 3. Lab Tests at Home -->
-                    <div class="service-item" onclick="openBookingModal('Lab Tests at Home')" title="Book Blood &amp; Lab Tests">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_lab_tests.png') }}" alt="Lab Tests at Home" class="service-thumb-img">
+                        <!-- 3. Lab Tests at Home -->
+                        <div class="service-item" onclick="openBookingModal('Lab Tests at Home')" title="Book Blood &amp; Lab Tests">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_lab_tests.png') }}" alt="Lab Tests at Home" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Lab Tests<br>at Home</span>
                         </div>
-                        <span class="service-label">Lab Tests<br>at Home</span>
-                    </div>
 
-                    <!-- 4. X-Ray at Home -->
-                    <div class="service-item" onclick="openBookingModal('X-Ray at Home')" title="Book Portable Digital X-Ray">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_xray.png') }}" alt="X-Ray at Home" class="service-thumb-img">
+                        <!-- 4. X-Ray at Home -->
+                        <div class="service-item" onclick="openBookingModal('X-Ray at Home')" title="Book Portable Digital X-Ray">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_xray.png') }}" alt="X-Ray at Home" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">X-Ray<br>at Home</span>
                         </div>
-                        <span class="service-label">X-Ray<br>at Home</span>
-                    </div>
 
-                    <!-- 5. Pharmacy to Home -->
-                    <div class="service-item" onclick="openBookingModal('Pharmacy to Home')" title="Order Medicines to Home">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_pharmacy.png') }}" alt="Pharmacy to Home" class="service-thumb-img">
+                        <!-- 5. Pharmacy to Home -->
+                        <div class="service-item" onclick="openBookingModal('Pharmacy to Home')" title="Order Medicines to Home">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_pharmacy.png') }}" alt="Pharmacy to Home" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Pharmacy<br>to Home</span>
                         </div>
-                        <span class="service-label">Pharmacy<br>to Home</span>
-                    </div>
 
-                    <!-- 6. Premium OPD Memberships -->
-                    <div class="service-item" onclick="openBookingModal('Premium OPD Memberships')" title="Explore Premium OPD Plans">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_premium_opd.png') }}" alt="Premium OPD Memberships" class="service-thumb-img">
+                        <!-- 6. Premium OPD Memberships -->
+                        <div class="service-item" onclick="openBookingModal('Premium OPD Memberships')" title="Explore Premium OPD Plans">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_premium_opd.png') }}" alt="Premium OPD Memberships" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Premium OPD<br>Memberships</span>
                         </div>
-                        <span class="service-label">Premium OPD<br>Memberships</span>
-                    </div>
 
-                    <!-- 7. Eldercare -->
-                    <div class="service-item" onclick="openBookingModal('Eldercare')" title="Book Eldercare Nursing Support">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_eldercare.png') }}" alt="Eldercare" class="service-thumb-img">
+                        <!-- 7. Eldercare -->
+                        <div class="service-item" onclick="openBookingModal('Eldercare')" title="Book Eldercare Nursing Support">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_eldercare.png') }}" alt="Eldercare" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Eldercare</span>
                         </div>
-                        <span class="service-label">Eldercare</span>
-                    </div>
 
-                    <!-- 8. Bedside Assistant -->
-                    <div class="service-item" onclick="openBookingModal('Bedside Assistant')" title="Book Bedside Medical Attendant">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_bedside.png') }}" alt="Bedside Assistant" class="service-thumb-img">
+                        <!-- 8. Bedside Assistant -->
+                        <div class="service-item" onclick="openBookingModal('Bedside Assistant')" title="Book Bedside Medical Attendant">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_bedside.png') }}" alt="Bedside Assistant" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Bedside<br>Assistant</span>
                         </div>
-                        <span class="service-label">Bedside<br>Assistant</span>
-                    </div>
 
-                    <!-- 9. Physiotherapy -->
-                    <div class="service-item" onclick="openBookingModal('Physiotherapy')" title="Book Home Physiotherapy">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_physio.png') }}" alt="Physiotherapy" class="service-thumb-img">
+                        <!-- 9. Physiotherapy -->
+                        <div class="service-item" onclick="openBookingModal('Physiotherapy')" title="Book Home Physiotherapy">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_physio.png') }}" alt="Physiotherapy" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Physiotherapy</span>
                         </div>
-                        <span class="service-label">Physiotherapy</span>
-                    </div>
 
-                    <!-- 10. and more... -->
-                    <div class="service-item service-more-item" onclick="openAllServicesModal()" title="Explore all 20+ Healthcare Services">
-                        <div class="service-img-wrap">
-                            <img src="{{ url_for('static', filename='images/services/srv_and_more.png') }}" alt="Explore More Services" class="service-thumb-img">
+                        <!-- 10. Nursing Services -->
+                        <div class="service-item" onclick="openBookingModal('Nursing Services')" title="Book Nursing Care at Home">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_nursing.png') }}" alt="Nursing Services" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Nursing<br>Services</span>
                         </div>
-                        <span class="service-label">and more...</span>
-                    </div>
 
+                        <!-- 11. Dental Care -->
+                        <div class="service-item" onclick="openBookingModal('Dental Care')" title="Book Dental Care">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_dental_care.png') }}" alt="Dental Care" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Dental<br>Care</span>
+                        </div>
+
+                        <!-- 12. Blood Bank -->
+                        <div class="service-item" onclick="openBookingModal('Blood Bank')" title="Connect with Blood Bank">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_blood_bank.png') }}" alt="Blood Bank" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Blood<br>Bank</span>
+                        </div>
+
+                        <!-- 13. Diagnostics and Imaging -->
+                        <div class="service-item" onclick="openBookingModal('Diagnostics and Imaging')" title="Book Diagnostics &amp; Imaging">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_diagnostics_imaging.png') }}" alt="Diagnostics and Imaging" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Diagnostics<br>&amp; Imaging</span>
+                        </div>
+
+                        <!-- 14. Ambulance Services 24/7 -->
+                        <div class="service-item" onclick="openBookingModal('Ambulance Services 24/7')" title="Book Ambulance Services 24/7">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_ambulance_247.png') }}" alt="Ambulance Services 24/7" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Ambulance<br>24/7 SOS</span>
+                        </div>
+
+                        <!-- 15. Home Vaccination Service -->
+                        <div class="service-item" onclick="openBookingModal('Home Vaccination Service')" title="Book Home Vaccination">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_home_vaccination.png') }}" alt="Home Vaccination Service" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Home<br>Vaccination</span>
+                        </div>
+
+                        <!-- 16. Health Checkups -->
+                        <div class="service-item" onclick="openBookingModal('Health Checkups')" title="Book Preventive Health Checkups">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_health_checkups.png') }}" alt="Health Checkups" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Health<br>Checkups</span>
+                        </div>
+
+                        <!-- 17. Care Programmes -->
+                        <div class="service-item" onclick="openBookingModal('Care Programmes')" title="Explore Care Programmes">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_care_programmes.png') }}" alt="Care Programmes" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Care<br>Programmes</span>
+                        </div>
+
+                        <!-- 18. Mental Health Support -->
+                        <div class="service-item" onclick="openBookingModal('Mental Health Support')" title="Consult Mental Health Support">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_mental_health.png') }}" alt="Mental Health Support" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">Mental Health<br>Support</span>
+                        </div>
+
+                        <!-- 19. and more... -->
+                        <div class="service-item service-more-item" onclick="openAllServicesModal()" title="Explore all 20+ Healthcare Services">
+                            <div class="service-img-wrap">
+                                <img src="{{ url_for('static', filename='images/services/srv_and_more.png') }}" alt="Explore More Services" class="service-thumb-img">
+                            </div>
+                            <span class="service-label">and more...</span>
+                        </div>
+
+                    </div>
+                    <button class="services-nav-arrow next" onclick="scrollServicesBar(1)" aria-label="Next services">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
 
@@ -817,13 +885,7 @@
             <div class="footer-top-container">
                 <div class="footer-brand-col">
                     <a href="/" class="brand-logo footer-logo" aria-label="Nhealth Home">
-                        <div class="logo-mark">
-                            <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img">
-                        </div>
-                        <div class="logo-text">
-                            <span class="brand-name">Nhealth</span>
-                            <span class="brand-tagline">— Healthcare at Home —</span>
-                        </div>
+                        <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal_light.png') }}" alt="Nhealth — Healthcare at Home" class="footer-logo-img-full">
                     </a>
                     <p class="footer-bio-text">NHealth Technologies is an enterprise healthcare marketplace and digital telemedicine infrastructure pioneer, connecting patients, doctors, pharmacies, diagnostics, and emergency ambulance providers nationwide.</p>
                     <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> support@nhealthtechnologies.com</p>
@@ -887,13 +949,7 @@
     <!-- Mobile Top Header Bar (Transparent & Frozen Sticky/Fixed to Viewport) -->
     <header class="mobile-top-header mobile-only" id="mobileHeader">
         <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
-            <div class="logo-mark m-logo-mark">
-                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
-            </div>
-            <div class="logo-text m-logo-text">
-                <span class="brand-name m-brand-name">Nhealth</span>
-                <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
-            </div>
+            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="m-brand-logo-img-full">
         </a>
         <div class="m-header-right">
             <button class="m-header-login-btn" onclick="openLoginModal()" title="Login to Nhealth">
@@ -1131,7 +1187,79 @@
                     <p class="m-srv-sub">Skilled. Trusted. Always there.</p>
                 </div>
 
-                <!-- 11. and More... -->
+                <!-- 11. Dental Care -->
+                <div class="m-service-card" onclick="openBookingModal('Dental Care')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_dental_care.png') }}" alt="Dental Care" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-dental">Dental Care</div>
+                    <p class="m-srv-sub">Healthy smiles, brighter tomorrows.</p>
+                </div>
+
+                <!-- 12. Blood Bank -->
+                <div class="m-service-card" onclick="openBookingModal('Blood Bank')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_blood_bank.png') }}" alt="Blood Bank" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-blood">Blood Bank</div>
+                    <p class="m-srv-sub">Donate blood. Save lives.</p>
+                </div>
+
+                <!-- 13. Diagnostics and Imaging -->
+                <div class="m-service-card" onclick="openBookingModal('Diagnostics and Imaging')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_diagnostics_imaging.png') }}" alt="Diagnostics and Imaging" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-diagnostics">Diagnostics &amp; Imaging</div>
+                    <p class="m-srv-sub">Accurate reports. Better decisions.</p>
+                </div>
+
+                <!-- 14. Ambulance Services 24/7 -->
+                <div class="m-service-card" onclick="openBookingModal('Ambulance Services 24/7')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_ambulance_247.png') }}" alt="Ambulance Services 24/7" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-ambulance">Ambulance 24/7</div>
+                    <p class="m-srv-sub">When every second matters.</p>
+                </div>
+
+                <!-- 15. Home Vaccination Service -->
+                <div class="m-service-card" onclick="openBookingModal('Home Vaccination Service')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_home_vaccination.png') }}" alt="Home Vaccination Service" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-vaccine">Home Vaccination</div>
+                    <p class="m-srv-sub">Safe immunity at your doorstep.</p>
+                </div>
+
+                <!-- 16. Health Checkups -->
+                <div class="m-service-card" onclick="openBookingModal('Health Checkups')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_health_checkups.png') }}" alt="Health Checkups" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-checkup">Health Checkups</div>
+                    <p class="m-srv-sub">Know today. Live healthier.</p>
+                </div>
+
+                <!-- 17. Care Programmes -->
+                <div class="m-service-card" onclick="openBookingModal('Care Programmes')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_care_programmes.png') }}" alt="Care Programmes" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-care">Care Programmes</div>
+                    <p class="m-srv-sub">Support today. Independence.</p>
+                </div>
+
+                <!-- 18. Mental Health Support -->
+                <div class="m-service-card" onclick="openBookingModal('Mental Health Support')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_mental_health.png') }}" alt="Mental Health Support" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-mental">Mental Health</div>
+                    <p class="m-srv-sub">Talk. Heal. Grow. Not alone.</p>
+                </div>
+
+                <!-- 19. and More... -->
                 <div class="m-service-card" onclick="openAllServicesModal()">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_and_more.png') }}" alt="and More..." class="m-srv-art-img" loading="lazy">
@@ -1140,7 +1268,7 @@
                     <p class="m-srv-sub">Complete healthcare</p>
                 </div>
 
-                <!-- 12. Doctor Banner Promo Card -->
+                <!-- 20. Doctor Banner Promo Card -->
                 <div class="m-doctor-banner-card" onclick="openBookingModal('General Physician')">
                     <div class="m-promo-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_family_promo.png') }}" alt="Your Health Our Priority" class="m-promo-art-img" loading="lazy">
@@ -1562,9 +1690,18 @@
 
             <!-- Health Support Rider Info Text Card -->
             <div class="rider-modal-info-card">
-                <p class="rider-modal-info-text">
-                    Pick and Drop Support and handles entire hospital or healthcare procedure &mdash; medicine, reports, essentials at your doorstep
-                </p>
+                <div class="rider-modal-title-pill">Health Support Rider</div>
+                <div class="rider-modal-headline">Trusted Pick &amp; Drop, Full-Day Support &amp; Complete Healthcare Assistance</div>
+                <div class="rider-modal-scope">&mdash; From Hospital Visits , OPDs to Procedures,<br>Medicines, Reports &amp; Essentials Delivered to Your Doorstep.</div>
+                <div class="rider-modal-tagline">
+                    <span class="tag-pick">Pick</span>
+                    <span class="tag-dot">&bull;</span>
+                    <span class="tag-support">Support</span>
+                    <span class="tag-dot">&bull;</span>
+                    <span class="tag-drop">Drop</span>
+                    <span class="tag-dot">&bull;</span>
+                    <span class="tag-brand">Your Healthcare, Simplified.</span>
+                </div>
             </div>
 
             <div class="rider-modal-actions">
@@ -1579,6 +1716,6 @@
     </div>
 
     <!-- Main JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.7"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.8"></script>
 </body>
 </html>

@@ -203,10 +203,12 @@ function openBookingModal(preselectedService = null) {
         if (successView) successView.style.display = 'none';
 
         if (preselectedService && serviceSelect) {
-            // Find option matching title
+            // Find option matching title (skip empty placeholder option)
             for (let i = 0; i < serviceSelect.options.length; i++) {
-                if (serviceSelect.options[i].value.toLowerCase().includes(preselectedService.toLowerCase()) || 
-                    preselectedService.toLowerCase().includes(serviceSelect.options[i].value.toLowerCase())) {
+                const optVal = (serviceSelect.options[i].value || '').trim();
+                if (!optVal) continue;
+                if (optVal.toLowerCase().includes(preselectedService.toLowerCase()) || 
+                    preselectedService.toLowerCase().includes(optVal.toLowerCase())) {
                     serviceSelect.selectedIndex = i;
                     break;
                 }
@@ -811,5 +813,15 @@ function toggleBikeDrive() {
         showToast("🛵 Nhealth Healthcare at Home on the way across Andhra Pradesh!", "success");
     } else {
         showToast("🛵 Nhealth Doctor Delivery returned to starting point!", "info");
+    }
+}
+
+/* ==========================================================================
+   15. DESKTOP SERVICES CAROUSEL SCROLLER
+   ========================================================================== */
+function scrollServicesBar(direction) {
+    const bar = document.getElementById('servicesCardBar') || document.querySelector('.services-card-bar');
+    if (bar) {
+        bar.scrollBy({ left: direction * 360, behavior: 'smooth' });
     }
 }

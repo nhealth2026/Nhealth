@@ -123,6 +123,96 @@ SERVICES = [
         "description": "Personalized physical therapy sessions for pain relief, stroke rehabilitation, sports injuries, and orthopedic care."
     },
     {
+        "id": "nursing-services",
+        "title": "Nursing Services",
+        "category": "Home Care",
+        "icon": "user-nurse",
+        "color": "#10b981",
+        "bg_tint": "rgba(16, 185, 129, 0.1)",
+        "badge": "Skilled Nurses",
+        "description": "Certified ICU and home care nurses for IV infusions, wound dressing, catheterization, and post-surgery care."
+    },
+    {
+        "id": "dental-care",
+        "title": "Dental Care",
+        "category": "Dental Care",
+        "icon": "tooth",
+        "color": "#0284c7",
+        "bg_tint": "rgba(2, 132, 199, 0.1)",
+        "badge": "Healthy Smiles",
+        "description": "Comprehensive dental checkups, cleaning, fillings, painless root canals, and consultations with certified dental surgeons."
+    },
+    {
+        "id": "blood-bank",
+        "title": "Blood Bank",
+        "category": "Emergency Care",
+        "icon": "droplet",
+        "color": "#b91c1c",
+        "bg_tint": "rgba(185, 28, 28, 0.1)",
+        "badge": "Donate & Save Lives",
+        "description": "24/7 verified blood donor network, cross-matching, platelets, and rapid hospital delivery for emergency life-saving needs."
+    },
+    {
+        "id": "diagnostics-imaging",
+        "title": "Diagnostics and Imaging",
+        "category": "Radiology & Scans",
+        "icon": "x-ray",
+        "color": "#0d9488",
+        "bg_tint": "rgba(13, 148, 136, 0.1)",
+        "badge": "Accurate Reports",
+        "description": "High-precision MRI, CT scans, ultrasound, and digital radiology with certified expert radiologist interpretations."
+    },
+    {
+        "id": "ambulance-services-247",
+        "title": "Ambulance Services 24/7",
+        "category": "Emergency SOS",
+        "icon": "truck-medical",
+        "color": "#dc2626",
+        "bg_tint": "rgba(220, 38, 38, 0.1)",
+        "badge": "24/7 Rapid Response",
+        "description": "Immediate emergency ICU and ALS/BLS ambulance dispatch equipped with ventilators, defibrillators, and oxygen support."
+    },
+    {
+        "id": "home-vaccination",
+        "title": "Home Vaccination Service",
+        "category": "Immunization",
+        "icon": "syringe",
+        "color": "#7c3aed",
+        "bg_tint": "rgba(124, 58, 237, 0.1)",
+        "badge": "Safe Immunity",
+        "description": "Safe, temperature-monitored vaccination at home for infants, children, adults, and seniors by certified healthcare nurses."
+    },
+    {
+        "id": "health-checkups",
+        "title": "Health Checkups",
+        "category": "Preventive Care",
+        "icon": "heart-pulse",
+        "color": "#16a34a",
+        "bg_tint": "rgba(22, 163, 74, 0.1)",
+        "badge": "Know Today",
+        "description": "Comprehensive full-body preventive health checkup packages with home sample pickup and personalized doctor review."
+    },
+    {
+        "id": "care-programmes",
+        "title": "Care Programmes",
+        "category": "Specialized Care",
+        "icon": "people-roof",
+        "color": "#ea580c",
+        "bg_tint": "rgba(234, 88, 12, 0.1)",
+        "badge": "Support & Independence",
+        "description": "Personalized care management programs for chronic illnesses, stroke rehab, post-surgical recovery, and assisted living."
+    },
+    {
+        "id": "mental-health",
+        "title": "Mental Health Support",
+        "category": "Mental Wellness",
+        "icon": "brain",
+        "color": "#4338ca",
+        "bg_tint": "rgba(67, 56, 202, 0.1)",
+        "badge": "Talk. Heal. Grow.",
+        "description": "Confidential counseling, psychotherapy, and psychiatric consultations with certified psychologists and mental wellness experts."
+    },
+    {
         "id": "and-more",
         "title": "and more...",
         "category": "Explore All",
