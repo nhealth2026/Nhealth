@@ -161,11 +161,6 @@
                             </button>
                         </div>
 
-                        <!-- Health Support Rider Badge & Book Rider (Desktop / Laptop) -->
-                        <div class="hero-rider-badge-wrap desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to View Details">
-                            <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider - Book Rider" class="hero-rider-badge-img">
-                        </div>
-
                         <!-- Quick Trust Pill Row for Mobile -->
                         <div class="mobile-quick-pills">
                             <span class="m-pill"><i class="fa-solid fa-certificate"></i> ISO Certified</span>
@@ -204,6 +199,11 @@
                     </div>
 
                 </div>
+            </div>
+
+            <!-- Health Support Rider Badge & Book Rider (Desktop / Laptop - Positioned at Banner Edge) -->
+            <div class="hero-rider-badge-wrap desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to View Details">
+                <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider - Book Rider" class="hero-rider-badge-img">
             </div>
 
             <!-- Continuous Slow Looping Healthcare Bike Delivery (Desktop/Laptop) -->

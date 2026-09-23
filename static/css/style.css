@@ -616,6 +616,7 @@ img, svg {
     flex-direction: column;
     align-items: flex-start;
     padding-right: 0.5rem;
+    padding-bottom: 110px;
 }
 
 /* Empty Spacer */
@@ -1069,9 +1070,10 @@ img, svg {
    3.5. HEALTH SUPPORT RIDER BADGE & CONTINUOUS SLOW LOOPING BIKE (Desktop)
    ========================================================================== */
 .hero-rider-badge-wrap {
-    display: block;
-    margin-top: 2.5rem;
-    margin-bottom: 0.5rem;
+    position: absolute;
+    bottom: 0px;
+    left: calc(max(0px, (100% - 1360px) / 2) + 2rem);
+    z-index: 22;
     cursor: pointer;
     user-select: none;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
@@ -1091,9 +1093,6 @@ img, svg {
 }
 
 @media (min-width: 1400px) {
-    .hero-rider-badge-wrap {
-        margin-top: 3.2rem;
-    }
     .hero-rider-badge-img {
         width: 150px;
     }
