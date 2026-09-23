@@ -3193,7 +3193,9 @@ img, svg {
 .footer-bio-text {
     font-size: 0.88rem;
     color: #94a3b8;
-    line-height: 1.6;
+    line-height: 1.65;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .footer-contact-email {
@@ -5793,12 +5795,23 @@ img, svg {
     margin-bottom: 0.65rem;
 }
 
+.m-footer-bio {
+    font-size: 0.74rem;
+    color: #64748b;
+    line-height: 1.6;
+    text-align: justify;
+    text-justify: inter-word;
+    margin: 0.5rem auto 0.75rem auto;
+    padding: 0 0.5rem;
+}
+
 .m-footer-contact {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 0.25rem;
-    font-size: 0.72rem;
-    color: #475569;
+    font-size: 0.74rem;
+    color: #0284c7;
     margin-bottom: 0.65rem;
 }
 
