@@ -1090,11 +1090,9 @@
                         <p class="about-lead-p">Whether you need a medical consultation, diagnostic test, medicines, physiotherapy, dental care, eldercare, an ambulance, or assistance with hospital procedures, Nhealth is designed to help you access the right healthcare service through a single platform.</p>
                     </div>
                     <div class="about-intro-badge-card">
-                        <div class="about-brand-emblem">
-                            <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Emblem" class="about-emblem-img">
+                        <div class="about-trademark-wrap">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_stacked_light.png') }}" alt="Nhealth — Healthcare at Home" class="about-trademark-stacked-img">
                         </div>
-                        <h4 class="about-emblem-title">Nhealth</h4>
-                        <p class="about-emblem-tagline">— Healthcare at Home —</p>
                         <div class="about-emblem-pills">
                             <span>✨ One Platform</span>
                             <span>✨ Connected Care</span>
@@ -1208,7 +1206,9 @@
             <div class="footer-top-container">
                 <div class="footer-brand-col">
                     <a href="/" class="brand-logo footer-logo" aria-label="Nhealth Home">
-                        <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal_light.png') }}" alt="Nhealth — Healthcare at Home" class="footer-logo-img-full">
+                        <div class="footer-logo-badge">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="footer-logo-img-full">
+                        </div>
                     </a>
                     <p class="footer-bio-text">Nhealth Technologies is an healthcare aggregator providing integrated healthcare services and at home through a single digital platform, connecting patients, doctors, pharmacies, diagnostics and emergency ambulance providers, eldercare, health packages, health riders, bedside assistants and at home, physiotherapy services and at home, blood availability checks, vaccination services nationwide, and also a digital telemedicine infrastructure pioneer.</p>
                     <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> <a href="mailto:support@nhealth.in" class="footer-email-link">support@nhealth.in</a></p>
@@ -1223,6 +1223,7 @@
                         <li><a href="#services-suite" onclick="openBookingModal('Pharmacy to Home')">Doorstep E-Pharmacy Refills</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Lab Tests at Home')">Home Diagnostics &amp; Lab Tests</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('X-Ray at Home')">X-Ray &amp; Portable ECG</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Dental Care')">Dental Care &amp; Oral Health</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Home Nursing Care Attendant')">Specialized Home Nursing</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Bedside Assistant')">Bedside Patient Attendant</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Eldercare')">Eldercare &amp; Senior Support</a></li>
@@ -1230,10 +1231,12 @@
                         <li><a href="#services-suite" onclick="triggerEmergencySOS()">24/7 Smart Ambulance SOS</a></li>
                         <li><a href="#services-suite" onclick="openRiderModal()">Health Support Rider</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Home Vaccination Service')">Home Vaccination Service</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Diagnostics and Imaging')">Diagnostics &amp; Advanced Imaging</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Full Body Preventive Health Checkup')">Full Body Health Packages</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Care Programmes')">Chronic Disease Care Plans</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Blood Bank')">Blood Bank &amp; Donor Network</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Mental Health Support')">Mental Health &amp; Counseling</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Premium OPD Memberships')">Premium OPD Memberships</a></li>
                     </ul>
                 </div>
 
@@ -1250,8 +1253,8 @@
                 </div>
             </div>
 
-            <!-- Footer Bottom Strip -->
-            <div class="footer-bottom-row" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.6rem; padding-top: 1.75rem; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 2rem;">
+            <!-- Footer Bottom Strip (Middle line removed) -->
+            <div class="footer-bottom-row" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.6rem; padding-top: 1.5rem; margin-top: 1.5rem;">
                 <p class="footer-copyright" style="color: #94a3b8; font-size: 0.88rem; font-weight: 500; margin: 0;">&copy; 2026 Nhealth Healthcare Technologies Pvt. Ltd. All rights reserved.</p>
                 <div class="footer-legal-links" style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.84rem; color: #64748b;">
                     <a href="javascript:void(0)" onclick="showToast('Terms of Service: Full legal terms and usage conditions.', 'info')" style="color: #94a3b8; text-decoration: none;">Terms of Service</a>
@@ -1797,15 +1800,13 @@
             <!-- ==================== MOBILE FOOTER ==================== -->
             <footer class="m-site-footer" id="m-contact">
                 <div class="m-footer-brand">
-                    <div class="logo-mark m-logo-mark">
-                        <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
-                    </div>
-                    <span class="brand-name m-brand-name">Nhealth</span>
+                    <a href="#home" aria-label="Nhealth Home" style="display: inline-block; text-decoration: none;">
+                        <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="m-footer-trademark-logo">
+                    </a>
                 </div>
                 <p class="m-footer-tagline">Powering the Future of Healthcare at Home</p>
                 <p class="m-footer-bio">Nhealth Technologies is an healthcare aggregator providing integrated healthcare services and at home through a single digital platform, connecting patients, doctors, pharmacies, diagnostics and emergency ambulance providers, eldercare, health packages, health riders, bedside assistants and at home, physiotherapy services and at home, blood availability checks, vaccination services nationwide, and also a digital telemedicine infrastructure pioneer.</p>
                 <div class="m-footer-contact">
-                    <span><i class="fa-solid fa-phone"></i> +91 9393934621</span>
                     <span><i class="fa-solid fa-envelope"></i> <a href="mailto:support@nhealth.in" style="color: inherit; text-decoration: none;">support@nhealth.in</a></span>
                 </div>
                 <div class="m-footer-links">
