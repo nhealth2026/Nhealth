@@ -507,6 +507,16 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
+.auth-google-btn .google-icon {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .auth-bottom-switch {
     text-align: center;
     margin-top: 1.15rem;
