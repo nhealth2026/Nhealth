@@ -65,6 +65,27 @@ body.lab-portal-body {
     text-decoration: none;
 }
 
+.lab-brand-logo-img {
+    height: 38px;
+    width: auto;
+    max-width: 190px;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.lab-brand-link:hover .lab-brand-logo-img {
+    transform: scale(1.02);
+}
+
+.lab-report-logo-img {
+    height: 34px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    display: block;
+}
+
 .lab-brand-icon {
     width: 32px;
     height: 32px;

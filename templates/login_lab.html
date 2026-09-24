@@ -21,21 +21,8 @@
 
     <!-- Mobile Top Navigation Bar -->
     <header class="lab-mobile-navbar">
-        <a href="/" class="lab-nav-logo">
-            <svg class="lab-brand-symbol" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="15" y="2" width="6" height="10.5" rx="3" fill="#f97316"/>
-                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(45 18 18)" fill="#f97316"/>
-                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(90 18 18)" fill="#f97316"/>
-                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(135 18 18)" fill="#f97316"/>
-                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(180 18 18)" fill="#f97316"/>
-                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(225 18 18)" fill="#f97316"/>
-                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(270 18 18)" fill="#f97316"/>
-                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(315 18 18)" fill="#f97316"/>
-            </svg>
-            <div class="lab-brand-text">
-                <span class="lab-brand-name">nhealth</span>
-                <span class="lab-brand-tagline">Better Health. Home.</span>
-            </div>
+        <a href="/" class="lab-nav-logo" aria-label="Nhealth Home">
+            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="lab-brand-logo-img">
         </a>
         <button class="lab-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">
             <i class="fa-solid fa-bars"></i>
@@ -60,21 +47,8 @@
         <div class="lab-showcase-panel">
             <div class="lab-showcase-top">
                 <!-- Nhealth Brand Logo -->
-                <a href="/" class="lab-showcase-logo">
-                    <svg class="lab-brand-symbol" style="width: 38px; height: 38px;" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" fill="#f97316"/>
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(45 18 18)" fill="#f97316"/>
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(90 18 18)" fill="#f97316"/>
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(135 18 18)" fill="#f97316"/>
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(180 18 18)" fill="#f97316"/>
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(225 18 18)" fill="#f97316"/>
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(270 18 18)" fill="#f97316"/>
-                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(315 18 18)" fill="#f97316"/>
-                    </svg>
-                    <div class="lab-brand-text">
-                        <span class="lab-brand-name" style="font-size: 1.6rem;">nhealth</span>
-                        <span class="lab-brand-tagline" style="font-size: 0.75rem;">Better Health. Home.</span>
-                    </div>
+                <a href="/" class="lab-showcase-logo" aria-label="Nhealth Home">
+                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="lab-showcase-logo-img">
                 </a>
 
                 <!-- Header -->

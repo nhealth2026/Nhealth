@@ -97,6 +97,22 @@ body.lab-auth-page {
     margin-bottom: 22px;
 }
 
+.lab-showcase-logo-img {
+    height: 42px;
+    width: auto;
+    max-width: 220px;
+    object-fit: contain;
+    display: block;
+}
+
+.lab-brand-logo-img {
+    height: 34px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    display: block;
+}
+
 .lab-brand-symbol {
     width: 36px;
     height: 36px;
