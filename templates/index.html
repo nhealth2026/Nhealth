@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=10.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=15.0">
 </head>
 <body>
 
@@ -24,13 +24,7 @@
         <div class="nav-container">
             <!-- Brand Logo -->
             <a href="/" class="brand-logo" aria-label="Nhealth Home">
-                <div class="logo-mark">
-                    <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img">
-                </div>
-                <div class="logo-text">
-                    <span class="brand-name">Nhealth</span>
-                    <span class="brand-tagline">— Healthcare at Home —</span>
-                </div>
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="brand-logo-img-full">
             </a>
 
             <!-- Desktop Navigation Links -->
@@ -60,7 +54,7 @@
 
                 <a href="#how-it-works" class="nav-link">How It Works</a>
                 <a href="#about-us" class="nav-link">About Us</a>
-                <a href="#contact" class="nav-link">Contact</a>
+                <a href="/contact" class="nav-link">Contact Us</a>
             </nav>
 
             <!-- Navbar Right Actions -->
@@ -68,8 +62,8 @@
                 <button class="icon-btn search-btn" id="searchTriggerBtn" title="Search services, doctors, lab tests" aria-label="Search">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-                <button class="btn-outline-pill login-btn" id="loginModalBtn" onclick="openLoginModal()">Login</button>
-                <button class="btn-outline-pill signup-btn" id="signupModalBtn" onclick="openSignupModal()">Sign Up</button>
+                <a href="/login" class="btn-outline-pill login-btn" id="loginModalBtn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Login</a>
+                <a href="/signup" class="btn-outline-pill signup-btn" id="signupModalBtn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Sign Up</a>
                 
                 <!-- Mobile Hamburger Toggle -->
                 <button class="mobile-toggle-btn" id="mobileMenuToggle" aria-label="Toggle navigation menu">
@@ -85,7 +79,7 @@
     <div class="mobile-drawer" id="mobileDrawer">
         <div class="mobile-drawer-header">
             <div class="mobile-drawer-logo">
-                <span class="brand-name">Nhealth</span>
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="m-drawer-logo-img">
             </div>
             <button class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
         </div>
@@ -101,13 +95,13 @@
                 </a>
                 {% endfor %}
             </div>
-            <a href="#how-it-works" class="m-link" onclick="closeMobileDrawer()">How It Works</a>
-            <a href="#about-us" class="m-link" onclick="closeMobileDrawer()">About Us</a>
-            <a href="#contact" class="m-link" onclick="closeMobileDrawer()">Contact</a>
+            <a href="#m-how-it-works" class="m-link" onclick="scrollToMobileSection('m-how-it-works'); closeMobileDrawer();">How It Works</a>
+            <a href="#m-about-us" class="m-link" onclick="scrollToMobileSection('m-about-us'); closeMobileDrawer();">About Us</a>
+            <a href="/contact" class="m-link">Contact Us</a>
             
             <div class="mobile-drawer-footer">
-                <button class="btn-outline-pill w-100 mb-2" onclick="openLoginModal(); closeMobileDrawer();">Login</button>
-                <button class="btn-outline-pill w-100" onclick="openSignupModal(); closeMobileDrawer();">Sign Up</button>
+                <a href="/login" class="btn-outline-pill w-100 mb-2" style="text-decoration:none; text-align:center; display:block;">Login</a>
+                <a href="/signup" class="btn-outline-pill w-100" style="text-decoration:none; text-align:center; display:block;">Sign Up</a>
             </div>
         </div>
     </div>
@@ -129,13 +123,7 @@
 
                         <!-- Secondary Brand Mark in Hero -->
                         <div class="hero-brand-block">
-                            <div class="hero-logo-mark">
-                                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="hero-logo-img">
-                            </div>
-                            <div class="hero-brand-titles">
-                                <h2 class="hero-brand-name">Nhealth</h2>
-                                <p class="hero-brand-sub">— Healthcare at Home —</p>
-                            </div>
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="hero-trademark-logo">
                         </div>
 
                         <!-- Main Dynamic Headline -->
@@ -157,9 +145,20 @@
                             <span class="pill-segment">All in One Place</span>
                         </div>
 
-                        <!-- Health Support Rider Badge & Book Rider (Desktop / Laptop) -->
-                        <div class="hero-rider-badge-wrap desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to View Details">
-                            <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider - Book Rider" class="hero-rider-badge-img">
+                        <!-- Floating AI Symptom Search Pill Bar (Desktop - Above Bike Logo) -->
+                        <div class="desktop-symptom-search-bar desktop-only" onclick="openSearchOverlay()" title="Tell us what's troubling you - Search symptoms & services">
+                            <div class="d-sparkle-icon">
+                                <svg viewBox="0 0 24 24" class="d-star-svg" fill="currentColor">
+                                    <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+                                </svg>
+                            </div>
+                            <div class="d-search-text-col">
+                                <span class="d-search-prompt">Tell us what's troubling you...</span>
+                                <span class="d-search-sub">e.g. fever, cough, stomach pain</span>
+                            </div>
+                            <button class="d-search-go-btn" aria-label="Search symptoms">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
                         </div>
 
                         <!-- Quick Trust Pill Row for Mobile -->
@@ -202,9 +201,15 @@
                 </div>
             </div>
 
+            <!-- Health Support Rider Badge & Book Rider (Desktop / Laptop - Positioned at Banner Edge) -->
+            <div class="hero-rider-badge-wrap desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to View Details">
+                <img src="{{ url_for('static', filename='images/health_support_rider_badge.png') }}" alt="Health Support Rider - Book Rider" class="hero-rider-badge-img">
+            </div>
+
             <!-- Continuous Slow Looping Healthcare Bike Delivery (Desktop/Laptop) -->
-            <div class="hero-bike-loop-track desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to View Details">
-                <img src="{{ url_for('static', filename='images/nhealth_bike.png') }}" alt="Nhealth Healthcare Bike Delivery" class="hero-bike-loop-img">
+            <div class="hero-bike-loop-track desktop-only" onclick="openRiderModal()" title="Health Support Rider - Click to View Details" aria-label="Health Support Rider traveling">
+                <div class="desktop-bike-bubble">🛵 Health Support Rider</div>
+                <img src="{{ url_for('static', filename='images/health_rider_bike_web.png') }}" alt="Health Support Rider" class="hero-bike-loop-img">
             </div>
         </section>
 
@@ -212,8 +217,9 @@
         <!-- ==================== HERO BOTTOM CONTROLS SECTION (Services Bar & Stats Bar) ==================== -->
         <section class="hero-bottom-section">
             
-            <!-- FLOATING SERVICES BAR (10 ILLUSTRATED SERVICES SIDE BY SIDE) -->
+            <!-- FLOATING SERVICES BAR (2 ROWS WITH COLOR PILL BOXES) -->
             <div class="services-floating-container" id="services">
+                <!-- Line 1: Primary Healthcare Services -->
                 <div class="services-card-bar">
                     
                     <!-- 1. Online Doctor Consultation -->
@@ -221,7 +227,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_online_consult.png') }}" alt="Online Doctor Consultation" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Online Doctor<br>Consultation</span>
+                        <span class="service-pill pill-blue">Online Doctor<br>Consultation</span>
                     </div>
 
                     <!-- 2. Doctor Home Visits -->
@@ -229,7 +235,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_doctor_visit.png') }}" alt="Doctor Home Visits" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Doctor<br>Home Visits</span>
+                        <span class="service-pill pill-green">Doctor<br>Home Visits</span>
                     </div>
 
                     <!-- 3. Lab Tests at Home -->
@@ -237,7 +243,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_lab_tests.png') }}" alt="Lab Tests at Home" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Lab Tests<br>at Home</span>
+                        <span class="service-pill pill-orange">Lab Tests<br>at Home</span>
                     </div>
 
                     <!-- 4. X-Ray at Home -->
@@ -245,7 +251,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_xray.png') }}" alt="X-Ray at Home" class="service-thumb-img">
                         </div>
-                        <span class="service-label">X-Ray<br>at Home</span>
+                        <span class="service-pill pill-teal">X-Ray<br>at Home</span>
                     </div>
 
                     <!-- 5. Pharmacy to Home -->
@@ -253,7 +259,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_pharmacy.png') }}" alt="Pharmacy to Home" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Pharmacy<br>to Home</span>
+                        <span class="service-pill pill-pink">Pharmacy<br>to Home</span>
                     </div>
 
                     <!-- 6. Premium OPD Memberships -->
@@ -261,7 +267,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_premium_opd.png') }}" alt="Premium OPD Memberships" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Premium OPD<br>Memberships</span>
+                        <span class="service-pill pill-indigo">Premium OPD<br>Memberships</span>
                     </div>
 
                     <!-- 7. Eldercare -->
@@ -269,7 +275,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_eldercare.png') }}" alt="Eldercare" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Eldercare</span>
+                        <span class="service-pill pill-coral">Eldercare</span>
                     </div>
 
                     <!-- 8. Bedside Assistant -->
@@ -277,7 +283,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_bedside.png') }}" alt="Bedside Assistant" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Bedside<br>Assistant</span>
+                        <span class="service-pill pill-purple">Bedside<br>Assistant</span>
                     </div>
 
                     <!-- 9. Physiotherapy -->
@@ -285,7 +291,7 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_physio.png') }}" alt="Physiotherapy" class="service-thumb-img">
                         </div>
-                        <span class="service-label">Physiotherapy</span>
+                        <span class="service-pill pill-skyblue">Physiotherapy</span>
                     </div>
 
                     <!-- 10. and more... -->
@@ -293,7 +299,76 @@
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_and_more.png') }}" alt="Explore More Services" class="service-thumb-img">
                         </div>
-                        <span class="service-label">and more...</span>
+                        <span class="service-pill pill-violet">and more...</span>
+                    </div>
+
+                </div>
+
+                <!-- Line 2: Additional Healthcare Services -->
+                <div class="services-card-bar services-card-bar-row2">
+                    
+                    <!-- 1. Dental Care -->
+                    <div class="service-item" onclick="openBookingModal('Dental Care')" title="Book Dental Care">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_dental_care.png') }}" alt="Dental Care" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-cyan">Dental<br>Care</span>
+                    </div>
+
+                    <!-- 2. Blood Bank -->
+                    <div class="service-item" onclick="openBookingModal('Blood Bank')" title="Blood Bank &amp; Assistance">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_blood_bank.png') }}" alt="Blood Bank" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-red">Blood<br>Bank</span>
+                    </div>
+
+                    <!-- 3. Diagnostics & Imaging -->
+                    <div class="service-item" onclick="openBookingModal('Diagnostics and Imaging')" title="Diagnostics &amp; Imaging">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_diagnostics_imaging.png') }}" alt="Diagnostics and Imaging" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-blue">Diagnostics<br>&amp; Imaging</span>
+                    </div>
+
+                    <!-- 4. Ambulance Services 24/7 -->
+                    <div class="service-item" onclick="openBookingModal('Ambulance Services 24/7')" title="Ambulance Services 24/7">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_ambulance_247.png') }}" alt="Ambulance Services 24/7" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-coral">Ambulance<br>24/7</span>
+                    </div>
+
+                    <!-- 5. Home Vaccination Service -->
+                    <div class="service-item" onclick="openBookingModal('Home Vaccination Service')" title="Home Vaccination Service">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_vaccination.png') }}" alt="Home Vaccination Service" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-emerald">Home<br>Vaccination</span>
+                    </div>
+
+                    <!-- 6. Health Checkups -->
+                    <div class="service-item" onclick="openBookingModal('Health Checkups')" title="Health Checkups">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_health_checkups.png') }}" alt="Health Checkups" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-teal">Health<br>Checkups</span>
+                    </div>
+
+                    <!-- 7. Care Programmes -->
+                    <div class="service-item" onclick="openBookingModal('Care Programmes')" title="Care Programmes">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_care_programmes.png') }}" alt="Care Programmes" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-purple">Care<br>Programmes</span>
+                    </div>
+
+                    <!-- 8. Mental Health Support -->
+                    <div class="service-item" onclick="openBookingModal('Mental Health Support')" title="Mental Health Support">
+                        <div class="service-img-wrap">
+                            <img src="{{ url_for('static', filename='images/services/srv_mental_health.png') }}" alt="Mental Health Support" class="service-thumb-img">
+                        </div>
+                        <span class="service-pill pill-indigo">Mental<br>Health</span>
                     </div>
 
                 </div>
@@ -374,124 +449,309 @@
 
         </section>
 
-        <!-- ==================== SECTION 1: COMPREHENSIVE HEALTHCARE SUITE ==================== -->
+        <!-- ==================== SECTION 1: COMPREHENSIVE HEALTHCARE SUITE / OUR SERVICES ==================== -->
         <section class="suite-section-container" id="services-suite">
             <div class="suite-header-block">
-                <span class="suite-badge-tag"><i class="fa-solid fa-layer-group text-teal"></i> All-In-One Healthcare</span>
-                <h2 class="suite-main-title">Comprehensive Healthcare Suite</h2>
-                <p class="suite-sub-title">Everything You Need For Your Family's Health &bull; Six integrated healthcare verticals unified under the trusted NHealth ecosystem.</p>
+                <span class="suite-badge-tag"><i class="fa-solid fa-layer-group text-teal"></i> All-In-One Healthcare Platform</span>
+                <h2 class="suite-main-title">Our Healthcare Services</h2>
+                <p class="suite-sub-title">Everything You Need For Your Family's Health &bull; <i class="fa-solid fa-infinity" style="color: #0baaa2; font-size: 0.92em; margin-right: 2px;"></i> Infinite, integrated healthcare services delivered seamlessly at home and in-clinic across Bharat.</p>
             </div>
 
-            <div class="suite-cards-grid">
+            <!-- Interactive Category Filter Tabs -->
+            <div class="suite-filter-tabs-wrap">
+                <button type="button" class="suite-filter-tab active" onclick="filterServicesCategory('all', this)">
+                    <i class="fa-solid fa-table-cells-large"></i> All Services
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('doctor', this)">
+                    <i class="fa-solid fa-user-doctor"></i> Doctor &amp; Consultations
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('diagnostics', this)">
+                    <i class="fa-solid fa-flask-vial"></i> Diagnostics &amp; Lab
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('nursing', this)">
+                    <i class="fa-solid fa-user-nurse"></i> Home Care &amp; Nursing
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('pharmacy', this)">
+                    <i class="fa-solid fa-prescription-bottle-medical"></i> Pharmacy &amp; Medicines
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('emergency', this)">
+                    <i class="fa-solid fa-truck-medical"></i> Emergency &amp; Ambulance
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('rehab', this)">
+                    <i class="fa-solid fa-person-walking-with-cane"></i> Therapy &amp; Mental Health
+                </button>
+                <button type="button" class="suite-filter-tab" onclick="filterServicesCategory('preventive', this)">
+                    <i class="fa-solid fa-shield-heart"></i> Preventive &amp; Care Plans
+                </button>
+            </div>
+
+            <!-- 19 Services Detailed Grid -->
+            <div class="suite-cards-grid" id="suiteCardsGrid">
+                {% for s in services %}
+                <div class="suite-card {% if s.id == 'ambulance-services-247' %}suite-highlight-card{% endif %}" 
+                     data-category="{{ s.filter_cat }}"
+                     onclick="{{ s.action_fn }}">
+                    <div class="suite-card-top">
+                        <div class="suite-icon-box" style="background: {{ s.bg_tint }}; color: {{ s.color }};">
+                            <span>{{ s.emoji }}</span>
+                        </div>
+                        <span class="suite-category-badge">{{ s.badge }}</span>
+                    </div>
+                    <div class="suite-meta-cat">{{ s.category }}</div>
+                    <h3 class="suite-card-title">{{ s.title }}</h3>
+                    <p class="suite-card-desc">{{ s.description }}</p>
+                    
+                    <ul class="suite-features-list">
+                        {% for feat in s.features %}
+                        <li><i class="fa-solid fa-circle-check"></i> <span>{{ feat }}</span></li>
+                        {% endfor %}
+                    </ul>
+
+                    <button class="btn-suite-action {% if s.id == 'ambulance-services-247' %}btn-emergency-sos{% endif %}">
+                        {{ s.action_label }} <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+
+        <!-- ==================== SECTION: HOW NHEALTH WORKS ==================== -->
+        <section class="how-it-works-section" id="how-it-works">
+            <div class="suite-header-block">
+                <span class="suite-badge-tag"><i class="fa-solid fa-bolt text-teal"></i> Simple &amp; Connected Process</span>
+                <h2 class="suite-main-title">How Nhealth Works</h2>
+                <p class="suite-sub-title"><strong>Your Healthcare. Connected in One Place.</strong><br>From your first consultation to diagnostics, medicines, emergency support, dental care, hospital assistance and ongoing home healthcare — Nhealth brings your healthcare journey together through one connected platform.</p>
+            </div>
+
+            <!-- 7 Steps Interactive Grid -->
+            <div class="hiw-steps-grid">
                 
-                <!-- 1. Doctor Consultation -->
-                <div class="suite-card" onclick="openBookingModal('Doctor Video Consultation')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-blue">
-                            <span>🩺</span>
-                        </div>
-                        <span class="suite-price-badge">Starts at ₹499</span>
+                <!-- Step 1 -->
+                <div class="hiw-step-card">
+                    <div class="hiw-step-header">
+                        <span class="hiw-step-badge">01</span>
+                        <div class="hiw-step-icon hiw-icon-blue"><i class="fa-solid fa-clipboard-list"></i></div>
                     </div>
-                    <h3 class="suite-card-title">Doctor Consultation</h3>
-                    <p class="suite-card-desc">Connect with 500+ board-certified general physicians and super-specialists via HD video or book priority in-clinic visits.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> 15-Minute Instant Telemedicine</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Free Follow-Up For 7 Days</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Digital E-Prescription with WhatsApp Delivery</li>
-                    </ul>
-                    <button class="btn-suite-action">Consult Now <i class="fa-solid fa-arrow-right"></i></button>
+                    <h3 class="hiw-step-title">Tell Us What You Need</h3>
+                    <p class="hiw-step-desc">Start by choosing the healthcare service you need or simply tell us about your requirement.</p>
+                    <div class="hiw-service-tags">
+                        <span class="hiw-tag">Online Doctor Consultation</span>
+                        <span class="hiw-tag">Doctor Home Visit</span>
+                        <span class="hiw-tag">Lab Tests at Home</span>
+                        <span class="hiw-tag">X-Ray &amp; Diagnostics</span>
+                        <span class="hiw-tag">Pharmacy Delivery</span>
+                        <span class="hiw-tag">Dental Care</span>
+                        <span class="hiw-tag">Ambulance Services</span>
+                        <span class="hiw-tag">Blood Support</span>
+                        <span class="hiw-tag">Hospital OPD Assistance</span>
+                        <span class="hiw-tag">Premium OPD</span>
+                        <span class="hiw-tag">Physiotherapy</span>
+                        <span class="hiw-tag">Eldercare</span>
+                        <span class="hiw-tag">Bedside Assistance</span>
+                        <span class="hiw-tag">Home Healthcare</span>
+                        <span class="hiw-tag">Pick-up &amp; Drop</span>
+                        <span class="hiw-tag">Procedure Assistance</span>
+                    </div>
+                    <p class="hiw-step-highlight"><i class="fa-solid fa-wand-magic-sparkles text-teal"></i> Whatever your healthcare requirement, start with Nhealth.</p>
                 </div>
 
-                <!-- 2. Doorstep E-Pharmacy -->
-                <div class="suite-card" onclick="openBookingModal('Prescription Medicine Order')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-green">
-                            <span>💊</span>
-                        </div>
-                        <span class="suite-price-badge">Express Free &gt; ₹500</span>
+                <!-- Step 2 -->
+                <div class="hiw-step-card">
+                    <div class="hiw-step-header">
+                        <span class="hiw-step-badge">02</span>
+                        <div class="hiw-step-icon hiw-icon-teal"><i class="fa-solid fa-network-wired"></i></div>
                     </div>
-                    <h3 class="suite-card-title">Doorstep E-Pharmacy</h3>
-                    <p class="suite-card-desc">Upload your prescription for instant pharmacist validation. Enjoy authentic temperature-controlled doorstep medicine delivery.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> 100% Genuine Certified Medicines</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 2-Hour Express Delivery Guarantee</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Flat 20% Discount on Monthly Refills</li>
+                    <h3 class="hiw-step-title">Get Connected to the Right Care</h3>
+                    <p class="hiw-step-desc">Based on the service you select and the requirement you provide, Nhealth helps connect you with an appropriate healthcare professional, provider or service.</p>
+                    <ul class="hiw-features-list">
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Doctor Consultations:</strong> Explore available doctors and select a suitable specialist.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Other Services:</strong> Nhealth coordinates directly with verified healthcare providers and service partners.</li>
                     </ul>
-                    <button class="btn-suite-action">Order Medicines <i class="fa-solid fa-arrow-right"></i></button>
+                    <p class="hiw-step-highlight"><i class="fa-solid fa-wand-magic-sparkles text-teal"></i> One platform. Multiple healthcare services. Connected care.</p>
                 </div>
 
-                <!-- 3. Home Diagnostics -->
-                <div class="suite-card" onclick="openBookingModal('Home Diagnostics & Lab Tests')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-teal">
-                            <span>🔬</span>
-                        </div>
-                        <span class="suite-price-badge">Packages from ₹699</span>
+                <!-- Step 3 -->
+                <div class="hiw-step-card">
+                    <div class="hiw-step-header">
+                        <span class="hiw-step-badge">03</span>
+                        <div class="hiw-step-icon hiw-icon-purple"><i class="fa-solid fa-user-pen"></i></div>
                     </div>
-                    <h3 class="suite-card-title">Home Diagnostics</h3>
-                    <p class="suite-card-desc">Certified phlebotomists arrive at your doorstep with sealed vacutainer kits for blood, urine, and pathology sample collection.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> NABL &amp; CAP Accredited Testing</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 100% Painless Safe Blood Draw</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Verified Smart PDF Reports in 6 Hours</li>
-                    </ul>
-                    <button class="btn-suite-action">Book Lab Test <i class="fa-solid fa-arrow-right"></i></button>
+                    <h3 class="hiw-step-title">Share Your Details</h3>
+                    <p class="hiw-step-desc">Provide the information required for your selected service. This helps Nhealth and the relevant healthcare provider understand your requirement and coordinate the next step.</p>
+                    <div class="hiw-details-chips">
+                        <span><i class="fa-solid fa-check"></i> Patient Details</span>
+                        <span><i class="fa-solid fa-check"></i> Symptoms / Concerns</span>
+                        <span><i class="fa-solid fa-check"></i> Preferred Service</span>
+                        <span><i class="fa-solid fa-check"></i> Location</span>
+                        <span><i class="fa-solid fa-check"></i> Appointment Time</span>
+                        <span><i class="fa-solid fa-check"></i> Prescription / Info</span>
+                    </div>
+                    <p class="hiw-step-highlight"><i class="fa-solid fa-wand-magic-sparkles text-teal"></i> Tell us what you need. We'll help coordinate the care.</p>
                 </div>
 
-                <!-- 4. Specialized Nursing -->
-                <div class="suite-card" onclick="openBookingModal('Home Nursing Care Attendant')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-pink">
-                            <span>👩‍⚕️</span>
-                        </div>
-                        <span class="suite-price-badge">Per Shift from ₹1,200</span>
+                <!-- Step 4 -->
+                <div class="hiw-step-card">
+                    <div class="hiw-step-header">
+                        <span class="hiw-step-badge">04</span>
+                        <div class="hiw-step-icon hiw-icon-green"><i class="fa-solid fa-calendar-check"></i></div>
                     </div>
-                    <h3 class="suite-card-title">Specialized Nursing</h3>
-                    <p class="suite-card-desc">Compassionate, qualified nurses for post-operative recovery, elderly assistance, wound dressing, catheter management, and home ICU.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> Background-Verified Registered Nurses</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 12-Hour &amp; 24-Hour Attendant Shifts</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Vital Monitoring &amp; Medication Management</li>
-                    </ul>
-                    <button class="btn-suite-action">Book Nurse <i class="fa-solid fa-arrow-right"></i></button>
+                    <h3 class="hiw-step-title">Book Your Service</h3>
+                    <p class="hiw-step-desc">Once your service and provider are confirmed, review the booking details and complete the required payment.</p>
+                    <p class="hiw-confirm-lead">Receive instant verified booking confirmation of your:</p>
+                    <div class="hiw-service-tags">
+                        <span class="hiw-tag tag-green">Consultation</span>
+                        <span class="hiw-tag tag-green">Home Visit</span>
+                        <span class="hiw-tag tag-green">Diagnostic Test</span>
+                        <span class="hiw-tag tag-green">Medicine Order</span>
+                        <span class="hiw-tag tag-green">Dental Appointment</span>
+                        <span class="hiw-tag tag-green">Ambulance Service</span>
+                        <span class="hiw-tag tag-green">Hospital/OPD</span>
+                        <span class="hiw-tag tag-green">Home Care</span>
+                    </div>
+                    <p class="hiw-step-highlight"><i class="fa-solid fa-wand-magic-sparkles text-teal"></i> Simple booking. Clear information. Convenient access.</p>
                 </div>
 
-                <!-- 5. 24/7 Smart Ambulance -->
-                <div class="suite-card suite-highlight-card" onclick="triggerEmergencySOS()">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-red">
-                            <span>🚑</span>
-                        </div>
-                        <span class="suite-price-badge badge-emergency">Emergency Toll-Free SOS</span>
+                <!-- Step 5 -->
+                <div class="hiw-step-card hiw-card-wide">
+                    <div class="hiw-step-header">
+                        <span class="hiw-step-badge">05</span>
+                        <div class="hiw-step-icon hiw-icon-navy"><i class="fa-solid fa-house-chimney-medical"></i></div>
                     </div>
-                    <h3 class="suite-card-title">24/7 Smart Ambulance</h3>
-                    <p class="suite-card-desc">Emergency GPS dispatch linking you to the nearest Advanced Life Support (ALS) and Basic Life Support (BLS) ambulances.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> 8-Minute Average Arrival Time</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Onboard Ventilator, Defibrillator &amp; O2</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Hospital Emergency Room Pre-Sync</li>
-                    </ul>
-                    <button class="btn-suite-action btn-emergency-sos">🚨 Dispatch SOS <i class="fa-solid fa-phone-volume"></i></button>
+                    <h3 class="hiw-step-title">Receive Your Healthcare Service</h3>
+                    <p class="hiw-step-desc">Your selected healthcare service is then delivered or coordinated seamlessly according to your booking.</p>
+                    
+                    <div class="hiw-subservices-grid">
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">🩺</div>
+                            <div>
+                                <h4>Doctor Consultation</h4>
+                                <p>Connect with a doctor through online consultation or arrange a doctor home visit.</p>
+                            </div>
+                        </div>
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">🧪</div>
+                            <div>
+                                <h4>Diagnostics at Home</h4>
+                                <p>Arrange laboratory sample collection and supported diagnostic services at home.</p>
+                            </div>
+                        </div>
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">💊</div>
+                            <div>
+                                <h4>Pharmacy</h4>
+                                <p>Get prescribed medicines and healthcare essentials coordinated for doorstep delivery.</p>
+                            </div>
+                        </div>
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">🦷</div>
+                            <div>
+                                <h4>Dental Care</h4>
+                                <p>Book and coordinate dental consultations and supported dental services.</p>
+                            </div>
+                        </div>
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">🚑</div>
+                            <div>
+                                <h4>Ambulance Services</h4>
+                                <p>Request and coordinate ambulance transportation when required.</p>
+                            </div>
+                        </div>
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">🩸</div>
+                            <div>
+                                <h4>Blood Support</h4>
+                                <p>Access blood-related support and coordination through the verified Nhealth network.</p>
+                            </div>
+                        </div>
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">🏥</div>
+                            <div>
+                                <h4>Hospital &amp; OPD Assistance</h4>
+                                <p>Coordinate hospital OPDs, appointments, healthcare procedures, reports and medicines.</p>
+                            </div>
+                        </div>
+                        <div class="hiw-sub-item">
+                            <div class="hiw-sub-icon">👵</div>
+                            <div>
+                                <h4>Home Healthcare</h4>
+                                <p>Arrange supported services such as physiotherapy, eldercare and bedside assistance.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="hiw-step-highlight"><i class="fa-solid fa-wand-magic-sparkles text-teal"></i> Healthcare support that reaches beyond the consultation.</p>
                 </div>
 
-                <!-- 6. Full Body Screening -->
-                <div class="suite-card" onclick="openBookingModal('Full Body Preventive Health Checkup')">
-                    <div class="suite-card-top">
-                        <div class="suite-icon-box suite-gold">
-                            <span>🛡️</span>
-                        </div>
-                        <span class="suite-price-badge">Comprehensive ₹1,999</span>
+                <!-- Step 6 -->
+                <div class="hiw-step-card">
+                    <div class="hiw-step-header">
+                        <span class="hiw-step-badge">06</span>
+                        <div class="hiw-step-icon hiw-icon-gold"><i class="fa-solid fa-file-shield"></i></div>
                     </div>
-                    <h3 class="suite-card-title">Full Body Screening</h3>
-                    <p class="suite-card-desc">Comprehensive annual preventive health packages covering 85+ parameters including Cardiac Risk, Liver, Kidney, and Diabetes.</p>
-                    <ul class="suite-features-list">
-                        <li><i class="fa-solid fa-circle-check"></i> Free Doctor Consultation Included</li>
-                        <li><i class="fa-solid fa-circle-check"></i> AI-Powered Health Risk Assessment</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Complete Family Health Passports</li>
-                    </ul>
-                    <button class="btn-suite-action">Book Package <i class="fa-solid fa-arrow-right"></i></button>
+                    <h3 class="hiw-step-title">Manage Your Reports &amp; Healthcare Information</h3>
+                    <p class="hiw-step-desc">Following consultations, diagnostics and other healthcare services, relevant prescriptions, reports and documents are made available through your Nhealth healthcare journey.</p>
+                    <p class="hiw-step-subdesc">This keeps important medical records organized and easily accessible for future consultations and follow-up care.</p>
+                    <p class="hiw-step-highlight"><i class="fa-solid fa-wand-magic-sparkles text-teal"></i> Your healthcare journey, organized in one place.</p>
                 </div>
 
+                <!-- Step 7 -->
+                <div class="hiw-step-card">
+                    <div class="hiw-step-header">
+                        <span class="hiw-step-badge">07</span>
+                        <div class="hiw-step-icon hiw-icon-coral"><i class="fa-solid fa-rotate-right"></i></div>
+                    </div>
+                    <h3 class="hiw-step-title">Continue Your Care</h3>
+                    <p class="hiw-step-desc">Healthcare is an ongoing journey. After your initial service, Nhealth can help coordinate supported follow-up requirements.</p>
+                    <div class="hiw-service-tags">
+                        <span class="hiw-tag">Follow-up Consultations</span>
+                        <span class="hiw-tag">Lab Tests</span>
+                        <span class="hiw-tag">Diagnostic Services</span>
+                        <span class="hiw-tag">Medicines</span>
+                        <span class="hiw-tag">Physiotherapy</span>
+                        <span class="hiw-tag">Dental Care</span>
+                        <span class="hiw-tag">Home Healthcare</span>
+                        <span class="hiw-tag">Hospital Assistance</span>
+                        <span class="hiw-tag">Eldercare</span>
+                        <span class="hiw-tag">Bedside Assistance</span>
+                    </div>
+                    <p class="hiw-step-highlight"><i class="fa-solid fa-wand-magic-sparkles text-teal"></i> From your first requirement to continuing care, Nhealth stays connected to your healthcare journey.</p>
+                </div>
+
+            </div>
+
+            <!-- Connected Flow Banner -->
+            <div class="hiw-ecosystem-banner">
+                <div class="hiw-eco-header">
+                    <span class="hiw-eco-badge">One Platform. A Connected Healthcare Ecosystem.</span>
+                    <h3 class="hiw-eco-title">From Healthcare to Home — Nhealth Connects It All.</h3>
+                </div>
+                <div class="hiw-flow-track">
+                    <div class="hiw-flow-node">
+                        <div class="node-circle">01</div>
+                        <span class="node-label">DISCOVER</span>
+                    </div>
+                    <div class="hiw-flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="hiw-flow-node">
+                        <div class="node-circle">02</div>
+                        <span class="node-label">CONNECT</span>
+                    </div>
+                    <div class="hiw-flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="hiw-flow-node">
+                        <div class="node-circle">03</div>
+                        <span class="node-label">BOOK</span>
+                    </div>
+                    <div class="hiw-flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="hiw-flow-node">
+                        <div class="node-circle">04</div>
+                        <span class="node-label">RECEIVE CARE</span>
+                    </div>
+                    <div class="hiw-flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="hiw-flow-node">
+                        <div class="node-circle">05</div>
+                        <span class="node-label">FOLLOW UP</span>
+                    </div>
+                </div>
+                <p class="hiw-eco-slogan"><strong>Nhealth</strong> &bull; <em>Powering the Future of Healthcare at Home</em></p>
             </div>
         </section>
 
@@ -508,7 +768,7 @@
                 <div class="telemed-room-header">
                     <div class="telemed-header-left">
                         <span class="live-pulse-dot"></span>
-                        <span class="telemed-doctor-header">Dr. Priya Sharma (Cardiology) &bull; Consultation #NH-7821</span>
+                        <span class="telemed-doctor-header">Consulting Doctor (General Medicine) &bull; Consultation #NH-7821</span>
                     </div>
                     <div class="telemed-header-right">
                         <span class="live-timer-badge">● LIVE 14:32</span>
@@ -519,14 +779,14 @@
                     <!-- Left: Doctor Video Frame & Patient PiP -->
                     <div class="telemed-video-area">
                         <div class="telemed-main-stream">
-                            <img src="{{ url_for('static', filename='images/doctor_banner.jpg') }}" alt="Dr. Priya Sharma" class="telemed-doctor-img">
+                            <img src="{{ url_for('static', filename='images/doctor_banner.jpg') }}" alt="Nhealth Consulting Doctor" class="telemed-doctor-img">
                             
                             <div class="telemed-stream-overlay">
                                 <div class="stream-doctor-badge">
                                     <span class="s-doc-icon">🩺</span>
                                     <div>
-                                        <h4 class="s-doc-name">Dr. Priya Sharma, MD</h4>
-                                        <p class="s-doc-role">Senior Consultant Cardiologist &bull; Fortis Healthcare Partner</p>
+                                        <h4 class="s-doc-name">Consulting Doctor, MD</h4>
+                                        <p class="s-doc-role">Senior Consultant Physician &bull; Nhealth Verified Specialist</p>
                                     </div>
                                     <span class="s-verified-tag"><i class="fa-solid fa-circle-check"></i> Verified MD</span>
                                 </div>
@@ -561,7 +821,7 @@
                         <div class="telemed-tab-pane active" id="telemedChatPane">
                             <div class="chat-messages-scroll" id="chatMessagesScroll">
                                 <div class="chat-bubble doc-msg">
-                                    <div class="chat-sender">Dr. Priya Sharma</div>
+                                    <div class="chat-sender">Consulting Doctor</div>
                                     <div class="chat-text">Hello Rahul! I can see your ECG telemetry is stable today. How is the mild chest heaviness you mentioned?</div>
                                     <div class="chat-time">10:14 AM</div>
                                 </div>
@@ -571,7 +831,7 @@
                                     <div class="chat-time">10:15 AM</div>
                                 </div>
                                 <div class="chat-bubble doc-msg">
-                                    <div class="chat-sender">Dr. Priya Sharma</div>
+                                    <div class="chat-sender">Consulting Doctor</div>
                                     <div class="chat-text">Good to hear. I've sent a 10-day refill for your cardiorespiratory medication directly to your WhatsApp and registered pharmacy.</div>
                                     <div class="chat-time">10:16 AM</div>
                                 </div>
@@ -594,7 +854,7 @@
                                     <p><strong>Diagnosis:</strong> Mild Exertional Fatigue &bull; Stable Telemetry</p>
                                     <div class="rx-meds-list">
                                         <div class="rx-med-item">
-                                            <span>1. Cardiosync Tab 5mg</span>
+                                             <span>1. Cardiosync Tab 5mg</span>
                                             <em>1 Tab &bull; Morning (After Breakfast) &bull; 10 Days</em>
                                         </div>
                                         <div class="rx-med-item">
@@ -604,7 +864,7 @@
                                     </div>
                                 </div>
                                 <div class="rx-footer">
-                                    <span class="rx-signed"><i class="fa-solid fa-signature"></i> Digitally Signed by Dr. Priya Sharma, MD</span>
+                                    <span class="rx-signed"><i class="fa-solid fa-signature"></i> Digitally Signed by Verified Physician, MD</span>
                                     <button class="btn-solid-teal" onclick="showToast('📲 E-Prescription sent to your WhatsApp number!', 'success')">WhatsApp Rx</button>
                                 </div>
                             </div>
@@ -757,7 +1017,7 @@
                             <div class="wa-booking-head">
                                 <strong>NHealth Technologies Booking Confirmation</strong>
                             </div>
-                            <p>Dear <strong>Rahul Verma</strong>, your telemedicine consultation is confirmed with <strong>Dr. Priya Sharma (Cardiology)</strong>.</p>
+                            <p>Dear <strong>Rahul Verma</strong>, your telemedicine consultation is confirmed with <strong>Consulting Doctor (General Medicine)</strong>.</p>
                             <div class="wa-info-lines">
                                 <p>📅 <strong>Date:</strong> Today, 11 Sep 2026</p>
                                 <p>⏰ <strong>Time:</strong> 10:30 AM (15 Mins)</p>
@@ -812,33 +1072,171 @@
         </section>
 
 
+        <!-- ==================== SECTION: ABOUT NHEALTH ==================== -->
+        <section class="about-us-section" id="about-us">
+            <div class="suite-header-block">
+                <span class="suite-badge-tag"><i class="fa-solid fa-hospital-user text-teal"></i> Who We Are</span>
+                <h2 class="suite-main-title">About Nhealth</h2>
+                <p class="suite-sub-title"><strong>Powering the Future of Healthcare at Home</strong></p>
+            </div>
+
+            <!-- About Intro Card -->
+            <div class="about-intro-card">
+                <div class="about-intro-grid">
+                    <div class="about-intro-text">
+                        <h3 class="about-lead-title">Accessible, Connected, Convenient &amp; Closer to Home</h3>
+                        <p class="about-lead-p">At <strong>Nhealth</strong>, we believe healthcare should be accessible, connected, convenient, and closer to home.</p>
+                        <p class="about-lead-p">Nhealth is an integrated <strong>Healthcare-at-Home platform</strong> designed to connect patients with the healthcare services they need through one convenient digital ecosystem. From consulting a doctor online to arranging healthcare services at home, we aim to simplify the entire healthcare journey for patients and their families.</p>
+                        <p class="about-lead-p">Whether you need a medical consultation, diagnostic test, medicines, physiotherapy, dental care, eldercare, an ambulance, or assistance with hospital procedures, Nhealth is designed to help you access the right healthcare service through a single platform.</p>
+                    </div>
+                    <div class="about-intro-badge-card">
+                        <div class="about-trademark-wrap">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_stacked_light.png') }}" alt="Nhealth — Healthcare at Home" class="about-trademark-stacked-img">
+                        </div>
+                        <div class="about-emblem-pills">
+                            <span>✨ One Platform</span>
+                            <span>✨ Connected Care</span>
+                            <span>✨ Closer to Home</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Core Pillars Grid -->
+            <div class="about-pillars-grid">
+                
+                <!-- Pillar 1: One Platform. Multiple Healthcare Needs -->
+                <div class="about-pillar-card pillar-wide">
+                    <div class="pillar-header">
+                        <div class="pillar-icon pillar-icon-blue"><i class="fa-solid fa-layer-group"></i></div>
+                        <div>
+                            <h3 class="pillar-title">One Platform. Multiple Healthcare Needs.</h3>
+                            <p class="pillar-subtitle">Simplifying healthcare management by bringing multiple services together</p>
+                        </div>
+                    </div>
+                    <p class="pillar-desc">Healthcare can become complicated when patients have to search for different providers for every requirement. Nhealth brings multiple healthcare services together so that patients can manage their healthcare journey more conveniently.</p>
+                    <div class="about-ecosystem-services-grid">
+                        <div class="eco-srv-item"><span class="eco-emoji">👨‍⚕️</span> Online Doctor Consultations</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🏠</span> Doctor Home Visits</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🧪</span> Lab Tests at Home</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🩻</span> X-Ray &amp; Diagnostic Services at Home</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">💊</span> Pharmacy &amp; Medicines Delivered to Home</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🦷</span> Dental Care</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🩺</span> Physiotherapy at Home</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">👵</span> Eldercare &amp; Bedside Assistance</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🚑</span> Ambulance Services</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🩸</span> Blood Bank / Blood Assistance Services</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">🏥</span> Hospital &amp; OPD Assistance</div>
+                        <div class="eco-srv-item"><span class="eco-emoji">📦</span> Healthcare Essentials &amp; Report Delivery</div>
+                    </div>
+                </div>
+
+                <!-- Pillar 2: Our Vision -->
+                <div class="about-pillar-card">
+                    <div class="pillar-header">
+                        <div class="pillar-icon pillar-icon-teal"><i class="fa-solid fa-eye"></i></div>
+                        <div>
+                            <h3 class="pillar-title">Our Vision</h3>
+                            <p class="pillar-subtitle">Connected Care Anytime, Anywhere</p>
+                        </div>
+                    </div>
+                    <p class="pillar-desc">To build a connected healthcare ecosystem where people can access essential healthcare services <strong>anytime, anywhere, and as close to home as possible</strong>.</p>
+                    <p class="pillar-desc">We envision a future where technology makes healthcare coordination simpler—not more complicated—and where patients and families can find the support they need through one trusted platform.</p>
+                </div>
+
+                <!-- Pillar 3: Our Mission -->
+                <div class="about-pillar-card">
+                    <div class="pillar-header">
+                        <div class="pillar-icon pillar-icon-purple"><i class="fa-solid fa-bullseye"></i></div>
+                        <div>
+                            <h3 class="pillar-title">Our Mission</h3>
+                            <p class="pillar-subtitle">Accessible, Convenient &amp; Unified Care</p>
+                        </div>
+                    </div>
+                    <p class="pillar-desc">Our mission is to make healthcare more accessible and convenient by connecting patients, doctors, diagnostic centres, pharmacies, hospitals, caregivers, and other healthcare service providers through a unified digital platform.</p>
+                    <ul class="pillar-list">
+                        <li><i class="fa-solid fa-circle-check text-teal"></i> Make healthcare services easier to discover and access.</li>
+                        <li><i class="fa-solid fa-circle-check text-teal"></i> Reduce the effort involved in coordinating multiple healthcare services.</li>
+                        <li><i class="fa-solid fa-circle-check text-teal"></i> Bring appropriate healthcare services closer to patients' homes.</li>
+                        <li><i class="fa-solid fa-circle-check text-teal"></i> Support elderly people, families, and patients who need assistance.</li>
+                        <li><i class="fa-solid fa-circle-check text-teal"></i> Connect healthcare providers with patients through technology.</li>
+                        <li><i class="fa-solid fa-circle-check text-teal"></i> Create a seamless healthcare journey from consultation to diagnosis, treatment, and follow-up.</li>
+                    </ul>
+                </div>
+
+                <!-- Pillar 4: Built Around People -->
+                <div class="about-pillar-card">
+                    <div class="pillar-header">
+                        <div class="pillar-icon pillar-icon-coral"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <div>
+                            <h3 class="pillar-title">Built Around People</h3>
+                            <p class="pillar-subtitle">Putting Patients &amp; Families First</p>
+                        </div>
+                    </div>
+                    <p class="pillar-desc">At Nhealth, technology is only a tool. The real purpose is to make healthcare more human, accessible, and convenient.</p>
+                    <p class="pillar-desc">We are building Nhealth with patients and their families at the centre of the experience, while creating opportunities for doctors, laboratories, pharmacies, hospitals, caregivers, ambulance providers, and other healthcare professionals to become part of a connected healthcare network.</p>
+                </div>
+
+                <!-- Pillar 5: Our Commitment -->
+                <div class="about-pillar-card">
+                    <div class="pillar-header">
+                        <div class="pillar-icon pillar-icon-gold"><i class="fa-solid fa-handshake-angle"></i></div>
+                        <div>
+                            <h3 class="pillar-title">Our Commitment</h3>
+                            <p class="pillar-subtitle">Convenience, Transparency &amp; Accessibility</p>
+                        </div>
+                    </div>
+                    <p class="pillar-desc">Nhealth is being built with a focus on <strong>convenience, transparency, accessibility, and responsible healthcare coordination</strong>.</p>
+                    <p class="pillar-desc">We aim to continuously improve the platform, expand our healthcare network, and develop services that can genuinely make healthcare easier for individuals and families.</p>
+                </div>
+
+            </div>
+
+            <!-- About Bottom Closing Slogan -->
+            <div class="about-footer-card">
+                <h3 class="about-closing-name">Nhealth</h3>
+                <p class="about-closing-slogan">Powering the Future of Healthcare at Home.</p>
+                <div class="about-closing-tag">One Platform. Connected Care. Closer to Home.</div>
+            </div>
+        </section>
+
+
         <!-- ==================== SECTION 5: CERTIFICATIONS & TRUSTED FOOTER ==================== -->
         <footer class="site-main-footer" id="contact">
             <div class="footer-top-container">
                 <div class="footer-brand-col">
                     <a href="/" class="brand-logo footer-logo" aria-label="Nhealth Home">
-                        <div class="logo-mark">
-                            <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img">
-                        </div>
-                        <div class="logo-text">
-                            <span class="brand-name">Nhealth</span>
-                            <span class="brand-tagline">— Healthcare at Home —</span>
+                        <div class="footer-logo-badge">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="footer-logo-img-full">
                         </div>
                     </a>
-                    <p class="footer-bio-text">NHealth Technologies is an enterprise healthcare marketplace and digital telemedicine infrastructure pioneer, connecting patients, doctors, pharmacies, diagnostics, and emergency ambulance providers nationwide.</p>
-                    <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> support@nhealthtechnologies.com</p>
+                    <p class="footer-bio-text">Nhealth Technologies is an healthcare aggregator providing integrated healthcare services and at home through a single digital platform, connecting patients, doctors, pharmacies, diagnostics and emergency ambulance providers, eldercare, health packages, health riders, bedside assistants and at home, physiotherapy services and at home, blood availability checks, vaccination services nationwide, and also a digital telemedicine infrastructure pioneer.</p>
+                    <p class="footer-contact-email"><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> <a href="mailto:support@nhealth.in" class="footer-email-link">support@nhealth.in</a></p>
                 </div>
 
-                <!-- Col 2: Healthcare Services -->
+                <!-- Col 2: Healthcare and Health Services -->
                 <div class="footer-links-col">
-                    <h4 class="footer-heading">Healthcare Services</h4>
-                    <ul class="f-links">
-                        <li><a href="#services-suite" onclick="openBookingModal('Doctor Video Consultation')">Doctor Video Consultation</a></li>
-                        <li><a href="#services-suite" onclick="openBookingModal('Prescription Medicine Order')">Doorstep E-Pharmacy Refills</a></li>
-                        <li><a href="#services-suite" onclick="openBookingModal('Home Diagnostics & Lab Tests')">Home Pathology Diagnostics</a></li>
+                    <h4 class="footer-heading">Healthcare and Health Services</h4>
+                    <ul class="f-links f-links-2col">
+                        <li><a href="#services-suite" onclick="openBookingModal('Online Doctor Consultation')">Doctor Video Consultation</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Doctor Home Visits')">Doctor Home Visits</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Pharmacy to Home')">Doorstep E-Pharmacy Refills</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Lab Tests at Home')">Home Diagnostics &amp; Lab Tests</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('X-Ray at Home')">X-Ray &amp; Portable ECG</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Dental Care')">Dental Care &amp; Oral Health</a></li>
                         <li><a href="#services-suite" onclick="openBookingModal('Home Nursing Care Attendant')">Specialized Home Nursing</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Bedside Assistant')">Bedside Patient Attendant</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Eldercare')">Eldercare &amp; Senior Support</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Physiotherapy')">Physiotherapy at Home</a></li>
                         <li><a href="#services-suite" onclick="triggerEmergencySOS()">24/7 Smart Ambulance SOS</a></li>
-                        <li><a href="#services-suite" onclick="openBookingModal('Full Body Preventive Health Checkup')">Executive Preventive Packages</a></li>
+                        <li><a href="#services-suite" onclick="openRiderModal()">Health Support Rider</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Home Vaccination Service')">Home Vaccination Service</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Diagnostics and Imaging')">Diagnostics &amp; Advanced Imaging</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Full Body Preventive Health Checkup')">Full Body Health Packages</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Care Programmes')">Chronic Disease Care Plans</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Blood Bank')">Blood Bank &amp; Donor Network</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Mental Health Support')">Mental Health &amp; Counseling</a></li>
+                        <li><a href="#services-suite" onclick="openBookingModal('Premium OPD Memberships')">Premium OPD Memberships</a></li>
                     </ul>
                 </div>
 
@@ -849,35 +1247,23 @@
                         <li><a href="#home">About NHealth</a></li>
                         <li><a href="#services-suite">Our Services</a></li>
                         <li><a href="javascript:void(0)" onclick="showToast('Careers portal: We are hiring clinicians and engineers!', 'info')">Careers</a></li>
-                        <li><a href="javascript:void(0)" onclick="openLoginModal()">Partner With Us</a></li>
-                        <li><a href="#contact">Contact Us</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 4: Certifications & Trust -->
-                <div class="footer-links-col">
-                    <h4 class="footer-heading">Certifications &amp; Trust</h4>
-                    <ul class="f-links">
-                        <li><a href="javascript:void(0)" onclick="showToast('🔒 HIPAA Privacy & Security standard verified', 'info')">HIPAA Privacy &amp; Security Rules</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('🛡️ ISO 27001 Information Security certified', 'info')">ISO 27001 Information Security</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('🧪 NABL Accredited Pathology Protocol active', 'info')">NABL Accredited Pathology Protocol</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('🇮🇳 Ayushman Bharat Digital Mission compliant', 'info')">Ayushman Bharat Digital Mission (ABDM)</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('💬 Verified WhatsApp Business API active', 'info')">Verified WhatsApp Business API</a></li>
-                        <li><a href="javascript:void(0)" onclick="showToast('👨‍⚕️ 100% Doctor Verification Standards enforced', 'info')">Doctor Verification Standards</a></li>
+                        <li><a href="/signup/doctor">Partner With Us</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Footer Compliance Trust Row -->
-            <div class="footer-trust-strip">
-                <div class="trust-badge-pill">✓ HIPAA Compliant</div>
-                <div class="trust-badge-pill">✓ ISO 27001 Certified</div>
-                <div class="trust-badge-pill">✓ NABL Accredited Labs</div>
-                <div class="trust-badge-pill">✓ 256-Bit SSL Encryption</div>
-            </div>
-
-            <div class="footer-bottom-bar">
-                <p>&copy; 2026 NHealth Technologies Inc. All rights reserved. Healthcare at Your Doorstep.</p>
+            <!-- Footer Bottom Strip (Middle line removed) -->
+            <div class="footer-bottom-row" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.6rem; padding-top: 1.5rem; margin-top: 1.5rem;">
+                <p class="footer-copyright" style="color: #94a3b8; font-size: 0.88rem; font-weight: 500; margin: 0;">&copy; 2026 Nhealth Technologies Pvt. Ltd. All rights reserved.</p>
+                <div class="footer-legal-links" style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.84rem; color: #64748b;">
+                    <a href="javascript:void(0)" onclick="showToast('Terms of Service: Full legal terms and usage conditions.', 'info')" style="color: #94a3b8; text-decoration: none;">Terms of Service</a>
+                    <span class="dot-divider" style="color: #475569;">•</span>
+                    <a href="javascript:void(0)" onclick="showToast('Privacy Policy: We protect your healthcare data strictly.', 'info')" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a>
+                    <span class="dot-divider" style="color: #475569;">•</span>
+                    <a href="javascript:void(0)" onclick="showToast('Telemedicine Guidelines: Compliance with MoHFW protocols.', 'info')" style="color: #94a3b8; text-decoration: none;">Telemedicine Guidelines</a>
+                </div>
+                <p class="footer-ownership" style="color: #0baaa2; font-size: 0.78rem; font-weight: 600; margin: 0.2rem 0 0 0;">Design and Developed and Owned by Nhealth Technologies Private Limited</p>
             </div>
         </footer>
 
@@ -887,18 +1273,15 @@
     <!-- Mobile Top Header Bar (Transparent & Frozen Sticky/Fixed to Viewport) -->
     <header class="mobile-top-header mobile-only" id="mobileHeader">
         <a href="/" class="brand-logo m-brand-logo" aria-label="Nhealth Home">
-            <div class="logo-mark m-logo-mark">
-                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="Nhealth Logo" class="brand-logo-img m-logo-img">
-            </div>
-            <div class="logo-text m-logo-text">
-                <span class="brand-name m-brand-name">Nhealth</span>
-                <span class="brand-tagline m-brand-tagline">— Healthcare at Home —</span>
-            </div>
+            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="m-brand-logo-img-full">
         </a>
         <div class="m-header-right">
-            <button class="m-header-login-btn" onclick="openLoginModal()" title="Login to Nhealth">
+            <a href="/login" class="m-header-login-btn" title="Login to Nhealth" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
                 <i class="fa-regular fa-user"></i> Login
-            </button>
+            </a>
+            <a href="/signup" class="m-header-signup-btn" title="Sign Up for Nhealth" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                <i class="fa-solid fa-user-plus"></i> Sign Up
+            </a>
         </div>
     </header>
 
@@ -1131,7 +1514,79 @@
                     <p class="m-srv-sub">Skilled. Trusted. Always there.</p>
                 </div>
 
-                <!-- 11. and More... -->
+                <!-- 11. Dental Care -->
+                <div class="m-service-card" onclick="openBookingModal('Dental Care')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_dental_care.png') }}" alt="Dental Care" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-dental">Dental Care</div>
+                    <p class="m-srv-sub">Healthy smiles, brighter tomorrows.</p>
+                </div>
+
+                <!-- 12. Blood Bank -->
+                <div class="m-service-card" onclick="openBookingModal('Blood Bank')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_blood_bank.png') }}" alt="Blood Bank" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-blood">Blood Bank</div>
+                    <p class="m-srv-sub">Donate blood. Save lives.</p>
+                </div>
+
+                <!-- 13. Diagnostics and Imaging -->
+                <div class="m-service-card" onclick="openBookingModal('Diagnostics and Imaging')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_diagnostics_imaging.png') }}" alt="Diagnostics and Imaging" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-diagnostics">Diagnostics &amp; Imaging</div>
+                    <p class="m-srv-sub">Accurate reports. Better decisions.</p>
+                </div>
+
+                <!-- 14. Ambulance Services 24/7 -->
+                <div class="m-service-card" onclick="openBookingModal('Ambulance Services 24/7')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_ambulance_247.png') }}" alt="Ambulance Services 24/7" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-ambulance">Ambulance 24/7</div>
+                    <p class="m-srv-sub">When every second matters.</p>
+                </div>
+
+                <!-- 15. Home Vaccination Service -->
+                <div class="m-service-card" onclick="openBookingModal('Home Vaccination Service')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_home_vaccination.png') }}" alt="Home Vaccination Service" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-vaccine">Home Vaccination</div>
+                    <p class="m-srv-sub">Safe immunity at your doorstep.</p>
+                </div>
+
+                <!-- 16. Health Checkups -->
+                <div class="m-service-card" onclick="openBookingModal('Health Checkups')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_health_checkups.png') }}" alt="Health Checkups" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-checkup">Health Checkups</div>
+                    <p class="m-srv-sub">Know today. Live healthier.</p>
+                </div>
+
+                <!-- 17. Care Programmes -->
+                <div class="m-service-card" onclick="openBookingModal('Care Programmes')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_care_programmes.png') }}" alt="Care Programmes" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-care">Care Programmes</div>
+                    <p class="m-srv-sub">Support today. Independence.</p>
+                </div>
+
+                <!-- 18. Mental Health Support -->
+                <div class="m-service-card" onclick="openBookingModal('Mental Health Support')">
+                    <div class="m-srv-art-wrap">
+                        <img src="{{ url_for('static', filename='images/services/art_mental_health.png') }}" alt="Mental Health Support" class="m-srv-art-img" loading="lazy">
+                    </div>
+                    <div class="m-srv-pill pill-mental">Mental Health</div>
+                    <p class="m-srv-sub">Talk. Heal. Grow. Not alone.</p>
+                </div>
+
+                <!-- 19. and More... -->
                 <div class="m-service-card" onclick="openAllServicesModal()">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_and_more.png') }}" alt="and More..." class="m-srv-art-img" loading="lazy">
@@ -1140,7 +1595,7 @@
                     <p class="m-srv-sub">Complete healthcare</p>
                 </div>
 
-                <!-- 12. Doctor Banner Promo Card -->
+                <!-- 20. Doctor Banner Promo Card -->
                 <div class="m-doctor-banner-card" onclick="openBookingModal('General Physician')">
                     <div class="m-promo-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_family_promo.png') }}" alt="Your Health Our Priority" class="m-promo-art-img" loading="lazy">
@@ -1180,6 +1635,196 @@
             </div>
 
         </section>
+
+            <!-- ==================== MOBILE HOW NHEALTH WORKS ==================== -->
+            <section class="m-hiw-section" id="m-how-it-works">
+                <div class="m-section-header">
+                    <span class="m-badge-pill"><i class="fa-solid fa-bolt"></i> How It Works</span>
+                    <h2 class="m-sec-title">How Nhealth Works</h2>
+                    <p class="m-sec-subtitle">Your Healthcare. Connected in One Place.</p>
+                </div>
+
+                <div class="m-hiw-steps-list">
+                    <!-- Step 01 -->
+                    <div class="m-step-card">
+                        <div class="m-step-num">01</div>
+                        <div class="m-step-body">
+                            <h3 class="m-step-heading">Tell Us What You Need</h3>
+                            <p class="m-step-txt">Start by choosing the healthcare service you need or simply tell us about your requirement.</p>
+                            <div class="m-step-tags">
+                                <span>Online Doctor</span>
+                                <span>Home Visit</span>
+                                <span>Lab Tests</span>
+                                <span>X-Ray</span>
+                                <span>Pharmacy</span>
+                                <span>Dental</span>
+                                <span>Ambulance</span>
+                                <span>Blood Support</span>
+                                <span>OPD Assistance</span>
+                                <span>Physiotherapy</span>
+                                <span>Eldercare</span>
+                                <span>Bedside Care</span>
+                            </div>
+                            <div class="m-step-note">✨ Whatever your healthcare requirement, start with Nhealth.</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 02 -->
+                    <div class="m-step-card">
+                        <div class="m-step-num">02</div>
+                        <div class="m-step-body">
+                            <h3 class="m-step-heading">Get Connected to the Right Care</h3>
+                            <p class="m-step-txt">Nhealth connects you with verified doctors, labs, and certified providers based on your requirements.</p>
+                            <div class="m-step-note">✨ One platform. Multiple healthcare services. Connected care.</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 03 -->
+                    <div class="m-step-card">
+                        <div class="m-step-num">03</div>
+                        <div class="m-step-body">
+                            <h3 class="m-step-heading">Share Your Details</h3>
+                            <p class="m-step-txt">Provide patient info, symptoms, location, and preferred time to help coordinate your service.</p>
+                            <div class="m-step-note">✨ Tell us what you need. We'll help coordinate the care.</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 04 -->
+                    <div class="m-step-card">
+                        <div class="m-step-num">04</div>
+                        <div class="m-step-body">
+                            <h3 class="m-step-heading">Book Your Service</h3>
+                            <p class="m-step-txt">Review booking details and receive instant verified confirmation across all services.</p>
+                            <div class="m-step-note">✨ Simple booking. Clear information. Convenient access.</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 05 -->
+                    <div class="m-step-card">
+                        <div class="m-step-num">05</div>
+                        <div class="m-step-body">
+                            <h3 class="m-step-heading">Receive Your Healthcare Service</h3>
+                            <p class="m-step-txt">Your selected doctor, diagnostic test, medicines, or caregiver is delivered right to your home.</p>
+                            <div class="m-step-note">✨ Healthcare support that reaches beyond the consultation.</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 06 -->
+                    <div class="m-step-card">
+                        <div class="m-step-num">06</div>
+                        <div class="m-step-body">
+                            <h3 class="m-step-heading">Manage Reports &amp; Information</h3>
+                            <p class="m-step-txt">All prescriptions, test results, and medical history organized and accessible in one place.</p>
+                            <div class="m-step-note">✨ Your healthcare journey, organized in one place.</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 07 -->
+                    <div class="m-step-card">
+                        <div class="m-step-num">07</div>
+                        <div class="m-step-body">
+                            <h3 class="m-step-heading">Continue Your Care</h3>
+                            <p class="m-step-txt">Seamlessly schedule follow-up consultations, recurring medicines, and ongoing therapies.</p>
+                            <div class="m-step-note">✨ From first requirement to continuing care, Nhealth stays connected.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Flow Banner -->
+                <div class="m-flow-banner">
+                    <div class="m-flow-title">One Platform. Connected Healthcare.</div>
+                    <div class="m-flow-row">
+                        <span>DISCOVER</span> <i class="fa-solid fa-angle-right"></i>
+                        <span>CONNECT</span> <i class="fa-solid fa-angle-right"></i>
+                        <span>BOOK</span> <i class="fa-solid fa-angle-right"></i>
+                        <span>CARE</span> <i class="fa-solid fa-angle-right"></i>
+                        <span>FOLLOW UP</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== MOBILE ABOUT NHEALTH ==================== -->
+            <section class="m-about-section" id="m-about-us">
+                <div class="m-section-header">
+                    <span class="m-badge-pill"><i class="fa-solid fa-hospital-user"></i> About Nhealth</span>
+                    <h2 class="m-sec-title">About Nhealth</h2>
+                    <p class="m-sec-subtitle">Powering the Future of Healthcare at Home</p>
+                </div>
+
+                <!-- Intro Card -->
+                <div class="m-about-intro-box">
+                    <p class="m-intro-lead">At <strong>Nhealth</strong>, we believe healthcare should be accessible, connected, convenient, and closer to home.</p>
+                    <p class="m-intro-sub">Nhealth is an integrated <strong>Healthcare-at-Home platform</strong> designed to connect patients with doctors, diagnostics, medicines, dental care, physiotherapy, eldercare, and hospital assistance through one convenient ecosystem.</p>
+                </div>
+
+                <!-- Vision & Mission Accordion/Cards -->
+                <div class="m-about-card-group">
+                    <div class="m-about-card">
+                        <div class="m-about-icon icon-teal"><i class="fa-solid fa-eye"></i></div>
+                        <h4 class="m-about-h">Our Vision</h4>
+                        <p class="m-about-p">To build a connected healthcare ecosystem where people can access essential healthcare services <strong>anytime, anywhere, and as close to home as possible</strong>.</p>
+                    </div>
+
+                    <div class="m-about-card">
+                        <div class="m-about-icon icon-blue"><i class="fa-solid fa-bullseye"></i></div>
+                        <h4 class="m-about-h">Our Mission</h4>
+                        <p class="m-about-p">To make healthcare more accessible and convenient by connecting patients, doctors, labs, pharmacies, hospitals, and caregivers through a unified digital platform.</p>
+                    </div>
+
+                    <div class="m-about-card">
+                        <div class="m-about-icon icon-purple"><i class="fa-solid fa-layer-group"></i></div>
+                        <h4 class="m-about-h">One Platform. Multiple Needs.</h4>
+                        <p class="m-about-p">Bringing together Online Consultations, Home Doctor Visits, Lab Tests, Pharmacy Delivery, Dental Care, Physiotherapy, Eldercare, Bedside Assistance, Ambulance, and Hospital OPD Assistance.</p>
+                    </div>
+
+                    <div class="m-about-card">
+                        <div class="m-about-icon icon-coral"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <h4 class="m-about-h">Built Around People</h4>
+                        <p class="m-about-p">Technology is only our tool. The real purpose is to make healthcare more human, compassionate, accessible, and convenient for families.</p>
+                    </div>
+
+                    <div class="m-about-card">
+                        <div class="m-about-icon icon-gold"><i class="fa-solid fa-handshake-angle"></i></div>
+                        <h4 class="m-about-h">Our Commitment</h4>
+                        <p class="m-about-p">Built with a focus on convenience, transparency, accessibility, and responsible healthcare coordination across every neighborhood.</p>
+                    </div>
+                </div>
+
+                <div class="m-about-footer-tag">
+                    <strong>Nhealth</strong>
+                    <span>Powering the Future of Healthcare at Home</span>
+                    <small>One Platform. Connected Care. Closer to Home.</small>
+                </div>
+            </section>
+
+            <!-- ==================== MOBILE FOOTER ==================== -->
+            <footer class="m-site-footer" id="m-contact">
+                <div class="m-footer-brand">
+                    <a href="#home" aria-label="Nhealth Home" style="display: inline-block; text-decoration: none;">
+                        <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="m-footer-trademark-logo">
+                    </a>
+                </div>
+                <p class="m-footer-tagline">Powering the Future of Healthcare at Home</p>
+                <p class="m-footer-bio">Nhealth Technologies is an healthcare aggregator providing integrated healthcare services and at home through a single digital platform, connecting patients, doctors, pharmacies, diagnostics and emergency ambulance providers, eldercare, health packages, health riders, bedside assistants and at home, physiotherapy services and at home, blood availability checks, vaccination services nationwide, and also a digital telemedicine infrastructure pioneer.</p>
+                <div class="m-footer-contact">
+                    <span><i class="fa-solid fa-envelope"></i> <strong>Support:</strong> <a href="mailto:support@nhealth.in" style="color: inherit; text-decoration: none;">support@nhealth.in</a></span>
+                </div>
+                <div class="m-footer-links">
+                    <a href="#home">Home</a> &bull;
+                    <a href="javascript:void(0)" onclick="openAllServicesModal()">Services</a> &bull;
+                    <a href="#m-how-it-works" onclick="scrollToMobileSection('m-how-it-works')">How It Works</a> &bull;
+                    <a href="#m-about-us" onclick="scrollToMobileSection('m-about-us')">About Us</a>
+                </div>
+                <p class="m-footer-copy" style="margin-top: 0.8rem; font-size: 0.68rem; color: #94a3b8; text-align: center; line-height: 1.4;">&copy; 2026 Nhealth Technologies Pvt. Ltd. All rights reserved.</p>
+                <div class="m-footer-legal" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; font-size: 0.62rem; color: #64748b; margin-top: 0.35rem;">
+                    <a href="javascript:void(0)" onclick="showToast('Terms of Service', 'info')" style="color: #94a3b8; text-decoration: none;">Terms of Service</a>
+                    <span>&bull;</span>
+                    <a href="javascript:void(0)" onclick="showToast('Privacy Policy', 'info')" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a>
+                    <span>&bull;</span>
+                    <a href="javascript:void(0)" onclick="showToast('Telemedicine Guidelines', 'info')" style="color: #94a3b8; text-decoration: none;">Telemedicine Guidelines</a>
+                </div>
+                <p class="m-footer-ownership" style="font-size: 0.62rem; color: #0baaa2; font-weight: 600; text-align: center; margin-top: 0.4rem;">Design and Developed and Owned by Nhealth Technologies Private Limited</p>
+            </footer>
 
         </div>
     </div>
@@ -1244,11 +1889,12 @@
                 <div class="form-row-2">
                     <div class="form-group">
                         <label for="bookService"><i class="fa-solid fa-stethoscope"></i> Select Service *</label>
-                        <select id="bookService" name="service" required class="form-control">
+                        <select id="bookService" name="service" required class="form-control" onchange="handleServiceSelectionChange(this.value)">
                             <option value="">-- Choose Healthcare Service --</option>
                             {% for service in services %}
                             <option value="{{ service.title }}">{{ service.title }}</option>
                             {% endfor %}
+                            <option value="Health Support Rider">Health Support Rider</option>
                             <option value="Other Healthcare Services">Other Healthcare Services</option>
                         </select>
                     </div>
@@ -1265,28 +1911,29 @@
 
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label for="bookDate"><i class="fa-solid fa-calendar-day"></i> Preferred Date</label>
-                        <input type="date" id="bookDate" name="date" class="form-control">
+                        <label for="bookDate"><i class="fa-solid fa-calendar-day"></i> Preferred Date *</label>
+                        <input type="date" id="bookDate" name="date" required class="form-control">
                     </div>
-                    <div class="form-group">
-                        <label for="bookTime"><i class="fa-solid fa-clock"></i> Preferred Slot</label>
-                        <select id="bookTime" name="time_slot" class="form-control">
+                    <div class="form-group" id="timeSlotGroup">
+                        <label for="bookTimeSelect" id="bookTimeLabel"><i class="fa-solid fa-clock"></i> Preferred Slot *</label>
+                        <select id="bookTimeSelect" name="time_slot" class="form-control">
                             <option value="Morning (08:00 AM - 12:00 PM)">Morning (08:00 AM - 12:00 PM)</option>
                             <option value="Afternoon (12:00 PM - 04:00 PM)">Afternoon (12:00 PM - 04:00 PM)</option>
                             <option value="Evening (04:00 PM - 08:00 PM)">Evening (04:00 PM - 08:00 PM)</option>
                             <option value="Urgent (Within 60 Mins)">Urgent (Within 60 Mins)</option>
                         </select>
+                        <input type="time" id="bookTimeInput" name="time_slot_custom" class="form-control" value="09:30" style="display: none;" disabled>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="bookSymptoms"><i class="fa-solid fa-notes-medical"></i> Symptoms / Health Concern</label>
-                    <input type="text" id="bookSymptoms" name="symptoms" placeholder="e.g. Fever, Blood Pressure Check, Medicine Refill" class="form-control">
+                    <label for="bookSymptoms"><i class="fa-solid fa-notes-medical"></i> Symptoms / Health Concern / Notes</label>
+                    <input type="text" id="bookSymptoms" name="symptoms" placeholder="e.g. Pickup from home to hospital, Fever, BP check" class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="bookAddress"><i class="fa-solid fa-house"></i> Home Address / Landmark</label>
-                    <input type="text" id="bookAddress" name="address" placeholder="House/Flat No., Colony, Street, Landmark" class="form-control">
+                    <label for="bookAddress"><i class="fa-solid fa-house"></i> Home Address / Landmark *</label>
+                    <input type="text" id="bookAddress" name="address" required placeholder="House/Flat No., Colony, Street, Landmark" class="form-control">
                 </div>
 
                 <!-- Price Breakdown & Discount Card -->
@@ -1305,10 +1952,10 @@
                     </div>
                 </div>
 
-                <!-- WhatsApp Live Alert Opt-in -->
-                <div class="whatsapp-alert-optin">
+                <!-- Mandatory WhatsApp Live Alert Opt-in Checkbox -->
+                <div class="whatsapp-alert-optin" id="waOptinRow">
                     <label class="wa-checkbox-label">
-                        <input type="checkbox" id="waAlertCheck" name="wa_alert" checked>
+                        <input type="checkbox" id="waAlertCheck" name="wa_alert" required>
                         <span class="wa-custom-checkbox"></span>
                         <span class="wa-optin-text"><i class="fa-brands fa-whatsapp text-wa-green"></i> Send instant booking confirmation &amp; digital prescription to my WhatsApp</span>
                     </label>
@@ -1483,7 +2130,7 @@
                         <i class="fa-solid fa-{{ service.icon }}"></i>
                     </div>
                     <div class="tile-info">
-                        <span class="t-badge">{{ service.category }}</span>
+                        <span class="t-badge">{{ service.badge }} &bull; {{ service.category }}</span>
                         <h4>{{ service.title }}</h4>
                         <p>{{ service.description }}</p>
                     </div>
@@ -1494,6 +2141,10 @@
         </div>
     </div>
 
+    <!-- ==================== FLOATING GO TO TOP DIRECT BUTTON ==================== -->
+    <button type="button" class="go-to-top-btn" id="goToTopBtn" onclick="scrollToTopDirect()" aria-label="Go to Top" title="Go to Top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
     <!-- ==================== FLOATING WHATSAPP BUTTON & CHAT WIDGET ==================== -->
     <div class="floating-whatsapp-container" id="floatingWhatsappContainer">
@@ -1562,15 +2213,24 @@
 
             <!-- Health Support Rider Info Text Card -->
             <div class="rider-modal-info-card">
-                <p class="rider-modal-info-text">
-                    Pick and Drop Support and handles entire hospital or healthcare procedure &mdash; medicine, reports, essentials at your doorstep
-                </p>
+                <div class="rider-modal-title-pill">Health Support Rider</div>
+                <div class="rider-modal-headline">Trusted Pick &amp; Drop, Full-Day Support &amp; Complete Healthcare Assistance</div>
+                <div class="rider-modal-scope">&mdash; From Hospital Visits , OPDs to Procedures,<br>Medicines, Reports &amp; Essentials Delivered to Your Doorstep.</div>
+                <div class="rider-modal-tagline">
+                    <span class="tag-pick">Pick</span>
+                    <span class="tag-dot">&bull;</span>
+                    <span class="tag-support">Support</span>
+                    <span class="tag-dot">&bull;</span>
+                    <span class="tag-drop">Drop</span>
+                    <span class="tag-dot">&bull;</span>
+                    <span class="tag-brand">Your Healthcare, Simplified.</span>
+                </div>
             </div>
 
             <div class="rider-modal-actions">
-                <button type="button" class="rider-modal-btn rider-btn-book" onclick="closeRiderModal(); openBookingModal('Health Support Rider');">
+                <a href="javascript:void(0)" class="rider-modal-btn rider-btn-signup" onclick="closeRiderModal(); openBookingModal('Health Support Rider');">
                     <i class="fa-solid fa-calendar-check"></i> Book Now
-                </button>
+                </a>
                 <a href="https://api.whatsapp.com/send?phone=919393934621&text=Hello%20Nhealth%20Team%2C%20I%20want%20to%20book%20the%20Health%20Support%20Rider%20service." target="_blank" rel="noopener noreferrer" class="rider-modal-btn rider-btn-wa" onclick="closeRiderModal(); openWhatsAppSupport('Health Support Rider'); return false;">
                     <i class="fa-brands fa-whatsapp"></i> WhatsApp
                 </a>

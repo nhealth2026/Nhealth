@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Lab Login | Nhealth — Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Lab Auth Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab_auth.css') }}?v=1.0">
+</head>
+<body class="lab-auth-page">
+
+    <!-- Mobile Top Navigation Bar -->
+    <header class="lab-mobile-navbar">
+        <a href="/" class="lab-nav-logo">
+            <svg class="lab-brand-symbol" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="15" y="2" width="6" height="10.5" rx="3" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(45 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(90 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(135 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(180 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(225 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(270 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(315 18 18)" fill="#f97316"/>
+            </svg>
+            <div class="lab-brand-text">
+                <span class="lab-brand-name">nhealth</span>
+                <span class="lab-brand-tagline">Better Health. Home.</span>
+            </div>
+        </a>
+        <button class="lab-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="lab-mobile-drawer" id="mobileDrawer">
+        <a href="/" class="lab-drawer-link"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="/login" class="lab-drawer-link"><i class="fa-regular fa-user"></i> Patient Login</a>
+        <a href="/login?role=doctor" class="lab-drawer-link"><i class="fa-solid fa-user-doctor"></i> Doctor Login</a>
+        <a href="/login/lab" class="lab-drawer-link active"><i class="fa-solid fa-flask-vial"></i> Lab Login</a>
+        <a href="/signup/lab" class="lab-drawer-link"><i class="fa-solid fa-building-circle-medical"></i> Register Lab</a>
+    </div>
+
+    <!-- Main Centered Container (Laptop Frame) -->
+    <div class="lab-auth-page-outer">
+        <div class="lab-auth-frame">
+            <div class="lab-auth-container">
+        
+        <!-- ==================== LEFT SHOWCASE PANEL (Desktop) ==================== -->
+        <div class="lab-showcase-panel">
+            <div class="lab-showcase-top">
+                <!-- Nhealth Brand Logo -->
+                <a href="/" class="lab-showcase-logo">
+                    <svg class="lab-brand-symbol" style="width: 38px; height: 38px;" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(45 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(90 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(135 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(180 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(225 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(270 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(315 18 18)" fill="#f97316"/>
+                    </svg>
+                    <div class="lab-brand-text">
+                        <span class="lab-brand-name" style="font-size: 1.6rem;">nhealth</span>
+                        <span class="lab-brand-tagline" style="font-size: 0.75rem;">Better Health. Home.</span>
+                    </div>
+                </a>
+
+                <!-- Header -->
+                <div class="lab-showcase-header">
+                    <h1 class="lab-showcase-title">Lab Login</h1>
+                    <p class="lab-showcase-subtitle">Welcome back! Please login to access your laboratory dashboard</p>
+                </div>
+
+                <!-- 3 Features List -->
+                <div class="lab-features-list">
+                    <div class="lab-feature-item">
+                        <div class="lab-feature-icon-wrap">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="lab-feature-text">
+                            <span class="lab-feature-title">Secure &amp; Trusted</span>
+                            <span class="lab-feature-desc">Your data is protected with enterprise-grade security.</span>
+                        </div>
+                    </div>
+
+                    <div class="lab-feature-item">
+                        <div class="lab-feature-icon-wrap">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div class="lab-feature-text">
+                            <span class="lab-feature-title">Fast &amp; Easy Access</span>
+                            <span class="lab-feature-desc">Quick login to manage tests, results and reports.</span>
+                        </div>
+                    </div>
+
+                    <div class="lab-feature-item">
+                        <div class="lab-feature-icon-wrap">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <div class="lab-feature-text">
+                            <span class="lab-feature-title">24/7 Support</span>
+                            <span class="lab-feature-desc">We are here to help you whenever you need.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Microscope & Blue Glassware Photo -->
+            <img src="{{ url_for('static', filename='images/auth/lab_showcase_bg.jpg') }}" alt="Laboratory Microscope" class="lab-showcase-bg-img">
+        </div>
+
+        <!-- ==================== RIGHT FORM PANEL (Desktop & Mobile) ==================== -->
+        <div class="lab-form-panel">
+            <div class="lab-auth-card">
+                
+                <!-- Center Header with Flask Icon -->
+                <div class="lab-card-header">
+                    <div class="lab-top-badge">
+                        <svg class="lab-badge-svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 3h6M10 3v6.5L5.2 19.2A2 2 0 0 0 7 22h10a2 2 0 0 0 1.8-2.8L14 9.5V3"/>
+                            <path d="M7.5 16h9"/>
+                            <circle cx="10" cy="13.5" r="0.75" fill="#1d4ed8"/>
+                            <circle cx="13" cy="14.5" r="0.75" fill="#1d4ed8"/>
+                        </svg>
+                    </div>
+                    <h2 class="lab-card-title">Login to Your Lab Account</h2>
+                    <p class="lab-card-subtitle">Enter your credentials to continue</p>
+                </div>
+
+                <!-- Alert Message Box -->
+                <div id="labAlert" class="lab-alert"></div>
+
+                <!-- Form -->
+                <form id="labLoginForm" onsubmit="handleLabLogin(event)" novalidate>
+                    
+                    <!-- Mobile Number / Email -->
+                    <div class="lab-form-group">
+                        <label class="lab-form-label" for="labIdentifier">Mobile Number / Email</label>
+                        <div class="lab-input-wrapper">
+                            <i class="fa-regular fa-user lab-input-icon"></i>
+                            <input type="text" id="labIdentifier" class="lab-form-input" placeholder="Enter mobile number or email" required autocomplete="username">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="lab-form-group">
+                        <div class="lab-form-label">
+                            <span>Password</span>
+                            <a href="javascript:void(0)" onclick="handleForgotPassword()" class="lab-forgot-link">Forgot Password?</a>
+                        </div>
+                        <div class="lab-input-wrapper">
+                            <i class="fa-solid fa-lock lab-input-icon"></i>
+                            <input type="password" id="labPassword" class="lab-form-input" placeholder="Enter your password" required autocomplete="current-password">
+                            <button type="button" class="lab-eye-toggle" onclick="togglePasswordVisibility('labPassword', this)" aria-label="Toggle password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="lab-checkbox-group">
+                        <input type="checkbox" id="labRemember" class="lab-checkbox" checked>
+                        <label for="labRemember" class="lab-checkbox-label">Remember me</label>
+                    </div>
+
+                    <!-- Primary Login Button -->
+                    <button type="submit" class="lab-btn-primary" id="labLoginBtn">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        <span>Login</span>
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="lab-divider">
+                        <span>or</span>
+                    </div>
+
+                    <!-- Register Your Lab Outline Button -->
+                    <a href="/signup/lab" class="lab-btn-outline">
+                        <i class="fa-solid fa-hospital"></i>
+                        <span>Register Your Lab</span>
+                    </a>
+
+                    <!-- Disclaimer -->
+                    <p class="lab-disclaimer-text">
+                        By continuing, you agree to our <a href="javascript:void(0)" onclick="alert('Nhealth Terms of Service for Diagnostic Labs: Clinical quality standard adherence & secure HIPAA/DISHA data handling.')">Terms of Service</a><br>
+                        and <a href="javascript:void(0)" onclick="alert('Nhealth Privacy Policy: 100% confidential patient health records.')">Privacy Policy</a>
+                    </p>
+
+                </form>
+
+            </div>
+        </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobileDrawer');
+            if (drawer) drawer.classList.toggle('open');
+        }
+
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        function handleForgotPassword() {
+            const id = document.getElementById('labIdentifier').value.trim();
+            const alertBox = document.getElementById('labAlert');
+            if (!id) {
+                alertBox.textContent = 'Please enter your registered mobile number or email above first.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+            alertBox.textContent = `Password reset link sent to ${id}. Please check your messages.`;
+            alertBox.className = 'lab-alert success';
+            alertBox.style.display = 'block';
+        }
+
+        async function handleLabLogin(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('labAlert');
+            const btn = document.getElementById('labLoginBtn');
+            const identifier = document.getElementById('labIdentifier').value.trim();
+            const password = document.getElementById('labPassword').value;
+
+            alertBox.style.display = 'none';
+
+            if (!identifier || !password) {
+                alertBox.textContent = 'Please enter both your mobile/email and password.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Logging in...</span>';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        role: 'lab',
+                        identifier: identifier,
+                        password: password
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    alertBox.textContent = '🎉 ' + (data.message || 'Login successful! Redirecting...');
+                    alertBox.className = 'lab-alert success';
+                    alertBox.style.display = 'block';
+
+                    if (data.user) {
+                        localStorage.setItem('nhealth_user', JSON.stringify(data.user));
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/lab/dashboard';
+                    }, 800);
+                } else {
+                    alertBox.textContent = data.message || 'Invalid credentials. Please verify and try again.';
+                    alertBox.className = 'lab-alert error';
+                    alertBox.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Login</span>';
+                }
+            } catch (err) {
+                alertBox.textContent = 'Network error. Please try again.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Login</span>';
+            }
+        }
+    </script>
+</body>
+</html>

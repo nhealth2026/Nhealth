@@ -110,6 +110,13 @@ function toggleMobileSubmenu(e) {
     }
 }
 
+function scrollToMobileSection(id) {
+    const el = document.getElementById(id) || document.getElementById(id.replace('m-', ''));
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 
 /* ==========================================================================
    3. ANDHRA PRADESH MAP INTERACTIVITY & TOOLTIP
@@ -192,6 +199,40 @@ function initStatsCounter() {
 /* ==========================================================================
    5. BOOKING MODAL & AJAX FORM
    ========================================================================== */
+function handleServiceSelectionChange(serviceName) {
+    const timeLabel = document.getElementById('bookTimeLabel');
+    const timeSelect = document.getElementById('bookTimeSelect');
+    const timeInput = document.getElementById('bookTimeInput');
+    const symptomsInput = document.getElementById('bookSymptoms');
+    if (!serviceName) return;
+
+    const isRider = serviceName.toLowerCase().includes('rider') || serviceName.toLowerCase().includes('health support rider');
+
+    if (isRider) {
+        if (timeLabel) timeLabel.innerHTML = '<i class="fa-solid fa-clock"></i> Rider Pickup Time (Enter Time) *';
+        if (timeSelect) {
+            timeSelect.style.display = 'none';
+            timeSelect.disabled = true;
+        }
+        if (timeInput) {
+            timeInput.style.display = 'block';
+            timeInput.disabled = false;
+        }
+        if (symptomsInput) symptomsInput.placeholder = 'e.g. Pickup from home to Hospital / OPD, Medicine delivery';
+    } else {
+        if (timeLabel) timeLabel.innerHTML = '<i class="fa-solid fa-clock"></i> Preferred Slot *';
+        if (timeSelect) {
+            timeSelect.style.display = 'block';
+            timeSelect.disabled = false;
+        }
+        if (timeInput) {
+            timeInput.style.display = 'none';
+            timeInput.disabled = true;
+        }
+        if (symptomsInput) symptomsInput.placeholder = 'e.g. Fever, Blood Pressure Check, Medicine Refill';
+    }
+}
+
 function openBookingModal(preselectedService = null) {
     const modal = document.getElementById('bookingModalBackdrop');
     const form = document.getElementById('bookingForm');
@@ -203,14 +244,19 @@ function openBookingModal(preselectedService = null) {
         if (successView) successView.style.display = 'none';
 
         if (preselectedService && serviceSelect) {
-            // Find option matching title
+            // Find option matching title (skip empty placeholder option)
             for (let i = 0; i < serviceSelect.options.length; i++) {
-                if (serviceSelect.options[i].value.toLowerCase().includes(preselectedService.toLowerCase()) || 
-                    preselectedService.toLowerCase().includes(serviceSelect.options[i].value.toLowerCase())) {
+                const optVal = (serviceSelect.options[i].value || '').trim();
+                if (!optVal) continue;
+                if (optVal.toLowerCase().includes(preselectedService.toLowerCase()) || 
+                    preselectedService.toLowerCase().includes(optVal.toLowerCase())) {
                     serviceSelect.selectedIndex = i;
                     break;
                 }
             }
+            handleServiceSelectionChange(preselectedService);
+        } else if (serviceSelect) {
+            handleServiceSelectionChange(serviceSelect.value);
         }
 
         modal.classList.add('active');
@@ -237,13 +283,39 @@ async function handleBookingSubmit(e) {
     if (btnText) btnText.innerText = "Confirming...";
     if (btnIcon) btnIcon.className = "fa-solid fa-spinner fa-spin";
 
+    // ── Mandatory WhatsApp checkbox validation ──
+    const waCheck = document.getElementById('waAlertCheck');
+    if (waCheck && !waCheck.checked) {
+        if (submitBtn) submitBtn.disabled = false;
+        if (btnText) btnText.innerText = "Confirm & Pay ₹399";
+        if (btnIcon) btnIcon.className = "fa-solid fa-arrow-right";
+        const optin = document.getElementById('waOptinRow');
+        if (optin) {
+            optin.style.outline = '2px solid #ef4444';
+            optin.style.borderRadius = '8px';
+            optin.style.padding = '6px 8px';
+            optin.style.animation = 'shake 0.4s ease';
+            setTimeout(() => { optin.style.outline = ''; optin.style.animation = ''; optin.style.padding = ''; }, 2500);
+        }
+        showToast("⚠️ Please check the WhatsApp confirmation box to proceed.", "error");
+        return;
+    }
+
+
+
+    const customTimeEl = document.getElementById('bookTimeInput');
+    const selectTimeEl = document.getElementById('bookTimeSelect');
+    const selectedTime = (customTimeEl && !customTimeEl.disabled && customTimeEl.style.display !== 'none') 
+        ? customTimeEl.value 
+        : (selectTimeEl ? selectTimeEl.value : 'Morning (08:00 AM - 12:00 PM)');
+
     const formData = {
         name: document.getElementById('bookName').value,
         phone: document.getElementById('bookPhone').value,
         service: document.getElementById('bookService').value,
         city: document.getElementById('bookCity').value,
         date: document.getElementById('bookDate').value,
-        time_slot: document.getElementById('bookTime').value,
+        time_slot: selectedTime,
         address: document.getElementById('bookAddress').value
     };
 
@@ -439,21 +511,11 @@ function setAuthMode(mode) {
 }
 
 function openLoginModal() {
-    setAuthMode('login');
-    const modal = document.getElementById('loginModalBackdrop');
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    window.location.href = '/login';
 }
 
 function openSignupModal() {
-    setAuthMode('signup');
-    const modal = document.getElementById('loginModalBackdrop');
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    window.location.href = '/signup';
 }
 
 function toggleAuthMode() {
@@ -690,13 +752,13 @@ function sendTelemedChatMessage(e) {
         const docMsg = document.createElement('div');
         docMsg.className = 'chat-bubble doc-msg';
         docMsg.innerHTML = `
-            <div class="chat-sender">Dr. Priya Sharma</div>
+            <div class="chat-sender">Consulting Doctor</div>
             <div class="chat-text">Noted Rahul. Telemetry readings reflect stable cardiac rhythm. I've updated your digital chart accordingly.</div>
             <div class="chat-time">${timeStr}</div>
         `;
         scrollContainer.appendChild(docMsg);
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
-        showToast("💬 Dr. Priya Sharma responded to your message", "info");
+        showToast("💬 Doctor responded to your message", "info");
     }, 1100);
 }
 
@@ -813,3 +875,66 @@ function toggleBikeDrive() {
         showToast("🛵 Nhealth Doctor Delivery returned to starting point!", "info");
     }
 }
+
+/* ==========================================================================
+   15. DESKTOP SERVICES CAROUSEL SCROLLER & CATEGORY FILTERING
+   ========================================================================== */
+function scrollServicesBar(direction) {
+    const bar = document.getElementById('servicesCardBar') || document.querySelector('.services-card-bar');
+    if (bar) {
+        bar.scrollBy({ left: direction * 360, behavior: 'smooth' });
+    }
+}
+
+function filterServicesCategory(category, btnElement) {
+    const cards = document.querySelectorAll('.suite-card');
+    const tabs = document.querySelectorAll('.suite-filter-tab');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    cards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        if (category === 'all' || cardCat === category) {
+            card.style.display = 'flex';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 10);
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+
+/* ==========================================================================
+   16. GO TO TOP – DIRECT FLOATING BUTTON
+   ========================================================================== */
+function scrollToTopDirect() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+function initGoToTopListener() {
+    const topBtn = document.getElementById('goToTopBtn');
+    if (!topBtn) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 280) {
+            topBtn.classList.add('visible');
+        } else {
+            topBtn.classList.remove('visible');
+        }
+    }, { passive: true });
+}
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    initGoToTopListener();
+});
+

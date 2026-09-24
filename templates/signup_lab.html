@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Lab Signup | Nhealth — Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Lab Auth Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab_auth.css') }}?v=1.0">
+</head>
+<body class="lab-auth-page">
+
+    <!-- Mobile Top Navigation Bar -->
+    <header class="lab-mobile-navbar">
+        <a href="/" class="lab-nav-logo">
+            <svg class="lab-brand-symbol" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="15" y="2" width="6" height="10.5" rx="3" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(45 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(90 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(135 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(180 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(225 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(270 18 18)" fill="#f97316"/>
+                <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(315 18 18)" fill="#f97316"/>
+            </svg>
+            <div class="lab-brand-text">
+                <span class="lab-brand-name">nhealth</span>
+                <span class="lab-brand-tagline">Better Health. Home.</span>
+            </div>
+        </a>
+        <button class="lab-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="lab-mobile-drawer" id="mobileDrawer">
+        <a href="/" class="lab-drawer-link"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="/login" class="lab-drawer-link"><i class="fa-regular fa-user"></i> Patient Login</a>
+        <a href="/login?role=doctor" class="lab-drawer-link"><i class="fa-solid fa-user-doctor"></i> Doctor Login</a>
+        <a href="/login/lab" class="lab-drawer-link"><i class="fa-solid fa-flask-vial"></i> Lab Login</a>
+        <a href="/signup/lab" class="lab-drawer-link active"><i class="fa-solid fa-building-circle-medical"></i> Register Lab</a>
+    </div>
+
+    <!-- Main Centered Container (Laptop Frame) -->
+    <div class="lab-auth-page-outer">
+        <div class="lab-auth-frame signup-frame">
+            <div class="lab-auth-container">
+        
+        <!-- ==================== LEFT SHOWCASE PANEL (Desktop) ==================== -->
+        <div class="lab-showcase-panel">
+            <div class="lab-showcase-top">
+                <!-- Nhealth Brand Logo -->
+                <a href="/" class="lab-showcase-logo">
+                    <svg class="lab-brand-symbol" style="width: 38px; height: 38px;" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(45 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(90 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(135 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(180 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(225 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(270 18 18)" fill="#f97316"/>
+                        <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(315 18 18)" fill="#f97316"/>
+                    </svg>
+                    <div class="lab-brand-text">
+                        <span class="lab-brand-name" style="font-size: 1.6rem;">nhealth</span>
+                        <span class="lab-brand-tagline" style="font-size: 0.75rem;">Better Health. Home.</span>
+                    </div>
+                </a>
+
+                <!-- Header -->
+                <div class="lab-showcase-header">
+                    <h1 class="lab-showcase-title">Lab Signup</h1>
+                    <p class="lab-showcase-subtitle">Create your lab / diagnostic center account to partner with Nhealth</p>
+                </div>
+
+                <!-- 3 Features List -->
+                <div class="lab-features-list">
+                    <div class="lab-feature-item">
+                        <div class="lab-feature-icon-wrap">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <div class="lab-feature-text">
+                            <span class="lab-feature-title">Grow Your Business</span>
+                            <span class="lab-feature-desc">Reach more patients and expand your services.</span>
+                        </div>
+                    </div>
+
+                    <div class="lab-feature-item">
+                        <div class="lab-feature-icon-wrap">
+                            <i class="fa-regular fa-file-lines"></i>
+                        </div>
+                        <div class="lab-feature-text">
+                            <span class="lab-feature-title">Digital &amp; Paperless</span>
+                            <span class="lab-feature-desc">Manage tests, results and reports digitally.</span>
+                        </div>
+                    </div>
+
+                    <div class="lab-feature-item">
+                        <div class="lab-feature-icon-wrap">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="lab-feature-text">
+                            <span class="lab-feature-title">Trusted Platform</span>
+                            <span class="lab-feature-desc">Join thousands of labs across India.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Provided Laboratory Showcase Image -->
+            <img src="{{ url_for('static', filename='images/auth/lab_signup_showcase_bg.png') }}" alt="Laboratory Diagnostics" class="lab-showcase-bg-img signup-showcase-bg">
+        </div>
+
+        <!-- ==================== RIGHT FORM PANEL (Desktop & Mobile) ==================== -->
+        <div class="lab-form-panel">
+            <div class="lab-auth-card signup-card">
+                
+                <!-- Center Header with Building Icon -->
+                <div class="lab-card-header">
+                    <div class="lab-top-badge">
+                        <svg class="lab-badge-svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 21h18"/>
+                            <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/>
+                            <path d="M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/>
+                            <path d="M10 9h4"/>
+                            <path d="M12 7v4"/>
+                        </svg>
+                    </div>
+                    <h2 class="lab-card-title">Create Your Lab Account</h2>
+                    <p class="lab-card-subtitle">Fill in the details below to get started</p>
+                </div>
+
+                <!-- Mobile Step Wizard Indicator -->
+                <div class="lab-mobile-wizard-bar" id="mobileWizardBar">
+                    <div class="lab-step-line">
+                        <div class="lab-step-line-fill" id="wizardLineFill"></div>
+                    </div>
+
+                    <div class="lab-step-item active" id="stepIndicator1">
+                        <div class="lab-step-circle">1</div>
+                        <span class="lab-step-label">Lab Details</span>
+                    </div>
+
+                    <div class="lab-step-item" id="stepIndicator2">
+                        <div class="lab-step-circle">2</div>
+                        <span class="lab-step-label">Address</span>
+                    </div>
+
+                    <div class="lab-step-item" id="stepIndicator3">
+                        <div class="lab-step-circle">3</div>
+                        <span class="lab-step-label">Documents</span>
+                    </div>
+                </div>
+
+                <!-- Alert Message Box -->
+                <div id="labSignupAlert" class="lab-alert"></div>
+
+                <!-- Multi-Step / Full Form -->
+                <form id="labSignupForm" onsubmit="handleLabSignup(event)" novalidate>
+                    
+                    <!-- ==================== STEP / SECTION 1: LAB DETAILS ==================== -->
+                    <div class="lab-step-section" id="stepSection1">
+                        <div class="lab-section-header">
+                            <i class="fa-solid fa-hospital"></i>
+                            <span>Lab / Center Details</span>
+                        </div>
+
+                        <!-- Row 1: Lab Name & Owner Name -->
+                        <div class="lab-grid-2">
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labName">Lab / Diagnostic Center Name *</label>
+                                <input type="text" id="labName" class="lab-form-input no-icon" placeholder="Enter lab / center name" required>
+                            </div>
+
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labOwnerName">Owner / Authorized Person Name *</label>
+                                <input type="text" id="labOwnerName" class="lab-form-input no-icon" placeholder="Enter full name" required>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Mobile Number & Email -->
+                        <div class="lab-grid-2">
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labPhone">Mobile Number *</label>
+                                <div class="lab-phone-wrapper">
+                                    <span class="lab-phone-prefix">+91 <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: #64748b;"></i></span>
+                                    <input type="tel" id="labPhone" class="lab-form-input" placeholder="Enter mobile number" maxlength="10" required>
+                                </div>
+                            </div>
+
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labEmail">Email Address *</label>
+                                <input type="email" id="labEmail" class="lab-form-input no-icon" placeholder="Enter email address" required>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Password & Confirm Password -->
+                        <div class="lab-grid-2">
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labPassword">Password *</label>
+                                <div class="lab-input-wrapper">
+                                    <input type="password" id="labPassword" class="lab-form-input no-icon" placeholder="Enter password" required>
+                                    <button type="button" class="lab-eye-toggle" onclick="togglePasswordVisibility('labPassword', this)" aria-label="Toggle password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labConfirmPassword">Confirm Password *</label>
+                                <div class="lab-input-wrapper">
+                                    <input type="password" id="labConfirmPassword" class="lab-form-input no-icon" placeholder="Confirm password" required>
+                                    <button type="button" class="lab-eye-toggle" onclick="togglePasswordVisibility('labConfirmPassword', this)" aria-label="Toggle password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Next Button for Step 1 -->
+                        <div class="mobile-only-btn" style="margin-top: 14px;">
+                            <button type="button" class="lab-btn-primary" onclick="goToStep(2)">
+                                <span>Next</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==================== STEP / SECTION 2: LAB ADDRESS ==================== -->
+                    <div class="lab-step-section" id="stepSection2">
+                        <div class="lab-section-header">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>Lab Address</span>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="lab-form-group">
+                            <label class="lab-form-label" for="labAddress">Address *</label>
+                            <input type="text" id="labAddress" class="lab-form-input no-icon" placeholder="Enter full address" required>
+                        </div>
+
+                        <!-- City, State, Pincode -->
+                        <div class="lab-grid-3">
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labCity">City *</label>
+                                <select id="labCity" class="lab-select" required>
+                                    <option value="" disabled selected>Select city</option>
+                                    <option value="Vijayawada">Vijayawada</option>
+                                    <option value="Visakhapatnam">Visakhapatnam</option>
+                                    <option value="Guntur">Guntur</option>
+                                    <option value="Tirupati">Tirupati</option>
+                                    <option value="Kurnool">Kurnool</option>
+                                    <option value="Kakinada">Kakinada</option>
+                                    <option value="Rajahmundry">Rajahmundry</option>
+                                    <option value="Nellore">Nellore</option>
+                                    <option value="Anantapur">Anantapur</option>
+                                    <option value="Kadapa">Kadapa</option>
+                                    <option value="Hyderabad">Hyderabad</option>
+                                    <option value="Bengaluru">Bengaluru</option>
+                                    <option value="Chennai">Chennai</option>
+                                </select>
+                            </div>
+
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labState">State *</label>
+                                <select id="labState" class="lab-select" required>
+                                    <option value="" disabled selected>Select state</option>
+                                    <option value="Andhra Pradesh" selected>Andhra Pradesh</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Delhi">Delhi</option>
+                                </select>
+                            </div>
+
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labPincode">Pincode *</label>
+                                <input type="text" id="labPincode" class="lab-form-input no-icon" placeholder="Enter pincode" maxlength="6" required>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Buttons for Step 2 -->
+                        <div class="mobile-step-nav">
+                            <button type="button" class="lab-btn-outline" style="flex: 1;" onclick="goToStep(1)">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <span>Back</span>
+                            </button>
+                            <button type="button" class="lab-btn-primary" style="flex: 2;" onclick="goToStep(3)">
+                                <span>Next</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ==================== STEP / SECTION 3 & 4: REGISTRATION & DOCUMENTS ==================== -->
+                    <div class="lab-step-section" id="stepSection3">
+                        <div class="lab-section-header">
+                            <i class="fa-regular fa-clipboard"></i>
+                            <span>Registration Details</span>
+                        </div>
+
+                        <!-- Registration No & GST No -->
+                        <div class="lab-grid-2">
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labRegNumber">Registration / License Number *</label>
+                                <input type="text" id="labRegNumber" class="lab-form-input no-icon" placeholder="Enter registration number" required>
+                            </div>
+
+                            <div class="lab-form-group">
+                                <label class="lab-form-label" for="labGstNumber">GST Number (Optional)</label>
+                                <input type="text" id="labGstNumber" class="lab-form-input no-icon" placeholder="Enter GST number">
+                            </div>
+                        </div>
+
+                        <div class="lab-section-header">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Document Upload</span>
+                        </div>
+
+                        <!-- 2 Document Upload Cards -->
+                        <div class="lab-upload-grid">
+                            <!-- Card 1: Certificate -->
+                            <div class="lab-upload-card" onclick="document.getElementById('fileCert').click()">
+                                <input type="file" id="fileCert" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusCert')">
+                                <span class="lab-upload-title">Lab Registration Certificate *</span>
+                                <span class="lab-upload-subtitle">Upload certificate (PDF, JPG, PNG)</span>
+                                <button type="button" class="lab-upload-btn">
+                                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                    <span>Upload File</span>
+                                </button>
+                                <span class="lab-file-status" id="statusCert"><i class="fa-solid fa-circle-check"></i> Certificate selected</span>
+                            </div>
+
+                            <!-- Card 2: ID Proof -->
+                            <div class="lab-upload-card" onclick="document.getElementById('fileId').click()">
+                                <input type="file" id="fileId" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusId')">
+                                <span class="lab-upload-title">Authorized Person ID Proof *</span>
+                                <span class="lab-upload-subtitle">Upload ID proof (PDF, JPG, PNG)</span>
+                                <button type="button" class="lab-upload-btn">
+                                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                    <span>Upload File</span>
+                                </button>
+                                <span class="lab-file-status" id="statusId"><i class="fa-solid fa-circle-check"></i> ID Proof selected</span>
+                            </div>
+                        </div>
+
+                        <!-- Terms Checkbox -->
+                        <div class="lab-checkbox-group" style="margin-top: 14px; margin-bottom: 20px;">
+                            <input type="checkbox" id="labTerms" class="lab-checkbox" required>
+                            <label for="labTerms" class="lab-checkbox-label">
+                                I agree to the <a href="javascript:void(0)" onclick="alert('Nhealth Terms: Diagnostic standard adherence, timely report upload & clinical accuracy.')">Terms of Service</a> and <a href="javascript:void(0)" onclick="alert('Nhealth Privacy Policy: 100% HIPAA/DISHA data protection.')">Privacy Policy</a> of Nhealth.
+                            </label>
+                        </div>
+
+                        <!-- Desktop Submit Button / Mobile Final Submit Button -->
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="lab-btn-outline mobile-only-inline-back" style="flex: 1; display: none;" onclick="goToStep(2)">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <span>Back</span>
+                            </button>
+                            <button type="submit" class="lab-btn-primary" id="labSignupSubmitBtn" style="flex: 2;">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Create Lab Account</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- Footer Link Centered Below White Card -->
+            <div class="lab-card-footer-link">
+                Already have an account? <a href="/login/lab">Login</a>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        let currentStep = 1;
+
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobileDrawer');
+            if (drawer) drawer.classList.toggle('open');
+        }
+
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        function handleFileSelected(input, statusElId) {
+            const statusEl = document.getElementById(statusElId);
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${fileName}`;
+                statusEl.style.display = 'block';
+            }
+        }
+
+        // Responsive Wizard Handler
+        function goToStep(step) {
+            if (window.innerWidth >= 992) {
+                // On desktop, all sections are visible simultaneously
+                return;
+            }
+
+            const alertBox = document.getElementById('labSignupAlert');
+            alertBox.style.display = 'none';
+
+            // Validation before going forward
+            if (step === 2 && currentStep === 1) {
+                const labName = document.getElementById('labName').value.trim();
+                const owner = document.getElementById('labOwnerName').value.trim();
+                const phone = document.getElementById('labPhone').value.trim();
+                const email = document.getElementById('labEmail').value.trim();
+                const pwd = document.getElementById('labPassword').value;
+                const cpwd = document.getElementById('labConfirmPassword').value;
+
+                if (!labName || !owner || !phone || !email || !pwd) {
+                    alertBox.textContent = 'Please fill out all required fields in Lab Details.';
+                    alertBox.className = 'lab-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (phone.length < 10) {
+                    alertBox.textContent = 'Please enter a valid 10-digit mobile number.';
+                    alertBox.className = 'lab-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (pwd.length < 6) {
+                    alertBox.textContent = 'Password must be at least 6 characters.';
+                    alertBox.className = 'lab-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (pwd !== cpwd) {
+                    alertBox.textContent = 'Passwords do not match. Please verify.';
+                    alertBox.className = 'lab-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+            }
+
+            if (step === 3 && currentStep === 2) {
+                const addr = document.getElementById('labAddress').value.trim();
+                const city = document.getElementById('labCity').value;
+                const state = document.getElementById('labState').value;
+                const pin = document.getElementById('labPincode').value.trim();
+
+                if (!addr || !city || !state || !pin) {
+                    alertBox.textContent = 'Please provide complete address, city, state and pincode.';
+                    alertBox.className = 'lab-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+            }
+
+            currentStep = step;
+            updateStepVisibility();
+        }
+
+        function updateStepVisibility() {
+            const isMobile = window.innerWidth < 992;
+            const s1 = document.getElementById('stepSection1');
+            const s2 = document.getElementById('stepSection2');
+            const s3 = document.getElementById('stepSection3');
+            const ind1 = document.getElementById('stepIndicator1');
+            const ind2 = document.getElementById('stepIndicator2');
+            const ind3 = document.getElementById('stepIndicator3');
+            const line = document.getElementById('wizardLineFill');
+            const backBtnInline = document.querySelector('.mobile-only-inline-back');
+
+            if (!isMobile) {
+                // Desktop: show all sections
+                s1.style.display = 'block';
+                s2.style.display = 'block';
+                s3.style.display = 'block';
+                if (backBtnInline) backBtnInline.style.display = 'none';
+                return;
+            }
+
+            // Mobile step wizard
+            s1.style.display = (currentStep === 1) ? 'block' : 'none';
+            s2.style.display = (currentStep === 2) ? 'block' : 'none';
+            s3.style.display = (currentStep === 3) ? 'block' : 'none';
+
+            if (backBtnInline) {
+                backBtnInline.style.display = (currentStep === 3) ? 'flex' : 'none';
+            }
+
+            // Indicators
+            ind1.className = 'lab-step-item' + (currentStep === 1 ? ' active' : (currentStep > 1 ? ' completed' : ''));
+            ind2.className = 'lab-step-item' + (currentStep === 2 ? ' active' : (currentStep > 2 ? ' completed' : ''));
+            ind3.className = 'lab-step-item' + (currentStep === 3 ? ' active' : '');
+
+            if (line) {
+                line.style.width = (currentStep === 1 ? '0%' : (currentStep === 2 ? '50%' : '100%'));
+            }
+        }
+
+        window.addEventListener('resize', updateStepVisibility);
+        document.addEventListener('DOMContentLoaded', updateStepVisibility);
+
+        async function handleLabSignup(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('labSignupAlert');
+            const submitBtn = document.getElementById('labSignupSubmitBtn');
+
+            const labName = document.getElementById('labName').value.trim();
+            const owner = document.getElementById('labOwnerName').value.trim();
+            const phone = document.getElementById('labPhone').value.trim();
+            const email = document.getElementById('labEmail').value.trim();
+            const pwd = document.getElementById('labPassword').value;
+            const cpwd = document.getElementById('labConfirmPassword').value;
+            const address = document.getElementById('labAddress').value.trim();
+            const city = document.getElementById('labCity').value;
+            const state = document.getElementById('labState').value;
+            const pincode = document.getElementById('labPincode').value.trim();
+            const regNo = document.getElementById('labRegNumber').value.trim();
+            const gst = document.getElementById('labGstNumber').value.trim();
+            const terms = document.getElementById('labTerms').checked;
+
+            alertBox.style.display = 'none';
+
+            if (!labName || !owner || !phone || !email || !pwd || !address || !city || !state || !pincode || !regNo) {
+                alertBox.textContent = 'Please fill out all required fields marked with *.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (phone.length < 10) {
+                alertBox.textContent = 'Please enter a valid 10-digit mobile number.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (pwd.length < 6) {
+                alertBox.textContent = 'Password must be at least 6 characters long.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (pwd !== cpwd) {
+                alertBox.textContent = 'Passwords do not match.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (!terms) {
+                alertBox.textContent = 'You must agree to the Terms of Service and Privacy Policy.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Creating Lab Account...</span>';
+
+            try {
+                const res = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        role: 'lab',
+                        name: labName,
+                        lab_name: labName,
+                        owner_name: owner,
+                        phone: phone,
+                        email: email,
+                        password: pwd,
+                        address: address,
+                        city: city,
+                        state: state,
+                        pincode: pincode,
+                        reg_number: regNo,
+                        gst_number: gst
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    if (data.user) {
+                        localStorage.setItem('nhealth_user', JSON.stringify(data.user));
+                    }
+                    alertBox.textContent = '🎉 ' + (data.message || 'Lab account created successfully! Redirecting...');
+                    alertBox.className = 'lab-alert success';
+                    alertBox.style.display = 'block';
+
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/lab/dashboard';
+                    }, 1200);
+                } else {
+                    alertBox.textContent = data.message || 'Failed to create lab account. Please try again.';
+                    alertBox.className = 'lab-alert error';
+                    alertBox.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> <span>Create Lab Account</span>';
+                }
+            } catch (err) {
+                alertBox.textContent = 'Network error. Please try again.';
+                alertBox.className = 'lab-alert error';
+                alertBox.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> <span>Create Lab Account</span>';
+            }
+        }
+    </script>
+</body>
+</html>

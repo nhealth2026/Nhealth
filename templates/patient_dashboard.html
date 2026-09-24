@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Nhealth - Online Consultation & Patient Dashboard</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Consultation Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/patient_dashboard.css') }}?v=1.2">
+</head>
+<body class="patient-dashboard-body">
+
+    <!-- ==========================================================================
+         PART 1: MOBILE APP LAYOUT (Screen.width < 992px)
+         ========================================================================== -->
+    <div class="pd-mobile-view" id="mobileAppContainer">
+        
+        <!-- ==================== MOBILE SCREEN 1: HOME ==================== -->
+        <div class="pd-screen active-screen" id="mScreen1">
+            <!-- App Header -->
+            <div class="m-app-header">
+                <div class="m-location-box" onclick="openPatientProfileModal()" title="View Patient Profile">
+                    <i class="fa-solid fa-circle-user" style="color: var(--pd-teal-primary); font-size: 1.15rem;"></i>
+                    <span class="m-location-text" id="mHeaderPatientName">{{ user.name if user else 'Valued Patient' }}</span>
+                    <i class="fa-solid fa-chevron-down m-location-chevron"></i>
+                </div>
+                <div class="m-header-actions">
+                    <button class="m-header-icon-btn" aria-label="Notifications" onclick="showToast('You have 1 upcoming consultation')"><i class="fa-regular fa-bell"></i></button>
+                    <button class="m-header-icon-btn" aria-label="Emergency SOS" onclick="openSosModal()" title="Emergency SOS"><i class="fa-solid fa-shield-heart" style="color: #ef4444;"></i></button>
+                    <button class="m-header-icon-btn" aria-label="Logout" onclick="handleLogout(event)" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket" style="color: #ef4444;"></i></button>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="m-search-wrap">
+                <div class="m-search-input-box" onclick="goToScreen('mScreen2')">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search doctors, specialties..." readonly>
+                </div>
+            </div>
+
+            <!-- Symptom Prompt Card -->
+            <div class="m-hero-symptom-card" onclick="goToScreen('mScreen2')">
+                <div class="m-symptom-card-info">
+                    <h3>How are you feeling today?</h3>
+                    <p>Hello <strong id="mHeroPatientGreeting" style="color: var(--pd-teal-primary);">{{ user.name.split()[0] if user and user.name else 'Patient' }}</strong>! Tell us your health concern and we'll guide you to the right specialist.</p>
+                    <div class="m-symptom-input-mock">
+                        <span>Describe your symptoms...</span>
+                        <i class="fa-solid fa-microphone"></i>
+                    </div>
+                </div>
+                <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Consult Doctor" class="m-hero-doctor-img" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}'">
+            </div>
+
+            <!-- Our Services (6 items with Online Consultation active) -->
+            <div class="m-services-section">
+                <div class="m-section-heading">
+                    <span>Our Services</span>
+                    <small style="color: #0baaa2; font-size: 0.78rem; font-weight: 700; cursor: pointer;" onclick="goToScreen('mScreen2')">View All</small>
+                </div>
+                <div class="m-services-grid-6">
+                    <div class="m-service-tile active-teal" onclick="goToScreen('mScreen2')">
+                        <div class="m-service-icon-circle">
+                            <img src="{{ url_for('static', filename='images/services/srv_online_consult.png') }}" alt="Online Consultation" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-video\'></i>'">
+                        </div>
+                        <span class="m-service-name">Online Consultation</span>
+                    </div>
+                    <div class="m-service-tile" onclick="openServiceBookingModal('Doctor Home Visit', 'General Physician & Specialist home visits across Vijayawada, Guntur & AP.', 'fa-house-medical')">
+                        <div class="m-service-icon-circle">
+                            <img src="{{ url_for('static', filename='images/services/srv_doctor_visit.png') }}" alt="Home Visit" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-house-medical\'></i>'">
+                        </div>
+                        <span class="m-service-name">Home Visit</span>
+                    </div>
+                    <div class="m-service-tile" onclick="openServiceBookingModal('Lab Diagnostics at Home', 'Certified phlebotomist blood sample collection with digital reports in 6 hours.', 'fa-flask-vial')">
+                        <div class="m-service-icon-circle">
+                            <img src="{{ url_for('static', filename='images/services/srv_lab_tests.png') }}" alt="Lab Tests" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-flask-vial\'></i>'">
+                        </div>
+                        <span class="m-service-name">Lab Tests</span>
+                    </div>
+                    <div class="m-service-tile" onclick="openServiceBookingModal('Doorstep Pharmacy', '60-minute doorstep medicine delivery with verified batch tracking.', 'fa-pills')">
+                        <div class="m-service-icon-circle">
+                            <img src="{{ url_for('static', filename='images/services/srv_pharmacy.png') }}" alt="Pharmacy" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-pills\'></i>'">
+                        </div>
+                        <span class="m-service-name">Pharmacy</span>
+                    </div>
+                    <div class="m-service-tile" onclick="openServiceBookingModal('Physiotherapy at Home', 'Certified physiotherapists for pain relief and post-surgery rehabilitation.', 'fa-person-walking')">
+                        <div class="m-service-icon-circle">
+                            <img src="{{ url_for('static', filename='images/services/srv_physio.png') }}" alt="Physiotherapy" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-person-walking\'></i>'">
+                        </div>
+                        <span class="m-service-name">Physiotherapy</span>
+                    </div>
+                    <div class="m-service-tile" onclick="openServiceBookingModal('Senior Eldercare Support', '24/7 daily vitals check and compassionate companion care for elderly.', 'fa-hand-holding-heart')">
+                        <div class="m-service-icon-circle">
+                            <img src="{{ url_for('static', filename='images/services/srv_eldercare.png') }}" alt="Eldercare" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-hand-holding-heart\'></i>'">
+                        </div>
+                        <span class="m-service-name">Eldercare</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Rated Doctors Quick List -->
+            <div class="m-services-section" style="margin-top: 8px;">
+                <div class="m-section-heading">
+                    <span>Top Rated Doctors</span>
+                    <small style="color: #0baaa2; font-size: 0.78rem; font-weight: 700; cursor: pointer;" onclick="goToScreen('mScreen2')">See All</small>
+                </div>
+                <div class="m-doctors-list" id="mHomeDoctorsList">
+                    <!-- Populated dynamically via JS with HD avatars -->
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <nav class="m-app-bottom-nav">
+                <button class="m-nav-item active" onclick="goToScreen('mScreen1'); setBottomNavActive(this)">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home</span>
+                </button>
+                <button class="m-nav-item" onclick="goToScreen('mScreen2'); setBottomNavActive(this)">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>Consultation</span>
+                </button>
+                <button class="m-nav-item" onclick="goToScreen('mScreenRx'); setBottomNavActive(this)">
+                    <i class="fa-solid fa-file-medical"></i>
+                    <span>Prescription</span>
+                </button>
+                <button class="m-nav-item" onclick="openPatientProfileModal()">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Profile</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- ==================== MOBILE SCREEN 2: BROWSE & FILTER DOCTORS ==================== -->
+        <div class="pd-screen" id="mScreen2">
+            <div class="m-sub-header">
+                <div class="m-sub-header-left">
+                    <button class="m-back-btn" onclick="goToScreen('mScreen1')" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="m-sub-title">Available Doctors</h2>
+                </div>
+                <button class="m-header-icon-btn" onclick="showToast('Showing verified doctors across AP')"><i class="fa-solid fa-sliders"></i></button>
+            </div>
+
+            <div class="m-search-wrap">
+                <div class="m-search-input-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="mDocSearchInput" placeholder="Search doctor, specialty, symptoms..." oninput="handleDoctorSearch(this.value, 'mDoctorsList')">
+                </div>
+            </div>
+
+            <!-- Specialty Filter Pills -->
+            <div class="m-specialty-pills" id="mSpecialtyPills">
+                <span class="m-pill active" onclick="filterBySpecialty('All', this, 'mDoctorsList')">All</span>
+                <span class="m-pill" onclick="filterBySpecialty('General Physician', this, 'mDoctorsList')">General Physician</span>
+                <span class="m-pill" onclick="filterBySpecialty('Cardiologist', this, 'mDoctorsList')">Cardiologist</span>
+                <span class="m-pill" onclick="filterBySpecialty('Dermatologist', this, 'mDoctorsList')">Dermatologist</span>
+                <span class="m-pill" onclick="filterBySpecialty('Orthopedics', this, 'mDoctorsList')">Orthopedics</span>
+            </div>
+
+            <!-- Doctors List -->
+            <div class="m-doctors-list" id="mDoctorsList">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+
+        <!-- ==================== MOBILE SCREEN 3: DOCTOR PROFILE ==================== -->
+        <div class="pd-screen" id="mScreen3">
+            <div class="m-sub-header">
+                <div class="m-sub-header-left">
+                    <button class="m-back-btn" onclick="goToScreen('mScreen2')" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="m-sub-title">Doctor Profile</h2>
+                </div>
+                <button class="m-header-icon-btn" onclick="showToast('Saved to your favorite doctors')"><i class="fa-regular fa-heart"></i></button>
+            </div>
+
+            <div class="m-profile-hero">
+                <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Doctor" class="m-profile-img-large" id="mProfileAvatar">
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--pd-navy-dark);" id="mProfileName">Dr. Priya Sharma</h3>
+                <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 6px;" id="mProfileSpec">General Physician &bull; MBBS, MD</p>
+                <span class="pd-badge-avail">Available Now</span>
+            </div>
+
+            <div class="m-profile-stats-grid">
+                <div class="m-profile-stat-box">
+                    <h5>Rating</h5>
+                    <p><i class="fa-solid fa-star" style="color: #f59e0b; font-size: 0.8rem;"></i> <span id="mProfileRating">4.8</span></p>
+                </div>
+                <div class="m-profile-stat-box">
+                    <h5>Experience</h5>
+                    <p id="mProfileExp">12+ Yrs</p>
+                </div>
+                <div class="m-profile-stat-box">
+                    <h5>Consultation</h5>
+                    <p style="color: var(--pd-teal-primary);" id="mProfileFee">₹500</p>
+                </div>
+            </div>
+
+            <!-- Profile Tabs -->
+            <div class="d-profile-tabs" style="padding: 0 16px; margin: 10px 0 14px 0;">
+                <button class="d-tab-btn active" onclick="switchProfileTab(this, 'mTabAbout')">About</button>
+                <button class="d-tab-btn" onclick="switchProfileTab(this, 'mTabExp')">Experience</button>
+                <button class="d-tab-btn" onclick="switchProfileTab(this, 'mTabSpecs')">Specialisations</button>
+                <button class="d-tab-btn" onclick="switchProfileTab(this, 'mTabReviews')">Reviews</button>
+            </div>
+
+            <div class="m-profile-about">
+                <div class="pd-tab-pane active" id="mTabAbout">
+                    <p id="mProfileAboutText">Dr. Priya Sharma is a senior general physician with over 12 years of clinical practice in internal medicine, chronic disease management, and family preventive healthcare across Andhra Pradesh.</p>
+                </div>
+                <div class="pd-tab-pane" id="mTabExp">
+                    <p id="mProfileExpText">Senior Consultant Physician at Apollo Hospitals, Vijayawada (6 yrs); Former Medical Officer at King George Hospital, Vizag (6 yrs). Over 15,000+ satisfied patient consultations.</p>
+                </div>
+                <div class="pd-tab-pane" id="mTabSpecs">
+                    <div class="m-spec-tags" id="mProfileSpecTags">
+                        <span class="m-spec-tag">General Medicine</span>
+                        <span class="m-spec-tag">Preventive Care</span>
+                    </div>
+                </div>
+                <div class="pd-tab-pane" id="mTabReviews">
+                    <div id="mProfileReviewsList">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Bottom Book Bar -->
+            <div style="padding: 16px; background: #ffffff; border-top: 1px solid #f1f5f9; display: flex; gap: 12px; position: sticky; bottom: 0; z-index: 20;">
+                <button class="pd-btn-secondary" style="flex: 1;" onclick="openDoctorChatModal()"><i class="fa-regular fa-comment-dots"></i> Message</button>
+                <button class="pd-btn-primary" style="flex: 2;" onclick="goToScreen('mScreen4')"><span id="mProfileBookBtn">Book Now &bull; ₹500</span></button>
+            </div>
+        </div>
+
+        <!-- ==================== MOBILE SCREEN 4: PATIENT DETAILS & SYMPTOMS ==================== -->
+        <div class="pd-screen" id="mScreen4">
+            <div class="m-sub-header">
+                <div class="m-sub-header-left">
+                    <button class="m-back-btn" onclick="goToScreen('mScreen3')" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="m-sub-title">Patient Details &amp; Symptoms</h2>
+                </div>
+            </div>
+
+            <div class="m-form-section">
+                <!-- Stepper -->
+                <div class="pd-stepper">
+                    <div class="pd-step-item active">
+                        <div class="pd-step-circle">1</div>
+                        <span class="pd-step-label">Details</span>
+                    </div>
+                    <div class="pd-step-item">
+                        <div class="pd-step-circle">2</div>
+                        <span class="pd-step-label">Payment</span>
+                    </div>
+                    <div class="pd-step-item">
+                        <div class="pd-step-circle">3</div>
+                        <span class="pd-step-label">Consult</span>
+                    </div>
+                </div>
+
+                <!-- Selected Doctor Tag -->
+                <div style="background: #f0fdfa; border: 1px solid var(--pd-teal-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 0.88rem; font-weight: 800; color: var(--pd-navy-dark);" class="dyn-doc-name">Dr. Priya Sharma</div>
+                        <div style="font-size: 0.74rem; color: #64748b;" class="dyn-doc-spec">General Physician</div>
+                    </div>
+                    <span style="font-size: 1rem; font-weight: 800; color: var(--pd-teal-primary);" class="dyn-doc-fee">₹500</span>
+                </div>
+
+                <!-- Patient Information Card -->
+                <div class="m-form-card">
+                    <h4>Patient Information</h4>
+                    <div class="m-input-group">
+                        <label class="m-input-label">Full Name</label>
+                        <input type="text" class="m-text-input" value="{{ user.name if user else '' }}" id="mPatientName">
+                    </div>
+                    <div class="m-input-row-2">
+                        <div class="m-input-group">
+                            <label class="m-input-label">Age</label>
+                            <input type="number" class="m-text-input" value="{{ user.age if user and user.age else 32 }}" id="mPatientAge">
+                        </div>
+                        <div class="m-input-group">
+                            <label class="m-input-label">Gender</label>
+                            <select class="m-text-input" id="mPatientGender">
+                                <option value="Male" {% if not user or user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if user and user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if user and user.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="m-input-group">
+                        <label class="m-input-label">Phone Number</label>
+                        <input type="tel" class="m-text-input" value="{{ user.phone if user else '' }}" id="mPatientPhone">
+                    </div>
+                    <div class="m-input-group">
+                        <label class="m-input-label">Email Address</label>
+                        <input type="email" class="m-text-input" value="{{ user.email if user else '' }}" id="mPatientEmail">
+                    </div>
+                </div>
+
+                <!-- Symptoms & Problem Card -->
+                <div class="m-form-card">
+                    <h4>Symptoms &amp; Health Concern</h4>
+                    <div class="m-input-group">
+                        <label class="m-input-label">Describe your symptoms</label>
+                        <textarea class="m-text-input" rows="3" placeholder="e.g. Mild fever, cold, headache for 2 days..." id="mSymptomsDesc">Mild fever, persistent cough and slight throat pain since yesterday.</textarea>
+                    </div>
+                    <div class="m-input-group">
+                        <label class="m-input-label">Duration</label>
+                        <select class="m-text-input" id="mSymptomDuration">
+                            <option value="Less than 1 week" selected>Less than 1 week</option>
+                            <option value="1 - 2 weeks">1 - 2 weeks</option>
+                            <option value="More than a month">More than a month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="pd-btn-primary" style="width: 100%;" onclick="goToScreen('mScreen5')">Proceed to Payment &rarr;</button>
+            </div>
+        </div>
+
+        <!-- ==================== MOBILE SCREEN 5: PAYMENT GATEWAY ==================== -->
+        <div class="pd-screen" id="mScreen5">
+            <div class="m-sub-header">
+                <div class="m-sub-header-left">
+                    <button class="m-back-btn" onclick="goToScreen('mScreen4')" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="m-sub-title">Payment Gateway</h2>
+                </div>
+            </div>
+
+            <div class="m-form-section">
+                <!-- Stepper -->
+                <div class="pd-stepper">
+                    <div class="pd-step-item completed">
+                        <div class="pd-step-circle"><i class="fa-solid fa-check"></i></div>
+                        <span class="pd-step-label">Details</span>
+                    </div>
+                    <div class="pd-step-item active">
+                        <div class="pd-step-circle">2</div>
+                        <span class="pd-step-label">Payment</span>
+                    </div>
+                    <div class="pd-step-item">
+                        <div class="pd-step-circle">3</div>
+                        <span class="pd-step-label">Confirm</span>
+                    </div>
+                </div>
+
+                <!-- Consultation Summary -->
+                <div class="m-form-card" style="background: #f0fdfa; border-color: var(--pd-teal-border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0; color: var(--pd-navy-dark);" class="dyn-doc-name">Dr. Priya Sharma</h4>
+                            <p style="font-size: 0.74rem; color: #64748b;">Instant Video Consultation</p>
+                        </div>
+                        <span style="font-size: 1.25rem; font-weight: 800; color: var(--pd-teal-primary);" class="dyn-doc-fee">₹500</span>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--pd-navy-dark); margin-bottom: 10px;">Choose Payment Method</h4>
+                <div class="m-payment-options">
+                    <div class="m-pay-card selected" onclick="selectPaymentMethod(this)">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <div class="m-pay-card-details">
+                            <div class="m-pay-title">UPI (Google Pay, PhonePe, Paytm)</div>
+                            <div class="m-pay-sub">Instant zero-fee transfer</div>
+                        </div>
+                        <i class="fa-solid fa-circle-check" style="color: var(--pd-teal-primary); font-size: 1.1rem;"></i>
+                    </div>
+
+                    <div class="m-pay-card" onclick="selectPaymentMethod(this)">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <div class="m-pay-card-details">
+                            <div class="m-pay-title">Credit / Debit Card</div>
+                            <div class="m-pay-sub">Visa, MasterCard, RuPay</div>
+                        </div>
+                        <i class="fa-regular fa-circle" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+                    </div>
+
+                    <div class="m-pay-card" onclick="selectPaymentMethod(this)">
+                        <i class="fa-solid fa-wallet"></i>
+                        <div class="m-pay-card-details">
+                            <div class="m-pay-title">Wallets</div>
+                            <div class="m-pay-sub">Paytm, Amazon Pay, Mobikwik</div>
+                        </div>
+                        <i class="fa-regular fa-circle" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+                    </div>
+
+                    <div class="m-pay-card" onclick="selectPaymentMethod(this)">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <div class="m-pay-card-details">
+                            <div class="m-pay-title">Net Banking</div>
+                            <div class="m-pay-sub">All Indian banks supported</div>
+                        </div>
+                        <i class="fa-regular fa-circle" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+                    </div>
+                </div>
+
+                <button class="pd-btn-primary" style="width: 100%;" id="mPayNowBtn" onclick="simulatePaymentSuccess('mobile')">Pay Now &bull; <span class="dyn-doc-fee">₹500</span></button>
+                <p style="text-align: center; font-size: 0.72rem; color: #94a3b8; margin-top: 10px;"><i class="fa-solid fa-lock"></i> 256-bit encrypted bank-grade checkout</p>
+            </div>
+        </div>
+
+        <!-- ==================== MOBILE SCREEN 6: PAYMENT SUCCESS ==================== -->
+        <div class="pd-screen" id="mScreen6">
+            <div class="m-success-container">
+                <div class="m-success-icon-wrap">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="m-success-title">Payment Successful!</h3>
+                <p class="m-success-amount"><span class="dyn-doc-fee">₹500</span> paid for Online Consultation</p>
+
+                <div class="m-success-receipt-card">
+                    <div class="m-receipt-row">
+                        <span>Doctor:</span>
+                        <span class="dyn-doc-name">Dr. Priya Sharma</span>
+                    </div>
+                    <div class="m-receipt-row">
+                        <span>Transaction ID:</span>
+                        <span id="mTxnId">TXN-NH-2026-9481</span>
+                    </div>
+                    <div class="m-receipt-row">
+                        <span>Payment Method:</span>
+                        <span>UPI Verified</span>
+                    </div>
+                    <div class="m-receipt-row">
+                        <span>Date &amp; Time:</span>
+                        <span id="mTxnDate">Today, Just Now</span>
+                    </div>
+                </div>
+
+                <button class="pd-btn-primary" style="width: 100%; margin-bottom: 12px;" onclick="startVideoCall('mobile')"><i class="fa-solid fa-video"></i> Join Video Call</button>
+                <button class="pd-btn-secondary" style="width: 100%;" onclick="goToScreen('mScreen1')">View Appointment Details</button>
+            </div>
+        </div>
+
+        <!-- ==================== MOBILE SCREEN 7 & 8: LIVE VIDEO CALL ==================== -->
+        <div class="pd-screen" id="mScreenVideo">
+            <div class="m-video-call-screen">
+                <!-- Doctor Video Feed -->
+                <img src="{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}" alt="Doctor Video Call" class="m-video-doctor-stream" id="mVideoDoctorStream" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
+                
+                <!-- Call Topbar -->
+                <div class="m-video-call-topbar">
+                    <div class="m-video-live-badge">
+                        <span>Live &bull; <span class="dyn-doc-name">Dr. Priya Sharma</span> <span id="mCallTimer">00:01</span></span>
+                    </div>
+                    <button class="m-call-btn" style="width: 36px; height: 36px; font-size: 0.9rem;" onclick="endVideoCall('mobile')" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <!-- Patient Picture-in-Picture (WebRTC Real Video & Avatar Fallback) -->
+                <div class="m-video-pip-patient" id="mPatientPipContainer">
+                    <video id="mPatientRealVideo" autoplay playsinline muted style="display: none;"></video>
+                    <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient Video" id="mPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
+                    <div class="video-off-overlay" id="mPipOverlay" style="display: none;">
+                        <i class="fa-solid fa-video-slash"></i>
+                        <span>Camera Off</span>
+                    </div>
+                    <div class="pip-label">You</div>
+                </div>
+
+                <!-- Floating Controls -->
+                <div class="m-video-controls-bar">
+                    <button class="m-call-btn btn-mute" id="mBtnMute" onclick="toggleMute(this)" aria-label="Mute" title="Mute Microphone"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="m-call-btn btn-video" id="mBtnVideo" onclick="toggleVideo(this)" aria-label="Camera" title="Camera On/Off"><i class="fa-solid fa-video"></i></button>
+                    <button class="m-call-btn btn-share" id="mBtnShare" onclick="toggleScreenShare(this)" aria-label="Share" title="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                    <button class="m-call-btn" onclick="openDoctorChatModal()" aria-label="Chat" title="Chat with Doctor"><i class="fa-regular fa-comment-dots"></i></button>
+                    <button class="m-call-btn" onclick="openVideoSettingsModal()" aria-label="Settings" title="Call Settings"><i class="fa-solid fa-ellipsis"></i></button>
+                    <button class="m-call-btn btn-end" onclick="endVideoCall('mobile')" aria-label="End Call" title="End Call"><i class="fa-solid fa-phone-slash"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== MOBILE SCREEN 11 & 12: PRESCRIPTION & FOLLOW-UP ==================== -->
+        <div class="pd-screen" id="mScreenRx">
+            <div class="m-sub-header">
+                <div class="m-sub-header-left">
+                    <button class="m-back-btn" onclick="goToScreen('mScreen1')" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="m-sub-title">After Consultation</h2>
+                </div>
+            </div>
+
+            <div style="padding: 16px; text-align: center;">
+                <div class="m-success-icon-wrap" style="width: 58px; height: 58px; margin-bottom: 8px;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 1.8rem;"></i>
+                </div>
+                <h3 style="font-family: var(--pd-font-heading); font-size: 1.15rem; color: var(--pd-navy-dark); margin-bottom: 4px;">Consultation Completed</h3>
+                <p style="font-size: 0.76rem; color: #64748b; margin-bottom: 14px;">Your digital prescription has been verified by <span class="dyn-doc-name">Dr. Priya Sharma</span> and sent via WhatsApp &amp; SMS.</p>
+
+                <!-- Prescription Card -->
+                <div class="m-prescription-card" id="mPrescriptionCard">
+                    <div class="m-rx-header">
+                        <div style="text-align: left;">
+                            <div class="m-rx-doctor-name dyn-doc-name">Dr. Priya Sharma</div>
+                            <div class="m-rx-spec dyn-doc-reg">MBBS, MD &bull; Reg #APMC-74892</div>
+                        </div>
+                        <span class="m-rx-symbol">&#8478;</span>
+                    </div>
+
+                    <!-- Patient Details Bar -->
+                    <div style="background: #f1f5f9; border-radius: 8px; padding: 8px 10px; margin: 8px 0 12px 0; font-size: 0.74rem; display: flex; justify-content: space-between; text-align: left;">
+                        <div><strong>Patient:</strong> <span class="dyn-patient-name">{{ user.name if user else 'Valued Patient' }}</span> (<span class="dyn-patient-age-gender">{{ user.age if user and user.age else 32 }} Yrs &bull; {{ user.gender if user and user.gender else 'Male' }}</span>)</div>
+                        <div><strong>Date:</strong> <span class="dyn-rx-date">Today</span></div>
+                    </div>
+
+                    <div style="text-align: left; margin-bottom: 10px;">
+                        <span style="font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Prescribed Medications</span>
+                    </div>
+
+                    <div id="mPrescriptionMedsList">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div style="margin-top: 14px; padding: 10px; background: #f8fafc; border-radius: 8px; font-size: 0.78rem; color: #475569; text-align: left;">
+                        <strong>Doctor's Advice:</strong> <span id="mPrescriptionAdvice">Drink warm water, adequate rest, monitor temperature daily.</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+                    <button class="pd-btn-primary" onclick="printPrescription()"><i class="fa-solid fa-file-arrow-down"></i> Download Prescription PDF</button>
+                    <button class="pd-btn-secondary" onclick="bookFollowUp()"><i class="fa-regular fa-calendar-plus"></i> Book Free Follow-up</button>
+                    <button class="pd-btn-secondary" onclick="goToScreen('mScreen1')"><i class="fa-solid fa-house"></i> Back to Home</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================================================
+         PART 2: LAPTOP / DESKTOP VIEW (Screen.width >= 992px)
+         ========================================================================== -->
+    <div class="pd-desktop-view" id="desktopAppContainer">
+        
+        <!-- Left Sidebar Navigation -->
+        <aside class="d-sidebar">
+            <div class="d-sidebar-brand">
+                <a href="/">
+                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="d-brand-logo-img">
+                </a>
+            </div>
+
+            <nav class="d-sidebar-nav">
+                <button class="d-nav-link" onclick="goToDeskScreen('dScreen1'); setDeskNavActive(this)">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home</span>
+                </button>
+                <button class="d-nav-link active" onclick="goToDeskScreen('dScreen2'); setDeskNavActive(this)">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>Online Consultation</span>
+                </button>
+                <button class="d-nav-link" onclick="openServiceBookingModal('Doctor Home Visit', 'General Physician & Specialist home visits across Vijayawada, Guntur & AP.', 'fa-house-medical')">
+                    <i class="fa-solid fa-house-medical"></i>
+                    <span>Home Visits</span>
+                </button>
+                <button class="d-nav-link" onclick="openServiceBookingModal('Lab Diagnostics at Home', 'Certified phlebotomist blood sample collection with digital reports in 6 hours.', 'fa-flask-vial')">
+                    <i class="fa-solid fa-flask-vial"></i>
+                    <span>Lab Tests</span>
+                </button>
+                <button class="d-nav-link" onclick="openServiceBookingModal('Doorstep Pharmacy', 'Upload your prescription or choose medicines for 60-minute doorstep delivery.', 'fa-pills')">
+                    <i class="fa-solid fa-pills"></i>
+                    <span>Pharmacy</span>
+                </button>
+                <button class="d-nav-link" onclick="openServiceBookingModal('Physiotherapy at Home', 'Certified physiotherapists for rehabilitation, joint therapy & posture correction.', 'fa-person-walking')">
+                    <i class="fa-solid fa-person-walking"></i>
+                    <span>Physiotherapy</span>
+                </button>
+                <button class="d-nav-link" onclick="openServiceBookingModal('Senior Eldercare Support', 'Dedicated 24/7 care companion and daily health monitoring for seniors.', 'fa-hand-holding-heart')">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                    <span>Eldercare</span>
+                </button>
+                <button class="d-nav-link" onclick="goToDeskScreen('dScreenRx'); setDeskNavActive(this)">
+                    <i class="fa-solid fa-file-medical"></i>
+                    <span>Medical Records</span>
+                </button>
+                <button class="d-nav-link" onclick="openPatientProfileModal()">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Patient Profile</span>
+                </button>
+                <button class="d-nav-link" style="color: #ef4444;" onclick="handleLogout(event)">
+                    <i class="fa-solid fa-arrow-right-from-bracket" style="color: #ef4444;"></i>
+                    <span>Logout</span>
+                </button>
+            </nav>
+
+            <div style="padding: 16px 20px; border-top: 1px solid #f1f5f9;">
+                <a href="/" style="font-size: 0.8rem; color: #64748b; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Back to Main Site</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="d-main-wrapper">
+            
+            <!-- Desktop Topbar -->
+            <header class="d-top-header">
+                <div class="d-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search doctors, specialties, symptoms..." oninput="handleDoctorSearch(this.value, 'dDoctorsResults'); goToDeskScreen('dScreen2');">
+                </div>
+
+                <div class="d-header-right">
+                    <button class="d-icon-btn" onclick="openSosModal()" title="Emergency SOS" style="color: #ef4444;"><i class="fa-solid fa-shield-heart"></i></button>
+                    <button class="d-icon-btn" onclick="showToast('You have 1 verified prescription')" aria-label="Notifications"><i class="fa-regular fa-bell"></i></button>
+                    <div class="d-user-pill" onclick="openPatientProfileModal()" title="View Patient Profile">
+                        <div id="dTopbarAvatarCircle" style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #0baaa2, #0e1b38); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 2px solid #0baaa2; flex-shrink: 0;">
+                            <span id="dTopbarUserInitials">{{ (user.name[0]|upper) if user and user.name else 'P' }}</span>
+                        </div>
+                        <span class="d-user-name" id="dTopbarUserName">{{ user.name if user else 'Valued Patient' }}</span>
+                    </div>
+                    <button class="d-icon-btn" onclick="handleLogout(event)" title="Logout" style="color: #ef4444;"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                </div>
+            </header>
+
+            <!-- Desktop Content Container -->
+            <div class="d-content-area">
+
+                <!-- ==================== DESKTOP SCREEN 1: HOME / FIND DOCTORS ==================== -->
+                <div class="pd-screen active-screen" id="dScreen1">
+                    <!-- Hero Banner -->
+                    <div class="d-hero-banner">
+                        <div class="d-hero-banner-content">
+                            <span class="d-hero-tag"><i class="fa-solid fa-video"></i> Online Consultation</span>
+                            <h1>Consult a Doctor from Home</h1>
+                            <p>Expert verified doctors, trusted healthcare, anytime, anywhere across Andhra Pradesh.</p>
+                            <div class="d-hero-search-bar">
+                                <input type="text" placeholder="Search doctor, specialty or symptoms..." id="dHomeSearchInput" onkeydown="if(event.key==='Enter'){handleDoctorSearch(this.value, 'dDoctorsResults'); goToDeskScreen('dScreen2');}">
+                                <button onclick="handleDoctorSearch(document.getElementById('dHomeSearchInput').value, 'dDoctorsResults'); goToDeskScreen('dScreen2');">Search</button>
+                            </div>
+                        </div>
+                        <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Consult a Doctor" class="d-hero-doctor-img" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}'">
+                    </div>
+
+                    <!-- Popular Specialties -->
+                    <div class="d-section-title">
+                        <span>Popular Specialties</span>
+                        <a href="javascript:void(0)" onclick="goToDeskScreen('dScreen2')" style="font-size: 0.86rem; color: #0baaa2; text-decoration: none; font-weight: 700;">View All</a>
+                    </div>
+                    <div class="d-specialties-grid">
+                        <div class="d-spec-card" onclick="filterDeskBySpecialty('General Physician')">
+                            <div class="d-spec-icon-box"><i class="fa-solid fa-user-doctor"></i></div>
+                            <div class="d-spec-name">General Physician</div>
+                        </div>
+                        <div class="d-spec-card" onclick="filterDeskBySpecialty('Cardiologist')">
+                            <div class="d-spec-icon-box"><i class="fa-solid fa-heart-pulse"></i></div>
+                            <div class="d-spec-name">Cardiologist</div>
+                        </div>
+                        <div class="d-spec-card" onclick="filterDeskBySpecialty('Dermatologist')">
+                            <div class="d-spec-icon-box"><i class="fa-solid fa-hand-dots"></i></div>
+                            <div class="d-spec-name">Dermatologist</div>
+                        </div>
+                        <div class="d-spec-card" onclick="filterDeskBySpecialty('Orthopedics')">
+                            <div class="d-spec-icon-box"><i class="fa-solid fa-bone"></i></div>
+                            <div class="d-spec-name">Orthopedician</div>
+                        </div>
+                        <div class="d-spec-card" onclick="filterDeskBySpecialty('All')">
+                            <div class="d-spec-icon-box"><i class="fa-solid fa-stethoscope"></i></div>
+                            <div class="d-spec-name">All Doctors</div>
+                        </div>
+                        <div class="d-spec-card" onclick="openServiceBookingModal('Doctor Home Visit', 'General Physician & Specialist home visits across AP.', 'fa-house-medical')">
+                            <div class="d-spec-icon-box"><i class="fa-solid fa-house-medical"></i></div>
+                            <div class="d-spec-name">Home Visit</div>
+                        </div>
+                    </div>
+
+                    <!-- Top Rated Doctors -->
+                    <div class="d-section-title">
+                        <span>Top Rated Doctors</span>
+                        <a href="javascript:void(0)" onclick="goToDeskScreen('dScreen2')" style="font-size: 0.86rem; color: #0baaa2; text-decoration: none; font-weight: 700;">See All Doctors</a>
+                    </div>
+                    <div class="d-doctors-grid" id="dHomeDoctorsGrid">
+                        <!-- Populated dynamically via JS with HD avatars -->
+                    </div>
+                </div>
+
+                <!-- ==================== DESKTOP SCREEN 2: FILTER & SEARCH DOCTORS ==================== -->
+                <div class="pd-screen" id="dScreen2">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                        <div>
+                            <h2 style="font-family: var(--pd-font-heading); font-size: 1.6rem; color: var(--pd-navy-dark);">Find the Right Doctor</h2>
+                            <p style="color: #64748b; font-size: 0.9rem;" id="dDoctorCountHeader">4 Verified doctors ready for online consultation</p>
+                        </div>
+                        <button class="pd-btn-secondary" onclick="goToDeskScreen('dScreen1')"><i class="fa-solid fa-arrow-left"></i> Back to Home</button>
+                    </div>
+
+                    <div class="d-filter-layout">
+                        <!-- Filters Sidebar -->
+                        <aside class="d-filter-sidebar">
+                            <h3 style="font-size: 1rem; font-weight: 800; color: var(--pd-navy-dark); margin-bottom: 16px;">Filter Doctors</h3>
+                            
+                            <div class="d-filter-group">
+                                <div class="d-filter-title">Specialty</div>
+                                <label class="d-filter-label"><input type="radio" name="deskSpec" value="All" checked onchange="applyDeskFilters()"> All Specialties</label>
+                                <label class="d-filter-label"><input type="radio" name="deskSpec" value="General Physician" onchange="applyDeskFilters()"> General Physician</label>
+                                <label class="d-filter-label"><input type="radio" name="deskSpec" value="Cardiologist" onchange="applyDeskFilters()"> Cardiologist</label>
+                                <label class="d-filter-label"><input type="radio" name="deskSpec" value="Dermatologist" onchange="applyDeskFilters()"> Dermatologist</label>
+                                <label class="d-filter-label"><input type="radio" name="deskSpec" value="Orthopedics" onchange="applyDeskFilters()"> Orthopedics</label>
+                            </div>
+
+                            <div class="d-filter-group">
+                                <div class="d-filter-title">Experience</div>
+                                <label class="d-filter-label"><input type="checkbox" id="deskExp10" onchange="applyDeskFilters()"> 10+ years experience</label>
+                            </div>
+
+                            <div class="d-filter-group">
+                                <div class="d-filter-title">Language</div>
+                                <label class="d-filter-label"><input type="checkbox" checked onchange="applyDeskFilters()"> Telugu</label>
+                                <label class="d-filter-label"><input type="checkbox" checked onchange="applyDeskFilters()"> English</label>
+                                <label class="d-filter-label"><input type="checkbox" checked onchange="applyDeskFilters()"> Hindi</label>
+                            </div>
+                        </aside>
+
+                        <!-- Doctor Rows -->
+                        <div class="d-doctors-results" id="dDoctorsResults">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== DESKTOP SCREEN 3: DOCTOR PROFILE DETAILS ==================== -->
+                <div class="pd-screen" id="dScreen3">
+                    <button class="pd-btn-secondary" style="margin-bottom: 20px;" onclick="goToDeskScreen('dScreen2')"><i class="fa-solid fa-arrow-left"></i> Back to Doctors List</button>
+
+                    <div class="d-profile-detail-card">
+                        <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Doctor" class="d-profile-big-avatar" id="dProfileAvatar">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+                                <h1 style="font-family: var(--pd-font-heading); font-size: 1.8rem; font-weight: 800; color: var(--pd-navy-dark);" id="dProfileName">Dr. Priya Sharma</h1>
+                                <span class="pd-badge-avail">Available Now</span>
+                            </div>
+                            <p style="color: #64748b; font-size: 1rem; margin-bottom: 8px;" id="dProfileSpec">Senior General Physician &bull; MBBS, MD (Internal Medicine)</p>
+                            <div style="display: flex; gap: 20px; font-size: 0.9rem; color: #475569; margin-bottom: 16px;">
+                                <span><i class="fa-solid fa-star" style="color: #f59e0b;"></i> <strong id="dProfileRating">4.8</strong> (<span id="dProfileReviewsCount">1,240</span> verified reviews)</span>
+                                <span><i class="fa-solid fa-briefcase" style="color: #0baaa2;"></i> <span id="dProfileExp">12+ years experience</span></span>
+                                <span><i class="fa-solid fa-language" style="color: #0284c7;"></i> <span id="dProfileLang">English, Hindi, Telugu</span></span>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                                <span style="font-size: 1.5rem; font-weight: 800; color: var(--pd-navy-dark);"><span id="dProfileFee">₹500</span> <small style="font-size: 0.82rem; font-weight: 500; color: #64748b;">Consultation Fee</small></span>
+                                <button class="pd-btn-primary" onclick="goToDeskScreen('dScreen4')">Book Consultation Now</button>
+                                <button class="pd-btn-secondary" onclick="openDoctorChatModal()"><i class="fa-regular fa-comment"></i> Chat</button>
+                            </div>
+
+                            <!-- Tabs -->
+                            <div class="d-profile-tabs">
+                                <button class="d-tab-btn active" onclick="switchDeskTab(this, 'dTabAbout')">About</button>
+                                <button class="d-tab-btn" onclick="switchDeskTab(this, 'dTabExp')">Experience</button>
+                                <button class="d-tab-btn" onclick="switchDeskTab(this, 'dTabSpecs')">Specialisations</button>
+                                <button class="d-tab-btn" onclick="switchDeskTab(this, 'dTabReviews')">Patient Reviews</button>
+                            </div>
+
+                            <div class="pd-tab-pane active" id="dTabAbout">
+                                <p style="color: #475569; font-size: 0.92rem; line-height: 1.6;" id="dProfileAboutText">
+                                    Dr. Priya Sharma is a senior general physician with over 12 years of clinical practice in internal medicine.
+                                </p>
+                            </div>
+                            <div class="pd-tab-pane" id="dTabExp">
+                                <p style="color: #475569; font-size: 0.92rem; line-height: 1.6;" id="dProfileExpText">
+                                    Senior Consultant Physician at Apollo Hospitals, Vijayawada (6 yrs); Former Medical Officer at King George Hospital, Vizag (6 yrs). Over 15,000+ satisfied consultations.
+                                </p>
+                            </div>
+                            <div class="pd-tab-pane" id="dTabSpecs">
+                                <div class="m-spec-tags" id="dProfileSpecTags" style="gap: 8px;">
+                                    <!-- Dynamic Specialty Tags -->
+                                </div>
+                            </div>
+                            <div class="pd-tab-pane" id="dTabReviews">
+                                <div id="dProfileReviewsList">
+                                    <!-- Dynamic Patient Reviews -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== DESKTOP SCREEN 4: PATIENT DETAILS & SYMPTOMS ==================== -->
+                <div class="pd-screen" id="dScreen4">
+                    <div class="d-form-card-wide">
+                        <button class="pd-btn-secondary" style="margin-bottom: 20px;" onclick="goToDeskScreen('dScreen3')"><i class="fa-solid fa-arrow-left"></i> Back to Profile</button>
+                        
+                        <h2 style="font-family: var(--pd-font-heading); font-size: 1.5rem; color: var(--pd-navy-dark); margin-bottom: 6px;">Book Consultation</h2>
+                        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 24px;">Please provide patient symptoms and clinical details for <span class="dyn-doc-name">Dr. Priya Sharma</span>.</p>
+
+                        <!-- Stepper -->
+                        <div class="pd-stepper" style="max-width: 500px; margin: 0 auto 30px auto;">
+                            <div class="pd-step-item active">
+                                <div class="pd-step-circle">1</div>
+                                <span class="pd-step-label">Details</span>
+                            </div>
+                            <div class="pd-step-item">
+                                <div class="pd-step-circle">2</div>
+                                <span class="pd-step-label">Payment</span>
+                            </div>
+                            <div class="pd-step-item">
+                                <div class="pd-step-circle">3</div>
+                                <span class="pd-step-label">Consultation</span>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                            <div class="m-input-group">
+                                <label class="m-input-label">Patient Full Name</label>
+                                <input type="text" class="m-text-input" value="{{ user.name if user else '' }}" id="dPatientName">
+                            </div>
+                            <div class="m-input-group">
+                                <label class="m-input-label">Phone Number</label>
+                                <input type="tel" class="m-text-input" value="{{ user.phone if user else '' }}" id="dPatientPhone">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                            <div class="m-input-group">
+                                <label class="m-input-label">Age</label>
+                                <input type="number" class="m-text-input" value="{{ user.age if user and user.age else 32 }}" id="dPatientAge">
+                            </div>
+                            <div class="m-input-group">
+                                <label class="m-input-label">Gender</label>
+                                <select class="m-text-input" id="dPatientGender">
+                                    <option value="Male" {% if not user or user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                    <option value="Female" {% if user and user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                    <option value="Other" {% if user and user.gender == 'Other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="m-input-group">
+                            <label class="m-input-label">Symptoms &amp; Health Problem</label>
+                            <textarea class="m-text-input" rows="4">Fever (100°F), sore throat, and mild headache for the past 2 days.</textarea>
+                        </div>
+
+                        <div class="m-input-group">
+                            <label class="m-input-label">Duration of Symptoms</label>
+                            <select class="m-text-input">
+                                <option selected>Less than 1 week</option>
+                                <option>1 - 2 weeks</option>
+                                <option>More than 1 month</option>
+                            </select>
+                        </div>
+
+                        <div style="text-align: right; margin-top: 24px;">
+                            <button class="pd-btn-primary" onclick="goToDeskScreen('dScreen5')">Proceed to Payment &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== DESKTOP SCREEN 5: PAYMENT GATEWAY ==================== -->
+                <div class="pd-screen" id="dScreen5">
+                    <div class="d-form-card-wide" style="max-width: 650px;">
+                        <button class="pd-btn-secondary" style="margin-bottom: 20px;" onclick="goToDeskScreen('dScreen4')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+
+                        <h2 style="font-family: var(--pd-font-heading); font-size: 1.5rem; color: var(--pd-navy-dark); margin-bottom: 20px;">Payment Gateway</h2>
+
+                        <div style="background: #f0fdfa; border: 1.5px solid var(--pd-teal-border); border-radius: 14px; padding: 18px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="color: var(--pd-navy-dark); font-size: 1.1rem; margin-bottom: 4px;"><span class="dyn-doc-name">Dr. Priya Sharma</span> &bull; Online Consultation</h3>
+                                <p style="font-size: 0.82rem; color: #64748b;">Instant Video Consultation &bull; Free 7-day follow-up</p>
+                            </div>
+                            <span style="font-size: 1.6rem; font-weight: 900; color: var(--pd-teal-primary);" class="dyn-doc-fee">₹500</span>
+                        </div>
+
+                        <div class="m-payment-options">
+                            <div class="m-pay-card selected" onclick="selectPaymentMethod(this)">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                                <div class="m-pay-card-details">
+                                    <div class="m-pay-title">UPI Payment (Google Pay, PhonePe, Paytm, BHIM)</div>
+                                    <div class="m-pay-sub">Fastest &amp; zero transaction fee</div>
+                                </div>
+                                <i class="fa-solid fa-circle-check" style="color: var(--pd-teal-primary); font-size: 1.1rem;"></i>
+                            </div>
+
+                            <div class="m-pay-card" onclick="selectPaymentMethod(this)">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <div class="m-pay-card-details">
+                                    <div class="m-pay-title">Credit / Debit Card</div>
+                                    <div class="m-pay-sub">Visa, MasterCard, RuPay</div>
+                                </div>
+                                <i class="fa-regular fa-circle" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+                            </div>
+
+                            <div class="m-pay-card" onclick="selectPaymentMethod(this)">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <div class="m-pay-card-details">
+                                    <div class="m-pay-title">Net Banking</div>
+                                    <div class="m-pay-sub">All Indian banks supported</div>
+                                </div>
+                                <i class="fa-regular fa-circle" style="color: #cbd5e1; font-size: 1.1rem;"></i>
+                            </div>
+                        </div>
+
+                        <button class="pd-btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="simulatePaymentSuccess('desktop')">Proceed to Pay <span class="dyn-doc-fee">₹500</span></button>
+                    </div>
+                </div>
+
+                <!-- ==================== DESKTOP SCREEN 6: PAYMENT SUCCESS ==================== -->
+                <div class="pd-screen" id="dScreen6">
+                    <div class="d-form-card-wide" style="max-width: 580px; text-align: center; padding: 40px 32px;">
+                        <div class="m-success-icon-wrap" style="width: 84px; height: 84px;">
+                            <i class="fa-solid fa-check" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h2 style="font-family: var(--pd-font-heading); font-size: 1.6rem; color: var(--pd-navy-dark); margin-bottom: 6px;">Payment Successful!</h2>
+                        <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 24px;">Your appointment has been confirmed with <span class="dyn-doc-name">Dr. Priya Sharma</span>.</p>
+
+                        <div class="m-success-receipt-card" style="margin-bottom: 28px;">
+                            <div class="m-receipt-row">
+                                <span>Doctor:</span>
+                                <span><span class="dyn-doc-name">Dr. Priya Sharma</span> (<span class="dyn-doc-spec">General Physician</span>)</span>
+                            </div>
+                            <div class="m-receipt-row">
+                                <span>Appointment ID:</span>
+                                <span id="dAppointmentId">NH-2026-9814</span>
+                            </div>
+                            <div class="m-receipt-row">
+                                <span>Amount Paid:</span>
+                                <span><span class="dyn-doc-fee">₹500</span> (UPI Verified)</span>
+                            </div>
+                            <div class="m-receipt-row">
+                                <span>Date &amp; Time:</span>
+                                <span>Today, Just Now</span>
+                            </div>
+                        </div>
+
+                        <button class="pd-btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; margin-bottom: 12px;" onclick="startVideoCall('desktop')"><i class="fa-solid fa-video"></i> Join Video Call</button>
+                        <button class="pd-btn-secondary" style="width: 100%;" onclick="goToDeskScreen('dScreen1')">View Appointment Details</button>
+                    </div>
+                </div>
+
+                <!-- ==================== DESKTOP SCREEN 7 & 8: LIVE VIDEO CONSULTATION ==================== -->
+                <div class="pd-screen" id="dScreenVideo">
+                    <div class="d-video-call-container">
+                        <!-- Full Doctor Stream in HD -->
+                        <img src="{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}" alt="Live Doctor Consultation" class="d-video-stream-full" id="dVideoDoctorStream" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
+
+                        <!-- Top Overlay -->
+                        <div style="position: absolute; top: 20px; left: 24px; z-index: 15; display: flex; align-items: center; gap: 12px;">
+                            <div class="m-video-live-badge">
+                                <span>Live &bull; <span class="dyn-doc-name">Dr. Priya Sharma</span> <span id="dCallTimer">00:01</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Patient PiP Window (WebRTC Real Video & Avatar Fallback) -->
+                        <div class="d-video-pip-corner" id="dPatientPipContainer">
+                            <video id="dPatientRealVideo" autoplay playsinline muted style="display: none;"></video>
+                            <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient" id="dPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
+                            <div class="video-off-overlay" id="dPipOverlay" style="display: none;">
+                                <i class="fa-solid fa-video-slash"></i>
+                                <span>Camera Off</span>
+                            </div>
+                            <div class="pip-label">You (HD Feed)</div>
+                        </div>
+
+                        <!-- Floating Toolbar with Working Controls -->
+                        <div class="d-video-toolbar">
+                            <button class="m-call-btn btn-mute" id="dBtnMute" onclick="toggleMute(this)" title="Mute Microphone" aria-label="Mute"><i class="fa-solid fa-microphone"></i></button>
+                            <button class="m-call-btn btn-video" id="dBtnVideo" onclick="toggleVideo(this)" title="Turn Off Camera" aria-label="Camera"><i class="fa-solid fa-video"></i></button>
+                            <button class="m-call-btn btn-share" id="dBtnShare" onclick="toggleScreenShare(this)" title="Share Screen" aria-label="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                            <button class="m-call-btn" onclick="openDoctorChatModal()" title="In-Call Chat with Doctor" aria-label="Chat"><i class="fa-regular fa-comment"></i></button>
+                            <button class="m-call-btn" onclick="openVideoSettingsModal()" title="Call Settings & Fullscreen" aria-label="Settings"><i class="fa-solid fa-ellipsis"></i></button>
+                            <button class="m-call-btn btn-end" onclick="endVideoCall('desktop')" title="End Consultation" aria-label="End Call"><i class="fa-solid fa-phone-slash"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== DESKTOP SCREEN 11 & 12: PRESCRIPTION & FOLLOW-UP ==================== -->
+                <div class="pd-screen" id="dScreenRx">
+                    <div class="d-rx-container">
+                        <div style="text-align: center; margin-bottom: 24px;">
+                            <div class="m-success-icon-wrap" style="width: 72px; height: 72px;">
+                                <i class="fa-solid fa-check" style="font-size: 2rem;"></i>
+                            </div>
+                            <h2 style="font-family: var(--pd-font-heading); font-size: 1.7rem; color: var(--pd-navy-dark); margin-bottom: 4px;">Consultation Completed</h2>
+                            <p style="color: #64748b; font-size: 0.95rem;">Your digital clinical prescription has been generated by <span class="dyn-doc-name">Dr. Priya Sharma</span>.</p>
+                        </div>
+
+                        <!-- Prescription Card -->
+                        <div class="m-prescription-card" id="dPrescriptionCard" style="margin: 0 0 24px 0; padding: 24px;">
+                            <div class="m-rx-header">
+                                <div>
+                                    <div style="font-size: 1.15rem; font-weight: 800; color: var(--pd-navy-dark);" class="dyn-doc-name">Dr. Priya Sharma, MBBS, MD</div>
+                                    <div style="font-size: 0.85rem; color: #64748b;" class="dyn-doc-reg">Nhealth Certified Telemedicine Specialist &bull; Reg: APMC-74892</div>
+                                </div>
+                                <span class="m-rx-symbol" style="font-size: 2.2rem;">&#8478;</span>
+                            </div>
+
+                            <!-- Patient Information Banner -->
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 16px; margin: 14px 0; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center;">
+                                <div><strong>Patient:</strong> <span class="dyn-patient-name">{{ user.name if user else 'Valued Patient' }}</span> &bull; <strong>ID:</strong> <span class="dyn-patient-id">{{ user.id if user else 'NH-2026' }}</span></div>
+                                <div><strong>Age / Gender:</strong> <span class="dyn-patient-age-gender">{{ user.age if user and user.age else 32 }} Yrs &bull; {{ user.gender if user and user.gender else 'Male' }}</span></div>
+                                <div><strong>Date:</strong> <span class="dyn-rx-date">Today</span></div>
+                            </div>
+
+                            <div style="margin: 16px 0 10px 0;">
+                                <h4 style="font-size: 0.85rem; font-weight: 800; color: #64748b; text-transform: uppercase;">Prescribed Medications</h4>
+                            </div>
+
+                            <div id="dPrescriptionMedsList">
+                                <!-- Populated dynamically -->
+                            </div>
+
+                            <div style="margin-top: 16px; padding: 12px; background: #f8fafc; border-radius: 10px; font-size: 0.85rem; color: #475569;">
+                                <strong>Doctor's Advice:</strong> <span id="dPrescriptionAdvice">Drink 3 liters of warm water daily, adequate rest, warm saline gargling twice a day. Monitor temperature twice daily.</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 14px;">
+                            <button class="pd-btn-primary" style="flex: 1;" onclick="printPrescription()"><i class="fa-solid fa-file-arrow-down"></i> Download Prescription PDF</button>
+                            <button class="pd-btn-secondary" style="flex: 1;" onclick="bookFollowUp()"><i class="fa-regular fa-calendar-plus"></i> Book Free Follow-up</button>
+                            <button class="pd-btn-secondary" style="flex: 1;" onclick="goToDeskScreen('dScreen1')"><i class="fa-solid fa-house"></i> Back to Home</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== INTERACTIVE MODALS ==================== -->
+
+    <!-- 1. Doctor Chat Modal -->
+    <div class="pd-modal-overlay" id="doctorChatModal">
+        <div class="pd-modal-card">
+            <button class="pd-modal-close-btn" onclick="closeModal('doctorChatModal')"><i class="fa-solid fa-xmark"></i></button>
+            <div class="pd-chat-container">
+                <div class="pd-chat-header">
+                    <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Doctor" class="pd-chat-avatar" id="chatDoctorAvatar">
+                    <div>
+                        <div style="font-size: 0.95rem; font-weight: 800; color: var(--pd-navy-dark);" class="dyn-doc-name">Dr. Priya Sharma</div>
+                        <div style="font-size: 0.72rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Active Now &bull; Online Consultation</div>
+                    </div>
+                </div>
+                <div class="pd-chat-body" id="chatMessagesBox">
+                    <div class="pd-chat-msg doctor" id="chatDoctorInitialMsg">
+                        Hello {{ user.name.split()[0] if user and user.name else 'Patient' }}! I have received your symptoms report. Please let me know if you are experiencing any fever, cough or chills right now.
+                    </div>
+                </div>
+                <div class="pd-chat-footer">
+                    <input type="text" id="chatInputText" placeholder="Type your message to doctor..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                    <button onclick="sendChatMessage()" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Patient Profile Modal (with Live Edit, Sync & Logout options) -->
+    <div class="pd-modal-overlay" id="patientProfileModal">
+        <div class="pd-modal-card" style="max-width: 480px;">
+            <button class="pd-modal-close-btn" onclick="closeModal('patientProfileModal')"><i class="fa-solid fa-xmark"></i></button>
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div id="modalPatientAvatarWrap" style="width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #0baaa2, #0e1b38); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; margin: 0 auto 8px auto; border: 3px solid var(--pd-teal-primary); box-shadow: 0 4px 14px rgba(11, 170, 162, 0.25);">
+                    <span id="modalPatientInitials">{{ (user.name[0]|upper) if user and user.name else 'P' }}</span>
+                </div>
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--pd-navy-dark);" id="modalPatientNameHeading">{{ user.name if user else 'Valued Patient' }}</h3>
+                <span class="pd-badge-avail" style="background: #e0f2fe; color: #0284c7;" id="modalPatientIdBadge">Active Patient &bull; ID #{{ user.id if user else 'NH-2026' }}</span>
+            </div>
+
+            <!-- Profile Info / Live Edit Form -->
+            <form id="patientProfileEditForm" onsubmit="savePatientProfile(event)" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Full Name</label>
+                        <input type="text" class="m-text-input" id="profileEditName" value="{{ user.name if user else '' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Phone Number</label>
+                        <input type="tel" class="m-text-input" id="profileEditPhone" value="{{ user.phone if user else '' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Email Address</label>
+                        <input type="email" class="m-text-input" id="profileEditEmail" value="{{ user.email if user else '' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">City / District</label>
+                        <input type="text" class="m-text-input" id="profileEditCity" value="{{ user.city if user else 'Vijayawada' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Age</label>
+                        <input type="number" class="m-text-input" id="profileEditAge" value="{{ user.age if user and user.age else 32 }}" style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Gender</label>
+                        <select class="m-text-input" id="profileEditGender" style="padding: 8px 12px; font-size: 0.85rem;">
+                            <option value="Male" {% if not user or user.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if user and user.gender == 'Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if user and user.gender == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Blood Group</label>
+                        <select class="m-text-input" id="profileEditBlood" style="padding: 8px 12px; font-size: 0.85rem;">
+                            <option value="O+" {% if not user or user.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                            <option value="O-" {% if user and user.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                            <option value="A+" {% if user and user.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                            <option value="A-" {% if user and user.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                            <option value="B+" {% if user and user.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                            <option value="B-" {% if user and user.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                            <option value="AB+" {% if user and user.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                            <option value="AB-" {% if user and user.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="m-input-group" style="margin-bottom: 0;">
+                    <label class="m-input-label" style="font-size: 0.72rem;">Care &amp; Delivery Address</label>
+                    <input type="text" class="m-text-input" id="profileEditAddress" value="{{ user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh') }}" placeholder="Door No, Street, Landmark" style="padding: 8px 12px; font-size: 0.85rem;">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 6px;">
+                    <button type="submit" class="pd-btn-primary" id="profileSaveBtn" style="flex: 2; padding: 10px;"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                    <button type="button" class="pd-btn-primary" style="flex: 1; padding: 10px; background: #ef4444;" onclick="handleLogout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+                    <button type="button" class="pd-btn-secondary" style="flex: 1; padding: 10px;" onclick="closeModal('patientProfileModal')">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Emergency SOS Modal -->
+    <div class="pd-modal-overlay" id="sosModal">
+        <div class="pd-modal-card" style="max-width: 440px; text-align: center;">
+            <button class="pd-modal-close-btn" onclick="closeModal('sosModal')"><i class="fa-solid fa-xmark"></i></button>
+            <div style="width: 68px; height: 68px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 12px auto;">
+                <i class="fa-solid fa-truck-medical"></i>
+            </div>
+            <h3 style="font-family: var(--pd-font-heading); font-size: 1.3rem; font-weight: 800; color: #b91c1c; margin-bottom: 4px;">24/7 Emergency Dispatch</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 18px;">Direct connection to Nhealth Critical Care Unit &amp; Andhra Pradesh 108 Ambulance Network.</p>
+            
+            <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 12px; padding: 14px; margin-bottom: 18px; text-align: left; font-size: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="color: #9f1239;">Nearest Care Rider:</span>
+                    <strong style="color: #0f172a;">Benz Circle, Vijayawada</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #9f1239;">Estimated Arrival:</span>
+                    <strong style="color: #16a34a;"><i class="fa-solid fa-bolt"></i> 4 Minutes</strong>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="tel:108" class="pd-btn-primary" style="background: #ef4444; text-decoration: none;"><i class="fa-solid fa-phone"></i> Call 108 Emergency Now</a>
+                <button class="pd-btn-secondary" onclick="showToast('Live GPS location shared with emergency rider team.'); closeModal('sosModal');"><i class="fa-solid fa-location-crosshairs"></i> Share Live Location</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Interactive Service Booking Modal -->
+    <div class="pd-modal-overlay" id="serviceBookingModal">
+        <div class="pd-modal-card" style="max-width: 480px;">
+            <button class="pd-modal-close-btn" onclick="closeModal('serviceBookingModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: var(--pd-teal-light); color: var(--pd-teal-primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" id="bookingServiceIconWrap">
+                    <i class="fa-solid fa-house-medical" id="bookingServiceIcon"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--pd-navy-dark);" id="bookingServiceTitle">Doctor Home Visit</h3>
+                    <p style="font-size: 0.78rem; color: #64748b;" id="bookingServiceSub">Experienced doctor visit at your doorstep across AP</p>
+                </div>
+            </div>
+
+            <div class="m-input-group">
+                <label class="m-input-label">Patient Name</label>
+                <input type="text" class="m-text-input" value="{{ user.name if user else '' }}" id="bookingPatientName">
+            </div>
+
+            <div class="m-input-group">
+                <label class="m-input-label">Service Address in AP</label>
+                <input type="text" class="m-text-input" value="{{ user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh') }}" id="bookingAddress">
+            </div>
+
+            <div class="m-input-row-2">
+                <div class="m-input-group">
+                    <label class="m-input-label">Preferred Date</label>
+                    <select class="m-text-input" id="bookingDate">
+                        <option selected>Today (Earliest slot)</option>
+                        <option>Tomorrow</option>
+                        <option>Day after tomorrow</option>
+                    </select>
+                </div>
+                <div class="m-input-group">
+                    <label class="m-input-label">Preferred Time</label>
+                    <select class="m-text-input" id="bookingTime">
+                        <option selected>Morning (09:00 AM - 12:00 PM)</option>
+                        <option>Afternoon (01:00 PM - 04:00 PM)</option>
+                        <option>Evening (05:00 PM - 08:00 PM)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="m-input-group">
+                <label class="m-input-label">Special Notes / Medical Requirement</label>
+                <textarea class="m-text-input" rows="2" placeholder="e.g. Elderly patient, needs routine checkup / blood sugar test" id="bookingNotes"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 18px;">
+                <button class="pd-btn-primary" style="flex: 2;" onclick="confirmServiceBooking()"><i class="fa-solid fa-calendar-check"></i> Confirm Service Booking</button>
+                <button class="pd-btn-secondary" style="flex: 1;" onclick="closeModal('serviceBookingModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Video Call Settings Modal -->
+    <div class="pd-modal-overlay" id="videoSettingsModal">
+        <div class="pd-modal-card" style="max-width: 420px;">
+            <button class="pd-modal-close-btn" onclick="closeModal('videoSettingsModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--pd-navy-dark); margin-bottom: 6px;">Call Settings</h3>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 16px;">Telemedicine audio, video &amp; display controls</p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; font-size: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px;">
+                    <span><i class="fa-solid fa-video" style="color: var(--pd-teal-primary); margin-right: 8px;"></i> Stream Quality</span>
+                    <strong style="color: #16a34a;">1080p HD (60 fps)</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px;">
+                    <span><i class="fa-solid fa-microphone" style="color: var(--pd-teal-primary); margin-right: 8px;"></i> Audio Input</span>
+                    <strong>Default Microphone</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px;">
+                    <span><i class="fa-solid fa-shield" style="color: #0284c7; margin-right: 8px;"></i> Encryption</span>
+                    <strong>End-to-End Encrypted</strong>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="pd-btn-primary" onclick="toggleFullScreen(); closeModal('videoSettingsModal');"><i class="fa-solid fa-expand"></i> Toggle Fullscreen Mode</button>
+                <button class="pd-btn-secondary" onclick="closeModal('videoSettingsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Toast Message -->
+    <div id="pdToast" style="display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #0c2340; color: #ffffff; padding: 12px 24px; border-radius: 50px; font-size: 0.88rem; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.25); z-index: 99999;">
+        <span id="pdToastText">Notification message</span>
+    </div>
+
+    <!-- ==================== JAVASCRIPT STATE CONTROLLER ==================== -->
+    <script>
+        // Doctor Catalog with HD Images
+        const DOCTORS = [
+            {
+                id: 'priya-sharma',
+                name: 'Dr. Priya Sharma',
+                spec: 'General Physician',
+                degrees: 'MBBS, MD (Internal Medicine)',
+                reg: 'APMC-74892',
+                rating: '4.8',
+                reviewsCount: '1.2k reviews',
+                exp: '12+ yrs',
+                expNum: 12,
+                fee: 500,
+                avatar: "{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}",
+                videoStream: "{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}",
+                languages: 'Telugu, English, Hindi',
+                about: 'Dr. Priya Sharma is a senior general physician with over 12 years of clinical practice in internal medicine, chronic disease management, and family preventive healthcare across Andhra Pradesh.',
+                experience: 'Senior Consultant Physician at Apollo Hospitals, Vijayawada (6 yrs); Former Medical Officer at King George Hospital, Vizag (6 yrs). Over 15,000+ satisfied patient consultations.',
+                specialisations: ['General Medicine', 'Preventive Care', 'Lifestyle Management', 'Fever & Infections', 'Hypertension & Diabetes Control'],
+                reviews: [
+                    { user: 'Suresh V.', rating: 5, date: '2 days ago', comment: 'Dr. Priya is very patient and explained the medication clearly. Felt much better within 2 days.' },
+                    { user: 'Lakshmi K.', rating: 5, date: '1 week ago', comment: 'Quick video connection and very professional prescription. Highly recommended!' }
+                ],
+                medications: [
+                    { name: 'Paracetamol 650mg', dosage: '1 tablet after meals &bull; 3 days', timing: 'TDS (Morning / Noon / Night)' },
+                    { name: 'Cetirizine 10mg', dosage: '1 tablet before sleep &bull; 5 days', timing: 'OD (Night only)' },
+                    { name: 'Vitamin C + Zinc (500mg)', dosage: '1 chewable tablet daily &bull; 10 days', timing: 'OD (Morning)' }
+                ],
+                advice: "Drink 3 liters of warm water daily, adequate rest, warm saline gargling twice a day. Monitor temperature twice daily."
+            },
+            {
+                id: 'rohan-mehta',
+                name: 'Dr. Rohan Mehta',
+                spec: 'Cardiologist',
+                degrees: 'MBBS, MD (Cardiology)',
+                reg: 'APMC-61245',
+                rating: '4.7',
+                reviewsCount: '890 reviews',
+                exp: '10+ yrs',
+                expNum: 10,
+                fee: 600,
+                avatar: "{{ url_for('static', filename='images/consultation/dr_rohan_mehta.png') }}",
+                videoStream: "{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}",
+                languages: 'Telugu, English',
+                about: 'Dr. Rohan Mehta specializes in cardiovascular disease diagnosis, ECG analysis, hypertension control, and preventive heart wellness with over a decade of clinical excellence.',
+                experience: 'Consultant Interventional Cardiologist at Manipal Hospitals, Vijayawada (5 yrs); Fellow in Preventive Cardiology, Care Hospitals, Hyderabad (5 yrs).',
+                specialisations: ['Cardiology', 'ECG Analysis', 'Hypertension Management', 'Cholesterol Control', 'Heart Wellness'],
+                reviews: [
+                    { user: 'Ramesh Naidu', rating: 5, date: '3 days ago', comment: 'Excellent doctor. He patiently answered all my questions regarding my blood pressure.' },
+                    { user: 'Bhavani S.', rating: 4, date: '2 weeks ago', comment: 'Prompt consultation and clear lifestyle recommendations.' }
+                ],
+                medications: [
+                    { name: 'Telmisartan 40mg', dosage: '1 tablet in the morning after breakfast &bull; 30 days', timing: 'OD (Morning)' },
+                    { name: 'Atorvastatin 10mg', dosage: '1 tablet after dinner &bull; 30 days', timing: 'OD (Night)' },
+                    { name: 'CoQ10 100mg', dosage: '1 capsule daily after food &bull; 30 days', timing: 'OD (Noon)' }
+                ],
+                advice: "Maintain low sodium diet, avoid saturated oils, 30 minutes daily brisk walk, monitor blood pressure weekly."
+            },
+            {
+                id: 'anitha-reddy',
+                name: 'Dr. Anitha Reddy',
+                spec: 'Dermatologist',
+                degrees: 'MBBS, MD (Dermatology)',
+                reg: 'APMC-83921',
+                rating: '4.9',
+                reviewsCount: '750 reviews',
+                exp: '15+ yrs',
+                expNum: 15,
+                fee: 900,
+                avatar: "{{ url_for('static', filename='images/consultation/dr_anitha_reddy.png') }}",
+                videoStream: "{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}",
+                languages: 'Telugu, English, Hindi',
+                about: 'Dr. Anitha Reddy is a board-certified dermatologist with 15+ years of specialized clinical experience treating skin allergies, eczema, acne, hair loss, and cosmetic dermatology.',
+                experience: 'Lead Dermatologist at Ramesh Hospitals, Guntur (8 yrs); Associate Professor of Dermatology, GMC (7 yrs). Renowned speaker and tele-dermatologist.',
+                specialisations: ['Clinical Dermatology', 'Acne & Skin Allergies', 'Eczema & Psoriasis', 'Hair & Scalp Care', 'Cosmetic Dermatology'],
+                reviews: [
+                    { user: 'Divya M.', rating: 5, date: 'Yesterday', comment: 'My skin rash resolved within 48 hours following her prescription. Very compassionate doctor.' },
+                    { user: 'Kiran K.', rating: 5, date: '5 days ago', comment: 'Best dermatologist in the region. Super convenient online video consultation!' }
+                ],
+                medications: [
+                    { name: 'Levocetirizine 5mg', dosage: '1 tablet after dinner &bull; 7 days', timing: 'OD (Night)' },
+                    { name: 'Mupirocin 2% Ointment', dosage: 'Apply thin layer on affected area twice daily &bull; 7 days', timing: 'BD (Morning & Night)' },
+                    { name: 'Hydrating Ceramide Lotion', dosage: 'Apply gently all over body after bath &bull; Daily', timing: 'OD' }
+                ],
+                advice: "Avoid hot water baths, use mild non-soap cleanser, do not scratch lesions, avoid scented skin cosmetics."
+            },
+            {
+                id: 'vikram-patel',
+                name: 'Dr. Vikram Patel',
+                spec: 'Orthopedics',
+                degrees: 'MBBS, MS (Orthopedics)',
+                reg: 'APMC-55923',
+                rating: '4.8',
+                reviewsCount: '620 reviews',
+                exp: '11+ yrs',
+                expNum: 11,
+                fee: 700,
+                avatar: "{{ url_for('static', filename='images/consultation/dr_vikram_patel.png') }}",
+                videoStream: "{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}",
+                languages: 'Telugu, English',
+                about: 'Dr. Vikram Patel is an orthopedic specialist handling joint pain, arthritis, sports injuries, spine health, and post-fracture physical rehabilitation.',
+                experience: 'Senior Orthopedic Surgeon at NRI General Hospital, Mangalagiri (6 yrs); Fellow in Joint Replacement, Sunshine Hospitals (5 yrs).',
+                specialisations: ['Orthopedic Surgery', 'Joint Pain Management', 'Arthritis Care', 'Spine & Back Health', 'Sports Injuries'],
+                reviews: [
+                    { user: 'Venkat Rao', rating: 5, date: '4 days ago', comment: 'Dr. Vikram diagnosed my knee problem accurately over video call and guided with simple exercises.' },
+                    { user: 'Prasad M.', rating: 5, date: '1 week ago', comment: 'Clear explanation of X-ray and very helpful advice.' }
+                ],
+                medications: [
+                    { name: 'Aceclofenac + Paracetamol', dosage: '1 tablet twice daily after meals &bull; 5 days', timing: 'BD (Morning & Night)' },
+                    { name: 'Calcium Citrate + Vit D3', dosage: '1 tablet daily after food &bull; 30 days', timing: 'OD (Morning)' },
+                    { name: 'Topical Pain Relief Gel', dosage: 'Apply over painful knee gently twice daily &bull; 7 days', timing: 'BD' }
+                ],
+                advice: "Avoid squatting and stairs, apply hot compress for 15 mins daily, perform gentle quadriceps strengthening exercises."
+            }
+        ];
+
+        // Logged-in Patient Context (Automatic & Dynamic)
+        let CURRENT_USER = {
+            id: {{ (user.id if user else 'NH-2026')|tojson }},
+            name: {{ (user.name if user else 'Valued Patient')|tojson }},
+            email: {{ (user.email if user else '')|tojson }},
+            phone: {{ (user.phone if user else '')|tojson }},
+            city: {{ (user.city if user else 'Vijayawada')|tojson }},
+            age: {{ (user.age if user and user.age else 32)|tojson }},
+            gender: {{ (user.gender if user and user.gender else 'Male')|tojson }},
+            blood_group: {{ (user.blood_group if user and user.blood_group else 'O+')|tojson }},
+            address: {{ (user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh'))|tojson }}
+        };
+
+        // Synchronize with local storage if available from previous login/signup
+        try {
+            const stored = localStorage.getItem('nhealth_user');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (parsed && parsed.name) {
+                    CURRENT_USER = Object.assign({}, CURRENT_USER, parsed);
+                }
+            }
+        } catch (e) {}
+
+        function populatePatientDetails(u) {
+            if (!u) return;
+
+            // 1. Mobile Header & Greeting
+            const mHeaderName = document.getElementById('mHeaderPatientName');
+            if (mHeaderName) mHeaderName.textContent = u.name;
+            const mGreeting = document.getElementById('mHeroPatientGreeting');
+            if (mGreeting) mGreeting.textContent = u.name.split(' ')[0];
+
+            // 2. Mobile Booking Fields
+            const mName = document.getElementById('mPatientName');
+            if (mName && (!mName.value || mName.value === 'Ravi Kumar')) mName.value = u.name;
+            const mAge = document.getElementById('mPatientAge');
+            if (mAge) mAge.value = u.age || 32;
+            const mGender = document.getElementById('mPatientGender');
+            if (mGender && u.gender) mGender.value = u.gender;
+            const mPhone = document.getElementById('mPatientPhone');
+            if (mPhone && (!mPhone.value || mPhone.value.includes('9876543210'))) mPhone.value = u.phone;
+            const mEmail = document.getElementById('mPatientEmail');
+            if (mEmail && (!mEmail.value || mEmail.value === 'ravi@gmail.com')) mEmail.value = u.email;
+
+            // 3. Desktop Topbar
+            const dName = document.getElementById('dTopbarUserName');
+            if (dName) dName.textContent = u.name;
+            const dInitials = document.getElementById('dTopbarUserInitials');
+            if (dInitials) dInitials.textContent = (u.name[0] || 'P').toUpperCase();
+
+            // 4. Desktop Booking Fields
+            const dPatName = document.getElementById('dPatientName');
+            if (dPatName && (!dPatName.value || dPatName.value === 'Ravi Kumar')) dPatName.value = u.name;
+            const dPatPhone = document.getElementById('dPatientPhone');
+            if (dPatPhone && (!dPatPhone.value || dPatPhone.value.includes('9876543210'))) dPatPhone.value = u.phone;
+            const dPatAge = document.getElementById('dPatientAge');
+            if (dPatAge) dPatAge.value = u.age || 32;
+            const dPatGender = document.getElementById('dPatientGender');
+            if (dPatGender && u.gender) dPatGender.value = u.gender;
+
+            // 5. Service Booking Modal
+            const bookName = document.getElementById('bookingPatientName');
+            if (bookName && (!bookName.value || bookName.value === 'Ravi Kumar')) bookName.value = u.name;
+            const bookAddr = document.getElementById('bookingAddress');
+            if (bookAddr && (!bookAddr.value || bookAddr.value.includes('Flat 402'))) {
+                bookAddr.value = u.address || `${u.city || 'Vijayawada'}, Andhra Pradesh`;
+            }
+
+            // 6. Doctor Chat Initial Message
+            const chatDocMsg = document.getElementById('chatDoctorInitialMsg');
+            if (chatDocMsg) {
+                chatDocMsg.innerHTML = `Hello <strong>${u.name.split(' ')[0]}</strong>! I have received your symptoms report. Please let me know if you are experiencing any fever, cough or chills right now.`;
+            }
+
+            // 7. Profile Modal
+            const profInitials = document.getElementById('modalPatientInitials');
+            if (profInitials) profInitials.textContent = (u.name[0] || 'P').toUpperCase();
+            const profHeading = document.getElementById('modalPatientNameHeading');
+            if (profHeading) profHeading.textContent = u.name;
+            const profBadge = document.getElementById('modalPatientIdBadge');
+            if (profBadge) profBadge.innerHTML = `Active Patient &bull; ID #${u.id}`;
+
+            const editName = document.getElementById('profileEditName');
+            if (editName) editName.value = u.name;
+            const editPhone = document.getElementById('profileEditPhone');
+            if (editPhone) editPhone.value = u.phone;
+            const editEmail = document.getElementById('profileEditEmail');
+            if (editEmail) editEmail.value = u.email;
+            const editCity = document.getElementById('profileEditCity');
+            if (editCity) editCity.value = u.city || 'Vijayawada';
+            const editAge = document.getElementById('profileEditAge');
+            if (editAge) editAge.value = u.age || 32;
+            const editGender = document.getElementById('profileEditGender');
+            if (editGender && u.gender) editGender.value = u.gender;
+            const editBlood = document.getElementById('profileEditBlood');
+            if (editBlood && u.blood_group) editBlood.value = u.blood_group;
+            const editAddr = document.getElementById('profileEditAddress');
+            if (editAddr) editAddr.value = u.address || `${u.city || 'Vijayawada'}, Andhra Pradesh`;
+
+            // 8. Prescriptions
+            document.querySelectorAll('.dyn-patient-name').forEach(el => el.textContent = u.name);
+            document.querySelectorAll('.dyn-patient-id').forEach(el => el.textContent = u.id);
+            document.querySelectorAll('.dyn-patient-age-gender').forEach(el => el.textContent = `${u.age || 32} Yrs • ${u.gender || 'Male'}`);
+            
+            const todayStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            document.querySelectorAll('.dyn-rx-date').forEach(el => el.textContent = todayStr);
+        }
+
+        let currentDoctor = DOCTORS[0];
+
+        // Screen Navigation for Mobile
+        function goToScreen(screenId) {
+            document.querySelectorAll('#mobileAppContainer .pd-screen').forEach(el => {
+                el.classList.remove('active-screen');
+            });
+            const target = document.getElementById(screenId);
+            if (target) {
+                target.classList.add('active-screen');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Screen Navigation for Desktop
+        function goToDeskScreen(screenId) {
+            document.querySelectorAll('#desktopAppContainer .pd-screen').forEach(el => {
+                el.classList.remove('active-screen');
+            });
+            const target = document.getElementById(screenId);
+            if (target) {
+                target.classList.add('active-screen');
+                const mainWrapper = document.querySelector('.d-main-wrapper');
+                if (mainWrapper) mainWrapper.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function setDeskNavActive(btn) {
+            document.querySelectorAll('.d-sidebar-nav .d-nav-link').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function setBottomNavActive(btn) {
+            document.querySelectorAll('.m-app-bottom-nav .m-nav-item').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // Render Doctor Lists Dynamically
+        function renderDoctorCards() {
+            // 1. Mobile Home Quick List (top 3)
+            const mHomeList = document.getElementById('mHomeDoctorsList');
+            if (mHomeList) {
+                mHomeList.innerHTML = DOCTORS.slice(0, 3).map(doc => `
+                    <div class="m-doc-card" onclick="selectDoctor('${doc.id}'); goToScreen('mScreen3');">
+                        <div class="m-doc-top">
+                            <img src="${doc.avatar}" alt="${doc.name}" class="m-doc-avatar" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
+                            <div class="m-doc-details">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <h4 class="m-doc-name">${doc.name}</h4>
+                                    <span class="pd-badge-avail">Available Now</span>
+                                </div>
+                                <p class="m-doc-spec">${doc.spec} &bull; ${doc.degrees}</p>
+                                <div class="m-doc-meta">
+                                    <span class="pd-rating"><i class="fa-solid fa-star"></i> ${doc.rating}</span>
+                                    <span>(${doc.reviewsCount})</span>
+                                    <span>&bull;</span>
+                                    <span>${doc.exp}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-doc-actions">
+                            <span class="m-doc-fee">₹${doc.fee} <small style="font-weight: 500; font-size: 0.72rem; color: #64748b;">fee</small></span>
+                            <div class="m-doc-btns">
+                                <button class="m-btn-view-profile" onclick="event.stopPropagation(); selectDoctor('${doc.id}'); goToScreen('mScreen3');">View Profile</button>
+                                <button class="m-btn-book" onclick="event.stopPropagation(); selectDoctor('${doc.id}'); goToScreen('mScreen4');">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // 2. Mobile Full Doctors List
+            populateMobileDoctors(DOCTORS);
+
+            // 3. Desktop Home Grid (top 4)
+            const dHomeGrid = document.getElementById('dHomeDoctorsGrid');
+            if (dHomeGrid) {
+                dHomeGrid.innerHTML = DOCTORS.slice(0, 4).map(doc => `
+                    <div class="d-doc-box" onclick="selectDoctor('${doc.id}'); goToDeskScreen('dScreen3');" style="cursor: pointer;">
+                        <img src="${doc.avatar}" alt="${doc.name}" class="d-doc-box-avatar" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
+                        <h4 class="d-doc-box-name">${doc.name}</h4>
+                        <p class="d-doc-box-spec">${doc.spec} &bull; ${doc.degrees.split(',')[0]}</p>
+                        <span class="pd-badge-avail" style="margin-bottom: 8px;">Available Now</span>
+                        <div class="d-doc-box-footer">
+                            <span class="d-doc-box-fee">₹${doc.fee}</span>
+                            <button class="pd-btn-primary" style="padding: 8px 16px; font-size: 0.82rem;" onclick="event.stopPropagation(); selectDoctor('${doc.id}'); goToDeskScreen('dScreen4');">Book Now</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // 4. Desktop Full Results Rows
+            populateDesktopDoctors(DOCTORS);
+        }
+
+        function populateMobileDoctors(list) {
+            const mList = document.getElementById('mDoctorsList');
+            if (!mList) return;
+            if (list.length === 0) {
+                mList.innerHTML = `<div style="text-align: center; padding: 40px 16px; color: #64748b;">
+                    <i class="fa-solid fa-user-doctor" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 8px;"></i>
+                    <p style="font-weight: 700;">No doctors found</p>
+                    <small>Try selecting "All" or a different search keyword</small>
+                </div>`;
+                return;
+            }
+            mList.innerHTML = list.map(doc => `
+                <div class="m-doc-card" onclick="selectDoctor('${doc.id}'); goToScreen('mScreen3');">
+                    <div class="m-doc-top">
+                        <img src="${doc.avatar}" alt="${doc.name}" class="m-doc-avatar" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
+                        <div class="m-doc-details">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <h4 class="m-doc-name">${doc.name}</h4>
+                                <span class="pd-badge-avail">Available Now</span>
+                            </div>
+                            <p class="m-doc-spec">${doc.spec} &bull; ${doc.degrees}</p>
+                            <div class="m-doc-meta">
+                                <span class="pd-rating"><i class="fa-solid fa-star"></i> ${doc.rating}</span>
+                                <span>(${doc.reviewsCount})</span>
+                                <span>&bull;</span>
+                                <span>${doc.exp}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-doc-actions">
+                        <span class="m-doc-fee">₹${doc.fee} <small style="font-weight: 500; font-size: 0.72rem; color: #64748b;">fee</small></span>
+                        <div class="m-doc-btns">
+                            <button class="m-btn-view-profile" onclick="event.stopPropagation(); selectDoctor('${doc.id}'); goToScreen('mScreen3');">View Profile</button>
+                            <button class="m-btn-book" onclick="event.stopPropagation(); selectDoctor('${doc.id}'); goToScreen('mScreen4');">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateDesktopDoctors(list) {
+            const dResults = document.getElementById('dDoctorsResults');
+            if (!dResults) return;
+            const header = document.getElementById('dDoctorCountHeader');
+            if (header) header.textContent = `${list.length} Verified doctors ready for online consultation`;
+
+            if (list.length === 0) {
+                dResults.innerHTML = `<div style="text-align: center; padding: 60px 20px; background: #ffffff; border-radius: 16px; border: 1.5px solid var(--pd-border-color); color: #64748b;">
+                    <i class="fa-solid fa-user-doctor" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 12px;"></i>
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--pd-navy-dark); margin-bottom: 4px;">No doctors matched your criteria</h3>
+                    <p style="font-size: 0.88rem;">Try resetting filters or searching for General Physician</p>
+                </div>`;
+                return;
+            }
+
+            dResults.innerHTML = list.map(doc => `
+                <div class="d-doc-card-row" onclick="selectDoctor('${doc.id}'); goToDeskScreen('dScreen3');" style="cursor: pointer;">
+                    <img src="${doc.avatar}" alt="${doc.name}" class="d-doc-row-avatar" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
+                    <div class="d-doc-row-info">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--pd-navy-dark);">${doc.name}</h3>
+                            <span class="pd-badge-avail">Available Now</span>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0;">${doc.spec} &bull; ${doc.degrees}</p>
+                        <p style="font-size: 0.8rem; color: #475569;">
+                            <i class="fa-solid fa-star" style="color: #f59e0b;"></i> <strong>${doc.rating}</strong> (${doc.reviewsCount}) &bull; ${doc.exp} experience &bull; ${doc.languages}
+                        </p>
+                    </div>
+                    <div class="d-doc-row-right">
+                        <span style="font-size: 1.25rem; font-weight: 800; color: var(--pd-navy-dark);">₹${doc.fee}</span>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="pd-btn-secondary" style="padding: 8px 16px;" onclick="event.stopPropagation(); selectDoctor('${doc.id}'); goToDeskScreen('dScreen3');">View Profile</button>
+                            <button class="pd-btn-primary" style="padding: 8px 20px;" onclick="event.stopPropagation(); selectDoctor('${doc.id}'); goToDeskScreen('dScreen4');">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Doctor Selection Controller
+        function selectDoctor(docId) {
+            const doc = DOCTORS.find(d => d.id === docId);
+            if (!doc) return;
+            currentDoctor = doc;
+
+            // 1. Update text fields across document
+            document.querySelectorAll('.dyn-doc-name').forEach(el => el.textContent = doc.name);
+            document.querySelectorAll('.dyn-doc-spec').forEach(el => el.textContent = doc.spec);
+            document.querySelectorAll('.dyn-doc-fee').forEach(el => el.textContent = `₹${doc.fee}`);
+            document.querySelectorAll('.dyn-doc-reg').forEach(el => el.textContent = `${doc.degrees} • Reg: ${doc.reg}`);
+
+            // 2. Mobile Profile elements
+            const mAvatar = document.getElementById('mProfileAvatar');
+            if (mAvatar) mAvatar.src = doc.avatar;
+            const mName = document.getElementById('mProfileName');
+            if (mName) mName.textContent = doc.name;
+            const mSpec = document.getElementById('mProfileSpec');
+            if (mSpec) mSpec.textContent = `${doc.spec} • ${doc.degrees}`;
+            const mRating = document.getElementById('mProfileRating');
+            if (mRating) mRating.textContent = doc.rating;
+            const mExp = document.getElementById('mProfileExp');
+            if (mExp) mExp.textContent = doc.exp;
+            const mFee = document.getElementById('mProfileFee');
+            if (mFee) mFee.textContent = `₹${doc.fee}`;
+            const mAbout = document.getElementById('mProfileAboutText');
+            if (mAbout) mAbout.textContent = doc.about;
+            const mExpText = document.getElementById('mProfileExpText');
+            if (mExpText) mExpText.textContent = doc.experience;
+            const mBookBtn = document.getElementById('mProfileBookBtn');
+            if (mBookBtn) mBookBtn.textContent = `Book Now • ₹${doc.fee}`;
+
+            const mSpecTags = document.getElementById('mProfileSpecTags');
+            if (mSpecTags) {
+                mSpecTags.innerHTML = doc.specialisations.map(s => `<span class="m-spec-tag">${s}</span>`).join('');
+            }
+            const mReviewsList = document.getElementById('mProfileReviewsList');
+            if (mReviewsList) {
+                mReviewsList.innerHTML = doc.reviews.map(r => `
+                    <div class="pd-review-card">
+                        <div class="pd-review-card-top">
+                            <span class="pd-reviewer-name">${r.user}</span>
+                            <span class="pd-rating"><i class="fa-solid fa-star"></i> ${r.rating}.0</span>
+                        </div>
+                        <p class="pd-review-text">${r.comment}</p>
+                    </div>
+                `).join('');
+            }
+
+            // 3. Desktop Profile elements
+            const dAvatar = document.getElementById('dProfileAvatar');
+            if (dAvatar) dAvatar.src = doc.avatar;
+            const dName = document.getElementById('dProfileName');
+            if (dName) dName.textContent = doc.name;
+            const dSpec = document.getElementById('dProfileSpec');
+            if (dSpec) dSpec.textContent = `${doc.spec} • ${doc.degrees}`;
+            const dRating = document.getElementById('dProfileRating');
+            if (dRating) dRating.textContent = doc.rating;
+            const dRevCount = document.getElementById('dProfileReviewsCount');
+            if (dRevCount) dRevCount.textContent = doc.reviewsCount;
+            const dExp = document.getElementById('dProfileExp');
+            if (dExp) dExp.textContent = `${doc.exp} experience`;
+            const dLang = document.getElementById('dProfileLang');
+            if (dLang) dLang.textContent = doc.languages;
+            const dFee = document.getElementById('dProfileFee');
+            if (dFee) dFee.textContent = `₹${doc.fee}`;
+            const dAbout = document.getElementById('dProfileAboutText');
+            if (dAbout) dAbout.textContent = doc.about;
+            const dExpText = document.getElementById('dProfileExpText');
+            if (dExpText) dExpText.textContent = doc.experience;
+
+            const dSpecTags = document.getElementById('dProfileSpecTags');
+            if (dSpecTags) {
+                dSpecTags.innerHTML = doc.specialisations.map(s => `<span class="m-spec-tag" style="font-size: 0.82rem; padding: 6px 14px;">${s}</span>`).join('');
+            }
+            const dReviewsList = document.getElementById('dProfileReviewsList');
+            if (dReviewsList) {
+                dReviewsList.innerHTML = doc.reviews.map(r => `
+                    <div class="pd-review-card">
+                        <div class="pd-review-card-top">
+                            <span class="pd-reviewer-name">${r.user} <small style="color: #94a3b8; font-weight: normal; margin-left: 6px;">(${r.date})</small></span>
+                            <span class="pd-rating"><i class="fa-solid fa-star"></i> ${r.rating}.0</span>
+                        </div>
+                        <p class="pd-review-text">${r.comment}</p>
+                    </div>
+                `).join('');
+            }
+
+            // 4. Update Video Streams & Avatar
+            const chatAvatar = document.getElementById('chatDoctorAvatar');
+            if (chatAvatar) chatAvatar.src = doc.avatar;
+
+            // 5. Update Prescription medications & advice
+            updatePrescriptionUI(doc);
+        }
+
+        function updatePrescriptionUI(doc) {
+            const medsHtml = doc.medications.map(m => `
+                <div class="m-med-item">
+                    <div style="text-align: left;">
+                        <div class="m-med-name">${m.name}</div>
+                        <div class="m-med-dosage">${m.dosage}</div>
+                    </div>
+                    <span class="m-med-timing">${m.timing}</span>
+                </div>
+            `).join('');
+
+            const mMeds = document.getElementById('mPrescriptionMedsList');
+            if (mMeds) mMeds.innerHTML = medsHtml;
+            const dMeds = document.getElementById('dPrescriptionMedsList');
+            if (dMeds) dMeds.innerHTML = medsHtml;
+
+            const mAdvice = document.getElementById('mPrescriptionAdvice');
+            if (mAdvice) mAdvice.textContent = doc.advice;
+            const dAdvice = document.getElementById('dPrescriptionAdvice');
+            if (dAdvice) dAdvice.textContent = doc.advice;
+        }
+
+        // Live Search Handling
+        function handleDoctorSearch(query, targetListId) {
+            const q = (query || '').toLowerCase().trim();
+            const filtered = DOCTORS.filter(d => 
+                d.name.toLowerCase().includes(q) ||
+                d.spec.toLowerCase().includes(q) ||
+                d.specialisations.some(s => s.toLowerCase().includes(q))
+            );
+
+            if (targetListId === 'mDoctorsList') {
+                populateMobileDoctors(filtered);
+            } else {
+                populateDesktopDoctors(filtered);
+            }
+        }
+
+        // Specialty Filter
+        function filterBySpecialty(spec, pillElement, targetListId) {
+            if (pillElement) {
+                const pillsContainer = pillElement.parentElement;
+                pillsContainer.querySelectorAll('.m-pill').forEach(p => p.classList.remove('active'));
+                pillElement.classList.add('active');
+            }
+
+            if (spec === 'All') {
+                populateMobileDoctors(DOCTORS);
+            } else {
+                const filtered = DOCTORS.filter(d => d.spec.toLowerCase().includes(spec.toLowerCase()));
+                populateMobileDoctors(filtered);
+            }
+        }
+
+        function filterDeskBySpecialty(spec) {
+            goToDeskScreen('dScreen2');
+            const radio = document.querySelector(`input[name="deskSpec"][value="${spec}"]`);
+            if (radio) radio.checked = true;
+            applyDeskFilters();
+        }
+
+        function applyDeskFilters() {
+            const selectedSpec = document.querySelector('input[name="deskSpec"]:checked')?.value || 'All';
+            const expOnly10 = document.getElementById('deskExp10')?.checked;
+
+            let filtered = DOCTORS;
+            if (selectedSpec !== 'All') {
+                filtered = filtered.filter(d => d.spec.toLowerCase().includes(selectedSpec.toLowerCase()));
+            }
+            if (expOnly10) {
+                filtered = filtered.filter(d => d.expNum >= 10);
+            }
+            populateDesktopDoctors(filtered);
+        }
+
+        // Tab Switching in Doctor Profile
+        function switchProfileTab(btn, paneId) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.d-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const contentContainer = parent.nextElementSibling;
+            if (contentContainer) {
+                contentContainer.querySelectorAll('.pd-tab-pane').forEach(p => p.classList.remove('active'));
+                const target = document.getElementById(paneId);
+                if (target) target.classList.add('active');
+            }
+        }
+
+        function switchDeskTab(btn, paneId) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.d-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const card = parent.parentElement;
+            card.querySelectorAll('.pd-tab-pane').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById(paneId);
+            if (target) target.classList.add('active');
+        }
+
+        // Payment Simulation
+        function selectPaymentMethod(card) {
+            const parent = card.parentElement;
+            parent.querySelectorAll('.m-pay-card').forEach(c => {
+                c.classList.remove('selected');
+                const icon = c.querySelector('i:last-child');
+                if (icon) {
+                    icon.className = 'fa-regular fa-circle';
+                    icon.style.color = '#cbd5e1';
+                }
+            });
+            card.classList.add('selected');
+            const icon = card.querySelector('i:last-child');
+            if (icon) {
+                icon.className = 'fa-solid fa-circle-check';
+                icon.style.color = 'var(--pd-teal-primary)';
+            }
+        }
+
+        function simulatePaymentSuccess(viewMode) {
+            showToast(`Processing payment of ₹${currentDoctor.fee}...`);
+            const randTxn = `TXN-NH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+            const randAppt = `NH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+            
+            const txnEl = document.getElementById('mTxnId');
+            if (txnEl) txnEl.textContent = randTxn;
+            const dApptEl = document.getElementById('dAppointmentId');
+            if (dApptEl) dApptEl.textContent = randAppt;
+
+            setTimeout(() => {
+                if (viewMode === 'mobile') {
+                    goToScreen('mScreen6');
+                } else {
+                    goToDeskScreen('dScreen6');
+                }
+            }, 600);
+        }
+
+        // Real-Time WebRTC Video Call State & Media Controllers
+        let callTimerInterval = null;
+        let callSeconds = 0;
+        let localUserMediaStream = null;
+        let localScreenStream = null;
+        let isAudioMuted = false;
+        let isVideoOff = false;
+        let isSharingScreen = false;
+
+        async function initRealTimeMedia() {
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+                        audio: true
+                    });
+                    localUserMediaStream = stream;
+
+                    // Attach to mobile and desktop patient video elements
+                    const mV = document.getElementById('mPatientRealVideo');
+                    const dV = document.getElementById('dPatientRealVideo');
+                    const mImg = document.getElementById('mPatientPip');
+                    const dImg = document.getElementById('dPatientPip');
+
+                    if (mV) {
+                        mV.srcObject = stream;
+                        mV.style.display = 'block';
+                        mV.play().catch(() => {});
+                    }
+                    if (dV) {
+                        dV.srcObject = stream;
+                        dV.style.display = 'block';
+                        dV.play().catch(() => {});
+                    }
+                    if (mImg) mImg.style.display = 'none';
+                    if (dImg) dImg.style.display = 'none';
+
+                    showToast('🎥 Live camera and microphone connected in HD!');
+                } else {
+                    showToast('Live consultation active (HD Avatar Mode)');
+                }
+            } catch (err) {
+                console.log('Webcam/Mic access denied or unavailable:', err);
+                showToast('Consultation connected (HD Avatar Mode)');
+            }
+        }
+
+        function startVideoCall(viewMode) {
+            callSeconds = 0;
+            isAudioMuted = false;
+            isVideoOff = false;
+            isSharingScreen = false;
+            updateCallControlsUI();
+
+            if (viewMode === 'mobile') {
+                goToScreen('mScreenVideo');
+                startTimer('mCallTimer');
+            } else {
+                goToDeskScreen('dScreenVideo');
+                startTimer('dCallTimer');
+            }
+
+            // Initialize live webcam and audio
+            initRealTimeMedia();
+
+            // Doctor audio greeting simulation if supported
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.cancel();
+                    const docName = (currentDoctor && currentDoctor.name) ? currentDoctor.name : 'Dr. Priya Sharma';
+                    const utterance = new SpeechSynthesisUtterance(`Hello! This is ${docName}. I can see and hear you clearly. How can I assist you today?`);
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                } catch(e) {}
+            }
+        }
+
+        function startTimer(timerId) {
+            clearInterval(callTimerInterval);
+            const el = document.getElementById(timerId);
+            if (el) el.textContent = '00:01';
+            callTimerInterval = setInterval(() => {
+                callSeconds++;
+                const mins = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+                const secs = String(callSeconds % 60).padStart(2, '0');
+                const timerEl = document.getElementById(timerId);
+                if (timerEl) timerEl.textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function toggleMute(clickedBtn) {
+            isAudioMuted = !isAudioMuted;
+
+            if (localUserMediaStream) {
+                localUserMediaStream.getAudioTracks().forEach(track => {
+                    track.enabled = !isAudioMuted;
+                });
+            }
+
+            updateCallControlsUI();
+            showToast(isAudioMuted ? '🔇 Microphone muted' : '🎤 Microphone unmuted');
+        }
+
+        function toggleVideo(clickedBtn) {
+            isVideoOff = !isVideoOff;
+
+            if (localUserMediaStream) {
+                localUserMediaStream.getVideoTracks().forEach(track => {
+                    track.enabled = !isVideoOff;
+                });
+            }
+
+            // Toggle overlay on PiP boxes
+            const mOverlay = document.getElementById('mPipOverlay');
+            const dOverlay = document.getElementById('dPipOverlay');
+            const mV = document.getElementById('mPatientRealVideo');
+            const dV = document.getElementById('dPatientRealVideo');
+            const mImg = document.getElementById('mPatientPip');
+            const dImg = document.getElementById('dPatientPip');
+
+            if (isVideoOff) {
+                if (mOverlay) mOverlay.style.display = 'flex';
+                if (dOverlay) dOverlay.style.display = 'flex';
+                if (mV) mV.style.display = 'none';
+                if (dV) dV.style.display = 'none';
+                if (mImg) mImg.style.display = 'none';
+                if (dImg) dImg.style.display = 'none';
+                showToast('📷 Camera turned off');
+            } else {
+                if (mOverlay) mOverlay.style.display = 'none';
+                if (dOverlay) dOverlay.style.display = 'none';
+                if (localUserMediaStream) {
+                    if (mV) mV.style.display = 'block';
+                    if (dV) dV.style.display = 'block';
+                } else {
+                    if (mImg) mImg.style.display = 'block';
+                    if (dImg) dImg.style.display = 'block';
+                }
+                showToast('🎥 Camera turned on');
+            }
+
+            updateCallControlsUI();
+        }
+
+        async function toggleScreenShare(clickedBtn) {
+            if (!isSharingScreen) {
+                try {
+                    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+                        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                        localScreenStream = stream;
+                        isSharingScreen = true;
+                        updateCallControlsUI();
+                        showToast('🖥️ Screen sharing started — Live broadcast to doctor');
+
+                        stream.getVideoTracks()[0].onended = () => {
+                            stopScreenSharing();
+                        };
+                    } else {
+                        isSharingScreen = true;
+                        updateCallControlsUI();
+                        showToast('🖥️ Screen sharing mode simulated');
+                    }
+                } catch (err) {
+                    console.log('Screen sharing cancelled or unavailable:', err);
+                }
+            } else {
+                stopScreenSharing();
+            }
+        }
+
+        function stopScreenSharing() {
+            if (localScreenStream) {
+                localScreenStream.getTracks().forEach(track => track.stop());
+                localScreenStream = null;
+            }
+            isSharingScreen = false;
+            updateCallControlsUI();
+            showToast('Screen sharing stopped');
+        }
+
+        function updateCallControlsUI() {
+            const muteBtns = [document.getElementById('mBtnMute'), document.getElementById('dBtnMute')];
+            const videoBtns = [document.getElementById('mBtnVideo'), document.getElementById('dBtnVideo')];
+            const shareBtns = [document.getElementById('mBtnShare'), document.getElementById('dBtnShare')];
+
+            muteBtns.forEach(btn => {
+                if (!btn) return;
+                const icon = btn.querySelector('i');
+                if (isAudioMuted) {
+                    btn.classList.add('active');
+                    btn.style.background = '#ef4444';
+                    if (icon) icon.className = 'fa-solid fa-microphone-slash';
+                } else {
+                    btn.classList.remove('active');
+                    btn.style.background = '';
+                    if (icon) icon.className = 'fa-solid fa-microphone';
+                }
+            });
+
+            videoBtns.forEach(btn => {
+                if (!btn) return;
+                const icon = btn.querySelector('i');
+                if (isVideoOff) {
+                    btn.classList.add('active');
+                    btn.style.background = '#ef4444';
+                    if (icon) icon.className = 'fa-solid fa-video-slash';
+                } else {
+                    btn.classList.remove('active');
+                    btn.style.background = '';
+                    if (icon) icon.className = 'fa-solid fa-video';
+                }
+            });
+
+            shareBtns.forEach(btn => {
+                if (!btn) return;
+                if (isSharingScreen) {
+                    btn.style.background = '#0baaa2';
+                    btn.style.boxShadow = '0 0 12px rgba(11, 170, 162, 0.7)';
+                } else {
+                    btn.style.background = '';
+                    btn.style.boxShadow = '';
+                }
+            });
+        }
+
+        function openVideoSettingsModal() {
+            const modal = document.getElementById('videoSettingsModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    showToast('Entered Fullscreen mode');
+                }).catch(err => {
+                    showToast('Fullscreen toggled');
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    showToast('Exited Fullscreen mode');
+                }
+            }
+        }
+
+        function endVideoCall(viewMode) {
+            clearInterval(callTimerInterval);
+
+            // Cleanly stop all media tracks
+            if (localUserMediaStream) {
+                localUserMediaStream.getTracks().forEach(track => track.stop());
+                localUserMediaStream = null;
+            }
+            if (localScreenStream) {
+                localScreenStream.getTracks().forEach(track => track.stop());
+                localScreenStream = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            showToast('Consultation completed. Preparing clinical prescription...');
+            setTimeout(() => {
+                if (viewMode === 'mobile') {
+                    goToScreen('mScreenRx');
+                } else {
+                    goToDeskScreen('dScreenRx');
+                }
+            }, 500);
+        }
+
+        // Printable Prescription
+        function printPrescription() {
+            showToast('Opening verified digital prescription...');
+            setTimeout(() => {
+                window.print();
+            }, 400);
+        }
+
+        function bookFollowUp() {
+            showToast(`Free follow-up scheduled for 7 days later with ${currentDoctor.name}!`);
+        }
+
+        // Modals Management
+        function openDoctorChatModal() {
+            const modal = document.getElementById('doctorChatModal');
+            if (modal) modal.classList.add('active');
+            const input = document.getElementById('chatInputText');
+            if (input) setTimeout(() => input.focus(), 100);
+        }
+
+        function openPatientProfileModal() {
+            const modal = document.getElementById('patientProfileModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function openSosModal() {
+            const modal = document.getElementById('sosModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function openServiceBookingModal(title, subtitle, iconClass) {
+            const modal = document.getElementById('serviceBookingModal');
+            if (!modal) return;
+            const titleEl = document.getElementById('bookingServiceTitle');
+            const subEl = document.getElementById('bookingServiceSub');
+            const iconEl = document.getElementById('bookingServiceIcon');
+            if (titleEl) titleEl.textContent = title;
+            if (subEl) subEl.textContent = subtitle;
+            if (iconEl) iconEl.className = `fa-solid ${iconClass}`;
+            modal.classList.add('active');
+        }
+
+        function confirmServiceBooking() {
+            const title = document.getElementById('bookingServiceTitle')?.textContent || 'Service';
+            const date = document.getElementById('bookingDate')?.value || 'Today';
+            showToast(`${title} confirmed for ${date}! Our care coordinator will call you in 5 minutes.`);
+            closeModal('serviceBookingModal');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('active');
+        }
+
+        // Patient Profile Save Handler (Saves to server and syncs locally)
+        async function savePatientProfile(e) {
+            e.preventDefault();
+            const saveBtn = document.getElementById('profileSaveBtn');
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            }
+
+            const payload = {
+                id: CURRENT_USER.id,
+                name: document.getElementById('profileEditName')?.value.trim() || CURRENT_USER.name,
+                phone: document.getElementById('profileEditPhone')?.value.trim() || CURRENT_USER.phone,
+                email: document.getElementById('profileEditEmail')?.value.trim() || CURRENT_USER.email,
+                city: document.getElementById('profileEditCity')?.value.trim() || CURRENT_USER.city,
+                age: document.getElementById('profileEditAge')?.value || CURRENT_USER.age,
+                gender: document.getElementById('profileEditGender')?.value || CURRENT_USER.gender,
+                blood_group: document.getElementById('profileEditBlood')?.value || CURRENT_USER.blood_group,
+                address: document.getElementById('profileEditAddress')?.value.trim() || CURRENT_USER.address
+            };
+
+            try {
+                const res = await fetch('/api/user/profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    CURRENT_USER = Object.assign({}, CURRENT_USER, data.user);
+                    localStorage.setItem('nhealth_user', JSON.stringify(CURRENT_USER));
+                    populatePatientDetails(CURRENT_USER);
+                    showToast('Profile information updated successfully!');
+                    closeModal('patientProfileModal');
+                } else {
+                    showToast(data.message || 'Failed to update profile');
+                }
+            } catch (err) {
+                // If offline or network issue, still update locally
+                CURRENT_USER = Object.assign({}, CURRENT_USER, payload);
+                localStorage.setItem('nhealth_user', JSON.stringify(CURRENT_USER));
+                populatePatientDetails(CURRENT_USER);
+                showToast('Profile saved locally!');
+                closeModal('patientProfileModal');
+            } finally {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+                }
+            }
+        }
+
+        // Logout Handler (Clears session & localStorage securely)
+        async function handleLogout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of Nhealth patient portal...');
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (e) {}
+            localStorage.removeItem('nhealth_user');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 600);
+        }
+
+        // Chat functionality
+        function sendChatMessage() {
+            const input = document.getElementById('chatInputText');
+            const box = document.getElementById('chatMessagesBox');
+            if (!input || !box) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Append patient message
+            const patDiv = document.createElement('div');
+            patDiv.className = 'pd-chat-msg patient';
+            patDiv.textContent = text;
+            box.appendChild(patDiv);
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            // Auto reply from doctor
+            setTimeout(() => {
+                const docDiv = document.createElement('div');
+                docDiv.className = 'pd-chat-msg doctor';
+                docDiv.textContent = `Understood. I am reviewing your notes carefully. Please start the video call whenever you are ready so I can examine you.`;
+                box.appendChild(docDiv);
+                box.scrollTop = box.scrollHeight;
+            }, 700);
+        }
+
+        // Generic Toast Notification
+        let toastTimeout = null;
+        function showToast(msg) {
+            const toast = document.getElementById('pdToast');
+            const text = document.getElementById('pdToastText');
+            if (!toast || !text) return;
+            text.textContent = msg;
+            toast.style.display = 'block';
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2600);
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            populatePatientDetails(CURRENT_USER);
+            renderDoctorCards();
+            selectDoctor('priya-sharma');
+        });
+    </script>
+</body>
+</html>
