@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- Lab Auth Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab_auth.css') }}?v=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab_auth.css') }}?v=1.2">
 </head>
 <body class="lab-auth-page">
 
@@ -152,12 +152,12 @@
                         <!-- Row 1: Lab Name & Owner Name -->
                         <div class="lab-grid-2">
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labName">Lab / Diagnostic Center Name *</label>
+                                <label class="lab-form-label" for="labName"><span>Lab / Diagnostic Center Name<span class="lab-req">*</span></span></label>
                                 <input type="text" id="labName" class="lab-form-input no-icon" placeholder="Enter lab / center name" required>
                             </div>
 
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labOwnerName">Owner / Authorized Person Name *</label>
+                                <label class="lab-form-label" for="labOwnerName"><span>Owner / Authorized Person Name<span class="lab-req">*</span></span></label>
                                 <input type="text" id="labOwnerName" class="lab-form-input no-icon" placeholder="Enter full name" required>
                             </div>
                         </div>
@@ -165,7 +165,7 @@
                         <!-- Row 2: Mobile Number & Email -->
                         <div class="lab-grid-2">
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labPhone">Mobile Number *</label>
+                                <label class="lab-form-label" for="labPhone"><span>Mobile Number<span class="lab-req">*</span></span></label>
                                 <div class="lab-phone-wrapper">
                                     <span class="lab-phone-prefix">+91 <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: #64748b;"></i></span>
                                     <input type="tel" id="labPhone" class="lab-form-input" placeholder="Enter mobile number" maxlength="10" required>
@@ -173,7 +173,7 @@
                             </div>
 
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labEmail">Email Address *</label>
+                                <label class="lab-form-label" for="labEmail"><span>Email Address<span class="lab-req">*</span></span></label>
                                 <input type="email" id="labEmail" class="lab-form-input no-icon" placeholder="Enter email address" required>
                             </div>
                         </div>
@@ -181,7 +181,7 @@
                         <!-- Row 3: Password & Confirm Password -->
                         <div class="lab-grid-2">
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labPassword">Password *</label>
+                                <label class="lab-form-label" for="labPassword"><span>Password<span class="lab-req">*</span></span></label>
                                 <div class="lab-input-wrapper">
                                     <input type="password" id="labPassword" class="lab-form-input no-icon" placeholder="Enter password" required>
                                     <button type="button" class="lab-eye-toggle" onclick="togglePasswordVisibility('labPassword', this)" aria-label="Toggle password">
@@ -191,7 +191,7 @@
                             </div>
 
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labConfirmPassword">Confirm Password *</label>
+                                <label class="lab-form-label" for="labConfirmPassword"><span>Confirm Password<span class="lab-req">*</span></span></label>
                                 <div class="lab-input-wrapper">
                                     <input type="password" id="labConfirmPassword" class="lab-form-input no-icon" placeholder="Confirm password" required>
                                     <button type="button" class="lab-eye-toggle" onclick="togglePasswordVisibility('labConfirmPassword', this)" aria-label="Toggle password">
@@ -219,14 +219,14 @@
 
                         <!-- Address -->
                         <div class="lab-form-group">
-                            <label class="lab-form-label" for="labAddress">Address *</label>
+                            <label class="lab-form-label" for="labAddress"><span>Address<span class="lab-req">*</span></span></label>
                             <input type="text" id="labAddress" class="lab-form-input no-icon" placeholder="Enter full address" required>
                         </div>
 
                         <!-- City, State, Pincode -->
                         <div class="lab-grid-3">
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labCity">City *</label>
+                                <label class="lab-form-label" for="labCity"><span>City<span class="lab-req">*</span></span></label>
                                 <select id="labCity" class="lab-select" required>
                                     <option value="" disabled selected>Select city</option>
                                     <option value="Vijayawada">Vijayawada</option>
@@ -246,7 +246,7 @@
                             </div>
 
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labState">State *</label>
+                                <label class="lab-form-label" for="labState"><span>State<span class="lab-req">*</span></span></label>
                                 <select id="labState" class="lab-select" required>
                                     <option value="" disabled selected>Select state</option>
                                     <option value="Andhra Pradesh" selected>Andhra Pradesh</option>
@@ -259,7 +259,7 @@
                             </div>
 
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labPincode">Pincode *</label>
+                                <label class="lab-form-label" for="labPincode"><span>Pincode<span class="lab-req">*</span></span></label>
                                 <input type="text" id="labPincode" class="lab-form-input no-icon" placeholder="Enter pincode" maxlength="6" required>
                             </div>
                         </div>
@@ -287,12 +287,12 @@
                         <!-- Registration No & GST No -->
                         <div class="lab-grid-2">
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labRegNumber">Registration / License Number *</label>
+                                <label class="lab-form-label" for="labRegNumber"><span>Registration / License Number<span class="lab-req">*</span></span></label>
                                 <input type="text" id="labRegNumber" class="lab-form-input no-icon" placeholder="Enter registration number" required>
                             </div>
 
                             <div class="lab-form-group">
-                                <label class="lab-form-label" for="labGstNumber">GST Number (Optional)</label>
+                                <label class="lab-form-label" for="labGstNumber"><span>GST Number (Optional)</span></label>
                                 <input type="text" id="labGstNumber" class="lab-form-input no-icon" placeholder="Enter GST number">
                             </div>
                         </div>
@@ -307,7 +307,7 @@
                             <!-- Card 1: Certificate -->
                             <div class="lab-upload-card" onclick="document.getElementById('fileCert').click()">
                                 <input type="file" id="fileCert" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusCert')">
-                                <span class="lab-upload-title">Lab Registration Certificate *</span>
+                                <span class="lab-upload-title">Lab Registration Certificate<span class="lab-req">*</span></span>
                                 <span class="lab-upload-subtitle">Upload certificate (PDF, JPG, PNG)</span>
                                 <button type="button" class="lab-upload-btn">
                                     <i class="fa-solid fa-arrow-up-from-bracket"></i>
@@ -319,7 +319,7 @@
                             <!-- Card 2: ID Proof -->
                             <div class="lab-upload-card" onclick="document.getElementById('fileId').click()">
                                 <input type="file" id="fileId" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusId')">
-                                <span class="lab-upload-title">Authorized Person ID Proof *</span>
+                                <span class="lab-upload-title">Authorized Person ID Proof<span class="lab-req">*</span></span>
                                 <span class="lab-upload-subtitle">Upload ID proof (PDF, JPG, PNG)</span>
                                 <button type="button" class="lab-upload-btn">
                                     <i class="fa-solid fa-arrow-up-from-bracket"></i>

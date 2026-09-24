@@ -26,52 +26,17 @@ def add_header(response):
     response.headers['Expires'] = '0'
     return response
 
-# Data store path for bookings (persistent JSON)
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-os.makedirs(DATA_DIR, exist_ok=True)
-BOOKINGS_FILE = os.path.join(DATA_DIR, 'bookings.json')
-USERS_FILE = os.path.join(DATA_DIR, 'users.json')
-CONTACTS_FILE = os.path.join(DATA_DIR, 'contacts.json')
-
-if not os.path.exists(BOOKINGS_FILE):
-    with open(BOOKINGS_FILE, 'w') as f:
-        json.dump([], f)
-
-if not os.path.exists(USERS_FILE):
-    with open(USERS_FILE, 'w') as f:
-        json.dump([], f)
-
-if not os.path.exists(CONTACTS_FILE):
-    with open(CONTACTS_FILE, 'w') as f:
-        json.dump([], f)
+# Import Database Manager (Supports Neon PostgreSQL & Local Storage)
+import db
 
 def get_all_users():
-    try:
-        with open(USERS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception:
-        return []
+    return db.get_all_users()
 
 def save_user(user_data):
-    users = get_all_users()
-    users.append(user_data)
-    with open(USERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users, f, indent=2)
+    return db.save_user(user_data)
 
 def update_user(user_id, updated_fields):
-    users = get_all_users()
-    updated = False
-    for u in users:
-        if u.get('id') == user_id:
-            for k, v in updated_fields.items():
-                if k != 'id' and k != 'password':
-                    u[k] = v
-            updated = True
-            break
-    if updated:
-        with open(USERS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(users, f, indent=2)
-    return updated
+    return db.update_user(user_id, updated_fields)
 
 def verify_password(stored_password, provided_password):
     if not stored_password or not provided_password:
@@ -640,16 +605,8 @@ def book_appointment():
             "status": "Confirmed"
         }
 
-        # Store booking record
-        try:
-            with open(BOOKINGS_FILE, 'r+') as f:
-                records = json.load(f)
-                records.append(booking_record)
-                f.seek(0)
-                json.dump(records, f, indent=2)
-        except Exception:
-            with open(BOOKINGS_FILE, 'w') as f:
-                json.dump([booking_record], f, indent=2)
+        # Store booking record via database layer
+        db.save_booking(booking_record)
 
         return jsonify({
             "status": "success",
@@ -1032,17 +989,8 @@ def submit_contact():
             "status": "new"
         }
 
-        # Save to persistent JSON
-        try:
-            contacts = []
-            if os.path.exists(CONTACTS_FILE):
-                with open(CONTACTS_FILE, 'r', encoding='utf-8') as f:
-                    contacts = json.load(f)
-            contacts.append(contact_entry)
-            with open(CONTACTS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(contacts, f, indent=2)
-        except Exception as file_err:
-            print(f"Warning saving contact to file: {file_err}")
+        # Save contact inquiry via database layer
+        db.save_contact(contact_entry)
 
         return jsonify({
             "status": "success",
