@@ -283,6 +283,26 @@ async function handleBookingSubmit(e) {
     if (btnText) btnText.innerText = "Confirming...";
     if (btnIcon) btnIcon.className = "fa-solid fa-spinner fa-spin";
 
+    // ── Mandatory WhatsApp checkbox validation ──
+    const waCheck = document.getElementById('waAlertCheck');
+    if (waCheck && !waCheck.checked) {
+        if (submitBtn) submitBtn.disabled = false;
+        if (btnText) btnText.innerText = "Confirm & Pay ₹399";
+        if (btnIcon) btnIcon.className = "fa-solid fa-arrow-right";
+        const optin = document.getElementById('waOptinRow');
+        if (optin) {
+            optin.style.outline = '2px solid #ef4444';
+            optin.style.borderRadius = '8px';
+            optin.style.padding = '6px 8px';
+            optin.style.animation = 'shake 0.4s ease';
+            setTimeout(() => { optin.style.outline = ''; optin.style.animation = ''; optin.style.padding = ''; }, 2500);
+        }
+        showToast("⚠️ Please check the WhatsApp confirmation box to proceed.", "error");
+        return;
+    }
+
+
+
     const customTimeEl = document.getElementById('bookTimeInput');
     const selectTimeEl = document.getElementById('bookTimeSelect');
     const selectedTime = (customTimeEl && !customTimeEl.disabled && customTimeEl.style.display !== 'none') 

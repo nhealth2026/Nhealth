@@ -1952,11 +1952,13 @@
                     </div>
                 </div>
 
-                <!-- Mandatory WhatsApp Live Alert Notification -->
-                <div class="whatsapp-alert-mandatory">
-                    <i class="fa-brands fa-whatsapp text-wa-green" style="font-size: 1.15rem; color: #25d366; flex-shrink: 0;"></i>
-                    <span>Instant booking confirmation &amp; digital updates will be sent directly to your WhatsApp.</span>
-                    <input type="hidden" name="wa_alert" value="true">
+                <!-- Mandatory WhatsApp Live Alert Opt-in Checkbox -->
+                <div class="whatsapp-alert-optin" id="waOptinRow">
+                    <label class="wa-checkbox-label">
+                        <input type="checkbox" id="waAlertCheck" name="wa_alert" required>
+                        <span class="wa-custom-checkbox"></span>
+                        <span class="wa-optin-text"><i class="fa-brands fa-whatsapp text-wa-green"></i> Send instant booking confirmation &amp; digital prescription to my WhatsApp</span>
+                    </label>
                 </div>
 
                 <div class="modal-actions">
