@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=14.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=14.2">
 </head>
 <body>
 
@@ -54,7 +54,7 @@
 
                 <a href="#how-it-works" class="nav-link">How It Works</a>
                 <a href="#about-us" class="nav-link">About Us</a>
-                <a href="#contact" class="nav-link">Contact Us</a>
+                <a href="/contact" class="nav-link">Contact Us</a>
             </nav>
 
             <!-- Navbar Right Actions -->
@@ -97,7 +97,7 @@
             </div>
             <a href="#m-how-it-works" class="m-link" onclick="scrollToMobileSection('m-how-it-works'); closeMobileDrawer();">How It Works</a>
             <a href="#m-about-us" class="m-link" onclick="scrollToMobileSection('m-about-us'); closeMobileDrawer();">About Us</a>
-            <a href="#m-contact" class="m-link" onclick="scrollToMobileSection('m-contact'); closeMobileDrawer();">Contact Us</a>
+            <a href="/contact" class="m-link">Contact Us</a>
             
             <div class="mobile-drawer-footer">
                 <a href="/login" class="btn-outline-pill w-100 mb-2" style="text-decoration:none; text-align:center; display:block;">Login</a>
@@ -1248,7 +1248,7 @@
                         <li><a href="#services-suite">Our Services</a></li>
                         <li><a href="javascript:void(0)" onclick="showToast('Careers portal: We are hiring clinicians and engineers!', 'info')">Careers</a></li>
                         <li><a href="/signup/doctor">Partner With Us</a></li>
-                        <li><a href="#contact">Contact Us</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
                     </ul>
                 </div>
             </div>
@@ -1889,11 +1889,12 @@
                 <div class="form-row-2">
                     <div class="form-group">
                         <label for="bookService"><i class="fa-solid fa-stethoscope"></i> Select Service *</label>
-                        <select id="bookService" name="service" required class="form-control">
+                        <select id="bookService" name="service" required class="form-control" onchange="handleServiceSelectionChange(this.value)">
                             <option value="">-- Choose Healthcare Service --</option>
                             {% for service in services %}
                             <option value="{{ service.title }}">{{ service.title }}</option>
                             {% endfor %}
+                            <option value="Health Support Rider">Health Support Rider</option>
                             <option value="Other Healthcare Services">Other Healthcare Services</option>
                         </select>
                     </div>
@@ -1910,28 +1911,29 @@
 
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label for="bookDate"><i class="fa-solid fa-calendar-day"></i> Preferred Date</label>
-                        <input type="date" id="bookDate" name="date" class="form-control">
+                        <label for="bookDate"><i class="fa-solid fa-calendar-day"></i> Preferred Date *</label>
+                        <input type="date" id="bookDate" name="date" required class="form-control">
                     </div>
-                    <div class="form-group">
-                        <label for="bookTime"><i class="fa-solid fa-clock"></i> Preferred Slot</label>
-                        <select id="bookTime" name="time_slot" class="form-control">
+                    <div class="form-group" id="timeSlotGroup">
+                        <label for="bookTimeSelect" id="bookTimeLabel"><i class="fa-solid fa-clock"></i> Preferred Slot *</label>
+                        <select id="bookTimeSelect" name="time_slot" class="form-control">
                             <option value="Morning (08:00 AM - 12:00 PM)">Morning (08:00 AM - 12:00 PM)</option>
                             <option value="Afternoon (12:00 PM - 04:00 PM)">Afternoon (12:00 PM - 04:00 PM)</option>
                             <option value="Evening (04:00 PM - 08:00 PM)">Evening (04:00 PM - 08:00 PM)</option>
                             <option value="Urgent (Within 60 Mins)">Urgent (Within 60 Mins)</option>
                         </select>
+                        <input type="time" id="bookTimeInput" name="time_slot_custom" class="form-control" value="09:30" style="display: none;" disabled>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="bookSymptoms"><i class="fa-solid fa-notes-medical"></i> Symptoms / Health Concern</label>
-                    <input type="text" id="bookSymptoms" name="symptoms" placeholder="e.g. Fever, Blood Pressure Check, Medicine Refill" class="form-control">
+                    <label for="bookSymptoms"><i class="fa-solid fa-notes-medical"></i> Symptoms / Health Concern / Notes</label>
+                    <input type="text" id="bookSymptoms" name="symptoms" placeholder="e.g. Pickup from home to hospital, Fever, BP check" class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="bookAddress"><i class="fa-solid fa-house"></i> Home Address / Landmark</label>
-                    <input type="text" id="bookAddress" name="address" placeholder="House/Flat No., Colony, Street, Landmark" class="form-control">
+                    <label for="bookAddress"><i class="fa-solid fa-house"></i> Home Address / Landmark *</label>
+                    <input type="text" id="bookAddress" name="address" required placeholder="House/Flat No., Colony, Street, Landmark" class="form-control">
                 </div>
 
                 <!-- Price Breakdown & Discount Card -->
@@ -1950,13 +1952,11 @@
                     </div>
                 </div>
 
-                <!-- WhatsApp Live Alert Opt-in -->
-                <div class="whatsapp-alert-optin">
-                    <label class="wa-checkbox-label">
-                        <input type="checkbox" id="waAlertCheck" name="wa_alert" checked>
-                        <span class="wa-custom-checkbox"></span>
-                        <span class="wa-optin-text"><i class="fa-brands fa-whatsapp text-wa-green"></i> Send instant booking confirmation &amp; digital prescription to my WhatsApp</span>
-                    </label>
+                <!-- Mandatory WhatsApp Live Alert Notification -->
+                <div class="whatsapp-alert-mandatory">
+                    <i class="fa-brands fa-whatsapp text-wa-green" style="font-size: 1.15rem; color: #25d366; flex-shrink: 0;"></i>
+                    <span>Instant booking confirmation &amp; digital updates will be sent directly to your WhatsApp.</span>
+                    <input type="hidden" name="wa_alert" value="true">
                 </div>
 
                 <div class="modal-actions">
@@ -2139,6 +2139,10 @@
         </div>
     </div>
 
+    <!-- ==================== FLOATING GO TO TOP DIRECT BUTTON ==================== -->
+    <button type="button" class="go-to-top-btn" id="goToTopBtn" onclick="scrollToTopDirect()" aria-label="Go to Top" title="Go to Top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
     <!-- ==================== FLOATING WHATSAPP BUTTON & CHAT WIDGET ==================== -->
     <div class="floating-whatsapp-container" id="floatingWhatsappContainer">
@@ -2233,6 +2237,6 @@
     </div>
 
     <!-- Main JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v=2.9"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=3.0"></script>
 </body>
 </html>

@@ -26,6 +26,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
 BOOKINGS_FILE = os.path.join(DATA_DIR, 'bookings.json')
 USERS_FILE = os.path.join(DATA_DIR, 'users.json')
+CONTACTS_FILE = os.path.join(DATA_DIR, 'contacts.json')
 
 if not os.path.exists(BOOKINGS_FILE):
     with open(BOOKINGS_FILE, 'w') as f:
@@ -33,6 +34,10 @@ if not os.path.exists(BOOKINGS_FILE):
 
 if not os.path.exists(USERS_FILE):
     with open(USERS_FILE, 'w') as f:
+        json.dump([], f)
+
+if not os.path.exists(CONTACTS_FILE):
+    with open(CONTACTS_FILE, 'w') as f:
         json.dump([], f)
 
 def get_all_users():
@@ -573,6 +578,13 @@ def patient_dashboard():
     return render_template('patient_dashboard.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
+@app.route('/contact')
+@app.route('/contact-us')
+def contact_page():
+    """Render the Contact Us page (Desktop and Mobile views)."""
+    return render_template('contact.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/login')
 def login_page():
     """Render the Login page."""
@@ -724,22 +736,47 @@ def auth_login():
 
 @app.route('/api/contact', methods=['POST'])
 def submit_contact():
-    """Handle general inquiries and contact requests."""
+    """Handle general inquiries and contact requests from website."""
     try:
         data = request.get_json() if request.is_json else request.form.to_dict()
         name = data.get('name', '').strip()
+        email = data.get('email', '').strip().lower()
         phone = data.get('phone', '').strip()
+        subject = data.get('subject', 'General Inquiry').strip()
         message = data.get('message', '').strip()
 
         if not name or not phone:
             return jsonify({
                 "status": "error",
-                "message": "Name and phone number are required."
+                "message": "Full name and phone number are required."
             }), 400
+
+        contact_entry = {
+            "id": f"INQ-{datetime.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}",
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "subject": subject,
+            "message": message,
+            "created_at": datetime.now().isoformat(),
+            "status": "new"
+        }
+
+        # Save to persistent JSON
+        try:
+            contacts = []
+            if os.path.exists(CONTACTS_FILE):
+                with open(CONTACTS_FILE, 'r', encoding='utf-8') as f:
+                    contacts = json.load(f)
+            contacts.append(contact_entry)
+            with open(CONTACTS_FILE, 'w', encoding='utf-8') as f:
+                json.dump(contacts, f, indent=2)
+        except Exception as file_err:
+            print(f"Warning saving contact to file: {file_err}")
 
         return jsonify({
             "status": "success",
-            "message": f"Thank you {name}. Our Andhra Pradesh healthcare coordinator will call you within 15 minutes."
+            "message": f"Thank you, {name}! Your message regarding '{subject}' has been received. Our support team will get back to you shortly."
         }), 200
 
     except Exception as e:

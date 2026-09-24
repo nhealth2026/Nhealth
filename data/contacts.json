@@ -1,0 +1,12 @@
+[
+  {
+    "id": "INQ-260924-E180",
+    "name": "Suresh Kumar",
+    "email": "suresh@example.com",
+    "phone": "9876543210",
+    "subject": "General Inquiry",
+    "message": "Testing message delivery",
+    "created_at": "2026-09-24T11:38:37.953821",
+    "status": "new"
+  }
+]

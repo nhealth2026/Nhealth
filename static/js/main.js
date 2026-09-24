@@ -199,6 +199,40 @@ function initStatsCounter() {
 /* ==========================================================================
    5. BOOKING MODAL & AJAX FORM
    ========================================================================== */
+function handleServiceSelectionChange(serviceName) {
+    const timeLabel = document.getElementById('bookTimeLabel');
+    const timeSelect = document.getElementById('bookTimeSelect');
+    const timeInput = document.getElementById('bookTimeInput');
+    const symptomsInput = document.getElementById('bookSymptoms');
+    if (!serviceName) return;
+
+    const isRider = serviceName.toLowerCase().includes('rider') || serviceName.toLowerCase().includes('health support rider');
+
+    if (isRider) {
+        if (timeLabel) timeLabel.innerHTML = '<i class="fa-solid fa-clock"></i> Rider Pickup Time (Enter Time) *';
+        if (timeSelect) {
+            timeSelect.style.display = 'none';
+            timeSelect.disabled = true;
+        }
+        if (timeInput) {
+            timeInput.style.display = 'block';
+            timeInput.disabled = false;
+        }
+        if (symptomsInput) symptomsInput.placeholder = 'e.g. Pickup from home to Hospital / OPD, Medicine delivery';
+    } else {
+        if (timeLabel) timeLabel.innerHTML = '<i class="fa-solid fa-clock"></i> Preferred Slot *';
+        if (timeSelect) {
+            timeSelect.style.display = 'block';
+            timeSelect.disabled = false;
+        }
+        if (timeInput) {
+            timeInput.style.display = 'none';
+            timeInput.disabled = true;
+        }
+        if (symptomsInput) symptomsInput.placeholder = 'e.g. Fever, Blood Pressure Check, Medicine Refill';
+    }
+}
+
 function openBookingModal(preselectedService = null) {
     const modal = document.getElementById('bookingModalBackdrop');
     const form = document.getElementById('bookingForm');
@@ -220,6 +254,9 @@ function openBookingModal(preselectedService = null) {
                     break;
                 }
             }
+            handleServiceSelectionChange(preselectedService);
+        } else if (serviceSelect) {
+            handleServiceSelectionChange(serviceSelect.value);
         }
 
         modal.classList.add('active');
@@ -246,13 +283,19 @@ async function handleBookingSubmit(e) {
     if (btnText) btnText.innerText = "Confirming...";
     if (btnIcon) btnIcon.className = "fa-solid fa-spinner fa-spin";
 
+    const customTimeEl = document.getElementById('bookTimeInput');
+    const selectTimeEl = document.getElementById('bookTimeSelect');
+    const selectedTime = (customTimeEl && !customTimeEl.disabled && customTimeEl.style.display !== 'none') 
+        ? customTimeEl.value 
+        : (selectTimeEl ? selectTimeEl.value : 'Morning (08:00 AM - 12:00 PM)');
+
     const formData = {
         name: document.getElementById('bookName').value,
         phone: document.getElementById('bookPhone').value,
         service: document.getElementById('bookService').value,
         city: document.getElementById('bookCity').value,
         date: document.getElementById('bookDate').value,
-        time_slot: document.getElementById('bookTime').value,
+        time_slot: selectedTime,
         address: document.getElementById('bookAddress').value
     };
 
@@ -845,4 +888,33 @@ function filterServicesCategory(category, btnElement) {
         }
     });
 }
+
+
+/* ==========================================================================
+   16. GO TO TOP – DIRECT FLOATING BUTTON
+   ========================================================================== */
+function scrollToTopDirect() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+function initGoToTopListener() {
+    const topBtn = document.getElementById('goToTopBtn');
+    if (!topBtn) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 280) {
+            topBtn.classList.add('visible');
+        } else {
+            topBtn.classList.remove('visible');
+        }
+    }, { passive: true });
+}
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    initGoToTopListener();
+});
 

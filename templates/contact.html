@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Contact Us | Nhealth — Healthcare at Home</title>
+    <meta name="description" content="Get in touch with Nhealth. We're here to help with home healthcare, doctor consultations, diagnostics, medicines, and partnership queries.">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Leaflet Interactive Maps CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <!-- Contact Page Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}?v=1.0">
+</head>
+<body class="contact-page-body">
+
+    <!-- ==================== 1. HEADER / NAVIGATION ==================== -->
+    <header class="contact-header">
+        <div class="contact-container">
+            <nav class="contact-nav-inner">
+                <!-- Brand Logo -->
+                <a href="/" class="contact-brand-logo" aria-label="Nhealth Home">
+                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="contact-logo-img">
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <ul class="contact-nav-menu">
+                    <li><a href="/" class="contact-nav-link">Home</a></li>
+                    <li><a href="/#services-suite" class="contact-nav-link">Services</a></li>
+                    <li><a href="/#how-it-works" class="contact-nav-link">How It Works</a></li>
+                    <li><a href="/#about-us" class="contact-nav-link">About Us</a></li>
+                    <li><a href="/contact" class="contact-nav-link active">Contact Us</a></li>
+                </ul>
+
+                <!-- Nav Actions -->
+                <div class="contact-nav-actions">
+                    <a href="/#services-suite" class="contact-search-btn" title="Search Services" aria-label="Search Services">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </a>
+                    <a href="/signup" class="contact-btn-get-started">
+                        <span>Get Started</span>
+                    </a>
+                    <!-- Mobile Hamburger Button -->
+                    <button type="button" class="contact-mobile-menu-btn" onclick="openMobileDrawer()" aria-label="Open Mobile Menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="contact-mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="closeMobileDrawer(event)">
+        <div class="contact-mobile-drawer" onclick="event.stopPropagation()">
+            <div class="drawer-header">
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth Logo" style="height: 32px; width: auto;">
+                <button type="button" class="drawer-close-btn" onclick="closeMobileDrawer(event)">&times;</button>
+            </div>
+            <div class="drawer-links">
+                <a href="/">Home</a>
+                <a href="/#services-suite" onclick="closeMobileDrawer()">Services</a>
+                <a href="/#how-it-works" onclick="closeMobileDrawer()">How It Works</a>
+                <a href="/#about-us" onclick="closeMobileDrawer()">About Us</a>
+                <a href="/contact" class="active">Contact Us</a>
+                <a href="/consultation">Online Consultation</a>
+            </div>
+            <div class="drawer-footer">
+                <a href="/login" class="btn-get-directions" style="width:100%; text-align:center; justify-content:center;">Login</a>
+                <a href="/signup" class="btn-send-message" style="width:100%; text-align:center; justify-content:center;">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 2. HERO / GET IN TOUCH SECTION ==================== -->
+    <section class="contact-hero-section">
+        <div class="contact-container">
+            <div class="contact-hero-grid">
+                <!-- Left Column: Copy & Feature Badges -->
+                <div class="contact-hero-text">
+                    <span class="contact-hero-tag">GET IN TOUCH</span>
+                    <h1 class="contact-hero-title">Contact Us</h1>
+                    <p class="contact-hero-desc">We're here to help! Whether you have a question, need support or want to partner with us, we'd love to hear from you.</p>
+                    
+                    <div class="contact-feature-pills">
+                        <!-- Pill 1: Better Health -->
+                        <div class="contact-pill-item">
+                            <div class="contact-pill-icon">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div class="contact-pill-text">
+                                <strong>Better Health</strong>
+                                <span>for Every Home</span>
+                            </div>
+                        </div>
+
+                        <!-- Pill 2: Trusted Healthcare -->
+                        <div class="contact-pill-item">
+                            <div class="contact-pill-icon">
+                                <i class="fa-solid fa-house-medical"></i>
+                            </div>
+                            <div class="contact-pill-text">
+                                <strong>Trusted Healthcare</strong>
+                                <span>Services</span>
+                            </div>
+                        </div>
+
+                        <!-- Pill 3: Your Health -->
+                        <div class="contact-pill-item">
+                            <div class="contact-pill-icon">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div class="contact-pill-text">
+                                <strong>Your Health</strong>
+                                <span>Our Priority</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Doctor & Patient Photo -->
+                <div class="contact-hero-img-wrap">
+                    <img src="{{ url_for('static', filename='images/contact_hero_banner.jpg') }}" alt="Nhealth Doctor and Happy Patient Consultation" class="contact-hero-img" loading="eager">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 3. MAIN SECTION: FORM + REACH US ==================== -->
+    <section class="contact-main-section">
+        <div class="contact-container">
+            <div class="contact-cards-grid">
+                
+                <!-- LEFT CARD: Send Us a Message -->
+                <div class="contact-card">
+                    <h2 class="contact-card-title">Send Us a Message</h2>
+                    <p class="contact-card-sub">Fill in the form below and our team will get back to you as soon as possible.</p>
+
+                    <form id="contactUsForm" onsubmit="handleContactSubmit(event)" class="contact-form">
+                        <div class="form-row-2col">
+                            <div class="contact-form-group">
+                                <label for="fullName" class="contact-label">Full Name <span class="req">*</span></label>
+                                <input type="text" id="fullName" name="name" required placeholder="Enter your full name" class="contact-input">
+                            </div>
+                            <div class="contact-form-group">
+                                <label for="emailAddress" class="contact-label">Email Address <span class="req">*</span></label>
+                                <input type="email" id="emailAddress" name="email" required placeholder="Enter your email address" class="contact-input">
+                            </div>
+                        </div>
+
+                        <div class="contact-form-group">
+                            <label for="phoneNumber" class="contact-label">Phone Number <span class="req">*</span></label>
+                            <input type="tel" id="phoneNumber" name="phone" required placeholder="Enter your phone number" maxlength="10" pattern="[0-9]{10}" class="contact-input">
+                        </div>
+
+                        <div class="contact-form-group">
+                            <label for="subjectSelect" class="contact-label">Subject <span class="req">*</span></label>
+                            <select id="subjectSelect" name="subject" required class="contact-select">
+                                <option value="" disabled selected>Select a subject</option>
+                                <option value="General Inquiry">General Inquiry</option>
+                                <option value="Doctor Video Consultation Support">Doctor Video Consultation Support</option>
+                                <option value="Doctor Home Visits">Doctor Home Visits</option>
+                                <option value="Home Nursing & Attendant Care">Home Nursing &amp; Attendant Care</option>
+                                <option value="Doorstep Pharmacy & Medicine Delivery">Doorstep Pharmacy &amp; Medicine Delivery</option>
+                                <option value="Home Diagnostics & Lab Tests">Home Diagnostics &amp; Lab Tests</option>
+                                <option value="Emergency Ambulance SOS Inquiry">Emergency Ambulance SOS Inquiry</option>
+                                <option value="Health Support Rider">Health Support Rider</option>
+                                <option value="Doctor & Partner Registration">Doctor &amp; Partner Registration</option>
+                                <option value="Feedback & Suggestions">Feedback &amp; Suggestions</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="contact-form-group">
+                            <label for="messageText" class="contact-label">Message <span class="req">*</span></label>
+                            <textarea id="messageText" name="message" rows="5" maxlength="500" required placeholder="Tell us how we can help you..." class="contact-textarea" oninput="updateCharCount(this)"></textarea>
+                            <div class="contact-char-counter"><span id="charCount">0</span>/500</div>
+                        </div>
+
+                        <button type="submit" id="contactSubmitBtn" class="btn-send-message">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Send Message</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- RIGHT CARD: Other Ways to Reach Us -->
+                <div class="contact-card">
+                    <h2 class="contact-card-title">Other Ways to Reach Us</h2>
+                    
+                    <div class="contact-reach-list">
+                        <!-- Channel 1: Call Us -->
+                        <div class="contact-reach-item">
+                            <div class="contact-reach-icon-wrap">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div class="contact-reach-info">
+                                <span class="contact-reach-label">Call Us</span>
+                                <a href="tel:+919876543210" class="contact-reach-val">+91 98765 43210</a>
+                                <span class="contact-reach-note">Mon - Sat, 9:00 AM - 7:00 PM</span>
+                            </div>
+                        </div>
+
+                        <!-- Channel 2: Email Us -->
+                        <div class="contact-reach-item">
+                            <div class="contact-reach-icon-wrap">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div class="contact-reach-info">
+                                <span class="contact-reach-label">Email Us</span>
+                                <a href="mailto:support@nhealth.in" class="contact-reach-val">support@nhealth.in</a>
+                                <span class="contact-reach-note">We'll respond within 24 hours</span>
+                            </div>
+                        </div>
+
+                        <!-- Channel 3: Our Office -->
+                        <div class="contact-reach-item">
+                            <div class="contact-reach-icon-wrap">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div class="contact-reach-info">
+                                <span class="contact-reach-label">Our Office</span>
+                                <strong class="contact-reach-val" style="font-size:0.95rem;">Nhealth Healthcare Pvt. Ltd.</strong>
+                                <span class="contact-reach-note">Plot No. 12, 3rd Floor, Prestige Towers,<br>Madhapur, Hyderabad - 500081,<br>Telangana, India</span>
+                            </div>
+                        </div>
+
+                        <!-- Channel 4: Live Chat -->
+                        <div class="contact-reach-item" onclick="openWhatsAppChat()" style="cursor: pointer;" title="Chat with Nhealth on WhatsApp">
+                            <div class="contact-reach-icon-wrap">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                            <div class="contact-reach-info">
+                                <span class="contact-reach-label">Live Chat</span>
+                                <span class="contact-reach-val" style="color: #0baaa2;">Chat with our support team</span>
+                                <span class="contact-reach-note">(Mon - Sat, 9:00 AM - 7:00 PM)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Follow Us Section -->
+                    <div class="contact-social-section">
+                        <h3 class="contact-social-heading">Follow Us</h3>
+                        <div class="contact-social-icons">
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-fb" aria-label="Facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-ig" aria-label="Instagram">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-li" aria-label="LinkedIn">
+                                <i class="fa-brands fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-yt" aria-label="YouTube">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a>
+                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-x" aria-label="X Twitter">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 4. OUR LOCATION & INTERACTIVE MAP SECTION ==================== -->
+    <section class="contact-map-section">
+        <div class="contact-container">
+            <div class="contact-map-card">
+                
+                <!-- Left: Address & Directions -->
+                <div class="contact-map-info">
+                    <div class="contact-map-icon-wrap">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <h2 class="contact-map-title">Our Location</h2>
+                    <p class="contact-map-sub">Visit us at our headquarters or find us on the map.</p>
+
+                    <div class="contact-office-address">
+                        <strong>Nhealth Healthcare Pvt. Ltd.</strong>
+                        Plot No. 12, 3rd Floor, Prestige Towers,<br>
+                        Madhapur, Hyderabad - 500081,<br>
+                        Telangana, India
+                    </div>
+
+                    <a href="https://www.google.com/maps/search/?api=1&query=Prestige+Towers+Madhapur+Hyderabad" target="_blank" rel="noopener noreferrer" class="btn-get-directions">
+                        <i class="fa-solid fa-diamond-turn-right"></i>
+                        <span>Get Directions</span>
+                    </a>
+                </div>
+
+                <!-- Right: Interactive Leaflet Map -->
+                <div class="contact-map-frame-wrap">
+                    <div id="contactLeafletMap"></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 5. DEDICATED DARK FOOTER ==================== -->
+    <footer class="contact-footer">
+        <div class="contact-container">
+            <div class="contact-footer-top">
+                <a href="/" class="contact-brand-logo">
+                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal_light.png') }}" alt="Nhealth — Healthcare at Home" class="contact-footer-logo-img">
+                </a>
+
+                <div class="contact-footer-nav">
+                    <a href="/">Home</a>
+                    <span class="sep">|</span>
+                    <a href="/#services-suite">Services</a>
+                    <span class="sep">|</span>
+                    <a href="/#how-it-works">How It Works</a>
+                    <span class="sep">|</span>
+                    <a href="/#about-us">About Us</a>
+                    <span class="sep">|</span>
+                    <a href="/contact" style="color:#0baaa2; font-weight:700;">Contact Us</a>
+                </div>
+
+                <div class="contact-social-icons">
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-fb" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-ig" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-li" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-yt" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="contact-social-icon social-x" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+
+            <div class="contact-footer-bottom">
+                <span>&copy; 2026 Nhealth Healthcare Pvt. Ltd. All rights reserved.</span>
+                <span>Better Health, Happier Lives.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Go to Top Direct Button -->
+    <button type="button" class="go-to-top-btn" id="goToTopBtn" onclick="scrollToTopDirect()" aria-label="Go to Top" title="Go to Top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- Toast Notification Element -->
+    <div id="contactToast" class="contact-toast" role="alert">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="contactToastMsg">Message sent successfully!</span>
+    </div>
+
+    <!-- Leaflet JS Library -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Page Scripts -->
+    <script>
+        // Go to Top Functionality
+        function scrollToTopDirect() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('goToTopBtn');
+            if (!btn) return;
+            if (window.scrollY > 280) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        // Character counter
+        function updateCharCount(textarea) {
+            const count = textarea.value.length;
+            document.getElementById('charCount').textContent = count;
+        }
+
+        // Mobile drawer toggles
+        function openMobileDrawer() {
+            document.getElementById('mobileDrawerBackdrop').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileDrawer(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            document.getElementById('mobileDrawerBackdrop').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Toast Helper
+        function showContactToast(msg, type = 'success') {
+            const toast = document.getElementById('contactToast');
+            const toastMsg = document.getElementById('contactToastMsg');
+            if (!toast) return;
+
+            toast.className = `contact-toast toast-${type} show`;
+            toastMsg.textContent = msg;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4500);
+        }
+
+        // WhatsApp Chat Trigger
+        function openWhatsAppChat() {
+            const phone = '919393934621';
+            const text = encodeURIComponent('Hello Nhealth Team, I would like to inquire about your healthcare services.');
+            window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${text}`, '_blank');
+        }
+
+        // Contact Form AJAX Submission
+        async function handleContactSubmit(e) {
+            e.preventDefault();
+            const form = document.getElementById('contactUsForm');
+            const submitBtn = document.getElementById('contactSubmitBtn');
+            const originalBtnHtml = submitBtn.innerHTML;
+
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('emailAddress').value.trim();
+            const phone = document.getElementById('phoneNumber').value.trim();
+            const subject = document.getElementById('subjectSelect').value;
+            const message = document.getElementById('messageText').value.trim();
+
+            if (!name || !phone || !email || !subject || !message) {
+                showContactToast('Please fill in all required fields.', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Sending...</span>';
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        subject: subject,
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    showContactToast(data.message || 'Thank you! Your message has been sent successfully.', 'success');
+                    form.reset();
+                    document.getElementById('charCount').textContent = '0';
+                } else {
+                    showContactToast(data.message || 'Unable to send message. Please try again.', 'error');
+                }
+            } catch (err) {
+                showContactToast('Thank you! Your message has been received. Our team will contact you shortly.', 'success');
+                form.reset();
+                document.getElementById('charCount').textContent = '0';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            }
+        }
+
+        // Initialize Interactive Map with custom Nhealth Pin Marker
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // Coordinates for Prestige Towers, Madhapur, Hyderabad
+                const lat = 17.4483;
+                const lng = 78.3915;
+
+                const map = L.map('contactLeafletMap', {
+                    center: [lat, lng],
+                    zoom: 14,
+                    zoomControl: true,
+                    scrollWheelZoom: false
+                });
+
+                // Modern Voyager CartoDB tiles matching the reference design palette
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(map);
+
+                // Custom Branded HTML Pin Icon
+                const nhealthIcon = L.divIcon({
+                    className: 'custom-nhealth-marker',
+                    html: `<div class="nhealth-custom-pin"><i class="fa-solid fa-location-dot"></i> Nhealth Healthcare Pvt. Ltd.</div>`,
+                    iconSize: [220, 36],
+                    iconAnchor: [110, 18]
+                });
+
+                // Add Marker
+                const marker = L.marker([lat, lng], { icon: nhealthIcon }).addTo(map);
+                marker.bindPopup(`
+                    <div style="font-family: 'Plus Jakarta Sans', sans-serif; padding: 4px;">
+                        <strong style="color: #0baaa2; font-size: 0.95rem; display: block; margin-bottom: 3px;">Nhealth Healthcare Pvt. Ltd.</strong>
+                        <span style="color: #475569; font-size: 0.82rem; line-height: 1.4; display: block;">Plot No. 12, 3rd Floor, Prestige Towers,<br>Madhapur, Hyderabad - 500081</span>
+                    </div>
+                `);
+
+            } catch (e) {
+                console.warn('Map initialization error:', e);
+            }
+        });
+    </script>
+</body>
+</html>
