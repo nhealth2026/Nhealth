@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Lab Dashboard | Nhealth Diagnostics Partner</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Lab Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab_dashboard.css') }}?v=1.1">
+</head>
+<body class="lab-portal-body">
+
+    <!-- ==================== TOP NAVIGATION BAR ==================== -->
+    <header class="lab-top-navbar">
+        <div class="lab-nav-left">
+            <a href="/lab/dashboard" class="lab-brand-link">
+                <svg class="lab-brand-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" fill="#f97316"/>
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(45 18 18)" fill="#f97316"/>
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(90 18 18)" fill="#f97316"/>
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(135 18 18)" fill="#f97316"/>
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(180 18 18)" fill="#f97316"/>
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(225 18 18)" fill="#f97316"/>
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(270 18 18)" fill="#f97316"/>
+                    <rect x="15" y="2" width="6" height="10.5" rx="3" transform="rotate(315 18 18)" fill="#f97316"/>
+                </svg>
+                <div class="lab-brand-title-wrap">
+                    <span class="lab-brand-title">nhealth</span>
+                    <span class="lab-brand-sub">Better Health. Home.</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Middle Pills -->
+        <nav class="lab-nav-middle">
+            <button class="lab-nav-pill active" id="navDashboard" onclick="setActiveNav('dashboard')">
+                <i class="fa-solid fa-gauge"></i>
+                <span>Dashboard</span>
+            </button>
+            <button class="lab-nav-pill" id="navPatients" onclick="setActiveNav('patients')">
+                <i class="fa-solid fa-users"></i>
+                <span>Patients</span>
+            </button>
+            <button class="lab-nav-pill" id="navTests" onclick="setActiveNav('tests')">
+                <i class="fa-solid fa-flask"></i>
+                <span>Tests</span>
+            </button>
+            <button class="lab-nav-pill" id="navReports" onclick="setActiveNav('reports')">
+                <i class="fa-regular fa-file-lines"></i>
+                <span>Reports</span>
+            </button>
+        </nav>
+
+        <!-- Right User / Staff Menu -->
+        <div class="lab-nav-right">
+            <div style="position: relative;">
+                <button class="lab-staff-btn" onclick="toggleStaffMenu(event)" id="labStaffDropdownBtn">
+                    <div class="lab-staff-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span id="navStaffName">Sri Venkateswara</span>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: #64748b;"></i>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div id="staffMenu" class="lab-dropdown-menu">
+                    <div class="lab-dropdown-header">
+                        <div class="lab-dropdown-labname" id="menuLabName">{{ user.name if user and user.name else 'Sri Venkateswara Diagnostics' }}</div>
+                        <div class="lab-dropdown-id">ID: {{ user.id if user else 'NH-LAB-7492' }}</div>
+                    </div>
+                    <a href="javascript:void(0)" onclick="openReportModal(); closeStaffMenu();" class="lab-dropdown-item">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Sample Report Preview</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="openSettingsModal(); closeStaffMenu();" class="lab-dropdown-item">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Diagnostic Center Settings</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="handleLabLogout()" class="lab-dropdown-item logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mobile Hamburger Toggle -->
+            <button class="lab-mobile-menu-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Overlay -->
+    <div class="lab-mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="closeMobileSidebar()"></div>
+
+    <!-- ==================== MAIN WORKSPACE CONTAINER ==================== -->
+    <div class="lab-portal-container">
+        
+        <!-- ==================== LEFT SIDEBAR ==================== -->
+        <aside class="lab-sidebar" id="labSidebar">
+            <div class="lab-sidebar-mobile-header">
+                <div class="lab-sidebar-mobile-title">
+                    <i class="fa-solid fa-hospital"></i>
+                    <span id="mobileSidebarLabName">Diagnostic Center</span>
+                </div>
+                <button class="lab-sidebar-close-btn" onclick="closeMobileSidebar()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <ul class="lab-sidebar-menu">
+                <li>
+                    <a class="lab-sidebar-item active" id="sideItemQueue" onclick="showScreen('queueScreen'); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span>Verification Queue</span>
+                        </div>
+                        <span class="lab-count-badge" id="queueBadgeCount">12</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="lab-sidebar-item" id="sideItemSearch" onclick="focusPatientSearch(); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Patient Search</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a class="lab-sidebar-item" id="sideItemResults" onclick="showScreen('selectScreen'); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>Enter Results</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a class="lab-sidebar-item" id="sideItemReports" onclick="openReportModal(); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <span>Reports</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a class="lab-sidebar-item" id="sideItemSettings" onclick="openSettingsModal(); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Settings</span>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="lab-sidebar-footer">
+                <button class="lab-sidebar-logout-btn" onclick="handleLabLogout()">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ==================== MAIN INTERACTIVE CONTENT SCREENS ==================== -->
+        <main class="lab-main-content">
+            
+            <!-- SCREEN 1: SAMPLES AWAITING VERIFICATION (Verification Queue) -->
+            <div class="lab-card" id="queueScreen">
+                <div class="lab-screen-header">
+                    <div>
+                        <h2 class="lab-screen-title">Samples Awaiting Verification</h2>
+                        <p class="lab-screen-sub">Select a patient to verify and enter test results</p>
+                    </div>
+                    <div class="lab-search-filter-wrap">
+                        <div class="lab-queue-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="queueSearchInput" placeholder="Search patient name or ID..." oninput="onQueueSearchInput(this.value)">
+                            <button class="lab-search-clear-btn" id="queueSearchClearBtn" onclick="clearQueueSearch()" style="display: none;">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop / Laptop Table View -->
+                <div class="lab-table-container">
+                    <table class="lab-queue-table" id="queueTable">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Patient Name</th>
+                                <th>Patient ID</th>
+                                <th>Test(s)</th>
+                                <th>Sample Received</th>
+                                <th>Status</th>
+                                <th style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="queueTableBody">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Card View (shown only on small screens) -->
+                <div class="lab-mobile-queue-container" id="queueMobileCards">
+                    <!-- Populated dynamically by JS on mobile view -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="lab-pagination">
+                    <span id="paginationInfo">Showing 1 - 8 of 12</span>
+                    <div class="lab-page-btns">
+                        <button class="lab-page-btn" id="btnPrevPage" onclick="changePage(currentPage - 1)" aria-label="Previous">&lt;</button>
+                        <div id="pageNumbersGroup" style="display: flex; gap: 6px;">
+                            <button class="lab-page-btn active" onclick="changePage(1)">1</button>
+                            <button class="lab-page-btn" onclick="changePage(2)">2</button>
+                        </div>
+                        <button class="lab-page-btn" id="btnNextPage" onclick="changePage(currentPage + 1)" aria-label="Next">&gt;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: STEP 1 & 2: SELECT PATIENT & SELECT TEST -->
+            <div class="lab-card" id="selectScreen" style="display: none;">
+                
+                <!-- 4-Step Wizard Progress Bar -->
+                <div class="lab-wizard-header">
+                    <div class="lab-wizard-step completed">
+                        <div class="lab-wizard-circle"><i class="fa-solid fa-check"></i></div>
+                        <span>Select Patient</span>
+                    </div>
+                    <div class="lab-wizard-step active">
+                        <div class="lab-wizard-circle">2</div>
+                        <span>Select Test</span>
+                    </div>
+                    <div class="lab-wizard-step">
+                        <div class="lab-wizard-circle">3</div>
+                        <span>Enter Results</span>
+                    </div>
+                    <div class="lab-wizard-step">
+                        <div class="lab-wizard-circle">4</div>
+                        <span>Save &amp; Print</span>
+                    </div>
+                </div>
+
+                <!-- Patient Details Box -->
+                <div class="lab-patient-details-card">
+                    <div class="lab-patient-avatar-wrap">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                    <div class="lab-patient-grid">
+                        <div class="lab-patient-field">
+                            <span class="lab-field-lbl">Name:</span>
+                            <span class="lab-field-val" id="selPatientName">Ramesh Babu</span>
+                        </div>
+                        <div class="lab-patient-field">
+                            <span class="lab-field-lbl">Patient ID:</span>
+                            <span class="lab-field-val" id="selPatientId">NH0001234</span>
+                        </div>
+                        <div class="lab-patient-field">
+                            <span class="lab-field-lbl">Age / Gender:</span>
+                            <span class="lab-field-val" id="selPatientAgeGender">45 Years / Male</span>
+                        </div>
+                        <div class="lab-patient-field">
+                            <span class="lab-field-lbl">Mobile:</span>
+                            <span class="lab-field-val" id="selPatientMobile">+91 98765 43210</span>
+                        </div>
+                        <div class="lab-patient-field">
+                            <span class="lab-field-lbl">Visit Date:</span>
+                            <span class="lab-field-val" id="selPatientVisitDate">24 Sep 2026</span>
+                        </div>
+                        <div class="lab-patient-field">
+                            <span class="lab-field-lbl">Tests:</span>
+                            <span class="lab-field-val" id="selPatientTests">CBC, RBS, LFT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search & Select Test -->
+                <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin-bottom: 14px;">Search &amp; Select Test</h3>
+                
+                <div class="lab-test-selection-grid">
+                    <!-- Left: Test List -->
+                    <div>
+                        <div class="lab-test-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search test name..." id="testSearchInput" oninput="filterTestList()">
+                        </div>
+
+                        <div class="lab-test-radio-list">
+                            <label class="lab-test-radio-label selected" onclick="chooseTest('CBC')">
+                                <input type="radio" name="selectedTestRadio" value="CBC" checked>
+                                <span>Complete Blood Count (CBC)</span>
+                            </label>
+                            <label class="lab-test-radio-label" onclick="chooseTest('RBS')">
+                                <input type="radio" name="selectedTestRadio" value="RBS">
+                                <span>Random Blood Sugar (RBS)</span>
+                            </label>
+                            <label class="lab-test-radio-label" onclick="chooseTest('LFT')">
+                                <input type="radio" name="selectedTestRadio" value="LFT">
+                                <span>Liver Function Test (LFT)</span>
+                            </label>
+                            <label class="lab-test-radio-label" onclick="chooseTest('KFT')">
+                                <input type="radio" name="selectedTestRadio" value="KFT">
+                                <span>Kidney Function Test (KFT)</span>
+                            </label>
+                            <label class="lab-test-radio-label" onclick="chooseTest('LIPID')">
+                                <input type="radio" name="selectedTestRadio" value="LIPID">
+                                <span>Lipid Profile (Cholesterol)</span>
+                            </label>
+                            <label class="lab-test-radio-label" onclick="chooseTest('THYROID')">
+                                <input type="radio" name="selectedTestRadio" value="THYROID">
+                                <span>Thyroid Profile (T3, T4, TSH)</span>
+                            </label>
+                            <label class="lab-test-radio-label" onclick="chooseTest('URINE')">
+                                <input type="radio" name="selectedTestRadio" value="URINE">
+                                <span>Urine Routine &amp; Microscopic</span>
+                            </label>
+                            <label class="lab-test-radio-label" onclick="chooseTest('HBA1C')">
+                                <input type="radio" name="selectedTestRadio" value="HBA1C">
+                                <span>HbA1c (Glycated Hemoglobin)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Right: Selected Test Summary -->
+                    <div class="lab-selected-test-summary-card">
+                        <div>
+                            <div class="lab-summary-tag">Selected Test</div>
+                            <div class="lab-summary-test-title" id="summaryTestTitle">Complete Blood Count (CBC)</div>
+                            <div class="lab-summary-desc" id="summaryTestDesc">Includes: Hb, RBC, WBC, Platelets, PCV, Indices etc.</div>
+                        </div>
+
+                        <div style="margin-top: 24px;">
+                            <button class="lab-btn-primary-action" style="width: 100%; justify-content: center;" onclick="showScreen('resultsScreen')">
+                                <span>Proceed to Enter Results</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Back button -->
+                <div style="margin-top: 20px;">
+                    <button class="lab-btn-secondary" onclick="showScreen('queueScreen')">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back to Queue</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: STEP 3: ENTER RESULTS -->
+            <div class="lab-card" id="resultsScreen" style="display: none;">
+                
+                <!-- 4-Step Wizard Progress Bar -->
+                <div class="lab-wizard-header">
+                    <div class="lab-wizard-step completed">
+                        <div class="lab-wizard-circle"><i class="fa-solid fa-check"></i></div>
+                        <span>Select Patient</span>
+                    </div>
+                    <div class="lab-wizard-step completed">
+                        <div class="lab-wizard-circle"><i class="fa-solid fa-check"></i></div>
+                        <span>Select Test</span>
+                    </div>
+                    <div class="lab-wizard-step active">
+                        <div class="lab-wizard-circle">3</div>
+                        <span>Enter Results</span>
+                    </div>
+                    <div class="lab-wizard-step">
+                        <div class="lab-wizard-circle">4</div>
+                        <span>Save &amp; Print</span>
+                    </div>
+                </div>
+
+                <!-- Patient & Test Info Ribbon -->
+                <div class="lab-results-ribbon">
+                    <div class="lab-ribbon-left">
+                        <i class="fa-regular fa-user" style="color: var(--lab-blue);"></i>
+                        <span id="ribbonPatientName">Ramesh Babu</span>
+                        <span style="color: #cbd5e1;">|</span>
+                        <span id="ribbonPatientId">NH0001234</span>
+                        <span style="color: #cbd5e1;">|</span>
+                        <span id="ribbonPatientAgeGender">45 Years / Male</span>
+                    </div>
+                    <div class="lab-ribbon-right">
+                        <span>Test: <strong id="ribbonTestName">Complete Blood Count (CBC)</strong></span>
+                    </div>
+                </div>
+
+                <!-- Parameters Table with Inputs -->
+                <div class="lab-table-container">
+                    <table class="lab-results-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Result Value</th>
+                                <th>Unit</th>
+                                <th>Reference Range</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <!-- Populated dynamically based on chosen test -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Navigation Action Buttons -->
+                <div class="lab-results-actions">
+                    <button class="lab-btn-secondary" onclick="showScreen('selectScreen')">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Back</span>
+                    </button>
+                    <button class="lab-btn-primary-action" onclick="saveAndContinue()">
+                        <span>Save &amp; Continue</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 4: STEP 4: SAVE & PRINT (SUCCESS CONFIRMATION) -->
+            <div class="lab-card" id="confirmScreen" style="display: none;">
+                
+                <!-- 4-Step Wizard Progress Bar -->
+                <div class="lab-wizard-header">
+                    <div class="lab-wizard-step completed">
+                        <div class="lab-wizard-circle"><i class="fa-solid fa-check"></i></div>
+                        <span>Select Patient</span>
+                    </div>
+                    <div class="lab-wizard-step completed">
+                        <div class="lab-wizard-circle"><i class="fa-solid fa-check"></i></div>
+                        <span>Select Test</span>
+                    </div>
+                    <div class="lab-wizard-step completed">
+                        <div class="lab-wizard-circle"><i class="fa-solid fa-check"></i></div>
+                        <span>Enter Results</span>
+                    </div>
+                    <div class="lab-wizard-step active">
+                        <div class="lab-wizard-circle">4</div>
+                        <span>Save &amp; Print</span>
+                    </div>
+                </div>
+
+                <!-- Centered Success Card -->
+                <div class="lab-success-panel">
+                    <div class="lab-success-icon-badge">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h2 class="lab-success-title">Test Results Saved Successfully!</h2>
+                    <p class="lab-success-sub" id="confirmSuccessMsg">The results have been saved for Ramesh Babu (NH0001234).</p>
+
+                    <!-- Buttons: View Results & Print Report -->
+                    <div class="lab-success-btn-group">
+                        <button class="lab-btn-secondary" onclick="openReportModal()">
+                            <i class="fa-regular fa-eye"></i>
+                            <span>View Results</span>
+                        </button>
+                        <button class="lab-btn-primary-action" onclick="openReportModal(true)">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Print Report</span>
+                        </button>
+                    </div>
+
+                    <!-- Next Steps Box -->
+                    <div class="lab-next-steps-card">
+                        <div class="lab-next-steps-title">Next Steps</div>
+                        <div class="lab-step-bullet">
+                            <span class="lab-step-num">1</span>
+                            <span>Click "Print Report" to print the lab report with lab name and Nhealth branding.</span>
+                        </div>
+                        <div class="lab-step-bullet">
+                            <span class="lab-step-num">2</span>
+                            <span>Once printed, mark the sample as completed in the verification queue.</span>
+                        </div>
+                    </div>
+
+                    <!-- Link to Back to Queue -->
+                    <div>
+                        <a href="javascript:void(0)" class="lab-back-queue-link" onclick="markCurrentCompletedAndReturn()">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Back to Queue</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ==================== SCREEN 5: CLINICAL PRINTED REPORT MODAL ==================== -->
+    <div class="lab-report-modal-backdrop" id="reportModal" onclick="if(event.target===this) closeReportModal()">
+        <div class="lab-report-paper">
+            <button class="lab-modal-close-btn" onclick="closeReportModal()" aria-label="Close Preview">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Top Header: Laboratory / Diagnostics Lab Name & Details + In association with Nhealth -->
+            <div class="lab-report-top-header">
+                <!-- Left: Lab Info -->
+                <div class="lab-report-lab-details">
+                    <i class="fa-solid fa-microscope lab-microscope-icon"></i>
+                    <div>
+                        <div class="lab-name-heading" id="reportLabName">{{ user.name if user and user.name else 'Sri Venkateswara Diagnostics & Labs' }}</div>
+                        <div class="lab-location-sub" id="reportLabLocation">{{ user.city if user and user.city else 'Narasaraopet' }}, Andhra Pradesh</div>
+                        <div class="lab-tagline-sub" id="reportLabTagline">Accurate Results | Trusted Care &bull; Reg: AP-LAB-2026-9821</div>
+                    </div>
+                </div>
+
+                <!-- Right: In association with Nhealth -->
+                <div class="lab-assoc-wrap">
+                    <span class="lab-assoc-lbl">In association with</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg style="width: 28px; height: 28px;" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="15" y="2" width="6" height="12" rx="3" fill="#ea580c"/>
+                            <rect x="15" y="22" width="6" height="12" rx="3" fill="#ea580c"/>
+                            <rect x="2" y="15" width="12" height="6" rx="3" fill="#ea580c"/>
+                            <rect x="22" y="15" width="12" height="6" rx="3" fill="#ea580c"/>
+                            <rect x="6.8" y="4.8" width="6" height="12" rx="3" transform="rotate(-45 9.8 10.8)" fill="#f97316"/>
+                            <rect x="23.2" y="21.2" width="6" height="12" rx="3" transform="rotate(-45 26.2 27.2)" fill="#f97316"/>
+                            <rect x="21.2" y="6.8" width="12" height="6" rx="3" transform="rotate(-45 27.2 9.8)" fill="#f97316"/>
+                            <rect x="4.8" y="23.2" width="12" height="6" rx="3" transform="rotate(-45 10.8 26.2)" fill="#f97316"/>
+                        </svg>
+                        <div style="text-align: left; line-height: 1;">
+                            <div style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #0b1e36;">nhealth</div>
+                            <div style="font-size: 0.6rem; color: #64748b; font-weight: 600;">Better Health. Home.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Title Banner -->
+            <div class="lab-report-title-banner">
+                LABORATORY REPORT
+            </div>
+
+            <!-- Patient Metadata Grid -->
+            <div class="lab-patient-meta-grid">
+                <div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Patient Name</span>
+                        <span class="lab-meta-v">: <span id="r_patientName">Ramesh Babu</span></span>
+                    </div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Patient ID</span>
+                        <span class="lab-meta-v">: <span id="r_patientId">NH0001234</span></span>
+                    </div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Age / Gender</span>
+                        <span class="lab-meta-v">: <span id="r_patientAgeGender">45 Years / Male</span></span>
+                    </div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Ref. Doctor</span>
+                        <span class="lab-meta-v">: Self / Tele-Consult</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Sample Collected</span>
+                        <span class="lab-meta-v">: 24 Sep 2026 09:10 AM</span>
+                    </div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Sample Received</span>
+                        <span class="lab-meta-v">: 24 Sep 2026 09:15 AM</span>
+                    </div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Report Generated</span>
+                        <span class="lab-meta-v" id="r_reportTimestamp">: 24 Sep 2026 12:30 PM</span>
+                    </div>
+                    <div class="lab-meta-row">
+                        <span class="lab-meta-k">Lab Sample ID</span>
+                        <span class="lab-meta-v">: <span id="r_sampleLabId">SD-2026-001234</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Title -->
+            <div class="lab-print-test-title" id="r_testTitle">
+                COMPLETE BLOOD COUNT (CBC)
+            </div>
+
+            <!-- Results Table -->
+            <table class="lab-print-results-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Result</th>
+                        <th>Unit</th>
+                        <th>Reference Range</th>
+                    </tr>
+                </thead>
+                <tbody id="r_tableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+
+            <!-- Report Footer with Signature -->
+            <div class="lab-print-footer">
+                <span class="lab-end-report">*** End of Laboratory Report &bull; Verified via Nhealth ABDM Gateway ***</span>
+                <div class="lab-signature-block">
+                    <div class="lab-sig-img" id="sigDoctorName">Dr. K. Srinivas</div>
+                    <div class="lab-sig-title">Lab Incharge / Chief Pathologist</div>
+                    <div class="lab-sig-labname" id="sigLabName">{{ user.name if user and user.name else 'Sri Venkateswara Diagnostics & Labs' }}</div>
+                </div>
+            </div>
+
+            <!-- Print Actions in Modal -->
+            <div class="lab-print-modal-actions">
+                <button class="lab-btn-secondary" onclick="closeReportModal()">Close Preview</button>
+                <button class="lab-btn-primary-action" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print Report PDF</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== SCREEN 6: LAB SETTINGS MODAL ==================== -->
+    <div class="lab-settings-modal-backdrop" id="settingsModal" onclick="if(event.target===this) closeSettingsModal()">
+        <div class="lab-settings-paper">
+            <div class="lab-settings-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="lab-settings-icon-wrap">
+                        <i class="fa-solid fa-gear"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Diagnostic Center Settings</h3>
+                        <p style="font-size: 0.78rem; color: #64748b; margin: 0;">Lab profile, Pathologist details, and ABDM FHIR gateway</p>
+                    </div>
+                </div>
+                <button class="lab-modal-close-btn" onclick="closeSettingsModal()" aria-label="Close Settings">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="lab-settings-body">
+                <div class="lab-settings-grid">
+                    <div class="lab-settings-field">
+                        <label for="setLabName">Laboratory / Diagnostic Center Name</label>
+                        <input type="text" id="setLabName" value="Sri Venkateswara Diagnostics &amp; Labs">
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="setLabReg">Govt. / NABH Registration No.</label>
+                        <input type="text" id="setLabReg" value="AP-LAB-2026-9821">
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="setPathologist">Chief Pathologist / Incharge</label>
+                        <input type="text" id="setPathologist" value="Dr. K. Srinivas, MD (Path)">
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="setLabPhone">Contact Phone Number</label>
+                        <input type="text" id="setLabPhone" value="+91 8647 224455">
+                    </div>
+                    <div class="lab-settings-field" style="grid-column: 1 / -1;">
+                        <label for="setLabAddress">Center Address &amp; City</label>
+                        <input type="text" id="setLabAddress" value="Main Road, Near Old Bus Stand, Narasaraopet, AP - 522601">
+                    </div>
+                </div>
+
+                <!-- ABDM FHIR Integration Status Banner -->
+                <div class="lab-abdm-banner">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="lab-abdm-badge">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">ABDM Health Facility Registry (HFR) Active</div>
+                            <div style="font-size: 0.74rem; color: #64748b;">HIP ID: AP-HIP-NHEALTH-042 &bull; Direct FHIR DiagnosticReport Gateway</div>
+                        </div>
+                    </div>
+                    <span class="lab-status-badge completed"><i class="fa-solid fa-check"></i> Connected</span>
+                </div>
+            </div>
+
+            <div class="lab-settings-footer">
+                <button class="lab-btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+                <button class="lab-btn-primary-action" onclick="saveLabSettings()">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Save Settings</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT STATE CONTROLLER ==================== -->
+    <script>
+        // Full 12 Sample Patients matching User Verification Queue
+        let PATIENTS_QUEUE = [
+            { sNo: 1, name: "Ramesh Babu", id: "NH0001234", tests: "CBC, RBS, LFT", received: "24 Sep 2026 09:15 AM", status: "Pending", age: "45 Years / Male", mobile: "+91 98765 43210" },
+            { sNo: 2, name: "Sridevi K", id: "NH0001235", tests: "Thyroid Profile", received: "24 Sep 2026 09:32 AM", status: "Pending", age: "38 Years / Female", mobile: "+91 98451 22340" },
+            { sNo: 3, name: "Venkatesh", id: "NH0001236", tests: "Lipid Profile", received: "24 Sep 2026 10:05 AM", status: "Pending", age: "52 Years / Male", mobile: "+91 94401 88721" },
+            { sNo: 4, name: "Anitha Reddy", id: "NH0001237", tests: "Urine Routine", received: "24 Sep 2026 10:20 AM", status: "Pending", age: "29 Years / Female", mobile: "+91 91234 56780" },
+            { sNo: 5, name: "Prakash", id: "NH0001238", tests: "HbA1c", received: "24 Sep 2026 10:45 AM", status: "In Progress", age: "61 Years / Male", mobile: "+91 98852 11450" },
+            { sNo: 6, name: "Lakshmi", id: "NH0001239", tests: "Vitamin D", received: "24 Sep 2026 11:10 AM", status: "Pending", age: "44 Years / Female", mobile: "+91 97001 23456" },
+            { sNo: 7, name: "Karthik", id: "NH0001240", tests: "LFT, KFT", received: "24 Sep 2026 11:30 AM", status: "Pending", age: "34 Years / Male", mobile: "+91 99663 88771" },
+            { sNo: 8, name: "Pavani", id: "NH0001241", tests: "TSH, Free T3, Free T4", received: "24 Sep 2026 11:50 AM", status: "Pending", age: "27 Years / Female", mobile: "+91 95532 99884" },
+            { sNo: 9, name: "Sunil Kumar", id: "NH0001242", tests: "Serum Creatinine, BUN", received: "24 Sep 2026 12:05 PM", status: "Pending", age: "48 Years / Male", mobile: "+91 98480 33211" },
+            { sNo: 10, name: "Divya Bharathi", id: "NH0001243", tests: "Blood Grouping & Rh", received: "24 Sep 2026 12:20 PM", status: "Pending", age: "23 Years / Female", mobile: "+91 97012 44556" },
+            { sNo: 11, name: "Mahesh Babu", id: "NH0001244", tests: "Dengue NS1 Antigen", received: "24 Sep 2026 12:40 PM", status: "In Progress", age: "35 Years / Male", mobile: "+91 99591 77882" },
+            { sNo: 12, name: "Radha Rani", id: "NH0001245", tests: "Serum Calcium & Vit B12", received: "24 Sep 2026 01:10 PM", status: "Pending", age: "58 Years / Female", mobile: "+91 94901 66320" }
+        ];
+
+        // Test Catalog Parameters
+        const TEST_CATALOG = {
+            'CBC': {
+                name: 'Complete Blood Count (CBC)',
+                desc: 'Includes: Hb, RBC, WBC, Platelets, PCV, Indices etc.',
+                parameters: [
+                    { key: 'hb', name: 'Hemoglobin (Hb)', defaultVal: '14.2', unit: 'g/dL', ref: '13.0 - 17.0' },
+                    { key: 'rbc', name: 'RBC Count', defaultVal: '5.1', unit: 'million/cumm', ref: '4.5 - 5.9' },
+                    { key: 'wbc', name: 'Total WBC Count', defaultVal: '7800', unit: '/cumm', ref: '4000 - 11000' },
+                    { key: 'plt', name: 'Platelet Count', defaultVal: '2.4', unit: 'lakh/cumm', ref: '1.5 - 4.5' },
+                    { key: 'pcv', name: 'PCV (Hematocrit)', defaultVal: '42', unit: '%', ref: '40 - 50' },
+                    { key: 'mcv', name: 'MCV', defaultVal: '82', unit: 'fL', ref: '80 - 100' },
+                    { key: 'mch', name: 'MCH', defaultVal: '28', unit: 'pg', ref: '27 - 33' },
+                    { key: 'mchc', name: 'MCHC', defaultVal: '34', unit: 'g/dL', ref: '32 - 36' }
+                ]
+            },
+            'RBS': {
+                name: 'Random Blood Sugar (RBS)',
+                desc: 'Includes: Plasma Glucose, Fasting & Post Prandial levels.',
+                parameters: [
+                    { key: 'glucose', name: 'Plasma Glucose (Random)', defaultVal: '118', unit: 'mg/dL', ref: '70 - 140' },
+                    { key: 'urine_sugar', name: 'Urine Sugar', defaultVal: 'Nil', unit: '', ref: 'Nil' }
+                ]
+            },
+            'LFT': {
+                name: 'Liver Function Test (LFT)',
+                desc: 'Includes: Bilirubin (Total & Direct), SGOT/AST, SGPT/ALT, Alkaline Phosphatase.',
+                parameters: [
+                    { key: 'tbili', name: 'Bilirubin - Total', defaultVal: '0.8', unit: 'mg/dL', ref: '0.2 - 1.2' },
+                    { key: 'dbili', name: 'Bilirubin - Direct', defaultVal: '0.2', unit: 'mg/dL', ref: '0.0 - 0.3' },
+                    { key: 'sgot', name: 'SGOT / AST', defaultVal: '28', unit: 'U/L', ref: '10 - 40' },
+                    { key: 'sgpt', name: 'SGPT / ALT', defaultVal: '32', unit: 'U/L', ref: '10 - 45' },
+                    { key: 'alp', name: 'Alkaline Phosphatase (ALP)', defaultVal: '95', unit: 'U/L', ref: '40 - 130' },
+                    { key: 'tp', name: 'Total Protein', defaultVal: '7.2', unit: 'g/dL', ref: '6.4 - 8.3' },
+                    { key: 'alb', name: 'Albumin', defaultVal: '4.4', unit: 'g/dL', ref: '3.5 - 5.0' }
+                ]
+            },
+            'KFT': {
+                name: 'Kidney Function Test (KFT)',
+                desc: 'Includes: Serum Creatinine, Blood Urea Nitrogen (BUN), Uric Acid, Electrolytes.',
+                parameters: [
+                    { key: 'creat', name: 'Serum Creatinine', defaultVal: '0.9', unit: 'mg/dL', ref: '0.6 - 1.2' },
+                    { key: 'urea', name: 'Blood Urea', defaultVal: '24', unit: 'mg/dL', ref: '15 - 40' },
+                    { key: 'bun', name: 'BUN (Blood Urea Nitrogen)', defaultVal: '11.2', unit: 'mg/dL', ref: '7 - 20' },
+                    { key: 'uric', name: 'Uric Acid', defaultVal: '5.2', unit: 'mg/dL', ref: '3.5 - 7.2' }
+                ]
+            },
+            'LIPID': {
+                name: 'Lipid Profile (Cholesterol)',
+                desc: 'Includes: Total Cholesterol, HDL, LDL, VLDL, Triglycerides.',
+                parameters: [
+                    { key: 'chol', name: 'Total Cholesterol', defaultVal: '185', unit: 'mg/dL', ref: '< 200' },
+                    { key: 'trig', name: 'Triglycerides', defaultVal: '142', unit: 'mg/dL', ref: '< 150' },
+                    { key: 'hdl', name: 'HDL Cholesterol', defaultVal: '48', unit: 'mg/dL', ref: '> 40' },
+                    { key: 'ldl', name: 'LDL Cholesterol', defaultVal: '108', unit: 'mg/dL', ref: '< 100' },
+                    { key: 'vldl', name: 'VLDL Cholesterol', defaultVal: '28.4', unit: 'mg/dL', ref: '< 30' }
+                ]
+            },
+            'THYROID': {
+                name: 'Thyroid Profile (T3, T4, TSH)',
+                desc: 'Includes: Total Triiodothyronine (T3), Total Thyroxine (T4), Ultra-sensitive TSH.',
+                parameters: [
+                    { key: 't3', name: 'Total Triiodothyronine (T3)', defaultVal: '1.2', unit: 'ng/mL', ref: '0.8 - 2.0' },
+                    { key: 't4', name: 'Total Thyroxine (T4)', defaultVal: '8.4', unit: 'ug/dL', ref: '5.1 - 14.1' },
+                    { key: 'tsh', name: 'TSH (Thyroid Stimulating Hormone)', defaultVal: '2.45', unit: 'uIU/mL', ref: '0.4 - 4.2' }
+                ]
+            },
+            'URINE': {
+                name: 'Urine Routine & Microscopic',
+                desc: 'Includes: Physical, Chemical, and Microscopic sediment examination.',
+                parameters: [
+                    { key: 'u_color', name: 'Colour & Appearance', defaultVal: 'Pale Yellow, Clear', unit: '', ref: 'Pale Yellow' },
+                    { key: 'u_ph', name: 'pH Reaction', defaultVal: '6.5', unit: '', ref: '5.0 - 7.5' },
+                    { key: 'u_spgr', name: 'Specific Gravity', defaultVal: '1.020', unit: '', ref: '1.010 - 1.030' },
+                    { key: 'u_alb', name: 'Albumin (Protein)', defaultVal: 'Nil', unit: '', ref: 'Nil' },
+                    { key: 'u_pus', name: 'Pus Cells (WBC)', defaultVal: '1 - 2', unit: '/hpf', ref: '0 - 5' }
+                ]
+            },
+            'HBA1C': {
+                name: 'HbA1c (Glycated Hemoglobin)',
+                desc: 'Includes: Glycated Hemoglobin percentage and Estimated Average Glucose (eAG).',
+                parameters: [
+                    { key: 'hba1c_val', name: 'HbA1c (Glycated Hb)', defaultVal: '5.8', unit: '%', ref: '4.0 - 5.6 (Normal)' },
+                    { key: 'eag', name: 'Estimated Avg Glucose (eAG)', defaultVal: '120', unit: 'mg/dL', ref: '90 - 130' }
+                ]
+            }
+        };
+
+        // State variables
+        let currentPage = 1;
+        const pageSize = 8;
+        let queueSearchQuery = "";
+        let selectedPatient = PATIENTS_QUEUE[0];
+        let currentActiveTestCode = "CBC";
+        let enteredParameterValues = {};
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedSettings();
+            syncUserData();
+            renderQueue();
+            loadTestParameters(currentActiveTestCode);
+
+            // Document click to close menus
+            document.addEventListener('click', (e) => {
+                const staffMenu = document.getElementById('staffMenu');
+                const staffBtn = document.getElementById('labStaffDropdownBtn');
+                if (staffMenu && !staffBtn.contains(e.target) && !staffMenu.contains(e.target)) {
+                    staffMenu.classList.remove('open');
+                }
+            });
+        });
+
+        // Top Navigation Pill Controller
+        function setActiveNav(navKey) {
+            const pills = ['navDashboard', 'navPatients', 'navTests', 'navReports'];
+            pills.forEach(p => {
+                const btn = document.getElementById(p);
+                if (btn) btn.classList.remove('active');
+            });
+
+            if (navKey === 'dashboard') {
+                document.getElementById('navDashboard')?.classList.add('active');
+                showScreen('queueScreen');
+            } else if (navKey === 'patients') {
+                document.getElementById('navPatients')?.classList.add('active');
+                showScreen('queueScreen');
+                focusPatientSearch();
+            } else if (navKey === 'tests') {
+                document.getElementById('navTests')?.classList.add('active');
+                showScreen('selectScreen');
+            } else if (navKey === 'reports') {
+                document.getElementById('navReports')?.classList.add('active');
+                openReportModal();
+            }
+        }
+
+        // Filter and Render Queue Table & Mobile Cards
+        function getFilteredPatients() {
+            if (!queueSearchQuery) return PATIENTS_QUEUE;
+            const q = queueSearchQuery.toLowerCase().trim();
+            return PATIENTS_QUEUE.filter(p => 
+                p.name.toLowerCase().includes(q) ||
+                p.id.toLowerCase().includes(q) ||
+                p.tests.toLowerCase().includes(q) ||
+                p.status.toLowerCase().includes(q)
+            );
+        }
+
+        function renderQueue() {
+            const filtered = getFilteredPatients();
+            const total = filtered.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, total);
+            const pageItems = filtered.slice(startIndex, endIndex);
+
+            // 1. Render Desktop Table
+            const tbody = document.getElementById('queueTableBody');
+            tbody.innerHTML = '';
+
+            if (pageItems.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 36px 16px; color: #64748b;">
+                            <i class="fa-solid fa-magnifying-glass" style="font-size: 1.5rem; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+                            <strong>No matching patients found.</strong>
+                            <div style="font-size: 0.78rem; margin-top: 4px;">Try searching with a different patient name or ID.</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                pageItems.forEach(p => {
+                    const tr = document.createElement('tr');
+                    let badgeClass = 'pending';
+                    if (p.status === 'In Progress') badgeClass = 'inprogress';
+                    if (p.status === 'Completed') badgeClass = 'completed';
+
+                    tr.innerHTML = `
+                        <td><strong>${p.sNo}</strong></td>
+                        <td style="font-weight: 700; color: #0f172a;">${p.name}</td>
+                        <td style="color: #64748b; font-weight: 500;">${p.id}</td>
+                        <td style="color: #1e293b;">${p.tests}</td>
+                        <td style="color: #64748b; font-size: 0.82rem;">${p.received}</td>
+                        <td><span class="lab-status-badge ${badgeClass}">${p.status}</span></td>
+                        <td style="text-align: center;">
+                            <button class="lab-btn-verify" onclick="verifyPatient('${p.id}')">Verify</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // 2. Render Mobile Cards
+            const mobileContainer = document.getElementById('queueMobileCards');
+            mobileContainer.innerHTML = '';
+
+            if (pageItems.length === 0) {
+                mobileContainer.innerHTML = `
+                    <div style="text-align: center; padding: 30px 16px; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; color: #64748b;">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size: 1.5rem; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+                        <strong>No matching patients found.</strong>
+                    </div>
+                `;
+            } else {
+                pageItems.forEach(p => {
+                    let badgeClass = 'pending';
+                    if (p.status === 'In Progress') badgeClass = 'inprogress';
+                    if (p.status === 'Completed') badgeClass = 'completed';
+
+                    const card = document.createElement('div');
+                    card.className = 'lab-mobile-patient-card';
+                    card.innerHTML = `
+                        <div class="lab-mp-top">
+                            <div class="lab-mp-name-wrap">
+                                <span class="lab-mp-num">#${p.sNo}</span>
+                                <span class="lab-mp-name">${p.name}</span>
+                            </div>
+                            <span class="lab-status-badge ${badgeClass}">${p.status}</span>
+                        </div>
+                        <div class="lab-mp-info-row">
+                            <span><i class="fa-solid fa-id-badge"></i> ${p.id}</span>
+                            <span><i class="fa-regular fa-user"></i> ${p.age}</span>
+                        </div>
+                        <div class="lab-mp-tests">
+                            <i class="fa-solid fa-flask-vial"></i>
+                            <span>${p.tests}</span>
+                        </div>
+                        <div class="lab-mp-time">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>Received: ${p.received}</span>
+                        </div>
+                        <button class="lab-mp-verify-btn" onclick="verifyPatient('${p.id}')">
+                            <span>Verify Patient &amp; Enter Results</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    `;
+                    mobileContainer.appendChild(card);
+                });
+            }
+
+            // 3. Update Pagination UI
+            const pageInfo = document.getElementById('paginationInfo');
+            if (total === 0) {
+                pageInfo.textContent = "Showing 0 of 0";
+            } else {
+                pageInfo.textContent = `Showing ${startIndex + 1} - ${endIndex} of ${total}`;
+            }
+
+            // Prev / Next button state
+            const btnPrev = document.getElementById('btnPrevPage');
+            const btnNext = document.getElementById('btnNextPage');
+            if (btnPrev) btnPrev.disabled = (currentPage <= 1);
+            if (btnNext) btnNext.disabled = (currentPage >= totalPages);
+
+            // Page numbers
+            const pageGroup = document.getElementById('pageNumbersGroup');
+            pageGroup.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const pBtn = document.createElement('button');
+                pBtn.className = `lab-page-btn ${i === currentPage ? 'active' : ''}`;
+                pBtn.textContent = i;
+                pBtn.onclick = () => changePage(i);
+                pageGroup.appendChild(pBtn);
+            }
+
+            // Update badge count
+            const queueBadge = document.getElementById('queueBadgeCount');
+            if (queueBadge) queueBadge.textContent = PATIENTS_QUEUE.filter(p => p.status !== 'Completed').length;
+        }
+
+        function changePage(page) {
+            const filtered = getFilteredPatients();
+            const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderQueue();
+            }
+        }
+
+        // Live Search Handler
+        function onQueueSearchInput(val) {
+            queueSearchQuery = val;
+            currentPage = 1;
+            const clearBtn = document.getElementById('queueSearchClearBtn');
+            if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
+            renderQueue();
+        }
+
+        function clearQueueSearch() {
+            const input = document.getElementById('queueSearchInput');
+            if (input) {
+                input.value = "";
+                onQueueSearchInput("");
+                input.focus();
+            }
+        }
+
+        function focusPatientSearch() {
+            showScreen('queueScreen');
+            const input = document.getElementById('queueSearchInput');
+            if (input) {
+                input.focus();
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // Verify Patient Action (Opens Screen 2)
+        function verifyPatient(patientId) {
+            const p = PATIENTS_QUEUE.find(item => item.id === patientId);
+            if (!p) return;
+            selectedPatient = p;
+
+            // Populate Step 1 & 2 fields
+            document.getElementById('selPatientName').textContent = p.name;
+            document.getElementById('selPatientId').textContent = p.id;
+            document.getElementById('selPatientAgeGender').textContent = p.age;
+            document.getElementById('selPatientMobile').textContent = p.mobile;
+            document.getElementById('selPatientVisitDate').textContent = "24 Sep 2026";
+            document.getElementById('selPatientTests').textContent = p.tests;
+
+            // Populate Step 3 Ribbon
+            document.getElementById('ribbonPatientName').textContent = p.name;
+            document.getElementById('ribbonPatientId').textContent = p.id;
+            document.getElementById('ribbonPatientAgeGender').textContent = p.age;
+
+            // Populate Step 4 Confirmation
+            document.getElementById('confirmSuccessMsg').textContent = `The results have been saved for ${p.name} (${p.id}).`;
+
+            // Populate Clinical Report
+            document.getElementById('r_patientName').textContent = p.name;
+            document.getElementById('r_patientId').textContent = p.id;
+            document.getElementById('r_patientAgeGender').textContent = p.age;
+            document.getElementById('r_sampleLabId').textContent = `SD-2026-${p.id.replace('NH', '')}`;
+
+            // Auto-detect test from patient's tests string
+            let detectedTest = "CBC";
+            if (p.tests.includes("Thyroid") || p.tests.includes("TSH")) detectedTest = "THYROID";
+            else if (p.tests.includes("Lipid")) detectedTest = "LIPID";
+            else if (p.tests.includes("Urine")) detectedTest = "URINE";
+            else if (p.tests.includes("HbA1c")) detectedTest = "HBA1C";
+            else if (p.tests.includes("KFT")) detectedTest = "KFT";
+            else if (p.tests.includes("LFT")) detectedTest = "LFT";
+            else if (p.tests.includes("RBS")) detectedTest = "RBS";
+
+            chooseTest(detectedTest);
+            showScreen('selectScreen');
+        }
+
+        // Switch Screen helper
+        function showScreen(screenId) {
+            const screens = ['queueScreen', 'selectScreen', 'resultsScreen', 'confirmScreen'];
+            screens.forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.style.display = (s === screenId) ? 'block' : 'none';
+            });
+
+            // Update sidebar active state
+            document.getElementById('sideItemQueue')?.classList.toggle('active', screenId === 'queueScreen');
+            document.getElementById('sideItemResults')?.classList.toggle('active', screenId !== 'queueScreen');
+
+            // Sync top pill
+            if (screenId === 'queueScreen') {
+                document.getElementById('navDashboard')?.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Test Selection in Step 2
+        function chooseTest(testCode) {
+            currentActiveTestCode = testCode;
+            const testInfo = TEST_CATALOG[testCode] || TEST_CATALOG['CBC'];
+
+            // Update Radio selection state
+            document.querySelectorAll('.lab-test-radio-label').forEach(lbl => {
+                const radio = lbl.querySelector('input[type="radio"]');
+                if (radio && radio.value === testCode) {
+                    lbl.classList.add('selected');
+                    radio.checked = true;
+                } else {
+                    lbl.classList.remove('selected');
+                }
+            });
+
+            // Update Step 2 Summary card
+            document.getElementById('summaryTestTitle').textContent = testInfo.name;
+            document.getElementById('summaryTestDesc').textContent = testInfo.desc;
+
+            // Update Step 3 Ribbon
+            document.getElementById('ribbonTestName').textContent = testInfo.name;
+
+            // Update Clinical Report Header
+            document.getElementById('r_testTitle').textContent = testInfo.name.toUpperCase();
+
+            // Load test parameters into Step 3
+            loadTestParameters(testCode);
+        }
+
+        function filterTestList() {
+            const q = document.getElementById('testSearchInput').value.toLowerCase();
+            document.querySelectorAll('.lab-test-radio-label').forEach(lbl => {
+                const text = lbl.textContent.toLowerCase();
+                lbl.style.display = text.includes(q) ? 'flex' : 'none';
+            });
+        }
+
+        // Dynamically load test parameter rows into Step 3 table
+        function loadTestParameters(testCode) {
+            const testInfo = TEST_CATALOG[testCode] || TEST_CATALOG['CBC'];
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = '';
+
+            testInfo.parameters.forEach(param => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${param.name}</strong></td>
+                    <td>
+                        <input type="text" class="lab-result-input" id="param_${param.key}" value="${param.defaultVal}">
+                    </td>
+                    <td>${param.unit || '-'}</td>
+                    <td>${param.ref}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Save Results in Step 3
+        function saveAndContinue() {
+            const testInfo = TEST_CATALOG[currentActiveTestCode] || TEST_CATALOG['CBC'];
+            enteredParameterValues = {};
+
+            // Read values and populate Clinical Report Table
+            const repTbody = document.getElementById('r_tableBody');
+            repTbody.innerHTML = '';
+
+            testInfo.parameters.forEach(param => {
+                const input = document.getElementById(`param_${param.key}`);
+                const val = input ? input.value.trim() : param.defaultVal;
+                enteredParameterValues[param.key] = val;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${param.name}</td>
+                    <td><strong>${val}</strong></td>
+                    <td>${param.unit || '-'}</td>
+                    <td>${param.ref}</td>
+                `;
+                repTbody.appendChild(tr);
+            });
+
+            // Update Report Generation Time
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            document.getElementById('r_reportTimestamp').textContent = `: ${dateStr} ${timeStr}`;
+
+            // Move to Step 4 confirmation screen
+            showScreen('confirmScreen');
+        }
+
+        // Mark completed and return to Queue
+        function markCurrentCompletedAndReturn() {
+            if (selectedPatient) {
+                selectedPatient.status = "Completed";
+                renderQueue();
+            }
+            showScreen('queueScreen');
+        }
+
+        // Report Modal Controls
+        function openReportModal(autoPrint = false) {
+            const modal = document.getElementById('reportModal');
+            if (modal) {
+                modal.classList.add('open');
+                if (autoPrint) {
+                    setTimeout(() => window.print(), 350);
+                }
+            }
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('reportModal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        // Settings Modal Controls
+        function openSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) modal.classList.add('open');
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        function saveLabSettings() {
+            const labName = document.getElementById('setLabName').value.trim();
+            const labReg = document.getElementById('setLabReg').value.trim();
+            const pathologist = document.getElementById('setPathologist').value.trim();
+            const phone = document.getElementById('setLabPhone').value.trim();
+            const address = document.getElementById('setLabAddress').value.trim();
+
+            const settings = { labName, labReg, pathologist, phone, address };
+            localStorage.setItem('nhealth_lab_settings', JSON.stringify(settings));
+
+            applyLabSettings(settings);
+            closeSettingsModal();
+        }
+
+        function applyLabSettings(settings) {
+            if (settings.labName) {
+                document.getElementById('navStaffName').textContent = settings.labName.split(' ')[0] || 'Staff';
+                document.getElementById('menuLabName').textContent = settings.labName;
+                document.getElementById('reportLabName').textContent = settings.labName;
+                document.getElementById('sigLabName').textContent = settings.labName;
+                document.getElementById('mobileSidebarLabName').textContent = settings.labName;
+            }
+            if (settings.address) {
+                document.getElementById('reportLabLocation').textContent = settings.address;
+            }
+            if (settings.labReg) {
+                document.getElementById('reportLabTagline').textContent = `Accurate Results | Trusted Care • Reg: ${settings.labReg}`;
+            }
+            if (settings.pathologist) {
+                const docName = settings.pathologist.split(',')[0];
+                document.getElementById('sigDoctorName').textContent = docName;
+            }
+        }
+
+        function loadSavedSettings() {
+            try {
+                const saved = localStorage.getItem('nhealth_lab_settings');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.labName) document.getElementById('setLabName').value = parsed.labName;
+                    if (parsed.labReg) document.getElementById('setLabReg').value = parsed.labReg;
+                    if (parsed.pathologist) document.getElementById('setPathologist').value = parsed.pathologist;
+                    if (parsed.phone) document.getElementById('setLabPhone').value = parsed.phone;
+                    if (parsed.address) document.getElementById('setLabAddress').value = parsed.address;
+                    applyLabSettings(parsed);
+                }
+            } catch(e) {}
+        }
+
+        function syncUserData() {
+            try {
+                const stored = localStorage.getItem('nhealth_user');
+                if (stored) {
+                    const u = JSON.parse(stored);
+                    if (u.name) {
+                        const firstName = u.name.split(' ')[0] || 'Staff';
+                        document.getElementById('navStaffName').textContent = firstName;
+                        document.getElementById('menuLabName').textContent = u.name;
+                        document.getElementById('reportLabName').textContent = u.name;
+                        document.getElementById('sigLabName').textContent = u.name;
+                        document.getElementById('mobileSidebarLabName').textContent = u.name;
+                        if (u.city) {
+                            document.getElementById('reportLabLocation').textContent = `${u.city}, Andhra Pradesh`;
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // Mobile Drawer Toggle
+        function toggleMobileSidebar() {
+            const bar = document.getElementById('labSidebar');
+            const backdrop = document.getElementById('mobileDrawerBackdrop');
+            if (bar) bar.classList.toggle('mobile-open');
+            if (backdrop) backdrop.classList.toggle('mobile-open');
+        }
+
+        function closeMobileSidebar() {
+            const bar = document.getElementById('labSidebar');
+            const backdrop = document.getElementById('mobileDrawerBackdrop');
+            if (bar) bar.classList.remove('mobile-open');
+            if (backdrop) backdrop.classList.remove('mobile-open');
+        }
+
+        // Staff Dropdown
+        function toggleStaffMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('staffMenu');
+            if (menu) menu.classList.toggle('open');
+        }
+
+        function closeStaffMenu() {
+            const menu = document.getElementById('staffMenu');
+            if (menu) menu.classList.remove('open');
+        }
+
+        // Logout
+        async function handleLabLogout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch(e) {}
+            localStorage.removeItem('nhealth_user');
+            window.location.href = '/login/lab';
+        }
+    </script>
+</body>
+</html>

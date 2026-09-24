@@ -178,20 +178,22 @@
 .auth-role-tabs {
     display: flex;
     background: #f1f5f9;
-    padding: 5px;
+    padding: 4px;
     border-radius: 50px;
     margin-bottom: 1.25rem;
     gap: 4px;
     border: 1px solid #e2e8f0;
+    align-items: center;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .auth-role-tab {
     flex: 1;
     border: none;
     background: transparent;
-    padding: 9px 14px;
+    padding: 8px 10px;
     border-radius: 50px;
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     font-weight: 700;
     font-family: inherit;
     color: #64748b;
@@ -201,7 +203,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
+    gap: 6px;
     white-space: nowrap;
 }
 
@@ -738,4 +740,190 @@
     .auth-showcase-panel {
         display: none;
     }
+}
+
+/* ==========================================================================
+   Healthcare Security & Password Strength Enhancements (Both Views)
+   ========================================================================== */
+.auth-security-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f0fdfa;
+    border: 1px solid #ccfbf1;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #0f766e;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.auth-security-strip i {
+    color: #0baaa2;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+/* Password Strength Meter */
+.password-strength-container {
+    margin: -6px 0 14px 0;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.75rem;
+}
+
+.password-strength-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.strength-label-title {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.strength-label-text {
+    font-weight: 700;
+    transition: color 0.2s ease;
+}
+
+.password-strength-bars {
+    display: flex;
+    gap: 4px;
+    height: 4px;
+    margin-bottom: 8px;
+}
+
+.strength-bar-segment {
+    flex: 1;
+    background: #e2e8f0;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.strength-bar-segment.active-weak { background: #ef4444; }
+.strength-bar-segment.active-fair { background: #f59e0b; }
+.strength-bar-segment.active-good { background: #3b82f6; }
+.strength-bar-segment.active-strong { background: #10b981; }
+
+.password-rules-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+@media (max-width: 480px) {
+    .password-rules-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.password-rule-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 0.72rem;
+    transition: color 0.2s ease;
+}
+
+.password-rule-item.valid {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.password-rule-item i {
+    font-size: 0.7rem;
+}
+
+/* Password Match Indicator */
+.password-match-badge {
+    display: none;
+    font-size: 0.74rem;
+    font-weight: 600;
+    margin-top: -6px;
+    margin-bottom: 12px;
+    padding-left: 4px;
+}
+
+.password-match-badge.matched {
+    display: block;
+    color: #10b981;
+}
+
+.password-match-badge.mismatched {
+    display: block;
+    color: #ef4444;
+}
+
+/* Anti-Bot Human Security Challenge */
+.auth-security-challenge-wrap {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.auth-challenge-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.auth-challenge-label i {
+    color: #0baaa2;
+    font-size: 1rem;
+}
+
+.auth-challenge-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.auth-captcha-input {
+    width: 70px !important;
+    padding: 6px 8px !important;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    color: #0e1b38;
+}
+
+.auth-captcha-refresh-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 6px;
+    border-radius: 6px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.auth-captcha-refresh-btn:hover {
+    color: #0baaa2;
+    transform: rotate(90deg);
 }

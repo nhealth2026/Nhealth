@@ -59,12 +59,15 @@
 
                     <!-- Role Switcher Tabs -->
                     <div class="auth-role-tabs">
-                        <button type="button" class="auth-role-tab {% if role != 'doctor' %}active{% endif %}" id="tabPatient" onclick="switchLoginRole('patient')">
+                        <button type="button" class="auth-role-tab {% if role != 'doctor' and role != 'lab' %}active{% endif %}" id="tabPatient" onclick="switchLoginRole('patient')">
                             <i class="fa-regular fa-user"></i> Patient Login
                         </button>
                         <button type="button" class="auth-role-tab {% if role == 'doctor' %}active{% endif %}" id="tabDoctor" onclick="switchLoginRole('doctor')">
                             <i class="fa-solid fa-user-doctor"></i> Doctor / Partner
                         </button>
+                        <a href="/login/lab" class="auth-role-tab" style="text-decoration: none;">
+                            <i class="fa-solid fa-flask-vial"></i> Lab Login
+                        </a>
                     </div>
 
                     <!-- Role Badge Pill -->
@@ -263,8 +266,33 @@
             }, 4000);
         }
 
+        // Security: Lockout check & rate-limiting client protection
+        function checkLoginLockout() {
+            const lockoutUntil = parseInt(sessionStorage.getItem('login_lockout_until') || '0');
+            const now = Date.now();
+            if (lockoutUntil > now) {
+                const remainingSecs = Math.ceil((lockoutUntil - now) / 1000);
+                const alertBox = document.getElementById('authAlertBox');
+                const submitBtn = document.getElementById('loginSubmitBtn');
+                alertBox.textContent = `🔒 Security Lockout: Too many failed attempts. Please wait ${remainingSecs}s.`;
+                alertBox.className = 'auth-alert-box error';
+                alertBox.style.display = 'block';
+                submitBtn.disabled = true;
+                setTimeout(checkLoginLockout, 1000);
+                return true;
+            } else {
+                const submitBtn = document.getElementById('loginSubmitBtn');
+                if (submitBtn && submitBtn.disabled && submitBtn.querySelector('.btn-text').textContent === 'Sign In') {
+                    submitBtn.disabled = false;
+                }
+                return false;
+            }
+        }
+
         async function handleUserLogin(e) {
             e.preventDefault();
+            if (checkLoginLockout()) return;
+
             const alertBox = document.getElementById('authAlertBox');
             const submitBtn = document.getElementById('loginSubmitBtn');
             const identifier = document.getElementById('loginIdentifier').value.trim();
@@ -280,8 +308,15 @@
                 return;
             }
 
+            if (!password) {
+                alertBox.textContent = 'Please enter your Password.';
+                alertBox.className = 'auth-alert-box error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
             submitBtn.disabled = true;
-            submitBtn.querySelector('.btn-text').textContent = 'Signing in...';
+            submitBtn.querySelector('.btn-text').textContent = 'Signing in securely...';
 
             try {
                 const res = await fetch('/api/auth/login', {
@@ -297,23 +332,40 @@
                 const data = await res.json();
 
                 if (res.ok && data.status === 'success') {
-                    alertBox.textContent = '🎉 ' + data.message + ' Logging you in...';
+                    // Reset failed attempts upon successful login
+                    sessionStorage.removeItem('failed_login_attempts');
+                    sessionStorage.removeItem('login_lockout_until');
+
+                    // Synchronize user to local storage for patient dashboard
+                    if (data.user) {
+                        localStorage.setItem('nhealth_user', JSON.stringify(data.user));
+                    }
+
+                    alertBox.textContent = '🎉 ' + data.message + ' Redirecting...';
                     alertBox.className = 'auth-alert-box success';
                     alertBox.style.display = 'block';
                     showAuthToast(data.message, 'success');
                     setTimeout(() => {
                         const targetUrl = (data.user && data.user.role === 'doctor') ? '/' : '/patient/dashboard';
                         window.location.href = targetUrl;
-                    }, 1400);
+                    }, 1000);
                 } else {
-                    alertBox.textContent = data.message || 'Invalid credentials.';
-                    alertBox.className = 'auth-alert-box error';
-                    alertBox.style.display = 'block';
-                    submitBtn.disabled = false;
-                    submitBtn.querySelector('.btn-text').textContent = 'Sign In';
+                    let failed = parseInt(sessionStorage.getItem('failed_login_attempts') || '0') + 1;
+                    sessionStorage.setItem('failed_login_attempts', failed);
+
+                    if (res.status === 429 || failed >= 5) {
+                        sessionStorage.setItem('login_lockout_until', Date.now() + 30000);
+                        checkLoginLockout();
+                    } else {
+                        alertBox.textContent = data.message || 'Invalid mobile number/email or password.';
+                        alertBox.className = 'auth-alert-box error';
+                        alertBox.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('.btn-text').textContent = 'Sign In';
+                    }
                 }
             } catch (err) {
-                alertBox.textContent = 'Network error. Please try again.';
+                alertBox.textContent = 'Network error. Please check your connection.';
                 alertBox.className = 'auth-alert-box error';
                 alertBox.style.display = 'block';
                 submitBtn.disabled = false;

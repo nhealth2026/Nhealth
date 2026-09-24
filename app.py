@@ -6,13 +6,18 @@ Flask Backend Application
 import os
 import json
 import uuid
+import time
+import re
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'nhealth-super-secret-key-2026'
+app.config['SECRET_KEY'] = 'nhealth-super-secret-key-2026-secure-session'
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 @app.after_request
 def add_header(response):
@@ -52,6 +57,101 @@ def save_user(user_data):
     users.append(user_data)
     with open(USERS_FILE, 'w', encoding='utf-8') as f:
         json.dump(users, f, indent=2)
+
+def update_user(user_id, updated_fields):
+    users = get_all_users()
+    updated = False
+    for u in users:
+        if u.get('id') == user_id:
+            for k, v in updated_fields.items():
+                if k != 'id' and k != 'password':
+                    u[k] = v
+            updated = True
+            break
+    if updated:
+        with open(USERS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(users, f, indent=2)
+    return updated
+
+def verify_password(stored_password, provided_password):
+    if not stored_password or not provided_password:
+        return False
+    if stored_password.startswith(('pbkdf2:sha256:', 'scrypt:', 'argon2:')):
+        return check_password_hash(stored_password, provided_password)
+    return stored_password == provided_password
+
+# Rate-limiting failed logins (security)
+FAILED_LOGIN_ATTEMPTS = {}  # { key: {'count': int, 'lockout_until': timestamp} }
+
+def is_rate_limited(key):
+    record = FAILED_LOGIN_ATTEMPTS.get(key)
+    if not record:
+        return False, 0
+    now = time.time()
+    if record.get('lockout_until', 0) > now:
+        remaining = int(record['lockout_until'] - now)
+        return True, remaining
+    return False, 0
+
+def record_failed_attempt(key):
+    now = time.time()
+    record = FAILED_LOGIN_ATTEMPTS.get(key, {'count': 0, 'lockout_until': 0})
+    record['count'] += 1
+    if record['count'] >= 5:
+        record['lockout_until'] = now + 30  # 30-second lockout after 5 failed attempts
+    FAILED_LOGIN_ATTEMPTS[key] = record
+
+def clear_failed_attempts(key):
+    FAILED_LOGIN_ATTEMPTS.pop(key, None)
+
+def _ensure_patient_fields(user_dict):
+    if not user_dict.get('age'):
+        user_dict['age'] = 32
+    if not user_dict.get('gender'):
+        user_dict['gender'] = 'Male'
+    if not user_dict.get('blood_group'):
+        user_dict['blood_group'] = 'O+'
+    if not user_dict.get('city'):
+        user_dict['city'] = 'Vijayawada'
+    if not user_dict.get('address'):
+        user_dict['address'] = f"{user_dict.get('city', 'Vijayawada')}, Andhra Pradesh"
+
+def get_current_patient():
+    """Retrieve current logged in patient from session or fallback to latest registered patient."""
+    user_id = session.get('user_id')
+    users = get_all_users()
+    
+    if user_id:
+        for u in users:
+            if u.get('id') == user_id:
+                clean = {k: v for k, v in u.items() if k != 'password'}
+                _ensure_patient_fields(clean)
+                return clean
+    
+    if 'user' in session:
+        clean = dict(session['user'])
+        _ensure_patient_fields(clean)
+        return clean
+    
+    # Fallback to the latest patient registered in users.json so there are never dummy placeholder names
+    patients = [u for u in users if u.get('role') == 'patient']
+    if patients:
+        latest = patients[-1]
+        clean = {k: v for k, v in latest.items() if k != 'password'}
+        _ensure_patient_fields(clean)
+        return clean
+        
+    return {
+        "id": "USR-PAT-NEW",
+        "name": "Valued Patient",
+        "email": "patient@nhealth.in",
+        "phone": "9876543210",
+        "city": "Vijayawada",
+        "age": 32,
+        "gender": "Male",
+        "blood_group": "O+",
+        "address": "Vijayawada, Andhra Pradesh"
+    }
 
 
 # Service Catalog with Comprehensive Details
@@ -575,7 +675,8 @@ def book_appointment():
 @app.route('/consultation')
 def patient_dashboard():
     """Render the Patient Online Consultation & Healthcare Dashboard (Mobile + Laptop views)."""
-    return render_template('patient_dashboard.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+    patient = get_current_patient()
+    return render_template('patient_dashboard.html', user=patient, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
 @app.route('/contact')
@@ -589,13 +690,24 @@ def contact_page():
 def login_page():
     """Render the Login page."""
     role = request.args.get('role', 'patient')
+    if role == 'lab':
+        return redirect(url_for('login_lab_page'))
     return render_template('login.html', role=role, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/login/lab')
+@app.route('/lab/login')
+def login_lab_page():
+    """Render dedicated Lab Login page (matching reference design for both desktop and mobile views)."""
+    return render_template('login_lab.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
 @app.route('/signup')
 def signup_page():
     """Render the Signup page (defaults to patient or uses role query)."""
     role = request.args.get('role', 'patient')
+    if role == 'lab':
+        return redirect(url_for('signup_lab_page'))
     if role in ['doctor', 'partner']:
         return render_template('signup_partner.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
     return render_template('signup_patient.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
@@ -614,30 +726,77 @@ def signup_doctor_page():
     return render_template('signup_partner.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
+@app.route('/signup/lab')
+@app.route('/lab/signup')
+def signup_lab_page():
+    """Render dedicated Lab Sign Up page (matching reference design for both desktop and mobile views)."""
+    return render_template('signup_lab.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/lab/dashboard')
+def lab_dashboard():
+    """Render Lab Partner Dashboard."""
+    user = session.get('user')
+    if not user:
+        user = {
+            "id": "LAB-AP-2026",
+            "name": "Apollo Diagnostics & Pathology Lab",
+            "owner_name": "Dr. K. Srinivas Rao",
+            "role": "lab",
+            "city": "Vijayawada",
+            "phone": "9876543210",
+            "email": "lab@nhealth.in"
+        }
+    return render_template('lab_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/api/auth/signup', methods=['POST'])
 def auth_signup():
-    """Handle new patient or doctor/partner account registration."""
+    """Handle new patient or doctor/partner account registration with security validation."""
     try:
         data = request.get_json() if request.is_json else request.form.to_dict()
         role = data.get('role', 'patient').strip().lower()
-        name = data.get('name', '').strip()
+        name = (data.get('name', '') or data.get('lab_name', '')).strip()
+        owner_name = (data.get('owner_name') or data.get('ownerName', '')).strip()
         email = data.get('email', '').strip().lower()
         phone = data.get('phone', '').strip()
+        city = data.get('city', '').strip()
+        state = data.get('state', 'Andhra Pradesh').strip()
+        pincode = data.get('pincode', '').strip()
+        address = data.get('address', '').strip()
+        reg_number = (data.get('reg_number') or data.get('registrationNumber', '')).strip()
+        gst_number = (data.get('gst_number') or data.get('gstNumber', '')).strip()
         password = data.get('password', '').strip()
 
+        # Required fields validation
         if not name or not phone or not password:
             return jsonify({
                 "status": "error",
-                "message": "Full Name, Phone Number, and Password are required."
+                "message": "Full Name / Lab Name, Mobile Number, and Password are required."
+            }), 400
+
+        # Clean phone and validate 10 digits
+        clean_phone = re.sub(r'\D', '', phone)
+        if len(clean_phone) != 10:
+            return jsonify({
+                "status": "error",
+                "message": "Please enter a valid 10-digit mobile number."
+            }), 400
+
+        # Password minimum length check
+        if len(password) < 6:
+            return jsonify({
+                "status": "error",
+                "message": "Password must be at least 6 characters long."
             }), 400
 
         users = get_all_users()
 
         # Check existing user
-        if any(u.get('phone') == phone or (email and u.get('email') == email) for u in users):
+        if any(u.get('phone') == clean_phone or (email and u.get('email', '').lower() == email) for u in users):
             return jsonify({
                 "status": "error",
-                "message": "An account with this phone number or email already exists. Please login."
+                "message": "An account with this mobile number or email already exists. Please login."
             }), 409
 
         user_id = f"USR-{role[:3].upper()}-{datetime.now().strftime('%y%m')}-{uuid.uuid4().hex[:4].upper()}"
@@ -646,29 +805,40 @@ def auth_signup():
             "id": user_id,
             "role": role,
             "name": name,
+            "owner_name": owner_name,
             "email": email,
-            "phone": phone,
-            "whatsapp": data.get('whatsapp', phone).strip(),
-            "specialization": data.get('specialization', ''),
-            "clinic_name": data.get('clinic_name', ''),
-            "reg_number": data.get('reg_number', ''),
-            "city": data.get('city', ''),
-            "password": password,
+            "phone": clean_phone,
+            "whatsapp": data.get('whatsapp', clean_phone).strip(),
+            "specialization": data.get('specialization', 'Diagnostic Pathology' if role == 'lab' else ''),
+            "clinic_name": data.get('clinic_name', name if role == 'lab' else ''),
+            "reg_number": reg_number,
+            "gst_number": gst_number,
+            "city": city or "Vijayawada",
+            "state": state,
+            "pincode": pincode,
+            "age": int(data.get('age', 32)) if str(data.get('age', '')).isdigit() else 32,
+            "gender": data.get('gender', 'Male'),
+            "blood_group": data.get('blood_group', 'O+'),
+            "address": address or f"{city or 'Vijayawada'}, Andhra Pradesh",
+            "password": generate_password_hash(password),
             "created_at": datetime.now().isoformat()
         }
 
         save_user(user_record)
 
+        # Set session for seamless login
+        clean_user = {k: v for k, v in user_record.items() if k != 'password'}
+        _ensure_patient_fields(clean_user)
+        session['user_id'] = user_record["id"]
+        session['user'] = clean_user
+
+        redirect_url = '/lab/dashboard' if role == 'lab' else ('/patient/dashboard' if role == 'patient' else '/')
+
         return jsonify({
             "status": "success",
             "message": f"Account successfully created! Welcome to Nhealth, {name}.",
-            "user": {
-                "id": user_record["id"],
-                "name": user_record["name"],
-                "role": user_record["role"],
-                "email": user_record["email"],
-                "phone": user_record["phone"]
-            }
+            "user": clean_user,
+            "redirect": redirect_url
         }), 201
 
     except Exception as e:
@@ -680,50 +850,76 @@ def auth_signup():
 
 @app.route('/api/auth/login', methods=['POST'])
 def auth_login():
-    """Handle authentication via credentials or demo login."""
+    """Handle secure authentication via credentials with rate-limiting."""
     try:
         data = request.get_json() if request.is_json else request.form.to_dict()
         identifier = data.get('identifier', '').strip()
         password = data.get('password', '').strip()
         role = data.get('role', '')
 
+        client_ip = request.remote_addr or 'unknown'
+        rate_key = f"{client_ip}:{identifier}"
+
+        # Rate-limiting / Brute-force lockout check
+        is_limited, wait_time = is_rate_limited(rate_key)
+        if is_limited:
+            return jsonify({
+                "status": "error",
+                "message": f"Too many failed login attempts. For security reasons, please wait {wait_time} seconds before trying again."
+            }), 429
+
         if not identifier:
             return jsonify({
                 "status": "error",
-                "message": "Please enter your Email or Phone Number."
+                "message": "Please enter your Mobile Number or Email."
+            }), 400
+
+        if not password:
+            return jsonify({
+                "status": "error",
+                "message": "Please enter your Password."
             }), 400
 
         users = get_all_users()
         identifier_lower = identifier.lower()
+        clean_digits = re.sub(r'\D', '', identifier)
 
         # Find matching user
         matched = None
         for u in users:
-            if u.get('email', '').lower() == identifier_lower or u.get('phone') == identifier:
-                if not password or u.get('password') == password:
-                    matched = u
-                    break
+            u_email = u.get('email', '').lower()
+            u_phone = re.sub(r'\D', '', str(u.get('phone', '')))
+            if (u_email and u_email == identifier_lower) or (clean_digits and u_phone == clean_digits):
+                matched = u
+                break
 
-        if not matched:
-            # Flexible demo login for user testing
-            matched = {
-                "id": f"USR-DEMO-{uuid.uuid4().hex[:4].upper()}",
-                "name": identifier.split('@')[0].capitalize() if '@' in identifier else "Valued User",
-                "role": role if role else "patient",
-                "email": identifier if '@' in identifier else f"{identifier}@nhealth.in",
-                "phone": identifier if identifier.isdigit() else "9876543210"
-            }
+        if not matched or not verify_password(matched.get('password', ''), password):
+            record_failed_attempt(rate_key)
+            return jsonify({
+                "status": "error",
+                "message": "Invalid mobile number/email or password. Please check your credentials."
+            }), 401
+
+        # Clear failed attempts on successful login
+        clear_failed_attempts(rate_key)
+
+        # Upgrade legacy plain-text password to secure hash if needed
+        if not matched.get('password', '').startswith(('pbkdf2:sha256:', 'scrypt:', 'argon2:')):
+            update_user(matched['id'], {'password': generate_password_hash(password)})
+
+        clean_user = {k: v for k, v in matched.items() if k != 'password'}
+        _ensure_patient_fields(clean_user)
+        session['user_id'] = matched['id']
+        session['user'] = clean_user
+
+        user_role = clean_user.get('role', 'patient')
+        redirect_url = '/lab/dashboard' if user_role == 'lab' else ('/patient/dashboard' if user_role == 'patient' else '/')
 
         return jsonify({
             "status": "success",
-            "message": f"Welcome back, {matched['name']}!",
-            "user": {
-                "id": matched["id"],
-                "name": matched["name"],
-                "role": matched.get("role", "patient"),
-                "email": matched.get("email", ""),
-                "phone": matched.get("phone", "")
-            }
+            "message": f"Welcome back, {clean_user['name']}!",
+            "user": clean_user,
+            "redirect": redirect_url
         }), 200
 
     except Exception as e:
@@ -731,6 +927,80 @@ def auth_login():
             "status": "error",
             "message": f"Login failed: {str(e)}"
         }), 500
+
+
+@app.route('/api/auth/logout', methods=['POST', 'GET'])
+def auth_logout():
+    """Clear session on logout."""
+    session.clear()
+    return jsonify({
+        "status": "success",
+        "message": "Logged out successfully"
+    }), 200
+
+
+@app.route('/api/user/profile', methods=['GET', 'POST'])
+def user_profile():
+    """Retrieve or update logged-in patient profile."""
+    try:
+        if request.method == 'GET':
+            patient = get_current_patient()
+            return jsonify({"status": "success", "user": patient}), 200
+
+        # POST: update profile
+        data = request.get_json() if request.is_json else request.form.to_dict()
+        user_id = data.get('id') or session.get('user_id')
+        
+        users = get_all_users()
+        target_user = None
+        if user_id:
+            for u in users:
+                if u.get('id') == user_id:
+                    target_user = u
+                    break
+        if not target_user and users:
+            target_user = users[-1]
+            user_id = target_user['id']
+
+        updates = {}
+        if 'name' in data and data['name'].strip():
+            updates['name'] = data['name'].strip()
+        if 'phone' in data and data['phone'].strip():
+            updates['phone'] = data['phone'].strip()
+        if 'email' in data and data['email'].strip():
+            updates['email'] = data['email'].strip()
+        if 'city' in data and data['city'].strip():
+            updates['city'] = data['city'].strip()
+        if 'age' in data:
+            try:
+                updates['age'] = int(data['age'])
+            except (ValueError, TypeError):
+                pass
+        if 'gender' in data and data['gender'].strip():
+            updates['gender'] = data['gender'].strip()
+        if 'blood_group' in data and data['blood_group'].strip():
+            updates['blood_group'] = data['blood_group'].strip()
+        if 'address' in data and data['address'].strip():
+            updates['address'] = data['address'].strip()
+
+        if user_id and updates:
+            update_user(user_id, updates)
+            for k, v in updates.items():
+                target_user[k] = v
+            clean_user = {k: v for k, v in target_user.items() if k != 'password'}
+            _ensure_patient_fields(clean_user)
+            session['user_id'] = clean_user['id']
+            session['user'] = clean_user
+            return jsonify({
+                "status": "success",
+                "message": "Patient profile updated successfully!",
+                "user": clean_user
+            }), 200
+        
+        return jsonify({"status": "error", "message": "No profile updates provided."}), 400
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Failed to update profile: {str(e)}"}), 500
 
 
 

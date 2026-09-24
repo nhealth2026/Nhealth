@@ -63,7 +63,10 @@
                             <i class="fa-regular fa-user"></i> Patient Sign Up
                         </a>
                         <a href="/signup/doctor" class="auth-role-tab">
-                            <i class="fa-solid fa-user-doctor"></i> Doctor / Partner
+                            <i class="fa-solid fa-user-doctor"></i> Doctor
+                        </a>
+                        <a href="/signup/lab" class="auth-role-tab">
+                            <i class="fa-solid fa-flask-vial"></i> Lab Partner
                         </a>
                     </div>
 
@@ -88,19 +91,19 @@
                         <!-- Full Name -->
                         <div class="auth-input-group">
                             <i class="fa-regular fa-user auth-field-icon"></i>
-                            <input type="text" name="name" id="patientName" class="auth-form-input" placeholder="Full Name" required>
+                            <input type="text" name="name" id="patientName" class="auth-form-input" placeholder="Full Name" required autocomplete="name">
                         </div>
 
                         <!-- Email Address -->
                         <div class="auth-input-group">
                             <i class="fa-regular fa-envelope auth-field-icon"></i>
-                            <input type="email" name="email" id="patientEmail" class="auth-form-input" placeholder="Email Address" required>
+                            <input type="email" name="email" id="patientEmail" class="auth-form-input" placeholder="Email Address" required autocomplete="email">
                         </div>
 
                         <!-- Phone Number -->
                         <div class="auth-input-group">
                             <i class="fa-solid fa-phone auth-field-icon"></i>
-                            <input type="tel" name="phone" id="patientPhone" class="auth-form-input" placeholder="Phone Number (10 digits)" maxlength="10" required>
+                            <input type="tel" name="phone" id="patientPhone" class="auth-form-input" placeholder="Phone Number (10 digits)" maxlength="10" required autocomplete="tel">
                         </div>
 
                         <!-- WhatsApp Number -->
@@ -124,20 +127,41 @@
                         <!-- Password -->
                         <div class="auth-input-group">
                             <i class="fa-solid fa-lock auth-field-icon"></i>
-                            <input type="password" name="password" id="patientPassword" class="auth-form-input" placeholder="Password" required>
+                            <input type="password" name="password" id="patientPassword" class="auth-form-input" placeholder="Password (min. 8 characters)" required autocomplete="new-password" oninput="evaluatePasswordStrength(this.value)">
                             <button type="button" class="auth-eye-toggle" onclick="togglePasswordVisibility('patientPassword', this)" aria-label="Toggle password visibility">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
                         </div>
 
+                        <!-- Live Password Strength Meter -->
+                        <div class="password-strength-container" id="passwordStrengthBox" style="display: none;">
+                            <div class="password-strength-header">
+                                <span class="strength-label-title">Password Security:</span>
+                                <span class="strength-label-text" id="strengthText" style="color: #ef4444;">Weak</span>
+                            </div>
+                            <div class="password-strength-bars">
+                                <div class="strength-bar-segment" id="bar1"></div>
+                                <div class="strength-bar-segment" id="bar2"></div>
+                                <div class="strength-bar-segment" id="bar3"></div>
+                                <div class="strength-bar-segment" id="bar4"></div>
+                            </div>
+                            <ul class="password-rules-list">
+                                <li class="password-rule-item" id="ruleLength"><i class="fa-solid fa-circle-xmark"></i> 8+ characters</li>
+                                <li class="password-rule-item" id="ruleNumber"><i class="fa-solid fa-circle-xmark"></i> 1+ number (0-9)</li>
+                                <li class="password-rule-item" id="ruleSymbol"><i class="fa-solid fa-circle-xmark"></i> 1+ special symbol</li>
+                                <li class="password-rule-item" id="ruleCase"><i class="fa-solid fa-circle-xmark"></i> Mixed case</li>
+                            </ul>
+                        </div>
+
                         <!-- Confirm Password -->
-                        <div class="auth-input-group">
+                        <div class="auth-input-group" style="margin-bottom: 8px;">
                             <i class="fa-solid fa-lock auth-field-icon"></i>
-                            <input type="password" name="confirm_password" id="patientConfirmPassword" class="auth-form-input" placeholder="Confirm Password" required>
+                            <input type="password" name="confirm_password" id="patientConfirmPassword" class="auth-form-input" placeholder="Confirm Password" required autocomplete="new-password" oninput="checkPasswordMatch()">
                             <button type="button" class="auth-eye-toggle" onclick="togglePasswordVisibility('patientConfirmPassword', this)" aria-label="Toggle password visibility">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
                         </div>
+                        <div class="password-match-badge" id="passwordMatchBadge"></div>
 
                         <!-- Terms Checkbox -->
                         <div class="auth-checkbox-group">
@@ -249,6 +273,96 @@
 
     <!-- Scripts -->
     <script>
+        // Live Password Strength Evaluator
+        function evaluatePasswordStrength(pwd) {
+            const box = document.getElementById('passwordStrengthBox');
+            if (!box) return;
+            if (!pwd) {
+                box.style.display = 'none';
+                return;
+            }
+            box.style.display = 'block';
+
+            const hasLength = pwd.length >= 8;
+            const hasNumber = /\d/.test(pwd);
+            const hasSymbol = /[^A-Za-z0-9]/.test(pwd);
+            const hasCase = /[a-z]/.test(pwd) && /[A-Z]/.test(pwd);
+
+            // Update rule checklist items
+            updateRuleUI('ruleLength', hasLength);
+            updateRuleUI('ruleNumber', hasNumber);
+            updateRuleUI('ruleSymbol', hasSymbol);
+            updateRuleUI('ruleCase', hasCase);
+
+            let score = 0;
+            if (hasLength) score++;
+            if (hasNumber) score++;
+            if (hasSymbol) score++;
+            if (hasCase) score++;
+
+            const textEl = document.getElementById('strengthText');
+            const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+
+            bars.forEach(b => b.className = 'strength-bar-segment');
+
+            if (score <= 1) {
+                textEl.textContent = 'Weak';
+                textEl.style.color = '#ef4444';
+                if (bars[0]) bars[0].classList.add('active-weak');
+            } else if (score === 2) {
+                textEl.textContent = 'Fair';
+                textEl.style.color = '#f59e0b';
+                bars[0].classList.add('active-fair');
+                bars[1].classList.add('active-fair');
+            } else if (score === 3) {
+                textEl.textContent = 'Good';
+                textEl.style.color = '#3b82f6';
+                bars[0].classList.add('active-good');
+                bars[1].classList.add('active-good');
+                bars[2].classList.add('active-good');
+            } else {
+                textEl.textContent = 'Strong';
+                textEl.style.color = '#10b981';
+                bars.forEach(b => b.classList.add('active-strong'));
+            }
+
+            checkPasswordMatch();
+        }
+
+        function updateRuleUI(ruleId, isValid) {
+            const el = document.getElementById(ruleId);
+            if (!el) return;
+            const icon = el.querySelector('i');
+            if (isValid) {
+                el.classList.add('valid');
+                if (icon) icon.className = 'fa-solid fa-circle-check';
+            } else {
+                el.classList.remove('valid');
+                if (icon) icon.className = 'fa-solid fa-circle-xmark';
+            }
+        }
+
+        function checkPasswordMatch() {
+            const pwd = document.getElementById('patientPassword').value;
+            const confirm = document.getElementById('patientConfirmPassword').value;
+            const badge = document.getElementById('passwordMatchBadge');
+            if (!badge) return;
+
+            if (!confirm) {
+                badge.style.display = 'none';
+                return;
+            }
+
+            badge.style.display = 'block';
+            if (pwd === confirm) {
+                badge.className = 'password-match-badge matched';
+                badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Passwords match securely';
+            } else {
+                badge.className = 'password-match-badge mismatched';
+                badge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Passwords do not match';
+            }
+        }
+
         function togglePasswordVisibility(fieldId, btn) {
             const input = document.getElementById(fieldId);
             const icon = btn.querySelector('i');
@@ -344,13 +458,18 @@
                 const data = await res.json();
 
                 if (res.ok && data.status === 'success') {
-                    alertBox.textContent = '🎉 ' + data.message + ' Redirecting to dashboard...';
+                    // Synchronize user to local storage for patient dashboard
+                    if (data.user) {
+                        localStorage.setItem('nhealth_user', JSON.stringify(data.user));
+                    }
+
+                    alertBox.textContent = '🎉 ' + data.message + ' Taking you to your dashboard...';
                     alertBox.className = 'auth-alert-box success';
                     alertBox.style.display = 'block';
                     showAuthToast('Welcome to Nhealth, ' + name + '!', 'success');
                     setTimeout(() => {
-                        window.location.href = '/login?role=patient&registered=1';
-                    }, 1800);
+                        window.location.href = '/patient/dashboard';
+                    }, 1200);
                 } else {
                     alertBox.textContent = data.message || 'Registration failed. Please try again.';
                     alertBox.className = 'auth-alert-box error';

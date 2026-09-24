@@ -1,0 +1,912 @@
+/* ==========================================================================
+   Nhealth Healthcare - Lab Authentication (lab_auth.css)
+   1:1 Match with Reference Specification (media_1790237387752.png)
+   Pixel-perfect Desktop/Laptop Frame & Responsive Mobile Layout
+   ========================================================================== */
+
+:root {
+    --lab-blue-primary: #1d4ed8;
+    --lab-blue-hover: #1e40af;
+    --lab-blue-light: #e0f2fe;
+    --lab-blue-accent: #0284c7;
+    --lab-navy: #0f172a;
+    --lab-text-body: #334155;
+    --lab-text-muted: #64748b;
+    --lab-border: #e2e8f0;
+    --lab-border-focus: #2563eb;
+    --lab-bg-light: #f8fafc;
+    --lab-showcase-bg: #f1f6fc;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.lab-auth-page {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--lab-text-body);
+    background-color: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==================== LAPTOP VIEW FRAME ==================== */
+.lab-auth-page-outer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 20px;
+    width: 100%;
+}
+
+.lab-auth-frame {
+    width: 100%;
+    max-width: 1040px;
+    background: #f1f6fc;
+    border-radius: 20px;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 4px 30px rgba(15, 23, 42, 0.04);
+    display: flex;
+    overflow: hidden;
+    min-height: 590px;
+    position: relative;
+}
+
+.lab-auth-frame.signup-frame {
+    max-width: 1180px;
+}
+
+.lab-auth-container {
+    display: flex;
+    width: 100%;
+}
+
+/* ==================== LEFT SHOWCASE PANEL ==================== */
+.lab-showcase-panel {
+    flex: 0 0 42%;
+    width: 42%;
+    background: #f1f6fc;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 34px 34px 0 34px;
+    position: relative;
+    overflow: hidden;
+}
+
+.signup-frame .lab-showcase-panel {
+    flex: 0 0 38%;
+    width: 38%;
+    padding: 34px 32px 0 32px;
+}
+
+.lab-showcase-top {
+    position: relative;
+    z-index: 2;
+}
+
+.lab-showcase-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    margin-bottom: 22px;
+}
+
+.lab-brand-symbol {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.lab-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.lab-brand-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #0c2340;
+    letter-spacing: -0.5px;
+}
+
+.lab-brand-tagline {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--lab-text-muted);
+}
+
+.lab-showcase-header {
+    margin-bottom: 20px;
+}
+
+.lab-showcase-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--lab-navy);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.lab-showcase-subtitle {
+    font-size: 0.86rem;
+    color: var(--lab-text-muted);
+    line-height: 1.45;
+    max-width: 360px;
+}
+
+/* 3 Value Propositions */
+.lab-features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.lab-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.lab-feature-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: #0284c7;
+    border: 1.5px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.lab-feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lab-feature-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--lab-navy);
+}
+
+.lab-feature-desc {
+    font-size: 0.78rem;
+    color: var(--lab-text-muted);
+    line-height: 1.35;
+}
+
+/* Microscope & Blue Glassware Background Image */
+.lab-showcase-bg-img {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: 320px;
+    height: 190px;
+    object-fit: cover;
+    object-position: bottom left;
+    pointer-events: none;
+    z-index: 1;
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%), linear-gradient(to right, rgba(0,0,0,1) 40%, rgba(0,0,0,0.1) 100%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%), linear-gradient(to right, rgba(0,0,0,1) 40%, rgba(0,0,0,0.1) 100%);
+    opacity: 0.95;
+}
+
+.signup-frame .lab-showcase-bg-img {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: bottom left;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
+.lab-showcase-footer {
+    display: none !important;
+}
+
+/* ==================== RIGHT FORM PANEL ==================== */
+.lab-form-panel {
+    flex: 0 0 58%;
+    width: 58%;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 34px;
+    overflow-y: auto;
+}
+
+.signup-frame .lab-form-panel {
+    flex: 0 0 64%;
+    width: 64%;
+    padding: 26px 28px;
+}
+
+/* Distinct White Card */
+.lab-auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 25px -4px rgba(15, 23, 42, 0.05);
+    padding: 32px 34px;
+}
+
+.lab-auth-card.signup-card {
+    max-width: 660px;
+    padding: 26px 30px;
+}
+
+/* Top Badge Icon */
+.lab-card-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.lab-top-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: var(--lab-blue-primary);
+    border: 2px solid #bae6fd;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.55rem;
+    margin-bottom: 12px;
+}
+
+.lab-card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--lab-navy);
+    margin-bottom: 4px;
+}
+
+.lab-card-subtitle {
+    font-size: 0.82rem;
+    color: var(--lab-text-muted);
+}
+
+/* Form Groups & Inputs */
+.lab-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 14px;
+}
+
+.lab-form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lab-forgot-link {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--lab-blue-accent);
+    text-decoration: none;
+}
+
+.lab-forgot-link:hover {
+    color: var(--lab-blue-primary);
+    text-decoration: underline;
+}
+
+.lab-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.lab-input-icon {
+    position: absolute;
+    left: 13px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.lab-form-input {
+    width: 100%;
+    height: 40px;
+    border: 1.5px solid var(--lab-border);
+    border-radius: 8px;
+    padding: 0 12px 0 38px;
+    font-family: inherit;
+    font-size: 0.86rem;
+    color: var(--lab-navy);
+    background: #ffffff;
+    transition: all 0.2s;
+}
+
+.lab-form-input.no-icon {
+    padding-left: 12px;
+}
+
+.lab-form-input::placeholder {
+    color: #94a3b8;
+}
+
+.lab-form-input:focus {
+    outline: none;
+    border-color: var(--lab-border-focus);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.lab-eye-toggle {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lab-eye-toggle:hover {
+    color: var(--lab-navy);
+}
+
+/* Integrated +91 Prefix for Phone Input */
+.lab-phone-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 1.5px solid var(--lab-border);
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.lab-phone-wrapper:focus-within {
+    border-color: var(--lab-border-focus);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.lab-phone-prefix {
+    height: 40px;
+    padding: 0 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+    background: #f8fafc;
+    border-right: 1.5px solid var(--lab-border);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.lab-phone-wrapper input.lab-form-input {
+    border: none;
+    box-shadow: none;
+    padding-left: 12px;
+    height: 38px;
+}
+
+/* Checkbox Row */
+.lab-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.lab-checkbox {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--lab-blue-primary);
+    cursor: pointer;
+}
+
+.lab-checkbox-label {
+    font-size: 0.8rem;
+    color: #475569;
+    cursor: pointer;
+    user-select: none;
+}
+
+.lab-checkbox-label a {
+    color: var(--lab-blue-accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Buttons */
+.lab-btn-primary {
+    width: 100%;
+    height: 42px;
+    background: var(--lab-blue-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    text-decoration: none;
+}
+
+.lab-btn-primary:hover {
+    background: var(--lab-blue-hover);
+}
+
+.lab-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 16px 0;
+    color: #94a3b8;
+    font-size: 0.78rem;
+}
+
+.lab-divider::before,
+.lab-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--lab-border);
+}
+
+.lab-divider span {
+    padding: 0 10px;
+}
+
+.lab-btn-outline {
+    width: 100%;
+    height: 42px;
+    background: #ffffff;
+    color: var(--lab-blue-primary);
+    border: 1.5px solid var(--lab-blue-primary);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.lab-btn-outline:hover {
+    background: #eff6ff;
+}
+
+.lab-disclaimer-text {
+    text-align: center;
+    font-size: 0.74rem;
+    color: var(--lab-text-muted);
+    margin-top: 18px;
+    line-height: 1.45;
+}
+
+.lab-disclaimer-text a {
+    color: var(--lab-blue-accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ==================== SIGNUP SECTIONS ==================== */
+.lab-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2563eb;
+    font-size: 0.86rem;
+    font-weight: 700;
+    margin: 16px 0 10px 0;
+    padding-bottom: 2px;
+}
+
+.lab-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.lab-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.lab-select {
+    width: 100%;
+    height: 40px;
+    border: 1.5px solid var(--lab-border);
+    border-radius: 8px;
+    padding: 0 30px 0 10px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--lab-navy);
+    background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 10px center / 16px 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.lab-select:focus {
+    outline: none;
+    border-color: var(--lab-border-focus);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Document Upload Cards */
+.lab-upload-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.lab-upload-card {
+    background: var(--lab-bg-light);
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.lab-upload-card:hover {
+    border-color: var(--lab-blue-accent);
+    background: #f0f9ff;
+}
+
+.lab-upload-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--lab-navy);
+}
+
+.lab-upload-subtitle {
+    font-size: 0.7rem;
+    color: var(--lab-text-muted);
+}
+
+.lab-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 5px 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--lab-blue-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.lab-upload-btn:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.lab-file-status {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #16a34a;
+    margin-top: 3px;
+    display: none;
+}
+
+/* Footer Link centered below card on Signup */
+.lab-card-footer-link {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 0.82rem;
+    color: var(--lab-text-muted);
+}
+
+.lab-card-footer-link a {
+    color: var(--lab-blue-primary);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* Alert Box */
+.lab-alert {
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    margin-bottom: 14px;
+    display: none;
+}
+
+.lab-alert.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.lab-alert.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+}
+
+/* ==================== MOBILE STEP WIZARD ==================== */
+.lab-mobile-wizard-bar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.lab-step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.lab-step-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e2e8f0;
+}
+
+.lab-step-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.lab-step-item.active .lab-step-circle {
+    background: var(--lab-blue-primary);
+    color: #ffffff;
+    border-color: var(--lab-blue-primary);
+}
+
+.lab-step-item.active .lab-step-label {
+    color: var(--lab-blue-primary);
+    font-weight: 700;
+}
+
+.lab-step-item.completed .lab-step-circle {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #10b981;
+}
+
+.lab-step-line {
+    position: absolute;
+    top: 14px;
+    left: 16%;
+    right: 16%;
+    height: 2px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+
+.lab-step-line-fill {
+    height: 100%;
+    background: var(--lab-blue-primary);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+/* Top Navbar on Mobile */
+.lab-mobile-navbar {
+    display: none;
+    background: #ffffff;
+    border-bottom: 1px solid var(--lab-border);
+    padding: 12px 18px;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.lab-nav-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.lab-menu-toggle {
+    background: transparent;
+    border: none;
+    font-size: 1.35rem;
+    color: var(--lab-navy);
+    cursor: pointer;
+}
+
+.lab-mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-bottom: 2px solid var(--lab-border);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 14px 18px;
+    z-index: 99;
+}
+
+.lab-mobile-drawer.open {
+    display: block;
+}
+
+.lab-drawer-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    color: var(--lab-navy);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.92rem;
+    border-radius: 6px;
+}
+
+.lab-drawer-link:hover, .lab-drawer-link.active {
+    background: var(--lab-blue-light);
+    color: var(--lab-blue-primary);
+}
+
+/* ==================== DESKTOP VS MOBILE VISIBILITY ==================== */
+@media (min-width: 992px) {
+    .lab-step-section {
+        display: block !important;
+    }
+    .mobile-only-btn, .mobile-step-nav {
+        display: none !important;
+    }
+    .lab-mobile-wizard-bar {
+        display: none !important;
+    }
+}
+
+/* ==================== RESPONSIVE OVERRIDES (< 992px) ==================== */
+@media (max-width: 991px) {
+    body.lab-auth-page {
+        background-color: #ffffff;
+    }
+
+    .lab-auth-page-outer {
+        padding: 14px 14px 40px 14px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .lab-auth-frame {
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        display: block;
+        min-height: auto;
+        background: #ffffff;
+        max-width: 520px;
+        margin: 0 auto;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .lab-mobile-navbar {
+        display: flex;
+    }
+
+    .lab-showcase-panel {
+        display: none;
+    }
+
+    .lab-auth-container {
+        flex-direction: column;
+    }
+
+    .lab-form-panel {
+        padding: 24px 18px 28px 18px;
+        background: #ffffff;
+        width: 100%;
+        flex: 1;
+        justify-content: flex-start;
+    }
+
+    .lab-auth-card {
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+    }
+
+    .lab-auth-card.signup-card {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .lab-grid-2, .lab-upload-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lab-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .lab-mobile-wizard-bar {
+        display: flex !important;
+    }
+
+    .mobile-only-btn {
+        display: block;
+    }
+
+    .mobile-step-nav {
+        display: flex;
+        gap: 10px;
+        margin-top: 14px;
+    }
+}

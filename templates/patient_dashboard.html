@@ -28,9 +28,9 @@
         <div class="pd-screen active-screen" id="mScreen1">
             <!-- App Header -->
             <div class="m-app-header">
-                <div class="m-location-box" onclick="showToast('Serving all areas in Vijayawada, Guntur & AP')">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span class="m-location-text">Vijayawada, AP</span>
+                <div class="m-location-box" onclick="openPatientProfileModal()" title="View Patient Profile">
+                    <i class="fa-solid fa-circle-user" style="color: var(--pd-teal-primary); font-size: 1.15rem;"></i>
+                    <span class="m-location-text" id="mHeaderPatientName">{{ user.name if user else 'Valued Patient' }}</span>
                     <i class="fa-solid fa-chevron-down m-location-chevron"></i>
                 </div>
                 <div class="m-header-actions">
@@ -52,7 +52,7 @@
             <div class="m-hero-symptom-card" onclick="goToScreen('mScreen2')">
                 <div class="m-symptom-card-info">
                     <h3>How are you feeling today?</h3>
-                    <p>Tell us your health concern and we'll guide you to the right specialist.</p>
+                    <p>Hello <strong id="mHeroPatientGreeting" style="color: var(--pd-teal-primary);">{{ user.name.split()[0] if user and user.name else 'Patient' }}</strong>! Tell us your health concern and we'll guide you to the right specialist.</p>
                     <div class="m-symptom-input-mock">
                         <span>Describe your symptoms...</span>
                         <i class="fa-solid fa-microphone"></i>
@@ -278,29 +278,29 @@
                     <h4>Patient Information</h4>
                     <div class="m-input-group">
                         <label class="m-input-label">Full Name</label>
-                        <input type="text" class="m-text-input" value="Ravi Kumar" id="mPatientName">
+                        <input type="text" class="m-text-input" value="{{ user.name if user else '' }}" id="mPatientName">
                     </div>
                     <div class="m-input-row-2">
                         <div class="m-input-group">
                             <label class="m-input-label">Age</label>
-                            <input type="number" class="m-text-input" value="32" id="mPatientAge">
+                            <input type="number" class="m-text-input" value="{{ user.age if user and user.age else 32 }}" id="mPatientAge">
                         </div>
                         <div class="m-input-group">
                             <label class="m-input-label">Gender</label>
                             <select class="m-text-input" id="mPatientGender">
-                                <option value="Male" selected>Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
+                                <option value="Male" {% if not user or user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if user and user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if user and user.gender == 'Other' %}selected{% endif %}>Other</option>
                             </select>
                         </div>
                     </div>
                     <div class="m-input-group">
                         <label class="m-input-label">Phone Number</label>
-                        <input type="tel" class="m-text-input" value="+91 9876543210" id="mPatientPhone">
+                        <input type="tel" class="m-text-input" value="{{ user.phone if user else '' }}" id="mPatientPhone">
                     </div>
                     <div class="m-input-group">
                         <label class="m-input-label">Email Address</label>
-                        <input type="email" class="m-text-input" value="ravi@gmail.com" id="mPatientEmail">
+                        <input type="email" class="m-text-input" value="{{ user.email if user else '' }}" id="mPatientEmail">
                     </div>
                 </div>
 
@@ -454,17 +454,22 @@
                     <button class="m-call-btn" style="width: 36px; height: 36px; font-size: 0.9rem;" onclick="endVideoCall('mobile')" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
 
-                <!-- Patient Picture-in-Picture -->
-                <div style="position: relative;">
-                    <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient Ravi" class="m-video-pip-patient" id="mPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
-                    <div class="video-off-overlay" id="mPipOverlay" style="display: none;">Camera Off</div>
+                <!-- Patient Picture-in-Picture (WebRTC Real Video & Avatar Fallback) -->
+                <div class="m-video-pip-patient" id="mPatientPipContainer">
+                    <video id="mPatientRealVideo" autoplay playsinline muted style="display: none;"></video>
+                    <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient Video" id="mPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
+                    <div class="video-off-overlay" id="mPipOverlay" style="display: none;">
+                        <i class="fa-solid fa-video-slash"></i>
+                        <span>Camera Off</span>
+                    </div>
+                    <div class="pip-label">You</div>
                 </div>
 
                 <!-- Floating Controls -->
                 <div class="m-video-controls-bar">
-                    <button class="m-call-btn btn-mute" onclick="toggleMute(this)" aria-label="Mute" title="Mute Microphone"><i class="fa-solid fa-microphone"></i></button>
-                    <button class="m-call-btn btn-video" onclick="toggleVideo(this, 'mPatientPip', 'mPipOverlay')" aria-label="Camera" title="Camera On/Off"><i class="fa-solid fa-video"></i></button>
-                    <button class="m-call-btn btn-share" onclick="toggleScreenShare(this)" aria-label="Share" title="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                    <button class="m-call-btn btn-mute" id="mBtnMute" onclick="toggleMute(this)" aria-label="Mute" title="Mute Microphone"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="m-call-btn btn-video" id="mBtnVideo" onclick="toggleVideo(this)" aria-label="Camera" title="Camera On/Off"><i class="fa-solid fa-video"></i></button>
+                    <button class="m-call-btn btn-share" id="mBtnShare" onclick="toggleScreenShare(this)" aria-label="Share" title="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
                     <button class="m-call-btn" onclick="openDoctorChatModal()" aria-label="Chat" title="Chat with Doctor"><i class="fa-regular fa-comment-dots"></i></button>
                     <button class="m-call-btn" onclick="openVideoSettingsModal()" aria-label="Settings" title="Call Settings"><i class="fa-solid fa-ellipsis"></i></button>
                     <button class="m-call-btn btn-end" onclick="endVideoCall('mobile')" aria-label="End Call" title="End Call"><i class="fa-solid fa-phone-slash"></i></button>
@@ -496,6 +501,12 @@
                             <div class="m-rx-spec dyn-doc-reg">MBBS, MD &bull; Reg #APMC-74892</div>
                         </div>
                         <span class="m-rx-symbol">&#8478;</span>
+                    </div>
+
+                    <!-- Patient Details Bar -->
+                    <div style="background: #f1f5f9; border-radius: 8px; padding: 8px 10px; margin: 8px 0 12px 0; font-size: 0.74rem; display: flex; justify-content: space-between; text-align: left;">
+                        <div><strong>Patient:</strong> <span class="dyn-patient-name">{{ user.name if user else 'Valued Patient' }}</span> (<span class="dyn-patient-age-gender">{{ user.age if user and user.age else 32 }} Yrs &bull; {{ user.gender if user and user.gender else 'Male' }}</span>)</div>
+                        <div><strong>Date:</strong> <span class="dyn-rx-date">Today</span></div>
                     </div>
 
                     <div style="text-align: left; margin-bottom: 10px;">
@@ -600,8 +611,10 @@
                     <button class="d-icon-btn" onclick="openSosModal()" title="Emergency SOS" style="color: #ef4444;"><i class="fa-solid fa-shield-heart"></i></button>
                     <button class="d-icon-btn" onclick="showToast('You have 1 verified prescription')" aria-label="Notifications"><i class="fa-regular fa-bell"></i></button>
                     <div class="d-user-pill" onclick="openPatientProfileModal()" title="View Patient Profile">
-                        <img src="{{ url_for('static', filename='images/consultation/patient_ravi.png') }}" alt="Ravi Kumar" class="d-user-avatar" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}'">
-                        <span class="d-user-name">Ravi Kumar</span>
+                        <div id="dTopbarAvatarCircle" style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #0baaa2, #0e1b38); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 2px solid #0baaa2; flex-shrink: 0;">
+                            <span id="dTopbarUserInitials">{{ (user.name[0]|upper) if user and user.name else 'P' }}</span>
+                        </div>
+                        <span class="d-user-name" id="dTopbarUserName">{{ user.name if user else 'Valued Patient' }}</span>
                     </div>
                     <button class="d-icon-btn" onclick="handleLogout(event)" title="Logout" style="color: #ef4444;"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
                 </div>
@@ -795,25 +808,25 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                             <div class="m-input-group">
                                 <label class="m-input-label">Patient Full Name</label>
-                                <input type="text" class="m-text-input" value="Ravi Kumar">
+                                <input type="text" class="m-text-input" value="{{ user.name if user else '' }}" id="dPatientName">
                             </div>
                             <div class="m-input-group">
                                 <label class="m-input-label">Phone Number</label>
-                                <input type="tel" class="m-text-input" value="+91 9876543210">
+                                <input type="tel" class="m-text-input" value="{{ user.phone if user else '' }}" id="dPatientPhone">
                             </div>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                             <div class="m-input-group">
                                 <label class="m-input-label">Age</label>
-                                <input type="number" class="m-text-input" value="32">
+                                <input type="number" class="m-text-input" value="{{ user.age if user and user.age else 32 }}" id="dPatientAge">
                             </div>
                             <div class="m-input-group">
                                 <label class="m-input-label">Gender</label>
-                                <select class="m-text-input">
-                                    <option selected>Male</option>
-                                    <option>Female</option>
-                                    <option>Other</option>
+                                <select class="m-text-input" id="dPatientGender">
+                                    <option value="Male" {% if not user or user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                    <option value="Female" {% if user and user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                    <option value="Other" {% if user and user.gender == 'Other' %}selected{% endif %}>Other</option>
                                 </select>
                             </div>
                         </div>
@@ -902,7 +915,7 @@
                             </div>
                             <div class="m-receipt-row">
                                 <span>Appointment ID:</span>
-                                <span>NH-2026-9814</span>
+                                <span id="dAppointmentId">NH-2026-9814</span>
                             </div>
                             <div class="m-receipt-row">
                                 <span>Amount Paid:</span>
@@ -932,17 +945,22 @@
                             </div>
                         </div>
 
-                        <!-- Patient PiP Window -->
-                        <div style="position: relative;">
-                            <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient" class="d-video-pip-corner" id="dPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
-                            <div class="video-off-overlay" id="dPipOverlay" style="display: none; bottom: 150px; right: 70px; position: absolute;">Camera Off</div>
+                        <!-- Patient PiP Window (WebRTC Real Video & Avatar Fallback) -->
+                        <div class="d-video-pip-corner" id="dPatientPipContainer">
+                            <video id="dPatientRealVideo" autoplay playsinline muted style="display: none;"></video>
+                            <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient" id="dPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
+                            <div class="video-off-overlay" id="dPipOverlay" style="display: none;">
+                                <i class="fa-solid fa-video-slash"></i>
+                                <span>Camera Off</span>
+                            </div>
+                            <div class="pip-label">You (HD Feed)</div>
                         </div>
 
                         <!-- Floating Toolbar with Working Controls -->
                         <div class="d-video-toolbar">
-                            <button class="m-call-btn btn-mute" onclick="toggleMute(this)" title="Mute Microphone" aria-label="Mute"><i class="fa-solid fa-microphone"></i></button>
-                            <button class="m-call-btn btn-video" onclick="toggleVideo(this, 'dPatientPip', 'dPipOverlay')" title="Turn Off Camera" aria-label="Camera"><i class="fa-solid fa-video"></i></button>
-                            <button class="m-call-btn btn-share" onclick="toggleScreenShare(this)" title="Share Screen" aria-label="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                            <button class="m-call-btn btn-mute" id="dBtnMute" onclick="toggleMute(this)" title="Mute Microphone" aria-label="Mute"><i class="fa-solid fa-microphone"></i></button>
+                            <button class="m-call-btn btn-video" id="dBtnVideo" onclick="toggleVideo(this)" title="Turn Off Camera" aria-label="Camera"><i class="fa-solid fa-video"></i></button>
+                            <button class="m-call-btn btn-share" id="dBtnShare" onclick="toggleScreenShare(this)" title="Share Screen" aria-label="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
                             <button class="m-call-btn" onclick="openDoctorChatModal()" title="In-Call Chat with Doctor" aria-label="Chat"><i class="fa-regular fa-comment"></i></button>
                             <button class="m-call-btn" onclick="openVideoSettingsModal()" title="Call Settings & Fullscreen" aria-label="Settings"><i class="fa-solid fa-ellipsis"></i></button>
                             <button class="m-call-btn btn-end" onclick="endVideoCall('desktop')" title="End Consultation" aria-label="End Call"><i class="fa-solid fa-phone-slash"></i></button>
@@ -969,6 +987,13 @@
                                     <div style="font-size: 0.85rem; color: #64748b;" class="dyn-doc-reg">Nhealth Certified Telemedicine Specialist &bull; Reg: APMC-74892</div>
                                 </div>
                                 <span class="m-rx-symbol" style="font-size: 2.2rem;">&#8478;</span>
+                            </div>
+
+                            <!-- Patient Information Banner -->
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 16px; margin: 14px 0; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center;">
+                                <div><strong>Patient:</strong> <span class="dyn-patient-name">{{ user.name if user else 'Valued Patient' }}</span> &bull; <strong>ID:</strong> <span class="dyn-patient-id">{{ user.id if user else 'NH-2026' }}</span></div>
+                                <div><strong>Age / Gender:</strong> <span class="dyn-patient-age-gender">{{ user.age if user and user.age else 32 }} Yrs &bull; {{ user.gender if user and user.gender else 'Male' }}</span></div>
+                                <div><strong>Date:</strong> <span class="dyn-rx-date">Today</span></div>
                             </div>
 
                             <div style="margin: 16px 0 10px 0;">
@@ -1011,8 +1036,8 @@
                     </div>
                 </div>
                 <div class="pd-chat-body" id="chatMessagesBox">
-                    <div class="pd-chat-msg doctor">
-                        Hello Ravi! I have received your symptoms report. Please let me know if you are experiencing any fever, cough or chills right now.
+                    <div class="pd-chat-msg doctor" id="chatDoctorInitialMsg">
+                        Hello {{ user.name.split()[0] if user and user.name else 'Patient' }}! I have received your symptoms report. Please let me know if you are experiencing any fever, cough or chills right now.
                     </div>
                 </div>
                 <div class="pd-chat-footer">
@@ -1023,44 +1048,81 @@
         </div>
     </div>
 
-    <!-- 2. Patient Profile Modal (with Logout option) -->
+    <!-- 2. Patient Profile Modal (with Live Edit, Sync & Logout options) -->
     <div class="pd-modal-overlay" id="patientProfileModal">
-        <div class="pd-modal-card" style="max-width: 440px;">
+        <div class="pd-modal-card" style="max-width: 480px;">
             <button class="pd-modal-close-btn" onclick="closeModal('patientProfileModal')"><i class="fa-solid fa-xmark"></i></button>
             <div style="text-align: center; margin-bottom: 16px;">
-                <img src="{{ url_for('static', filename='images/consultation/patient_ravi.png') }}" alt="Ravi Kumar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center top; border: 3px solid var(--pd-teal-primary); margin-bottom: 8px;">
-                <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--pd-navy-dark);">Ravi Kumar</h3>
-                <span class="pd-badge-avail" style="background: #e0f2fe; color: #0284c7;">Active Patient &bull; ID #NH-9481</span>
+                <div id="modalPatientAvatarWrap" style="width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #0baaa2, #0e1b38); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; margin: 0 auto 8px auto; border: 3px solid var(--pd-teal-primary); box-shadow: 0 4px 14px rgba(11, 170, 162, 0.25);">
+                    <span id="modalPatientInitials">{{ (user.name[0]|upper) if user and user.name else 'P' }}</span>
+                </div>
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--pd-navy-dark);" id="modalPatientNameHeading">{{ user.name if user else 'Valued Patient' }}</h3>
+                <span class="pd-badge-avail" style="background: #e0f2fe; color: #0284c7;" id="modalPatientIdBadge">Active Patient &bull; ID #{{ user.id if user else 'NH-2026' }}</span>
             </div>
 
-            <div style="background: #f8fafc; border-radius: 14px; padding: 14px; margin-bottom: 16px; font-size: 0.84rem;">
-                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e2e8f0;">
-                    <span style="color: #64748b;">Age / Gender:</span>
-                    <strong>32 Yrs &bull; Male</strong>
+            <!-- Profile Info / Live Edit Form -->
+            <form id="patientProfileEditForm" onsubmit="savePatientProfile(event)" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Full Name</label>
+                        <input type="text" class="m-text-input" id="profileEditName" value="{{ user.name if user else '' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Phone Number</label>
+                        <input type="tel" class="m-text-input" id="profileEditPhone" value="{{ user.phone if user else '' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e2e8f0;">
-                    <span style="color: #64748b;">Blood Group:</span>
-                    <strong style="color: #ef4444;">B Positive (B+)</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e2e8f0;">
-                    <span style="color: #64748b;">Phone:</span>
-                    <strong>+91 98765 43210</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e2e8f0;">
-                    <span style="color: #64748b;">Email:</span>
-                    <strong>ravi@gmail.com</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding: 6px 0;">
-                    <span style="color: #64748b;">City:</span>
-                    <strong>Vijayawada, Andhra Pradesh</strong>
-                </div>
-            </div>
 
-            <div style="display: flex; gap: 10px;">
-                <button class="pd-btn-primary" style="flex: 1; padding: 10px;" onclick="showToast('Profile information updated'); closeModal('patientProfileModal');">Save Changes</button>
-                <button class="pd-btn-primary" style="flex: 1; padding: 10px; background: #ef4444;" onclick="handleLogout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
-                <button class="pd-btn-secondary" style="flex: 1; padding: 10px;" onclick="closeModal('patientProfileModal')">Close</button>
-            </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Email Address</label>
+                        <input type="email" class="m-text-input" id="profileEditEmail" value="{{ user.email if user else '' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">City / District</label>
+                        <input type="text" class="m-text-input" id="profileEditCity" value="{{ user.city if user else 'Vijayawada' }}" required style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Age</label>
+                        <input type="number" class="m-text-input" id="profileEditAge" value="{{ user.age if user and user.age else 32 }}" style="padding: 8px 12px; font-size: 0.85rem;">
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Gender</label>
+                        <select class="m-text-input" id="profileEditGender" style="padding: 8px 12px; font-size: 0.85rem;">
+                            <option value="Male" {% if not user or user.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if user and user.gender == 'Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if user and user.gender == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Blood Group</label>
+                        <select class="m-text-input" id="profileEditBlood" style="padding: 8px 12px; font-size: 0.85rem;">
+                            <option value="O+" {% if not user or user.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                            <option value="O-" {% if user and user.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                            <option value="A+" {% if user and user.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                            <option value="A-" {% if user and user.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                            <option value="B+" {% if user and user.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                            <option value="B-" {% if user and user.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                            <option value="AB+" {% if user and user.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                            <option value="AB-" {% if user and user.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="m-input-group" style="margin-bottom: 0;">
+                    <label class="m-input-label" style="font-size: 0.72rem;">Care &amp; Delivery Address</label>
+                    <input type="text" class="m-text-input" id="profileEditAddress" value="{{ user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh') }}" placeholder="Door No, Street, Landmark" style="padding: 8px 12px; font-size: 0.85rem;">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 6px;">
+                    <button type="submit" class="pd-btn-primary" id="profileSaveBtn" style="flex: 2; padding: 10px;"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                    <button type="button" class="pd-btn-primary" style="flex: 1; padding: 10px; background: #ef4444;" onclick="handleLogout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+                    <button type="button" class="pd-btn-secondary" style="flex: 1; padding: 10px;" onclick="closeModal('patientProfileModal')">Close</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1109,12 +1171,12 @@
 
             <div class="m-input-group">
                 <label class="m-input-label">Patient Name</label>
-                <input type="text" class="m-text-input" value="Ravi Kumar" id="bookingPatientName">
+                <input type="text" class="m-text-input" value="{{ user.name if user else '' }}" id="bookingPatientName">
             </div>
 
             <div class="m-input-group">
                 <label class="m-input-label">Service Address in AP</label>
-                <input type="text" class="m-text-input" value="Flat 402, Sri Krishna Towers, Benz Circle, Vijayawada" id="bookingAddress">
+                <input type="text" class="m-text-input" value="{{ user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh') }}" id="bookingAddress">
             </div>
 
             <div class="m-input-row-2">
@@ -1300,6 +1362,115 @@
                 advice: "Avoid squatting and stairs, apply hot compress for 15 mins daily, perform gentle quadriceps strengthening exercises."
             }
         ];
+
+        // Logged-in Patient Context (Automatic & Dynamic)
+        let CURRENT_USER = {
+            id: {{ (user.id if user else 'NH-2026')|tojson }},
+            name: {{ (user.name if user else 'Valued Patient')|tojson }},
+            email: {{ (user.email if user else '')|tojson }},
+            phone: {{ (user.phone if user else '')|tojson }},
+            city: {{ (user.city if user else 'Vijayawada')|tojson }},
+            age: {{ (user.age if user and user.age else 32)|tojson }},
+            gender: {{ (user.gender if user and user.gender else 'Male')|tojson }},
+            blood_group: {{ (user.blood_group if user and user.blood_group else 'O+')|tojson }},
+            address: {{ (user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh'))|tojson }}
+        };
+
+        // Synchronize with local storage if available from previous login/signup
+        try {
+            const stored = localStorage.getItem('nhealth_user');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (parsed && parsed.name) {
+                    CURRENT_USER = Object.assign({}, CURRENT_USER, parsed);
+                }
+            }
+        } catch (e) {}
+
+        function populatePatientDetails(u) {
+            if (!u) return;
+
+            // 1. Mobile Header & Greeting
+            const mHeaderName = document.getElementById('mHeaderPatientName');
+            if (mHeaderName) mHeaderName.textContent = u.name;
+            const mGreeting = document.getElementById('mHeroPatientGreeting');
+            if (mGreeting) mGreeting.textContent = u.name.split(' ')[0];
+
+            // 2. Mobile Booking Fields
+            const mName = document.getElementById('mPatientName');
+            if (mName && (!mName.value || mName.value === 'Ravi Kumar')) mName.value = u.name;
+            const mAge = document.getElementById('mPatientAge');
+            if (mAge) mAge.value = u.age || 32;
+            const mGender = document.getElementById('mPatientGender');
+            if (mGender && u.gender) mGender.value = u.gender;
+            const mPhone = document.getElementById('mPatientPhone');
+            if (mPhone && (!mPhone.value || mPhone.value.includes('9876543210'))) mPhone.value = u.phone;
+            const mEmail = document.getElementById('mPatientEmail');
+            if (mEmail && (!mEmail.value || mEmail.value === 'ravi@gmail.com')) mEmail.value = u.email;
+
+            // 3. Desktop Topbar
+            const dName = document.getElementById('dTopbarUserName');
+            if (dName) dName.textContent = u.name;
+            const dInitials = document.getElementById('dTopbarUserInitials');
+            if (dInitials) dInitials.textContent = (u.name[0] || 'P').toUpperCase();
+
+            // 4. Desktop Booking Fields
+            const dPatName = document.getElementById('dPatientName');
+            if (dPatName && (!dPatName.value || dPatName.value === 'Ravi Kumar')) dPatName.value = u.name;
+            const dPatPhone = document.getElementById('dPatientPhone');
+            if (dPatPhone && (!dPatPhone.value || dPatPhone.value.includes('9876543210'))) dPatPhone.value = u.phone;
+            const dPatAge = document.getElementById('dPatientAge');
+            if (dPatAge) dPatAge.value = u.age || 32;
+            const dPatGender = document.getElementById('dPatientGender');
+            if (dPatGender && u.gender) dPatGender.value = u.gender;
+
+            // 5. Service Booking Modal
+            const bookName = document.getElementById('bookingPatientName');
+            if (bookName && (!bookName.value || bookName.value === 'Ravi Kumar')) bookName.value = u.name;
+            const bookAddr = document.getElementById('bookingAddress');
+            if (bookAddr && (!bookAddr.value || bookAddr.value.includes('Flat 402'))) {
+                bookAddr.value = u.address || `${u.city || 'Vijayawada'}, Andhra Pradesh`;
+            }
+
+            // 6. Doctor Chat Initial Message
+            const chatDocMsg = document.getElementById('chatDoctorInitialMsg');
+            if (chatDocMsg) {
+                chatDocMsg.innerHTML = `Hello <strong>${u.name.split(' ')[0]}</strong>! I have received your symptoms report. Please let me know if you are experiencing any fever, cough or chills right now.`;
+            }
+
+            // 7. Profile Modal
+            const profInitials = document.getElementById('modalPatientInitials');
+            if (profInitials) profInitials.textContent = (u.name[0] || 'P').toUpperCase();
+            const profHeading = document.getElementById('modalPatientNameHeading');
+            if (profHeading) profHeading.textContent = u.name;
+            const profBadge = document.getElementById('modalPatientIdBadge');
+            if (profBadge) profBadge.innerHTML = `Active Patient &bull; ID #${u.id}`;
+
+            const editName = document.getElementById('profileEditName');
+            if (editName) editName.value = u.name;
+            const editPhone = document.getElementById('profileEditPhone');
+            if (editPhone) editPhone.value = u.phone;
+            const editEmail = document.getElementById('profileEditEmail');
+            if (editEmail) editEmail.value = u.email;
+            const editCity = document.getElementById('profileEditCity');
+            if (editCity) editCity.value = u.city || 'Vijayawada';
+            const editAge = document.getElementById('profileEditAge');
+            if (editAge) editAge.value = u.age || 32;
+            const editGender = document.getElementById('profileEditGender');
+            if (editGender && u.gender) editGender.value = u.gender;
+            const editBlood = document.getElementById('profileEditBlood');
+            if (editBlood && u.blood_group) editBlood.value = u.blood_group;
+            const editAddr = document.getElementById('profileEditAddress');
+            if (editAddr) editAddr.value = u.address || `${u.city || 'Vijayawada'}, Andhra Pradesh`;
+
+            // 8. Prescriptions
+            document.querySelectorAll('.dyn-patient-name').forEach(el => el.textContent = u.name);
+            document.querySelectorAll('.dyn-patient-id').forEach(el => el.textContent = u.id);
+            document.querySelectorAll('.dyn-patient-age-gender').forEach(el => el.textContent = `${u.age || 32} Yrs • ${u.gender || 'Male'}`);
+            
+            const todayStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            document.querySelectorAll('.dyn-rx-date').forEach(el => el.textContent = todayStr);
+        }
 
         let currentDoctor = DOCTORS[0];
 
@@ -1692,6 +1863,14 @@
 
         function simulatePaymentSuccess(viewMode) {
             showToast(`Processing payment of ₹${currentDoctor.fee}...`);
+            const randTxn = `TXN-NH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+            const randAppt = `NH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+            
+            const txnEl = document.getElementById('mTxnId');
+            if (txnEl) txnEl.textContent = randTxn;
+            const dApptEl = document.getElementById('dAppointmentId');
+            if (dApptEl) dApptEl.textContent = randAppt;
+
             setTimeout(() => {
                 if (viewMode === 'mobile') {
                     goToScreen('mScreen6');
@@ -1701,18 +1880,81 @@
             }, 600);
         }
 
-        // Video Call State
+        // Real-Time WebRTC Video Call State & Media Controllers
         let callTimerInterval = null;
         let callSeconds = 0;
+        let localUserMediaStream = null;
+        let localScreenStream = null;
+        let isAudioMuted = false;
+        let isVideoOff = false;
+        let isSharingScreen = false;
+
+        async function initRealTimeMedia() {
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+                        audio: true
+                    });
+                    localUserMediaStream = stream;
+
+                    // Attach to mobile and desktop patient video elements
+                    const mV = document.getElementById('mPatientRealVideo');
+                    const dV = document.getElementById('dPatientRealVideo');
+                    const mImg = document.getElementById('mPatientPip');
+                    const dImg = document.getElementById('dPatientPip');
+
+                    if (mV) {
+                        mV.srcObject = stream;
+                        mV.style.display = 'block';
+                        mV.play().catch(() => {});
+                    }
+                    if (dV) {
+                        dV.srcObject = stream;
+                        dV.style.display = 'block';
+                        dV.play().catch(() => {});
+                    }
+                    if (mImg) mImg.style.display = 'none';
+                    if (dImg) dImg.style.display = 'none';
+
+                    showToast('🎥 Live camera and microphone connected in HD!');
+                } else {
+                    showToast('Live consultation active (HD Avatar Mode)');
+                }
+            } catch (err) {
+                console.log('Webcam/Mic access denied or unavailable:', err);
+                showToast('Consultation connected (HD Avatar Mode)');
+            }
+        }
 
         function startVideoCall(viewMode) {
             callSeconds = 0;
+            isAudioMuted = false;
+            isVideoOff = false;
+            isSharingScreen = false;
+            updateCallControlsUI();
+
             if (viewMode === 'mobile') {
                 goToScreen('mScreenVideo');
                 startTimer('mCallTimer');
             } else {
                 goToDeskScreen('dScreenVideo');
                 startTimer('dCallTimer');
+            }
+
+            // Initialize live webcam and audio
+            initRealTimeMedia();
+
+            // Doctor audio greeting simulation if supported
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.cancel();
+                    const docName = (currentDoctor && currentDoctor.name) ? currentDoctor.name : 'Dr. Priya Sharma';
+                    const utterance = new SpeechSynthesisUtterance(`Hello! This is ${docName}. I can see and hear you clearly. How can I assist you today?`);
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                } catch(e) {}
             }
         }
 
@@ -1729,50 +1971,139 @@
             }, 1000);
         }
 
-        function toggleMute(btn) {
-            btn.classList.toggle('active');
-            const icon = btn.querySelector('i');
-            if (btn.classList.contains('active')) {
-                icon.className = 'fa-solid fa-microphone-slash';
-                btn.style.background = '#ef4444';
-                showToast('Microphone muted');
+        function toggleMute(clickedBtn) {
+            isAudioMuted = !isAudioMuted;
+
+            if (localUserMediaStream) {
+                localUserMediaStream.getAudioTracks().forEach(track => {
+                    track.enabled = !isAudioMuted;
+                });
+            }
+
+            updateCallControlsUI();
+            showToast(isAudioMuted ? '🔇 Microphone muted' : '🎤 Microphone unmuted');
+        }
+
+        function toggleVideo(clickedBtn) {
+            isVideoOff = !isVideoOff;
+
+            if (localUserMediaStream) {
+                localUserMediaStream.getVideoTracks().forEach(track => {
+                    track.enabled = !isVideoOff;
+                });
+            }
+
+            // Toggle overlay on PiP boxes
+            const mOverlay = document.getElementById('mPipOverlay');
+            const dOverlay = document.getElementById('dPipOverlay');
+            const mV = document.getElementById('mPatientRealVideo');
+            const dV = document.getElementById('dPatientRealVideo');
+            const mImg = document.getElementById('mPatientPip');
+            const dImg = document.getElementById('dPatientPip');
+
+            if (isVideoOff) {
+                if (mOverlay) mOverlay.style.display = 'flex';
+                if (dOverlay) dOverlay.style.display = 'flex';
+                if (mV) mV.style.display = 'none';
+                if (dV) dV.style.display = 'none';
+                if (mImg) mImg.style.display = 'none';
+                if (dImg) dImg.style.display = 'none';
+                showToast('📷 Camera turned off');
             } else {
-                icon.className = 'fa-solid fa-microphone';
-                btn.style.background = '';
-                showToast('Microphone unmuted');
+                if (mOverlay) mOverlay.style.display = 'none';
+                if (dOverlay) dOverlay.style.display = 'none';
+                if (localUserMediaStream) {
+                    if (mV) mV.style.display = 'block';
+                    if (dV) dV.style.display = 'block';
+                } else {
+                    if (mImg) mImg.style.display = 'block';
+                    if (dImg) dImg.style.display = 'block';
+                }
+                showToast('🎥 Camera turned on');
+            }
+
+            updateCallControlsUI();
+        }
+
+        async function toggleScreenShare(clickedBtn) {
+            if (!isSharingScreen) {
+                try {
+                    if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+                        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                        localScreenStream = stream;
+                        isSharingScreen = true;
+                        updateCallControlsUI();
+                        showToast('🖥️ Screen sharing started — Live broadcast to doctor');
+
+                        stream.getVideoTracks()[0].onended = () => {
+                            stopScreenSharing();
+                        };
+                    } else {
+                        isSharingScreen = true;
+                        updateCallControlsUI();
+                        showToast('🖥️ Screen sharing mode simulated');
+                    }
+                } catch (err) {
+                    console.log('Screen sharing cancelled or unavailable:', err);
+                }
+            } else {
+                stopScreenSharing();
             }
         }
 
-        function toggleVideo(btn, pipImgId, overlayId) {
-            btn.classList.toggle('active');
-            const icon = btn.querySelector('i');
-            const pip = document.getElementById(pipImgId);
-            const overlay = document.getElementById(overlayId);
-
-            if (btn.classList.contains('active')) {
-                icon.className = 'fa-solid fa-video-slash';
-                btn.style.background = '#ef4444';
-                if (pip) pip.classList.add('video-pip-hidden');
-                if (overlay) overlay.style.display = 'block';
-                showToast('Camera turned off');
-            } else {
-                icon.className = 'fa-solid fa-video';
-                btn.style.background = '';
-                if (pip) pip.classList.remove('video-pip-hidden');
-                if (overlay) overlay.style.display = 'none';
-                showToast('Camera turned on');
+        function stopScreenSharing() {
+            if (localScreenStream) {
+                localScreenStream.getTracks().forEach(track => track.stop());
+                localScreenStream = null;
             }
+            isSharingScreen = false;
+            updateCallControlsUI();
+            showToast('Screen sharing stopped');
         }
 
-        function toggleScreenShare(btn) {
-            btn.classList.toggle('active');
-            if (btn.classList.contains('active')) {
-                btn.style.background = '#0baaa2';
-                showToast('Screen sharing started — Broadcasting in HD to doctor');
-            } else {
-                btn.style.background = '';
-                showToast('Screen sharing stopped');
-            }
+        function updateCallControlsUI() {
+            const muteBtns = [document.getElementById('mBtnMute'), document.getElementById('dBtnMute')];
+            const videoBtns = [document.getElementById('mBtnVideo'), document.getElementById('dBtnVideo')];
+            const shareBtns = [document.getElementById('mBtnShare'), document.getElementById('dBtnShare')];
+
+            muteBtns.forEach(btn => {
+                if (!btn) return;
+                const icon = btn.querySelector('i');
+                if (isAudioMuted) {
+                    btn.classList.add('active');
+                    btn.style.background = '#ef4444';
+                    if (icon) icon.className = 'fa-solid fa-microphone-slash';
+                } else {
+                    btn.classList.remove('active');
+                    btn.style.background = '';
+                    if (icon) icon.className = 'fa-solid fa-microphone';
+                }
+            });
+
+            videoBtns.forEach(btn => {
+                if (!btn) return;
+                const icon = btn.querySelector('i');
+                if (isVideoOff) {
+                    btn.classList.add('active');
+                    btn.style.background = '#ef4444';
+                    if (icon) icon.className = 'fa-solid fa-video-slash';
+                } else {
+                    btn.classList.remove('active');
+                    btn.style.background = '';
+                    if (icon) icon.className = 'fa-solid fa-video';
+                }
+            });
+
+            shareBtns.forEach(btn => {
+                if (!btn) return;
+                if (isSharingScreen) {
+                    btn.style.background = '#0baaa2';
+                    btn.style.boxShadow = '0 0 12px rgba(11, 170, 162, 0.7)';
+                } else {
+                    btn.style.background = '';
+                    btn.style.boxShadow = '';
+                }
+            });
         }
 
         function openVideoSettingsModal() {
@@ -1797,6 +2128,20 @@
 
         function endVideoCall(viewMode) {
             clearInterval(callTimerInterval);
+
+            // Cleanly stop all media tracks
+            if (localUserMediaStream) {
+                localUserMediaStream.getTracks().forEach(track => track.stop());
+                localUserMediaStream = null;
+            }
+            if (localScreenStream) {
+                localScreenStream.getTracks().forEach(track => track.stop());
+                localScreenStream = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
             showToast('Consultation completed. Preparing clinical prescription...');
             setTimeout(() => {
                 if (viewMode === 'mobile') {
@@ -1861,10 +2206,66 @@
             if (modal) modal.classList.remove('active');
         }
 
-        // Logout Handler
-        function handleLogout(event) {
+        // Patient Profile Save Handler (Saves to server and syncs locally)
+        async function savePatientProfile(e) {
+            e.preventDefault();
+            const saveBtn = document.getElementById('profileSaveBtn');
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            }
+
+            const payload = {
+                id: CURRENT_USER.id,
+                name: document.getElementById('profileEditName')?.value.trim() || CURRENT_USER.name,
+                phone: document.getElementById('profileEditPhone')?.value.trim() || CURRENT_USER.phone,
+                email: document.getElementById('profileEditEmail')?.value.trim() || CURRENT_USER.email,
+                city: document.getElementById('profileEditCity')?.value.trim() || CURRENT_USER.city,
+                age: document.getElementById('profileEditAge')?.value || CURRENT_USER.age,
+                gender: document.getElementById('profileEditGender')?.value || CURRENT_USER.gender,
+                blood_group: document.getElementById('profileEditBlood')?.value || CURRENT_USER.blood_group,
+                address: document.getElementById('profileEditAddress')?.value.trim() || CURRENT_USER.address
+            };
+
+            try {
+                const res = await fetch('/api/user/profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    CURRENT_USER = Object.assign({}, CURRENT_USER, data.user);
+                    localStorage.setItem('nhealth_user', JSON.stringify(CURRENT_USER));
+                    populatePatientDetails(CURRENT_USER);
+                    showToast('Profile information updated successfully!');
+                    closeModal('patientProfileModal');
+                } else {
+                    showToast(data.message || 'Failed to update profile');
+                }
+            } catch (err) {
+                // If offline or network issue, still update locally
+                CURRENT_USER = Object.assign({}, CURRENT_USER, payload);
+                localStorage.setItem('nhealth_user', JSON.stringify(CURRENT_USER));
+                populatePatientDetails(CURRENT_USER);
+                showToast('Profile saved locally!');
+                closeModal('patientProfileModal');
+            } finally {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+                }
+            }
+        }
+
+        // Logout Handler (Clears session & localStorage securely)
+        async function handleLogout(event) {
             if (event) event.preventDefault();
             showToast('Logging out of Nhealth patient portal...');
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (e) {}
+            localStorage.removeItem('nhealth_user');
             setTimeout(() => {
                 window.location.href = '/login';
             }, 600);
@@ -1912,6 +2313,7 @@
 
         // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', () => {
+            populatePatientDetails(CURRENT_USER);
             renderDoctorCards();
             selectDoctor('priya-sharma');
         });
