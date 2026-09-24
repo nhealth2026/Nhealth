@@ -50,5 +50,61 @@
     "city": "Vijayawada",
     "password": "password123",
     "created_at": "2026-09-22T21:23:31.721891"
+  },
+  {
+    "id": "USR-PAT-2609-C655",
+    "role": "patient",
+    "name": "Pendala Shiva",
+    "email": "shivapendala9@gmail.com",
+    "phone": "8008529416",
+    "whatsapp": "8008529416",
+    "specialization": "",
+    "clinic_name": "",
+    "reg_number": "",
+    "city": "Tirupati",
+    "password": "Shiva@123",
+    "created_at": "2026-09-23T14:47:03.210069"
+  },
+  {
+    "id": "USR-PAT-2609-E5A5",
+    "role": "patient",
+    "name": "kumar",
+    "email": "kumar@gmail.com",
+    "phone": "9391504451",
+    "whatsapp": "9391504451",
+    "specialization": "",
+    "clinic_name": "",
+    "reg_number": "",
+    "city": "Vizianagaram",
+    "password": "kumar123",
+    "created_at": "2026-09-23T17:22:07.042420"
+  },
+  {
+    "id": "USR-PAT-2609-93FA",
+    "role": "patient",
+    "name": "harish",
+    "email": "harish@gmail.com",
+    "phone": "8106376626",
+    "whatsapp": "8106376626",
+    "specialization": "",
+    "clinic_name": "",
+    "reg_number": "",
+    "city": "Vijayawada",
+    "password": "Harish@123",
+    "created_at": "2026-09-23T17:31:13.639417"
+  },
+  {
+    "id": "USR-PAT-2609-C515",
+    "role": "patient",
+    "name": "ravikumar",
+    "email": "ravikumar@gmail.com",
+    "phone": "8919512224",
+    "whatsapp": "8919512224",
+    "specialization": "",
+    "clinic_name": "",
+    "reg_number": "",
+    "city": "Vijayawada",
+    "password": "ravikumar123",
+    "created_at": "2026-09-23T17:45:46.993480"
   }
 ]

@@ -302,7 +302,8 @@
                     alertBox.style.display = 'block';
                     showAuthToast(data.message, 'success');
                     setTimeout(() => {
-                        window.location.href = '/';
+                        const targetUrl = (data.user && data.user.role === 'doctor') ? '/' : '/patient/dashboard';
+                        window.location.href = targetUrl;
                     }, 1400);
                 } else {
                     alertBox.textContent = data.message || 'Invalid credentials.';
@@ -337,7 +338,7 @@
                 alertBox.className = 'auth-alert-box success';
                 alertBox.style.display = 'block';
                 setTimeout(() => {
-                    window.location.href = '/';
+                    window.location.href = '/patient/dashboard';
                 }, 1200);
             }, 1000);
         }

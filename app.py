@@ -565,6 +565,14 @@ def book_appointment():
         }), 500
 
 
+@app.route('/patient/dashboard')
+@app.route('/dashboard')
+@app.route('/consultation')
+def patient_dashboard():
+    """Render the Patient Online Consultation & Healthcare Dashboard (Mobile + Laptop views)."""
+    return render_template('patient_dashboard.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/login')
 def login_page():
     """Render the Login page."""
