@@ -138,6 +138,36 @@ def release_connection(conn):
         except Exception:
             pass
 
+from datetime import datetime, date
+
+def json_serial(obj):
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    return str(obj)
+
+def safe_json(d):
+    return Json(d, dumps=lambda o: json.dumps(o, default=json_serial))
+
+def _clean_record(rec):
+    """Recursively convert datetime/date objects to ISO format strings."""
+    if not isinstance(rec, dict):
+        return rec
+    cleaned = {}
+    for k, v in rec.items():
+        if isinstance(v, (datetime, date)):
+            cleaned[k] = v.isoformat()
+        elif isinstance(v, dict):
+            cleaned[k] = _clean_record(v)
+        elif isinstance(v, list):
+            cleaned[k] = [
+                _clean_record(item) if isinstance(item, dict)
+                else (item.isoformat() if isinstance(item, (datetime, date)) else item)
+                for item in v
+            ]
+        else:
+            cleaned[k] = v
+    return cleaned
+
 # ==================== USER OPERATIONS ====================
 
 def get_all_users():
@@ -155,7 +185,7 @@ def get_all_users():
                         for k, v in u['extra_data'].items():
                             if k not in u or u[k] is None:
                                 u[k] = v
-                    results.append(u)
+                    results.append(_clean_record(u))
                 return results
         except Exception as e:
             print(f"[DB Error get_all_users]: {e}")
@@ -168,16 +198,6 @@ def get_all_users():
             return json.load(f)
     except Exception:
         return []
-
-from datetime import datetime, date
-
-def json_serial(obj):
-    if isinstance(obj, (datetime, date)):
-        return obj.isoformat()
-    return str(obj)
-
-def safe_json(d):
-    return Json(d, dumps=lambda o: json.dumps(o, default=json_serial))
 
 def save_user(user_data):
     if _db_connected:
@@ -309,7 +329,7 @@ def get_all_bookings():
                         for k, v in b['extra_data'].items():
                             if k not in b:
                                 b[k] = v
-                    results.append(b)
+                    results.append(_clean_record(b))
                 return results
         except Exception as e:
             print(f"[DB Error get_all_bookings]: {e}")
@@ -354,7 +374,7 @@ def save_booking(booking_record):
                     'time_slot': booking_record.get('time_slot', ''),
                     'notes': booking_record.get('notes', ''),
                     'status': booking_record.get('status', 'Confirmed'),
-                    'extra_data': Json(extra)
+                    'extra_data': safe_json(extra)
                 })
                 conn.commit()
                 return True
@@ -370,10 +390,10 @@ def save_booking(booking_record):
             records = json.load(f)
             records.append(booking_record)
             f.seek(0)
-            json.dump(records, f, indent=2)
+            json.dump(records, f, indent=2, default=json_serial)
     except Exception:
         with open(BOOKINGS_FILE, 'w', encoding='utf-8') as f:
-            json.dump([booking_record], f, indent=2)
+            json.dump([booking_record], f, indent=2, default=json_serial)
     return True
 
 # ==================== CONTACTS OPERATIONS ====================
@@ -384,7 +404,7 @@ def get_all_contacts():
         try:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 cur.execute("SELECT * FROM contacts ORDER BY created_at DESC;")
-                return [dict(r) for r in cur.fetchall()]
+                return [_clean_record(dict(r)) for r in cur.fetchall()]
         except Exception as e:
             print(f"[DB Error get_all_contacts]: {e}")
         finally:
