@@ -15,107 +15,47 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- Lab Dashboard Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab_dashboard.css') }}?v=1.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab_dashboard.css') }}?v=2.0">
 </head>
 <body class="lab-portal-body">
 
-    <!-- ==================== TOP NAVIGATION BAR ==================== -->
-    <header class="lab-top-navbar">
-        <div class="lab-nav-left">
-            <a href="/lab/dashboard" class="lab-brand-link" aria-label="Nhealth Home">
-                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="lab-brand-logo-img">
-            </a>
-
-            <!-- Nav Pills — left-aligned next to logo -->
-            <nav class="lab-nav-middle">
-                <button class="lab-nav-pill active" id="navDashboard" onclick="setActiveNav('dashboard')">
-                    <i class="fa-solid fa-gauge"></i>
-                    <span>Dashboard</span>
-                </button>
-                <button class="lab-nav-pill" id="navPatients" onclick="setActiveNav('patients')">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Patients</span>
-                </button>
-                <button class="lab-nav-pill" id="navTests" onclick="setActiveNav('tests')">
-                    <i class="fa-solid fa-flask"></i>
-                    <span>Tests</span>
-                </button>
-                <button class="lab-nav-pill" id="navReports" onclick="setActiveNav('reports')">
-                    <i class="fa-regular fa-file-lines"></i>
-                    <span>Reports</span>
-                </button>
-            </nav>
-        </div>
-
-        <!-- Right User / Staff Menu -->
-        <div class="lab-nav-right">
-            <div style="position: relative;">
-                <button class="lab-staff-btn" onclick="toggleStaffMenu(event)" id="labStaffDropdownBtn">
-                    <div class="lab-staff-avatar">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <span id="navStaffName">Sri Venkateswara</span>
-                    <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: #64748b;"></i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <div id="staffMenu" class="lab-dropdown-menu">
-                    <div class="lab-dropdown-header">
-                        <div class="lab-dropdown-labname" id="menuLabName">{{ user.name if user and user.name else 'Sri Venkateswara Diagnostics' }}</div>
-                        <div class="lab-dropdown-id">ID: {{ user.id if user else 'NH-LAB-7492' }}</div>
-                    </div>
-                    <a href="javascript:void(0)" onclick="openReportModal(); closeStaffMenu();" class="lab-dropdown-item">
-                        <i class="fa-solid fa-print"></i>
-                        <span>Sample Report Preview</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openSettingsModal(); closeStaffMenu();" class="lab-dropdown-item">
-                        <i class="fa-solid fa-gear"></i>
-                        <span>Diagnostic Center Settings</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="handleLabLogout()" class="lab-dropdown-item logout">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        <span>Logout</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Mobile Hamburger Toggle -->
-            <button class="lab-mobile-menu-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Mobile Drawer Overlay -->
+    <!-- ==================== MOBILE DRAWER OVERLAY ==================== -->
     <div class="lab-mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="closeMobileSidebar()"></div>
 
-    <!-- ==================== MAIN WORKSPACE CONTAINER ==================== -->
-    <div class="lab-portal-container">
-        
-        <!-- ==================== LEFT SIDEBAR ==================== -->
-        <aside class="lab-sidebar" id="labSidebar">
-            <div class="lab-sidebar-mobile-header">
-                <div class="lab-sidebar-mobile-title">
-                    <i class="fa-solid fa-hospital"></i>
-                    <span id="mobileSidebarLabName">Diagnostic Center</span>
-                </div>
-                <button class="lab-sidebar-close-btn" onclick="closeMobileSidebar()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
+    <!-- ==================== FIXED LEFT SIDEBAR ==================== -->
+    <aside class="lab-sidebar" id="labSidebar">
 
+        <!-- Sidebar Logo -->
+        <div class="lab-sidebar-logo-wrap">
+            <a href="/lab/dashboard" class="lab-sidebar-logo-link">
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="lab-sidebar-logo-img">
+            </a>
+        </div>
+
+        <!-- Mobile close row -->
+        <div class="lab-sidebar-mobile-header">
+            <div class="lab-sidebar-mobile-title">
+                <i class="fa-solid fa-hospital"></i>
+                <span id="mobileSidebarLabName">Diagnostic Center</span>
+            </div>
+            <button class="lab-sidebar-close-btn" onclick="closeMobileSidebar()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Nav Items -->
+        <nav class="lab-sidebar-nav">
             <ul class="lab-sidebar-menu">
                 <li>
-                    <a class="lab-sidebar-item active" id="sideItemQueue" onclick="showScreen('queueScreen'); closeMobileSidebar();">
+                    <a class="lab-sidebar-item active" id="sideItemDashboard" onclick="setSidebarActive('dashboard'); showScreen('dashboardScreen'); closeMobileSidebar();">
                         <div class="lab-sidebar-item-left">
-                            <i class="fa-solid fa-list-check"></i>
-                            <span>Verification Queue</span>
+                            <i class="fa-solid fa-gauge"></i>
+                            <span>Dashboard</span>
                         </div>
-                        <span class="lab-count-badge" id="queueBadgeCount">12</span>
                     </a>
                 </li>
                 <li>
-                    <a class="lab-sidebar-item" id="sideItemSearch" onclick="focusPatientSearch(); closeMobileSidebar();">
+                    <a class="lab-sidebar-item" id="sideItemSearch" onclick="setSidebarActive('search'); focusPatientSearch(); closeMobileSidebar();">
                         <div class="lab-sidebar-item-left">
                             <i class="fa-solid fa-magnifying-glass"></i>
                             <span>Patient Search</span>
@@ -123,7 +63,24 @@
                     </a>
                 </li>
                 <li>
-                    <a class="lab-sidebar-item" id="sideItemResults" onclick="showScreen('selectScreen'); closeMobileSidebar();">
+                    <a class="lab-sidebar-item" id="sideItemQueue" onclick="setSidebarActive('patients'); showScreen('queueScreen'); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Patients</span>
+                        </div>
+                        <span class="lab-count-badge" id="queueBadgeCount">12</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="lab-sidebar-item" id="sideItemTests" onclick="setSidebarActive('tests'); showScreen('selectScreen'); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-flask"></i>
+                            <span>Tests</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a class="lab-sidebar-item" id="sideItemResults" onclick="setSidebarActive('results'); showScreen('resultsScreen'); closeMobileSidebar();">
                         <div class="lab-sidebar-item-left">
                             <i class="fa-solid fa-pen-to-square"></i>
                             <span>Enter Results</span>
@@ -131,7 +88,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="lab-sidebar-item" id="sideItemReports" onclick="openReportModal(); closeMobileSidebar();">
+                    <a class="lab-sidebar-item" id="sideItemReports" onclick="setSidebarActive('reports'); openReportModal(); closeMobileSidebar();">
                         <div class="lab-sidebar-item-left">
                             <i class="fa-regular fa-file-lines"></i>
                             <span>Reports</span>
@@ -139,7 +96,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="lab-sidebar-item" id="sideItemSettings" onclick="openSettingsModal(); closeMobileSidebar();">
+                    <a class="lab-sidebar-item" id="sideItemSettings" onclick="setSidebarActive('settings'); openSettingsModal(); closeMobileSidebar();">
                         <div class="lab-sidebar-item-left">
                             <i class="fa-solid fa-gear"></i>
                             <span>Settings</span>
@@ -147,20 +104,262 @@
                     </a>
                 </li>
             </ul>
+        </nav>
 
-            <div class="lab-sidebar-footer">
-                <button class="lab-sidebar-logout-btn" onclick="handleLabLogout()">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    <span>Logout</span>
+        <!-- Sidebar Footer: Logout -->
+        <div class="lab-sidebar-footer">
+            <button class="lab-sidebar-logout-btn" onclick="handleLabLogout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN WRAPPER (right of sidebar) ==================== -->
+    <div class="lab-main-wrapper">
+
+        <!-- ==================== TOP BAR ==================== -->
+        <header class="lab-topbar">
+            <!-- Mobile: Hamburger + Logo -->
+            <div class="lab-topbar-left">
+                <button class="lab-mobile-hamburger" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">
+                    <i class="fa-solid fa-bars"></i>
                 </button>
+                <a href="/lab/dashboard" class="lab-topbar-mobile-logo">
+                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" class="lab-topbar-logo-img">
+                </a>
             </div>
-        </aside>
 
-        <!-- ==================== MAIN INTERACTIVE CONTENT SCREENS ==================== -->
-        <main class="lab-main-content">
-            
-            <!-- SCREEN 1: SAMPLES AWAITING VERIFICATION (Verification Queue) -->
-            <div class="lab-card" id="queueScreen">
+            <!-- Right: Notification + Profile -->
+            <div class="lab-topbar-right">
+                <!-- Notification Bell -->
+                <div class="lab-notif-wrap" style="position:relative;">
+                    <button class="lab-notif-btn" aria-label="Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="lab-notif-badge">3</span>
+                    </button>
+                </div>
+
+                <!-- Admin Profile Button -->
+                <div style="position: relative;">
+                    <button class="lab-profile-btn" onclick="toggleStaffMenu(event)" id="labStaffDropdownBtn">
+                        <div class="lab-profile-avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="lab-profile-info">
+                            <span class="lab-profile-name" id="navStaffName">Sri Venkateswara</span>
+                            <span class="lab-profile-role">Lab Admin</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down lab-profile-chevron"></i>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="staffMenu" class="lab-dropdown-menu">
+                        <div class="lab-dropdown-header">
+                            <div class="lab-dropdown-labname" id="menuLabName">{{ user.name if user and user.name else 'Sri Venkateswara Diagnostics' }}</div>
+                            <div class="lab-dropdown-id">ID: {{ user.id if user else 'NH-LAB-7492' }}</div>
+                        </div>
+                        <a href="javascript:void(0)" onclick="openReportModal(); closeStaffMenu();" class="lab-dropdown-item">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Sample Report Preview</span>
+                        </a>
+                        <a href="javascript:void(0)" onclick="openSettingsModal(); closeStaffMenu();" class="lab-dropdown-item">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Diagnostic Center Settings</span>
+                        </a>
+                        <a href="javascript:void(0)" onclick="handleLabLogout()" class="lab-dropdown-item logout">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== MAIN CONTENT AREA ==================== -->
+        <main class="lab-content-area">
+
+            <!-- ==================== DASHBOARD SCREEN ==================== -->
+            <div id="dashboardScreen">
+
+                <!-- Page Title -->
+                <div class="lab-dash-page-header">
+                    <div>
+                        <h1 class="lab-dash-page-title">Dashboard</h1>
+                        <p class="lab-dash-page-sub">Welcome back, <strong>{{ user.name if user else 'Sri Venkateswara Diagnostics' }}</strong>!</p>
+                    </div>
+                </div>
+
+                <!-- ---- 4 Stat Cards ---- -->
+                <div class="lab-stat-cards-grid">
+                    <!-- Total Patients -->
+                    <div class="lab-stat-card">
+                        <div class="lab-stat-card-top">
+                            <div class="lab-stat-icon-circle" style="background:#EEF2FF;">
+                                <i class="fa-solid fa-users" style="color:#4361EE;"></i>
+                            </div>
+                            <svg viewBox="0 0 60 30" width="60" height="30">
+                                <polyline points="0,28 10,22 20,18 30,20 40,14 50,10 60,6" fill="none" stroke="#4361EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="lab-stat-number">512</div>
+                        <div class="lab-stat-label">Total Patients</div>
+                        <div class="lab-stat-period">This Month</div>
+                    </div>
+
+                    <!-- Tests Conducted -->
+                    <div class="lab-stat-card">
+                        <div class="lab-stat-card-top">
+                            <div class="lab-stat-icon-circle" style="background:#ECFDF5;">
+                                <i class="fa-solid fa-flask" style="color:#10b981;"></i>
+                            </div>
+                            <svg viewBox="0 0 60 30" width="60" height="30">
+                                <polyline points="0,26 10,20 20,24 30,16 40,12 50,8 60,4" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="lab-stat-number">1,243</div>
+                        <div class="lab-stat-label">Tests Conducted</div>
+                        <div class="lab-stat-period">This Month</div>
+                    </div>
+
+                    <!-- Results Entered -->
+                    <div class="lab-stat-card">
+                        <div class="lab-stat-card-top">
+                            <div class="lab-stat-icon-circle" style="background:#F5F3FF;">
+                                <i class="fa-solid fa-pen-to-square" style="color:#7c3aed;"></i>
+                            </div>
+                            <svg viewBox="0 0 60 30" width="60" height="30">
+                                <polyline points="0,28 10,24 20,20 30,22 40,15 50,11 60,7" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="lab-stat-number">980</div>
+                        <div class="lab-stat-label">Results Entered</div>
+                        <div class="lab-stat-period">This Month</div>
+                    </div>
+
+                    <!-- Pending Verifications -->
+                    <div class="lab-stat-card">
+                        <div class="lab-stat-card-top">
+                            <div class="lab-stat-icon-circle" style="background:#FFF7ED;">
+                                <i class="fa-solid fa-clock" style="color:#f59e0b;"></i>
+                            </div>
+                            <svg viewBox="0 0 60 30" width="60" height="30">
+                                <polyline points="0,10 10,14 20,12 30,18 40,16 50,22 60,24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="lab-stat-number">12</div>
+                        <div class="lab-stat-label">Pending Verifications</div>
+                        <div class="lab-stat-period">This Month</div>
+                    </div>
+                </div>
+
+                <!-- ---- Two Column Row ---- -->
+                <div class="lab-dash-two-col">
+
+                    <!-- LEFT: Recent Patients Table -->
+                    <div class="lab-card lab-dash-recent-patients">
+                        <div class="lab-dash-card-header">
+                            <h3 class="lab-dash-card-title">Recent Patients</h3>
+                            <button class="lab-dash-view-all-btn" onclick="setSidebarActive('patients'); showScreen('queueScreen');">View All</button>
+                        </div>
+                        <div class="lab-table-container">
+                            <table class="lab-queue-table" id="dashRecentPatientsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Patient ID</th>
+                                        <th>Patient Name</th>
+                                        <th>Age / Gender</th>
+                                        <th>Registered On</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashRecentPatientsBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Tests Summary Donut -->
+                    <div class="lab-card lab-dash-tests-summary">
+                        <div class="lab-dash-card-header">
+                            <h3 class="lab-dash-card-title">Tests Summary</h3>
+                        </div>
+                        <div class="lab-donut-wrap">
+                            <div class="lab-donut">
+                                <div class="lab-donut-center">
+                                    <div class="lab-donut-total">1,243</div>
+                                    <div class="lab-donut-total-label">Total</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Legend -->
+                        <div class="lab-donut-legend">
+                            <div class="lab-legend-item">
+                                <span class="lab-legend-dot" style="background:#4361EE;"></span>
+                                <span class="lab-legend-text">Completed</span>
+                                <span class="lab-legend-val">780 <em>63%</em></span>
+                            </div>
+                            <div class="lab-legend-item">
+                                <span class="lab-legend-dot" style="background:#f59e0b;"></span>
+                                <span class="lab-legend-text">Pending</span>
+                                <span class="lab-legend-val">280 <em>22%</em></span>
+                            </div>
+                            <div class="lab-legend-item">
+                                <span class="lab-legend-dot" style="background:#10b981;"></span>
+                                <span class="lab-legend-text">In Progress</span>
+                                <span class="lab-legend-val">120 <em>10%</em></span>
+                            </div>
+                            <div class="lab-legend-item">
+                                <span class="lab-legend-dot" style="background:#ef4444;"></span>
+                                <span class="lab-legend-text">Cancelled</span>
+                                <span class="lab-legend-val">63 <em>5%</em></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---- Recent Activity ---- -->
+                <div class="lab-card lab-dash-activity">
+                    <div class="lab-dash-card-header">
+                        <h3 class="lab-dash-card-title">Recent Activity</h3>
+                    </div>
+                    <div class="lab-activity-list">
+                        <div class="lab-activity-row">
+                            <div class="lab-activity-icon-wrap" style="background:#ECFDF5;">
+                                <i class="fa-solid fa-circle-check" style="color:#10b981;"></i>
+                            </div>
+                            <div class="lab-activity-body">
+                                <div class="lab-activity-desc">Results entered for patient <strong>Ravi Teja</strong> (NH0001234)</div>
+                                <div class="lab-activity-time">20 May 2025, 10:30 AM</div>
+                            </div>
+                        </div>
+                        <div class="lab-activity-row">
+                            <div class="lab-activity-icon-wrap" style="background:#EEF2FF;">
+                                <i class="fa-solid fa-user-plus" style="color:#4361EE;"></i>
+                            </div>
+                            <div class="lab-activity-body">
+                                <div class="lab-activity-desc">New patient <strong>Lakshmi Devi</strong> (NH0001235) registered</div>
+                                <div class="lab-activity-time">20 May 2025, 09:45 AM</div>
+                            </div>
+                        </div>
+                        <div class="lab-activity-row">
+                            <div class="lab-activity-icon-wrap" style="background:#EEF2FF;">
+                                <i class="fa-solid fa-flask" style="color:#4361EE;"></i>
+                            </div>
+                            <div class="lab-activity-body">
+                                <div class="lab-activity-desc">Test <strong>CBC</strong> for patient <strong>Kiran Kumar</strong> (NH0001236) completed</div>
+                                <div class="lab-activity-time">19 May 2025, 04:15 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- END dashboardScreen -->
+
+            <!-- ==================== SCREEN 1: SAMPLES AWAITING VERIFICATION (Verification Queue) ==================== -->
+            <div class="lab-card" id="queueScreen" style="display: none;">
                 <div class="lab-screen-header">
                     <div>
                         <h2 class="lab-screen-title">Samples Awaiting Verification</h2>
@@ -216,7 +415,7 @@
                 </div>
             </div>
 
-            <!-- SCREEN 2: STEP 1 & 2: SELECT PATIENT & SELECT TEST -->
+            <!-- ==================== SCREEN 2: STEP 1 & 2: SELECT PATIENT & SELECT TEST ==================== -->
             <div class="lab-card" id="selectScreen" style="display: none;">
                 
                 <!-- 4-Step Wizard Progress Bar -->
@@ -345,7 +544,7 @@
                 </div>
             </div>
 
-            <!-- SCREEN 3: STEP 3: ENTER RESULTS -->
+            <!-- ==================== SCREEN 3: STEP 3: ENTER RESULTS ==================== -->
             <div class="lab-card" id="resultsScreen" style="display: none;">
                 
                 <!-- 4-Step Wizard Progress Bar -->
@@ -413,7 +612,7 @@
                 </div>
             </div>
 
-            <!-- SCREEN 4: STEP 4: SAVE & PRINT (SUCCESS CONFIRMATION) -->
+            <!-- ==================== SCREEN 4: STEP 4: SAVE & PRINT (SUCCESS CONFIRMATION) ==================== -->
             <div class="lab-card" id="confirmScreen" style="display: none;">
                 
                 <!-- 4-Step Wizard Progress Bar -->
@@ -481,7 +680,10 @@
             </div>
 
         </main>
+        <!-- END lab-content-area -->
+
     </div>
+    <!-- END lab-main-wrapper -->
 
     <!-- ==================== SCREEN 5: CLINICAL PRINTED REPORT MODAL ==================== -->
     <div class="lab-report-modal-backdrop" id="reportModal" onclick="if(event.target===this) closeReportModal()">
@@ -665,6 +867,30 @@
         </div>
     </div>
 
+    <!-- ==================== MOBILE BOTTOM NAV ==================== -->
+    <nav class="lab-mobile-bottom-nav">
+        <button onclick="setSidebarActive('dashboard'); showScreen('dashboardScreen');" class="lab-mob-nav-item active" id="mobNavDash">
+            <i class="fa-solid fa-gauge"></i>
+            <span>Home</span>
+        </button>
+        <button onclick="setSidebarActive('patients'); showScreen('queueScreen');" class="lab-mob-nav-item" id="mobNavPatients">
+            <i class="fa-solid fa-users"></i>
+            <span>Patients</span>
+        </button>
+        <button onclick="setSidebarActive('tests'); showScreen('selectScreen');" class="lab-mob-nav-item" id="mobNavTests">
+            <i class="fa-solid fa-flask"></i>
+            <span>Tests</span>
+        </button>
+        <button onclick="openReportModal()" class="lab-mob-nav-item">
+            <i class="fa-regular fa-file-lines"></i>
+            <span>Reports</span>
+        </button>
+        <button onclick="toggleMobileSidebar()" class="lab-mob-nav-item">
+            <i class="fa-solid fa-bars"></i>
+            <span>Menu</span>
+        </button>
+    </nav>
+
     <!-- ==================== JAVASCRIPT STATE CONTROLLER ==================== -->
     <script>
         // Full 12 Sample Patients matching User Verification Queue
@@ -784,40 +1010,83 @@
             loadSavedSettings();
             syncUserData();
             renderQueue();
+            renderDashboardRecentPatients();
             loadTestParameters(currentActiveTestCode);
+
+            // Default: show dashboard
+            showScreen('dashboardScreen');
 
             // Document click to close menus
             document.addEventListener('click', (e) => {
                 const staffMenu = document.getElementById('staffMenu');
                 const staffBtn = document.getElementById('labStaffDropdownBtn');
-                if (staffMenu && !staffBtn.contains(e.target) && !staffMenu.contains(e.target)) {
+                if (staffMenu && staffBtn && !staffBtn.contains(e.target) && !staffMenu.contains(e.target)) {
                     staffMenu.classList.remove('open');
                 }
             });
         });
 
-        // Top Navigation Pill Controller
-        function setActiveNav(navKey) {
-            const pills = ['navDashboard', 'navPatients', 'navTests', 'navReports'];
-            pills.forEach(p => {
-                const btn = document.getElementById(p);
-                if (btn) btn.classList.remove('active');
+        // ---- Sidebar Active State ----
+        function setSidebarActive(navKey) {
+            const items = {
+                'dashboard': 'sideItemDashboard',
+                'search':    'sideItemSearch',
+                'patients':  'sideItemQueue',
+                'tests':     'sideItemTests',
+                'results':   'sideItemResults',
+                'reports':   'sideItemReports',
+                'settings':  'sideItemSettings'
+            };
+            Object.values(items).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active');
             });
+            const target = items[navKey];
+            if (target) {
+                const el = document.getElementById(target);
+                if (el) el.classList.add('active');
+            }
+        }
 
+        // Top Navigation Pill Controller (kept for backward compat)
+        function setActiveNav(navKey) {
             if (navKey === 'dashboard') {
-                document.getElementById('navDashboard')?.classList.add('active');
-                showScreen('queueScreen');
+                setSidebarActive('dashboard');
+                showScreen('dashboardScreen');
             } else if (navKey === 'patients') {
-                document.getElementById('navPatients')?.classList.add('active');
+                setSidebarActive('patients');
                 showScreen('queueScreen');
                 focusPatientSearch();
             } else if (navKey === 'tests') {
-                document.getElementById('navTests')?.classList.add('active');
+                setSidebarActive('tests');
                 showScreen('selectScreen');
             } else if (navKey === 'reports') {
-                document.getElementById('navReports')?.classList.add('active');
+                setSidebarActive('reports');
                 openReportModal();
             }
+        }
+
+        // Render Recent Patients Table on Dashboard (first 5 from PATIENTS_QUEUE)
+        function renderDashboardRecentPatients() {
+            const tbody = document.getElementById('dashRecentPatientsBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const first5 = PATIENTS_QUEUE.slice(0, 5);
+            first5.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color:#64748b;font-weight:500;">${p.id}</td>
+                    <td style="font-weight:700;color:#0f172a;">${p.name}</td>
+                    <td style="color:#64748b;">${p.age}</td>
+                    <td style="color:#64748b;font-size:0.82rem;">${p.received}</td>
+                    <td style="text-align:center;">
+                        <button class="lab-dash-arrow-btn" onclick="verifyPatient('${p.id}')">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         // Filter and Render Queue Table & Mobile Cards
@@ -986,6 +1255,7 @@
         }
 
         function focusPatientSearch() {
+            setSidebarActive('search');
             showScreen('queueScreen');
             const input = document.getElementById('queueSearchInput');
             if (input) {
@@ -1038,20 +1308,23 @@
 
         // Switch Screen helper
         function showScreen(screenId) {
-            const screens = ['queueScreen', 'selectScreen', 'resultsScreen', 'confirmScreen'];
+            const screens = ['dashboardScreen', 'queueScreen', 'selectScreen', 'resultsScreen', 'confirmScreen'];
             screens.forEach(s => {
                 const el = document.getElementById(s);
                 if (el) el.style.display = (s === screenId) ? 'block' : 'none';
             });
 
-            // Update sidebar active state
-            document.getElementById('sideItemQueue')?.classList.toggle('active', screenId === 'queueScreen');
-            document.getElementById('sideItemResults')?.classList.toggle('active', screenId !== 'queueScreen');
+            // Update sidebar active state based on screen
+            if (screenId === 'dashboardScreen') setSidebarActive('dashboard');
+            else if (screenId === 'queueScreen') setSidebarActive('patients');
+            else if (screenId === 'selectScreen') setSidebarActive('tests');
+            else if (screenId === 'resultsScreen') setSidebarActive('results');
 
-            // Sync top pill
-            if (screenId === 'queueScreen') {
-                document.getElementById('navDashboard')?.classList.add('active');
-            }
+            // Update mobile bottom nav active state
+            document.querySelectorAll('.lab-mob-nav-item').forEach(btn => btn.classList.remove('active'));
+            if (screenId === 'dashboardScreen') document.getElementById('mobNavDash')?.classList.add('active');
+            else if (screenId === 'queueScreen') document.getElementById('mobNavPatients')?.classList.add('active');
+            else if (screenId === 'selectScreen') document.getElementById('mobNavTests')?.classList.add('active');
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1289,5 +1562,6 @@
             window.location.href = '/login/lab';
         }
     </script>
+
 </body>
 </html>
