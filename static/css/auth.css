@@ -174,7 +174,112 @@
     object-fit: contain;
 }
 
-/* Role Selector Tabs (Signup & Login pages - Desktop & Mobile) */
+/* Service & Account Role Selector Dropdown */
+.auth-service-selector-wrap {
+    margin-bottom: 1.15rem;
+    position: relative;
+    width: 100%;
+}
+
+.auth-service-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.auth-service-label .service-count-pill {
+    font-size: 0.68rem;
+    color: #0080ff;
+    background: #e0f2fe;
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-weight: 700;
+}
+
+.auth-service-dropdown-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 0 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-service-dropdown-box:focus-within,
+.auth-service-dropdown-box:hover {
+    border-color: #0080ff;
+    box-shadow: 0 4px 16px rgba(0, 128, 255, 0.14);
+}
+
+.auth-service-icon {
+    font-size: 1.05rem;
+    color: #0080ff;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.auth-service-dropdown-box:focus-within .auth-service-icon {
+    transform: scale(1.12);
+}
+
+.auth-service-select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 11px 26px 11px 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: #0a2540;
+    cursor: pointer;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.auth-service-select optgroup {
+    font-weight: 800;
+    color: #475569;
+    font-size: 0.8rem;
+    padding: 8px 0;
+    background: #f8fafc;
+}
+
+.auth-service-select option {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 0.86rem;
+    padding: 9px 12px;
+    background: #ffffff;
+}
+
+.auth-service-chevron {
+    position: absolute;
+    right: 14px;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    pointer-events: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.auth-service-dropdown-box:focus-within .auth-service-chevron {
+    color: #0080ff;
+    transform: rotate(180deg);
+}
+
+/* Legacy Role Selector Tabs (Preserved for compatibility) */
 .auth-role-tabs {
     display: flex;
     background: #f1f5f9;
@@ -228,17 +333,23 @@
 
 /* Role Badge Pill */
 .auth-role-badge {
-    display: inline-block;
-    padding: 6px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
     border: 1.5px solid #dce4ec;
     border-radius: 50px;
     font-size: 0.82rem;
     font-weight: 700;
-    color: #334155;
+    color: #0f172a;
     margin-bottom: 1.15rem;
     background: #f8fafc;
+    transition: all 0.2s ease;
 }
-    background: #f8fafc;
+
+.auth-role-badge i {
+    color: #0080ff;
+    font-size: 0.88rem;
 }
 
 /* Card Heading */

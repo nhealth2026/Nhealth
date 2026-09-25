@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Pharmacy Dashboard | Sai Medicals — Nhealth Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Pharmacy Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pharmacy_dashboard.css') }}?v=1.0">
+</head>
+<body class="pharma-body">
+
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside class="pharma-sidebar" id="pharmaSidebar">
+        <!-- Logo -->
+        <div class="pharma-sidebar-brand">
+            <a href="/" aria-label="Nhealth Home">
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal_light.png') }}" alt="Nhealth — Healthcare at Home" class="pharma-brand-logo-img">
+            </a>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="pharma-sidebar-nav">
+            <button class="pharma-nav-link active" onclick="setPharmaNavActive(this, 'dashboard')">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'orders')">
+                <i class="fa-solid fa-pills"></i>
+                <span>Medicine Orders</span>
+                <span class="pharma-nav-badge">3</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'prescriptions')">
+                <i class="fa-regular fa-clipboard-check"></i>
+                <span>Prescription Verification</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'inventory')">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span>Inventory</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'delivery')">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Medicine Delivery</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'customers')">
+                <i class="fa-solid fa-users"></i>
+                <span>Customers</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'revenue')">
+                <i class="fa-solid fa-sack-dollar"></i>
+                <span>Revenue</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'analytics')">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Analytics</span>
+            </button>
+            <button class="pharma-nav-link" onclick="setPharmaNavActive(this, 'notifications')">
+                <i class="fa-regular fa-bell"></i>
+                <span>Notifications</span>
+            </button>
+
+            <div class="pharma-sidebar-divider"></div>
+
+            <button class="pharma-nav-link" onclick="openProfileModal()">
+                <i class="fa-regular fa-user"></i>
+                <span>Profile</span>
+            </button>
+            <button class="pharma-nav-link" onclick="openSettingsModal()">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+
+        <!-- Sidebar Footer Card -->
+        <div class="pharma-sidebar-footer-card">
+            <img src="{{ url_for('static', filename='images/pharma_sidebar_illustration.png') }}" alt="Nhealth Pharmacy" class="pharma-sidebar-art">
+            <div class="pharma-sidebar-footer-title">NHealth Pharmacy</div>
+            <div class="pharma-sidebar-footer-sub">— Delivering Healthcare at Home —</div>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN WORKSPACE ==================== -->
+    <div class="pharma-main-wrap">
+
+        <!-- Top Header Bar -->
+        <header class="pharma-topbar">
+            <!-- Search Bar -->
+            <div class="pharma-search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="pharmaSearchInput" class="pharma-search-input" placeholder="Search medicine, order ID, patient name..." oninput="handlePharmaSearch(this.value)">
+            </div>
+
+            <!-- Right Profile & Actions -->
+            <div class="pharma-topbar-right">
+                <button class="pharma-icon-btn" onclick="toggleNotifications()" aria-label="Notifications" title="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="pharma-badge-dot">3</span>
+                </button>
+                <button class="pharma-icon-btn" onclick="showPharmaToast('Chat system: 2 customer queries pending', 'info')" aria-label="Messages" title="Messages">
+                    <i class="fa-regular fa-comment-dots"></i>
+                </button>
+
+                <!-- Pharmacy Profile Card -->
+                <div class="pharma-profile-card" onclick="toggleProfileDropdown()">
+                    <div class="pharma-avatar-circle">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <div class="pharma-profile-info">
+                        <span class="pharma-store-name">{{ user.name if user and user.name else 'Sai Medicals' }}</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="pharma-store-id">{{ user.id if user and user.id else 'PHA-000123' }}</span>
+                            <span class="pharma-verified-badge">Verified Pharmacy Partner</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem; color: #94a3b8; margin-left: 4px;"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="pharma-content">
+
+            <!-- Welcome Greeting & Online Switch Bar -->
+            <div class="pharma-greeting-bar">
+                <div class="pharma-greeting-text">
+                    <h1>Welcome Back, {{ user.name if user and user.name else 'Sai Medicals' }}!</h1>
+                    <p>Here's what's happening with your pharmacy today.</p>
+                </div>
+
+                <div class="pharma-status-toggle-pill">
+                    <div class="pharma-status-icon-wrap" id="onlineIconWrap">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <div class="pharma-status-details">
+                        <span class="pharma-status-label" id="onlineStatusLabel">Online</span>
+                        <span class="pharma-status-sub" id="onlineStatusSub">Ready to accept orders</span>
+                    </div>
+                    <label class="pharma-switch" title="Toggle store availability">
+                        <input type="checkbox" id="storeStatusToggle" checked onchange="toggleStoreStatus(this)">
+                        <span class="pharma-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Top 4 KPI Metrics -->
+            <div class="pharma-kpi-grid">
+                <!-- Total Orders -->
+                <div class="pharma-kpi-card">
+                    <div class="pharma-kpi-top">
+                        <div class="pharma-kpi-icon-wrap kpi-blue">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                        <div>
+                            <span class="pharma-kpi-title">Total Orders</span>
+                            <div class="pharma-kpi-val" id="kpiTotalOrders">1,250</div>
+                        </div>
+                    </div>
+                    <div class="pharma-kpi-trend">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>20% vs last 7 days</span>
+                    </div>
+                </div>
+
+                <!-- Pending Orders -->
+                <div class="pharma-kpi-card">
+                    <div class="pharma-kpi-top">
+                        <div class="pharma-kpi-icon-wrap kpi-green">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div>
+                            <span class="pharma-kpi-title">Pending Orders</span>
+                            <div class="pharma-kpi-val" id="kpiPendingOrders">86</div>
+                        </div>
+                    </div>
+                    <div class="pharma-kpi-trend">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>15% vs last 7 days</span>
+                    </div>
+                </div>
+
+                <!-- Today's Revenue -->
+                <div class="pharma-kpi-card">
+                    <div class="pharma-kpi-top">
+                        <div class="pharma-kpi-icon-wrap kpi-purple">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                        <div>
+                            <span class="pharma-kpi-title">Today's Revenue</span>
+                            <div class="pharma-kpi-val" id="kpiRevenue">₹24,500</div>
+                        </div>
+                    </div>
+                    <div class="pharma-kpi-trend">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span>18% vs last 7 days</span>
+                    </div>
+                </div>
+
+                <!-- Customer Rating -->
+                <div class="pharma-kpi-card">
+                    <div class="pharma-kpi-top">
+                        <div class="pharma-kpi-icon-wrap kpi-teal">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div>
+                            <span class="pharma-kpi-title">Customer Rating</span>
+                            <div class="pharma-kpi-val">4.8</div>
+                        </div>
+                    </div>
+                    <div class="pharma-kpi-subtext">
+                        (324 reviews)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle 2-Column Section -->
+            <div class="pharma-workspace-grid">
+                
+                <!-- Left Column: Medicine Orders & Prescription Verification -->
+                <div class="pharma-left-col">
+                    
+                    <!-- Medicine Orders Table Card -->
+                    <div class="pharma-card" id="medicineOrdersSection">
+                        <div class="pharma-card-header">
+                            <div class="pharma-card-title-wrap">
+                                <div class="pharma-card-icon-circle">
+                                    <i class="fa-solid fa-pills"></i>
+                                </div>
+                                <h2 class="pharma-card-title">Medicine Orders</h2>
+                                <span class="pharma-card-badge" id="ordersBadge">3</span>
+                            </div>
+                            <a href="javascript:void(0)" onclick="showAllOrders()" class="pharma-link-view-all">View All</a>
+                        </div>
+
+                        <div class="pharma-table-responsive">
+                            <table class="pharma-table" id="ordersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Patient Name</th>
+                                        <th>Medicines</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody">
+                                    <tr data-search="ORD-001245 Rahul Sharma Dolo 650 Azithromycin">
+                                        <td>
+                                            <div class="order-id-cell">
+                                                <div class="order-id-icon"><i class="fa-solid fa-user"></i></div>
+                                                <span>ORD-001245</span>
+                                            </div>
+                                        </td>
+                                        <td class="patient-name-bold">Rahul Sharma</td>
+                                        <td>3 items</td>
+                                        <td class="amount-bold">₹450</td>
+                                        <td><span class="pharma-status-tag tag-pending">Pending</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-table-view" onclick="openOrderModal('ORD-001245', 'Rahul Sharma', 'Door No 14-2, Gandhi Nagar, Narasaraopeta', ['Dolo 650mg (10 tabs)', 'Azithromycin 500mg (3 tabs)', 'Vitamin C Chewables (15 tabs)'], '₹450', 'Pending')">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-search="ORD-001246 Priya Reddy Pantocid Telma">
+                                        <td>
+                                            <div class="order-id-cell">
+                                                <div class="order-id-icon"><i class="fa-solid fa-user"></i></div>
+                                                <span>ORD-001246</span>
+                                            </div>
+                                        </td>
+                                        <td class="patient-name-bold">Priya Reddy</td>
+                                        <td>5 items</td>
+                                        <td class="amount-bold">₹850</td>
+                                        <td><span class="pharma-status-tag tag-processing">Processing</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-table-view" onclick="openOrderModal('ORD-001246', 'Priya Reddy', 'Plot 45, RTC Colony, Narasaraopeta', ['Pantocid 40mg (15 tabs)', 'Telma 40mg (30 tabs)', 'Becosules Capsules (20 caps)', 'Paracetamol 500mg', 'ORSL Liquid'], '₹850', 'Processing')">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-search="ORD-001247 Kiran Kumar Insulin Glargine">
+                                        <td>
+                                            <div class="order-id-cell">
+                                                <div class="order-id-icon"><i class="fa-solid fa-user"></i></div>
+                                                <span>ORD-001247</span>
+                                            </div>
+                                        </td>
+                                        <td class="patient-name-bold">Kiran Kumar</td>
+                                        <td>2 items</td>
+                                        <td class="amount-bold">₹1,250</td>
+                                        <td><span class="pharma-status-tag tag-delivered">Delivered</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-table-view" onclick="openOrderModal('ORD-001247', 'Kiran Kumar', 'Near Clock Tower, Narasaraopeta', ['Lantus Insulin Cartridge 100IU', 'BD Syringes Pack 10'], '₹1,250', 'Delivered')">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-search="ORD-001248 Anita Patel Shelcal Calpol">
+                                        <td>
+                                            <div class="order-id-cell">
+                                                <div class="order-id-icon"><i class="fa-solid fa-user"></i></div>
+                                                <span>ORD-001248</span>
+                                            </div>
+                                        </td>
+                                        <td class="patient-name-bold">Anita Patel</td>
+                                        <td>4 items</td>
+                                        <td class="amount-bold">₹680</td>
+                                        <td><span class="pharma-status-tag tag-processing">Processing</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-table-view" onclick="openOrderModal('ORD-001248', 'Anita Patel', 'Subash Road, Narasaraopeta', ['Shelcal 500mg (15 tabs)', 'Calpol 650 (10 tabs)', 'Benadryl Cough Syrup 100ml', 'Vicks Inhaler'], '₹680', 'Processing')">View</button>
+                                        </td>
+                                    </tr>
+                                    <tr data-search="ORD-001249 Suresh Babu Augmentin Montair">
+                                        <td>
+                                            <div class="order-id-cell">
+                                                <div class="order-id-icon"><i class="fa-solid fa-user"></i></div>
+                                                <span>ORD-001249</span>
+                                            </div>
+                                        </td>
+                                        <td class="patient-name-bold">Suresh Babu</td>
+                                        <td>6 items</td>
+                                        <td class="amount-bold">₹1,450</td>
+                                        <td><span class="pharma-status-tag tag-pending">Pending</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-table-view" onclick="openOrderModal('ORD-001249', 'Suresh Babu', 'Bazar Street, Near Bus Stand, Narasaraopeta', ['Augmentin 625 Duo (10 tabs)', 'Montair LC (10 tabs)', 'Azee 500mg (5 tabs)', 'Livogen Iron Syrup', 'Vitamins Multi (30 tabs)', 'Saline Nasal Drops'], '₹1,450', 'Pending')">View</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Prescription Verification Card -->
+                    <div class="pharma-card" id="prescriptionSection">
+                        <div class="pharma-card-header">
+                            <div class="pharma-card-title-wrap">
+                                <div class="pharma-card-icon-circle">
+                                    <i class="fa-regular fa-clipboard-check"></i>
+                                </div>
+                                <h2 class="pharma-card-title">Prescription Verification</h2>
+                                <span class="pharma-card-badge" id="rxBadge">2</span>
+                            </div>
+                            <a href="javascript:void(0)" onclick="showAllPrescriptions()" class="pharma-link-view-all">View All</a>
+                        </div>
+
+                        <div class="pharma-table-responsive">
+                            <table class="pharma-table" id="rxTable">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Prescription</th>
+                                        <th>Date</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="rxRow1">
+                                        <td class="patient-name-bold">Ravi Teja</td>
+                                        <td>Dr. S. Kumar</td>
+                                        <td>
+                                            <div class="rx-thumb-wrap" onclick="openRxModal('Ravi Teja', 'Dr. S. Kumar', '12 Sep 2026', 'Tab Dolo 650mg TDS x 3 days\nTab Azithromycin 500mg OD x 3 days\nSyr Ascoril D 10ml TDS')">
+                                                <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
+                                            </div>
+                                        </td>
+                                        <td>12 Sep 2026</td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-rx-approve" onclick="approvePrescription('rxRow1', 'Ravi Teja')">Approve</button>
+                                            <button class="btn-rx-reject" onclick="rejectPrescription('rxRow1', 'Ravi Teja')">Reject</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="rxRow2">
+                                        <td class="patient-name-bold">Lakshmi Devi</td>
+                                        <td>Dr. P. Reddy</td>
+                                        <td>
+                                            <div class="rx-thumb-wrap" onclick="openRxModal('Lakshmi Devi', 'Dr. P. Reddy', '12 Sep 2026', 'Tab Glycomet GP 1mg OD\nTab Telma 40mg OD\nTab Shelcal 500mg OD')">
+                                                <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
+                                            </div>
+                                        </td>
+                                        <td>12 Sep 2026</td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-rx-approve" onclick="approvePrescription('rxRow2', 'Lakshmi Devi')">Approve</button>
+                                            <button class="btn-rx-reject" onclick="rejectPrescription('rxRow2', 'Lakshmi Devi')">Reject</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="rxRow3">
+                                        <td class="patient-name-bold">Kavitha</td>
+                                        <td>Dr. A. Mehta</td>
+                                        <td>
+                                            <div class="rx-thumb-wrap" onclick="openRxModal('Kavitha', 'Dr. A. Mehta', '11 Sep 2026', 'Tab Pantocid DSR OD AC\nCap Becosules OD\nTab Meftal Spas SOS')">
+                                                <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
+                                            </div>
+                                        </td>
+                                        <td>11 Sep 2026</td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-rx-approve" onclick="approvePrescription('rxRow3', 'Kavitha')">Approve</button>
+                                            <button class="btn-rx-reject" onclick="rejectPrescription('rxRow3', 'Kavitha')">Reject</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="rxRow4">
+                                        <td class="patient-name-bold">Ramesh</td>
+                                        <td>Dr. V. Sharma</td>
+                                        <td>
+                                            <div class="rx-thumb-wrap" onclick="openRxModal('Ramesh', 'Dr. V. Sharma', '11 Sep 2026', 'Tab Augmentin 625 Duo BD\nTab Levocet M OD\nNasal Spray Otrivin BD')">
+                                                <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
+                                            </div>
+                                        </td>
+                                        <td>11 Sep 2026</td>
+                                        <td style="text-align: right;">
+                                            <button class="btn-rx-approve" onclick="approvePrescription('rxRow4', 'Ramesh')">Approve</button>
+                                            <button class="btn-rx-reject" onclick="rejectPrescription('rxRow4', 'Ramesh')">Reject</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pharma-card-footer-action">
+                            <a href="javascript:void(0)" onclick="showAllPrescriptions()" class="btn-view-all-prescriptions">View All Prescriptions</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Live Tracking, Inventory Status, Customer Feedback -->
+                <div class="pharma-right-col">
+                    
+                    <!-- Live Delivery Tracking Widget -->
+                    <div class="pharma-card" style="padding: 18px 20px;">
+                        <div class="pharma-card-header" style="margin-bottom: 12px;">
+                            <div class="pharma-card-title-wrap">
+                                <i class="fa-solid fa-location-dot" style="color: #0080ff; font-size: 1.1rem;"></i>
+                                <h3 class="pharma-card-title" style="font-size: 1rem;">Live Delivery Tracking</h3>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <a href="javascript:void(0)" onclick="openTrackingModal()" class="pharma-link-view-all">View All</a>
+                                <button onclick="openTrackingModal()" style="background: none; border: none; color: #94a3b8; cursor: pointer;" title="Fullscreen Map">
+                                    <i class="fa-solid fa-up-right-and-down-left-from-center" style="font-size: 0.8rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Route Map Graphic with ETA Marker -->
+                        <div class="tracking-map-container" onclick="openTrackingModal()" style="cursor: pointer;">
+                            <img src="{{ url_for('static', filename='images/pharma_delivery_map.png') }}" alt="Live Route Map - Narsaraopeta" class="tracking-map-img">
+                        </div>
+
+                        <!-- Active Rider Card -->
+                        <div class="tracking-rider-card">
+                            <div class="rider-info-left">
+                                <div class="rider-scooter-wrap">
+                                    <i class="fa-solid fa-motorcycle"></i>
+                                </div>
+                                <div class="rider-details">
+                                    <span class="rider-order-id">DEL-00045</span>
+                                    <span class="rider-name">Delivery Partner: Suresh</span>
+                                </div>
+                            </div>
+                            <div class="rider-eta-box">
+                                <span class="eta-label">ETA</span>
+                                <div class="eta-time">12 mins</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Status Widget -->
+                    <div class="pharma-card" style="padding: 18px 20px;">
+                        <div class="pharma-card-header" style="margin-bottom: 14px;">
+                            <div class="pharma-card-title-wrap">
+                                <i class="fa-solid fa-boxes-stacked" style="color: #0080ff; font-size: 1rem;"></i>
+                                <h3 class="pharma-card-title" style="font-size: 1rem;">Inventory Status</h3>
+                            </div>
+                            <a href="javascript:void(0)" onclick="openAddMedicineModal()" class="pharma-link-view-all">View All</a>
+                        </div>
+
+                        <!-- 4 Mini Stat Badges -->
+                        <div class="inventory-stat-tiles">
+                            <div class="inv-tile inv-green">
+                                <i class="fa-solid fa-capsules inv-tile-icon"></i>
+                                <div class="inv-tile-info">
+                                    <span class="inv-tile-label">Total Medicines</span>
+                                    <span class="inv-tile-val">5,420</span>
+                                </div>
+                            </div>
+                            <div class="inv-tile inv-amber">
+                                <i class="fa-solid fa-triangle-exclamation inv-tile-icon"></i>
+                                <div class="inv-tile-info">
+                                    <span class="inv-tile-label">Low Stock Alerts</span>
+                                    <span class="inv-tile-val">18</span>
+                                </div>
+                            </div>
+                            <div class="inv-tile inv-red">
+                                <i class="fa-solid fa-circle-xmark inv-tile-icon"></i>
+                                <div class="inv-tile-info">
+                                    <span class="inv-tile-label">Out of Stock</span>
+                                    <span class="inv-tile-val">6</span>
+                                </div>
+                            </div>
+                            <div class="inv-tile inv-purple">
+                                <i class="fa-regular fa-clock inv-tile-icon"></i>
+                                <div class="inv-tile-info">
+                                    <span class="inv-tile-label">Expiring Soon</span>
+                                    <span class="inv-tile-val">24</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Low Stock Items Mini-Table -->
+                        <div class="low-stock-header-title">Low Stock Items</div>
+                        <table class="pharma-table" style="font-size: 0.78rem;">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 6px 8px;">Medicine</th>
+                                    <th style="padding: 6px 8px;">Stock</th>
+                                    <th style="padding: 6px 8px;">Expiry</th>
+                                    <th style="padding: 6px 8px;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 8px; font-weight: 700;">Dolo 650</td>
+                                    <td style="padding: 8px;">20</td>
+                                    <td style="padding: 8px;">2027-06</td>
+                                    <td style="padding: 8px;"><span class="pharma-status-tag tag-pending" style="padding: 2px 8px; font-size: 0.68rem;">Low Stock</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; font-weight: 700;">Azithromycin</td>
+                                    <td style="padding: 8px; color: #ef4444; font-weight: 800;">5</td>
+                                    <td style="padding: 8px;">2026-12</td>
+                                    <td style="padding: 8px;"><span class="pharma-status-tag tag-pending" style="padding: 2px 8px; font-size: 0.68rem;">Low Stock</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; font-weight: 700;">Amoxicillin</td>
+                                    <td style="padding: 8px; color: #ef4444; font-weight: 800;">0</td>
+                                    <td style="padding: 8px;">2026-08</td>
+                                    <td style="padding: 8px;"><span class="pharma-status-tag tag-out" style="padding: 2px 8px; font-size: 0.68rem;">Out of Stock</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Customer Feedback Widget -->
+                    <div class="pharma-card" style="padding: 18px 20px;">
+                        <div class="pharma-card-header" style="margin-bottom: 12px;">
+                            <div class="pharma-card-title-wrap">
+                                <i class="fa-regular fa-star" style="color: #f59e0b; font-size: 1rem;"></i>
+                                <h3 class="pharma-card-title" style="font-size: 1rem;">Customer Feedback</h3>
+                            </div>
+                            <a href="javascript:void(0)" onclick="showAllFeedback()" class="pharma-link-view-all">View All</a>
+                        </div>
+
+                        <div class="feedback-rating-row">
+                            <span class="feedback-score">4.8/5</span>
+                            <div class="feedback-stars">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star-half-stroke"></i>
+                            </div>
+                            <span class="feedback-count">(324 reviews)</span>
+                        </div>
+
+                        <div class="feedback-reviews-list">
+                            <div class="feedback-item">
+                                <div class="feedback-user-icon"><i class="fa-solid fa-user"></i></div>
+                                <div>
+                                    <div class="feedback-quote">"Excellent Service Fast Delivery"</div>
+                                    <div class="feedback-author">— Priya Reddy</div>
+                                </div>
+                            </div>
+                            <div class="feedback-item">
+                                <div class="feedback-user-icon"><i class="fa-solid fa-user"></i></div>
+                                <div>
+                                    <div class="feedback-quote">"Trusted Pharmacy Always on time"</div>
+                                    <div class="feedback-author">— Rahul Sharma</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Bottom Row: Revenue Overview, Recent Orders, Quick Actions -->
+            <div class="pharma-bottom-grid">
+                
+                <!-- Revenue Overview -->
+                <div class="pharma-card">
+                    <div class="pharma-card-header" style="margin-bottom: 8px;">
+                        <div class="pharma-card-title-wrap">
+                            <i class="fa-solid fa-chart-simple" style="color: #0080ff;"></i>
+                            <h3 class="pharma-card-title" style="font-size: 1rem;">Revenue Overview</h3>
+                        </div>
+                        <select style="border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.72rem; padding: 2px 6px; color: #475569; outline: none; background: #fff;">
+                            <option>This Week</option>
+                            <option>Last Week</option>
+                            <option>This Month</option>
+                        </select>
+                    </div>
+
+                    <div class="chart-header-stat">
+                        <span class="chart-stat-val">₹24,500</span>
+                        <span class="pharma-kpi-trend" style="font-size: 0.74rem;">
+                            <i class="fa-solid fa-arrow-up"></i> 18% vs last week
+                        </span>
+                    </div>
+
+                    <!-- CSS Bar Chart (Mon-Sun) -->
+                    <div class="chart-bars-wrap">
+                        <div class="chart-bar-col">
+                            <div class="chart-bar" style="height: 38%;" title="Mon: ₹9,500"></div>
+                            <span class="chart-day-label">Mon</span>
+                        </div>
+                        <div class="chart-bar-col">
+                            <div class="chart-bar" style="height: 60%;" title="Tue: ₹15,000"></div>
+                            <span class="chart-day-label">Tue</span>
+                        </div>
+                        <div class="chart-bar-col">
+                            <div class="chart-bar" style="height: 48%;" title="Wed: ₹12,000"></div>
+                            <span class="chart-day-label">Wed</span>
+                        </div>
+                        <div class="chart-bar-col">
+                            <div class="chart-bar" style="height: 70%;" title="Thu: ₹17,500"></div>
+                            <span class="chart-day-label">Thu</span>
+                        </div>
+                        <div class="chart-bar-col">
+                            <div class="chart-bar" style="height: 65%;" title="Fri: ₹16,200"></div>
+                            <span class="chart-day-label">Fri</span>
+                        </div>
+                        <div class="chart-bar-col">
+                            <div class="chart-bar" style="height: 85%;" title="Sat: ₹21,000"></div>
+                            <span class="chart-day-label">Sat</span>
+                        </div>
+                        <div class="chart-bar-col">
+                            <div class="chart-bar" style="height: 98%;" title="Sun: ₹24,500"></div>
+                            <span class="chart-day-label">Sun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="pharma-card">
+                    <div class="pharma-card-header" style="margin-bottom: 12px;">
+                        <div class="pharma-card-title-wrap">
+                            <i class="fa-solid fa-clock-rotate-left" style="color: #0080ff;"></i>
+                            <h3 class="pharma-card-title" style="font-size: 1rem;">Recent Orders</h3>
+                        </div>
+                        <a href="javascript:void(0)" onclick="showAllOrders()" class="pharma-link-view-all">View All</a>
+                    </div>
+
+                    <div class="pharma-table-responsive">
+                        <table class="pharma-table" style="font-size: 0.78rem;">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Location</th>
+                                    <th>Order Value</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: 700;">Rahul Sharma</td>
+                                    <td>Narsaraopeta</td>
+                                    <td style="font-weight: 800;">₹450</td>
+                                    <td><span class="pharma-status-tag tag-pending" style="padding: 2px 8px; font-size: 0.68rem;">Pending</span></td>
+                                    <td><span style="color: #059669; font-weight: 700;">Paid</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 700;">Priya Reddy</td>
+                                    <td>Mahabubabad</td>
+                                    <td style="font-weight: 800;">₹850</td>
+                                    <td><span class="pharma-status-tag tag-processing" style="padding: 2px 8px; font-size: 0.68rem;">Processing</span></td>
+                                    <td><span style="color: #059669; font-weight: 700;">Paid</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 700;">Kiran Kumar</td>
+                                    <td>Warangal</td>
+                                    <td style="font-weight: 800;">₹1,250</td>
+                                    <td><span class="pharma-status-tag tag-delivered" style="padding: 2px 8px; font-size: 0.68rem;">Delivered</span></td>
+                                    <td><span style="color: #059669; font-weight: 700;">Paid</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 700;">Anita Patel</td>
+                                    <td>Narsaraopeta</td>
+                                    <td style="font-weight: 800;">₹680</td>
+                                    <td><span class="pharma-status-tag tag-processing" style="padding: 2px 8px; font-size: 0.68rem;">Processing</span></td>
+                                    <td><span style="color: #f59e0b; font-weight: 700;">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 700;">Suresh Babu</td>
+                                    <td>Hanumakonda</td>
+                                    <td style="font-weight: 800;">₹1,450</td>
+                                    <td><span class="pharma-status-tag tag-pending" style="padding: 2px 8px; font-size: 0.68rem;">Pending</span></td>
+                                    <td><span style="color: #059669; font-weight: 700;">Paid</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="pharma-card">
+                    <div class="pharma-card-header" style="margin-bottom: 12px;">
+                        <div class="pharma-card-title-wrap">
+                            <i class="fa-solid fa-bolt" style="color: #0080ff;"></i>
+                            <h3 class="pharma-card-title" style="font-size: 1rem;">Quick Actions</h3>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions-list">
+                        <button class="btn-quick-action primary" onclick="openAddMedicineModal()">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Medicine</span>
+                        </button>
+                        <button class="btn-quick-action" onclick="showPharmaToast('Inventory stock bulk upload ready. Choose CSV file.')">
+                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                            <span>Upload Stock</span>
+                        </button>
+                        <button class="btn-quick-action" onclick="showAllPrescriptions()">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <span>View Prescriptions</span>
+                        </button>
+                        <button class="btn-quick-action" onclick="openAssignDeliveryModal()">
+                            <i class="fa-solid fa-motorcycle"></i>
+                            <span>Assign Delivery</span>
+                        </button>
+                        <button class="btn-quick-action" onclick="showPharmaToast('Daily Pharmacy Summary generated and ready to download.')">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Generate Report</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Serving Health, Delivering Care Banner -->
+            <div class="pharma-banner-card">
+                <div class="banner-left">
+                    <div class="banner-icon-circle">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="banner-title">Serving Health, Delivering Care</div>
+                        <div class="banner-sub">Thank you for helping patients receive medicines on time.</div>
+                    </div>
+                </div>
+                <div>
+                    <img src="{{ url_for('static', filename='images/pharma_banner_art.png') }}" alt="Pharmacy Care" class="banner-art-img">
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="pharma-modal-backdrop" onclick="closeOrderModal(event)">
+        <div class="pharma-modal-card">
+            <div class="pharma-modal-header">
+                <div>
+                    <h3 class="pharma-modal-title" id="modalOrderId">Order Details</h3>
+                    <span style="font-size: 0.78rem; color: #64748b;" id="modalPatientName"></span>
+                </div>
+                <button class="pharma-modal-close" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div class="pharma-modal-body">
+                <div>
+                    <label style="font-size: 0.76rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Delivery Address</label>
+                    <div style="font-size: 0.88rem; font-weight: 700; color: #0f172a; margin-top: 4px;" id="modalAddress"></div>
+                </div>
+                <div>
+                    <label style="font-size: 0.76rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Prescribed Medicines</label>
+                    <ul id="modalMedicinesList" style="margin-top: 6px; padding-left: 18px; font-size: 0.86rem; color: #334155; line-height: 1.6;"></ul>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+                    <span style="font-size: 0.88rem; font-weight: 700; color: #475569;">Total Bill Amount:</span>
+                    <span style="font-size: 1.25rem; font-weight: 800; color: #0f172a;" id="modalTotalAmount"></span>
+                </div>
+            </div>
+            <div class="pharma-modal-footer">
+                <button class="btn-table-view" onclick="closeOrderModal()">Close</button>
+                <button class="btn-rx-approve" style="padding: 8px 18px; font-size: 0.82rem;" onclick="dispatchOrderFromModal()">Dispatch via Nhealth Rider</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Preview Modal -->
+    <div id="rxModal" class="pharma-modal-backdrop" onclick="closeRxModal(event)">
+        <div class="pharma-modal-card">
+            <div class="pharma-modal-header">
+                <div>
+                    <h3 class="pharma-modal-title">Clinical Prescription</h3>
+                    <span style="font-size: 0.78rem; color: #64748b;" id="rxModalSub"></span>
+                </div>
+                <button class="pharma-modal-close" onclick="closeRxModal()">&times;</button>
+            </div>
+            <div class="pharma-modal-body">
+                <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 12px; padding: 20px; font-family: monospace; white-space: pre-wrap; font-size: 0.9rem; color: #0f172a; line-height: 1.7;" id="rxModalText"></div>
+            </div>
+            <div class="pharma-modal-footer">
+                <button class="btn-rx-reject" style="padding: 8px 18px; font-size: 0.82rem;" onclick="rejectFromModal()">Reject Prescription</button>
+                <button class="btn-rx-approve" style="padding: 8px 18px; font-size: 0.82rem;" onclick="approveFromModal()">Verify &amp; Dispense</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Medicine Modal -->
+    <div id="addMedModal" class="pharma-modal-backdrop" onclick="closeAddMedModal(event)">
+        <div class="pharma-modal-card">
+            <div class="pharma-modal-header">
+                <h3 class="pharma-modal-title">Add Medicine to Inventory</h3>
+                <button class="pharma-modal-close" onclick="closeAddMedModal()">&times;</button>
+            </div>
+            <form onsubmit="handleAddMedicine(event)">
+                <div class="pharma-modal-body">
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Medicine Brand Name</label>
+                        <input type="text" id="newMedName" placeholder="e.g. Paracetamol 650mg" required style="width: 100%; height: 38px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; margin-top: 4px; font-size: 0.86rem; outline: none;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Stock Count</label>
+                            <input type="number" id="newMedStock" placeholder="e.g. 100" required style="width: 100%; height: 38px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; margin-top: 4px; font-size: 0.86rem; outline: none;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Price per Strip (₹)</label>
+                            <input type="number" id="newMedPrice" placeholder="e.g. 45" required style="width: 100%; height: 38px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; margin-top: 4px; font-size: 0.86rem; outline: none;">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Expiry Date</label>
+                        <input type="month" id="newMedExpiry" required style="width: 100%; height: 38px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; margin-top: 4px; font-size: 0.86rem; outline: none;">
+                    </div>
+                </div>
+                <div class="pharma-modal-footer">
+                    <button type="button" class="btn-table-view" onclick="closeAddMedModal()">Cancel</button>
+                    <button type="submit" class="btn-rx-approve" style="padding: 8px 20px; font-size: 0.82rem;">Save to Inventory</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="pharmaToast" style="display: none; position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 12px; font-size: 0.86rem; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 3000; animation: toastSlide 0.2s ease;"></div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        function showPharmaToast(msg, type = 'success') {
+            const toast = document.getElementById('pharmaToast');
+            toast.textContent = msg;
+            toast.style.background = type === 'error' ? '#ef4444' : (type === 'info' ? '#0080ff' : '#0f172a');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3500);
+        }
+
+        function setPharmaNavActive(btn, screenId) {
+            document.querySelectorAll('.pharma-nav-link').forEach(l => l.classList.remove('active'));
+            btn.classList.add('active');
+            showPharmaToast(`Switched to ${btn.querySelector('span').textContent} view`, 'info');
+        }
+
+        // Live Search Handler
+        function handlePharmaSearch(query) {
+            const q = query.toLowerCase().trim();
+            const rows = document.querySelectorAll('#ordersTableBody tr');
+            rows.forEach(r => {
+                const text = r.getAttribute('data-search').toLowerCase();
+                r.style.display = text.includes(q) ? '' : 'none';
+            });
+        }
+
+        // Online Status Toggle
+        function toggleStoreStatus(checkbox) {
+            const isOnline = checkbox.checked;
+            const label = document.getElementById('onlineStatusLabel');
+            const sub = document.getElementById('onlineStatusSub');
+            const iconWrap = document.getElementById('onlineIconWrap');
+            
+            if (isOnline) {
+                label.textContent = 'Online';
+                label.style.color = '#065f46';
+                sub.textContent = 'Ready to accept orders';
+                sub.style.color = '#059669';
+                iconWrap.style.background = '#10b981';
+                showPharmaToast('Pharmacy is now ONLINE. New orders will be received in real-time.', 'success');
+            } else {
+                label.textContent = 'Offline';
+                label.style.color = '#991b1b';
+                sub.textContent = 'Store temporarily closed';
+                sub.style.color = '#ef4444';
+                iconWrap.style.background = '#94a3b8';
+                showPharmaToast('Pharmacy marked OFFLINE. Online order intake paused.', 'info');
+            }
+        }
+
+        // Order Modal Functions
+        let activeOrderId = '';
+        function openOrderModal(orderId, patient, address, meds, amount, status) {
+            activeOrderId = orderId;
+            document.getElementById('modalOrderId').textContent = `Order ${orderId}`;
+            document.getElementById('modalPatientName').textContent = `Patient: ${patient}`;
+            document.getElementById('modalAddress').textContent = address;
+            document.getElementById('modalTotalAmount').textContent = amount;
+
+            const list = document.getElementById('modalMedicinesList');
+            list.innerHTML = '';
+            meds.forEach(m => {
+                const li = document.createElement('li');
+                li.textContent = m;
+                list.appendChild(li);
+            });
+
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        function closeOrderModal(e) {
+            if (!e || e.target.id === 'orderModal') {
+                document.getElementById('orderModal').classList.remove('active');
+            }
+        }
+
+        function dispatchOrderFromModal() {
+            showPharmaToast(`Order ${activeOrderId} assigned to Delivery Partner Suresh (Rider). ETA 12 mins.`);
+            closeOrderModal();
+        }
+
+        // Prescription Modal
+        let activeRxPatient = '';
+        function openRxModal(patient, doctor, date, text) {
+            activeRxPatient = patient;
+            document.getElementById('rxModalSub').textContent = `Patient: ${patient} • ${doctor} • ${date}`;
+            document.getElementById('rxModalText').textContent = text;
+            document.getElementById('rxModal').classList.add('active');
+        }
+
+        function closeRxModal(e) {
+            if (!e || e.target.id === 'rxModal') {
+                document.getElementById('rxModal').classList.remove('active');
+            }
+        }
+
+        function approveFromModal() {
+            showPharmaToast(`Prescription for ${activeRxPatient} approved and forwarded to packing.`);
+            closeRxModal();
+        }
+
+        function rejectFromModal() {
+            showPharmaToast(`Prescription for ${activeRxPatient} rejected. Patient will be notified.`, 'error');
+            closeRxModal();
+        }
+
+        // Inline Prescription Table Actions
+        function approvePrescription(rowId, patient) {
+            const row = document.getElementById(rowId);
+            if (row) {
+                row.style.background = '#ecfdf5';
+                row.querySelector('td:last-child').innerHTML = '<span class="pharma-status-tag tag-delivered">Approved</span>';
+                showPharmaToast(`Prescription for ${patient} approved!`);
+            }
+        }
+
+        function rejectPrescription(rowId, patient) {
+            const row = document.getElementById(rowId);
+            if (row) {
+                row.style.background = '#fef2f2';
+                row.querySelector('td:last-child').innerHTML = '<span class="pharma-status-tag tag-out">Rejected</span>';
+                showPharmaToast(`Prescription for ${patient} rejected.`, 'error');
+            }
+        }
+
+        // Add Medicine Modal
+        function openAddMedicineModal() {
+            document.getElementById('addMedModal').classList.add('active');
+        }
+
+        function closeAddMedModal(e) {
+            if (!e || e.target.id === 'addMedModal') {
+                document.getElementById('addMedModal').classList.remove('active');
+            }
+        }
+
+        function handleAddMedicine(e) {
+            e.preventDefault();
+            const name = document.getElementById('newMedName').value;
+            const stock = document.getElementById('newMedStock').value;
+            showPharmaToast(`Successfully added ${stock} units of ${name} to Sai Medicals inventory!`);
+            closeAddMedModal();
+        }
+
+        function openTrackingModal() {
+            showPharmaToast('Live Delivery Tracking: Partner Suresh is en route to Narsaraopeta. 12 mins remaining.', 'info');
+        }
+
+        function openAssignDeliveryModal() {
+            showPharmaToast('Assign Delivery: Order DEL-00045 linked with Nhealth Health Support Rider Suresh.', 'info');
+        }
+
+        function showAllOrders() {
+            document.getElementById('pharmaSearchInput').value = '';
+            handlePharmaSearch('');
+            showPharmaToast('Displaying all active and fulfilled medicine orders.');
+        }
+
+        function showAllPrescriptions() {
+            showPharmaToast('Prescriptions Queue: 4 total (2 pending verification).');
+        }
+
+        function showAllFeedback() {
+            showPharmaToast('All 324 customer reviews loaded: 98% 5-star positive feedback.');
+        }
+
+        function toggleNotifications() {
+            showPharmaToast('Notifications: 3 new patient medicine orders waiting for verification.');
+        }
+
+        function toggleProfileDropdown() {
+            showPharmaToast('Pharmacy: Sai Medicals (PHA-000123) • Narasaraopeta, AP');
+        }
+
+        function openProfileModal() {
+            showPharmaToast('Store Profile: Sai Medicals • AP Pharmacy Council Reg: PHA-000123');
+        }
+
+        function openSettingsModal() {
+            showPharmaToast('Diagnostic & Pharmacy Delivery radius: 10km around Narasaraopeta.');
+        }
+    </script>
+</body>
+</html>

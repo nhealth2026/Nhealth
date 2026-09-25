@@ -717,6 +717,25 @@ def lab_dashboard():
     return render_template('lab_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
+@app.route('/pharmacy/dashboard')
+@app.route('/pharma/dashboard')
+@app.route('/pharmacy')
+def pharmacy_dashboard():
+    """Render Pharmacy Partner Dashboard matching reference design."""
+    user = session.get('user')
+    if not user or user.get('role') != 'pharmacy':
+        user = {
+            "id": "PHA-000123",
+            "name": "Sai Medicals",
+            "owner_name": "Sai Medicals & Pharmacy",
+            "role": "pharmacy",
+            "city": "Narasaraopeta",
+            "phone": "9876543290",
+            "email": "pharmacy@nhealth.in"
+        }
+    return render_template('pharmacy_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/api/auth/signup', methods=['POST'])
 def auth_signup():
     """Handle new patient or doctor/partner account registration with security validation."""
@@ -799,7 +818,7 @@ def auth_signup():
         session['user_id'] = user_record["id"]
         session['user'] = clean_user
 
-        redirect_url = '/lab/dashboard' if role == 'lab' else ('/patient/dashboard' if role == 'patient' else '/')
+        redirect_url = '/lab/dashboard' if role == 'lab' else ('/pharmacy/dashboard' if role in ['pharmacy', 'pharma'] else ('/patient/dashboard' if role == 'patient' else '/'))
 
         return jsonify({
             "status": "success",
@@ -880,7 +899,7 @@ def auth_login():
         session['user'] = clean_user
 
         user_role = clean_user.get('role', 'patient')
-        redirect_url = '/lab/dashboard' if user_role == 'lab' else ('/patient/dashboard' if user_role == 'patient' else '/')
+        redirect_url = '/lab/dashboard' if user_role == 'lab' else ('/pharmacy/dashboard' if user_role in ['pharmacy', 'pharma'] else ('/patient/dashboard' if user_role == 'patient' else '/'))
 
         return jsonify({
             "status": "success",

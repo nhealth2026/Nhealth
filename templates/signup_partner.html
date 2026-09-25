@@ -57,22 +57,94 @@
                         </a>
                     </div>
 
-                    <!-- Role Switcher Tabs (Desktop & Mobile) -->
-                    <div class="auth-role-tabs">
-                        <a href="/signup/patient" class="auth-role-tab">
-                            <i class="fa-regular fa-user"></i> Patient Sign Up
-                        </a>
-                        <a href="/signup/doctor" class="auth-role-tab active">
-                            <i class="fa-solid fa-user-doctor"></i> Doctor
-                        </a>
-                        <a href="/signup/lab" class="auth-role-tab">
-                            <i class="fa-solid fa-flask-vial"></i> Lab Partner
-                        </a>
+                    <!-- Service & Account Role Selector Dropdown -->
+                    <div class="auth-service-selector-wrap">
+                        <label class="auth-service-label" for="authServiceSelector">
+                            <span>Select Account / Service Type</span>
+                            <span class="service-count-pill">All 19 Services</span>
+                        </label>
+                        <div class="auth-service-dropdown-box">
+                            <i class="fa-solid fa-user-doctor auth-service-icon" id="serviceSelectorIcon"></i>
+                            <select id="authServiceSelector" class="auth-service-select" onchange="onSignupServiceChange(this)">
+                                <optgroup label="👤 Patients &amp; Individuals">
+                                    <option value="patient" data-url="/signup/patient" data-icon="fa-regular fa-user" data-badge="Patient Sign Up">
+                                        👤 Patient Account Sign Up
+                                    </option>
+                                </optgroup>
+                                <optgroup label="🩺 Doctor &amp; Clinical Services">
+                                    <option value="doctor-consult" data-spec="Online Doctor Consultation" data-icon="fa-solid fa-user-doctor" data-badge="Online Doctor Partner Sign Up" data-title="Create Your Online Doctor Account" selected>
+                                        🩺 Online Doctor Consultation
+                                    </option>
+                                    <option value="home-visits" data-spec="Doctor Home Visits" data-icon="fa-solid fa-house-medical" data-badge="Doctor Home Visits Sign Up" data-title="Create Your Home Visits Doctor Account">
+                                        🏠 Doctor Home Visits
+                                    </option>
+                                    <option value="mental-health" data-spec="Mental Health &amp; Counseling" data-icon="fa-solid fa-brain" data-badge="Mental Health Partner Sign Up" data-title="Create Your Mental Health Partner Account">
+                                        🧠 Mental Health &amp; Counseling
+                                    </option>
+                                    <option value="hospital-opd" data-spec="Premium OPD &amp; Hospital Assistance" data-icon="fa-solid fa-square-plus" data-badge="Hospital &amp; OPD Partner Sign Up" data-title="Create Your Hospital / OPD Partner Account">
+                                        🏥 Premium OPD &amp; Hospital Assistance
+                                    </option>
+                                </optgroup>
+                                <optgroup label="🧪 Diagnostics &amp; Lab Services">
+                                    <option value="lab-tests" data-url="/signup/lab" data-icon="fa-solid fa-flask-vial" data-badge="Diagnostic Lab Partner Registration">
+                                        🧪 Home Diagnostics &amp; Lab Tests (Lab Partner)
+                                    </option>
+                                    <option value="x-ray" data-spec="X-Ray &amp; Portable Diagnostics" data-icon="fa-solid fa-x-ray" data-badge="Portable X-Ray Partner Sign Up" data-title="Create Your Portable X-Ray Partner Account">
+                                        🩻 X-Ray &amp; Portable Diagnostics
+                                    </option>
+                                    <option value="advanced-imaging" data-spec="Diagnostics &amp; Advanced Imaging" data-icon="fa-solid fa-hospital" data-badge="Advanced Imaging Partner Sign Up" data-title="Create Your Imaging Center Partner Account">
+                                        🔬 Diagnostics &amp; Advanced Imaging (MRI / CT / Scans)
+                                    </option>
+                                    <option value="screening" data-spec="Full Body Preventive Screening" data-icon="fa-solid fa-stethoscope" data-badge="Preventive Screening Partner Sign Up" data-title="Create Your Screening Partner Account">
+                                        📋 Full Body Preventive Screening
+                                    </option>
+                                </optgroup>
+                                <optgroup label="👩‍⚕️ Nursing &amp; Home Care">
+                                    <option value="nursing" data-spec="Specialized Nursing Care" data-icon="fa-solid fa-user-nurse" data-badge="Nursing Care Partner Sign Up" data-title="Create Your Nursing Care Partner Account">
+                                        👩‍⚕️ Specialized Nursing Care
+                                    </option>
+                                    <option value="attendant" data-spec="Bedside Assistant &amp; Attendant" data-icon="fa-solid fa-hands-holding-child" data-badge="Bedside Assistant Partner Sign Up" data-title="Create Your Bedside Care Partner Account">
+                                        🤝 Bedside Assistant &amp; Attendant
+                                    </option>
+                                    <option value="eldercare" data-spec="Eldercare &amp; Senior Assistance" data-icon="fa-solid fa-person-cane" data-badge="Senior Care Partner Sign Up" data-title="Create Your Eldercare Partner Account">
+                                        👵 Eldercare &amp; Senior Assistance
+                                    </option>
+                                    <option value="physio" data-spec="Physiotherapy at Home" data-icon="fa-solid fa-person-walking" data-badge="Physiotherapy Partner Sign Up" data-title="Create Your Physiotherapist Account">
+                                        🏃 Physiotherapy at Home
+                                    </option>
+                                    <option value="dental" data-spec="Dental Care &amp; Oral Health" data-icon="fa-solid fa-tooth" data-badge="Dental Care Partner Sign Up" data-title="Create Your Dental Partner Account">
+                                        🦷 Dental Care &amp; Oral Health
+                                    </option>
+                                    <option value="vaccination" data-spec="Home Vaccination Service" data-icon="fa-solid fa-syringe" data-badge="Home Vaccination Partner Sign Up" data-title="Create Your Vaccination Partner Account">
+                                        💉 Home Vaccination Service
+                                    </option>
+                                    <option value="chronic-care" data-spec="Chronic Disease Care Programmes" data-icon="fa-solid fa-heart-pulse" data-badge="Chronic Care Partner Sign Up" data-title="Create Your Chronic Care Partner Account">
+                                        ❤️ Chronic Disease Care Programmes
+                                    </option>
+                                </optgroup>
+                                <optgroup label="💊 Pharmacy, Emergency &amp; Mobility">
+                                    <option value="e-pharmacy" data-spec="Doorstep E-Pharmacy" data-icon="fa-solid fa-prescription-bottle-medical" data-badge="Doorstep E-Pharmacy Partner Sign Up" data-title="Create Your Pharmacy Partner Account">
+                                        💊 Doorstep E-Pharmacy
+                                    </option>
+                                    <option value="ambulance" data-spec="24/7 Smart Ambulance &amp; SOS" data-icon="fa-solid fa-truck-medical" data-badge="Smart Ambulance Partner Sign Up" data-title="Create Your Ambulance &amp; SOS Partner Account">
+                                        🚑 24/7 Smart Ambulance &amp; SOS
+                                    </option>
+                                    <option value="blood-bank" data-spec="Blood Bank &amp; Support" data-icon="fa-solid fa-droplet" data-badge="Blood Bank Network Sign Up" data-title="Create Your Blood Bank Partner Account">
+                                        🩸 Blood Bank &amp; Support
+                                    </option>
+                                    <option value="rider-service" data-spec="Health Support Rider" data-icon="fa-solid fa-motorcycle" data-badge="Health Support Rider Partner Sign Up" data-title="Create Your Health Support Rider Account">
+                                        🛵 Health Support Rider (Pick • Support • Drop)
+                                    </option>
+                                </optgroup>
+                            </select>
+                            <i class="fa-solid fa-chevron-down auth-service-chevron"></i>
+                        </div>
                     </div>
 
                     <!-- Role Badge Pill -->
-                    <div class="auth-role-badge">
-                        <span>Doctor / Partner Sign Up</span>
+                    <div class="auth-role-badge" id="roleBadgeContainer">
+                        <i class="fa-solid fa-user-doctor" id="roleBadgeIcon"></i>
+                        <span id="roleBadgeText">Online Doctor Partner Sign Up</span>
                     </div>
 
                     <!-- Card Heading -->
@@ -116,24 +188,43 @@
                         <div class="auth-input-group select-group">
                             <i class="fa-solid fa-stethoscope auth-field-icon"></i>
                             <select name="specialization" id="partnerSpecialization" class="auth-form-select" required>
-                                <option value="" disabled selected>Specialization</option>
-                                <option value="General Physician">General Physician / Internal Medicine</option>
-                                <option value="Pediatrician">Pediatrician / Child Specialist</option>
-                                <option value="Cardiologist">Cardiologist (Heart Specialist)</option>
-                                <option value="Orthopedic">Orthopedic Surgeon / Bone Specialist</option>
-                                <option value="Gynecologist">Gynecologist & Obstetrician</option>
-                                <option value="Neurologist">Neurologist</option>
-                                <option value="Pulmonologist">Pulmonologist / Chest Physician</option>
-                                <option value="Dermatologist">Dermatologist (Skin & Hair)</option>
-                                <option value="ENT Specialist">ENT Specialist</option>
-                                <option value="Psychiatrist">Psychiatrist & Mental Health Specialist</option>
-                                <option value="Dentist">Dental Surgeon / Dentist</option>
-                                <option value="Physiotherapist">Certified Physiotherapist</option>
-                                <option value="Home Nursing Partner">Home Nursing & ICU Care Partner</option>
-                                <option value="Diagnostic Lab Partner">Diagnostic Lab & Pathology Partner</option>
-                                <option value="Pharmacy Partner">Pharmacy / Chemist Partner</option>
-                                <option value="Ambulance Partner">Ambulance & Emergency Service</option>
-                                <option value="Hospital / Clinic Network">Hospital / Healthcare Institution</option>
+                                <option value="" disabled selected>Select Specialization / Healthcare Service</option>
+                                <optgroup label="🩺 Doctor &amp; Clinical Specialties">
+                                    <option value="Online Doctor Consultation">Online Doctor Consultation</option>
+                                    <option value="Doctor Home Visits">Doctor Home Visits</option>
+                                    <option value="General Physician">General Physician / Internal Medicine</option>
+                                    <option value="Pediatrician">Pediatrician / Child Specialist</option>
+                                    <option value="Cardiologist">Cardiologist (Heart Specialist)</option>
+                                    <option value="Orthopedic">Orthopedic Surgeon / Bone Specialist</option>
+                                    <option value="Gynecologist">Gynecologist &amp; Obstetrician</option>
+                                    <option value="Neurologist">Neurologist</option>
+                                    <option value="Pulmonologist">Pulmonologist / Chest Physician</option>
+                                    <option value="Dermatologist">Dermatologist (Skin &amp; Hair)</option>
+                                    <option value="ENT Specialist">ENT Specialist</option>
+                                    <option value="Dentist">Dental Care &amp; Oral Health</option>
+                                    <option value="Mental Health &amp; Counseling">Mental Health &amp; Counseling</option>
+                                    <option value="Premium OPD &amp; Hospital Assistance">Premium OPD &amp; Hospital Assistance</option>
+                                </optgroup>
+                                <optgroup label="🧪 Diagnostics &amp; Imaging">
+                                    <option value="Home Diagnostics &amp; Lab Tests">Home Diagnostics &amp; Lab Tests Partner</option>
+                                    <option value="X-Ray &amp; Portable Diagnostics">X-Ray &amp; Portable Diagnostics</option>
+                                    <option value="Diagnostics &amp; Advanced Imaging">Diagnostics &amp; Advanced Imaging (MRI / CT / Scans)</option>
+                                    <option value="Full Body Preventive Screening">Full Body Preventive Screening</option>
+                                </optgroup>
+                                <optgroup label="👩‍⚕️ Nursing &amp; Home Care">
+                                    <option value="Specialized Nursing Care">Specialized Nursing Care (GNM / B.Sc)</option>
+                                    <option value="Bedside Assistant &amp; Attendant">Bedside Assistant &amp; Attendant (12hr/24hr)</option>
+                                    <option value="Eldercare &amp; Senior Assistance">Eldercare &amp; Senior Assistance</option>
+                                    <option value="Physiotherapy at Home">Physiotherapy at Home</option>
+                                    <option value="Home Vaccination Service">Home Vaccination Service</option>
+                                    <option value="Chronic Disease Care Programmes">Chronic Disease Care Programmes</option>
+                                </optgroup>
+                                <optgroup label="💊 Pharmacy, Emergency &amp; Mobility">
+                                    <option value="Doorstep E-Pharmacy">Doorstep E-Pharmacy Partner</option>
+                                    <option value="24/7 Smart Ambulance &amp; SOS">24/7 Smart Ambulance &amp; SOS Partner</option>
+                                    <option value="Blood Bank &amp; Support">Blood Bank &amp; Support Network</option>
+                                    <option value="Health Support Rider">Health Support Rider (Pick • Support • Drop)</option>
+                                </optgroup>
                             </select>
                             <i class="fa-solid fa-chevron-down auth-select-arrow"></i>
                         </div>
@@ -278,6 +369,61 @@
 
     <!-- Scripts -->
     <script>
+        function onSignupServiceChange(selectElem) {
+            if (!selectElem) return;
+            const opt = selectElem.options[selectElem.selectedIndex];
+            if (!opt) return;
+
+            const url = opt.getAttribute('data-url');
+            if (url) {
+                window.location.href = url;
+                return;
+            }
+
+            const spec = opt.getAttribute('data-spec') || opt.text.trim();
+            const icon = opt.getAttribute('data-icon') || 'fa-solid fa-user-doctor';
+            const badge = opt.getAttribute('data-badge') || spec + ' Sign Up';
+            const title = opt.getAttribute('data-title') || 'Create Your Doctor / Partner Account';
+
+            // Update top icons and badge
+            const selectorIcon = document.getElementById('serviceSelectorIcon');
+            if (selectorIcon) selectorIcon.className = icon + ' auth-service-icon';
+
+            const badgeText = document.getElementById('roleBadgeText');
+            const badgeIcon = document.getElementById('roleBadgeIcon');
+            if (badgeText) badgeText.textContent = badge;
+            if (badgeIcon) badgeIcon.className = icon;
+
+            // Update Page Title
+            const titleElem = document.querySelector('.auth-title');
+            if (titleElem) titleElem.textContent = title;
+
+            // Update Specialization dropdown inside form
+            const specSelect = document.getElementById('partnerSpecialization');
+            if (specSelect && spec) {
+                for (let i = 0; i < specSelect.options.length; i++) {
+                    if (specSelect.options[i].value === spec || specSelect.options[i].text.includes(spec)) {
+                        specSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Initialize from URL parameters on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const serviceParam = params.get('service');
+            const selector = document.getElementById('authServiceSelector');
+
+            if (selector && serviceParam) {
+                if (selector.querySelector(`option[value="${serviceParam}"]`)) {
+                    selector.value = serviceParam;
+                    onSignupServiceChange(selector);
+                }
+            }
+        });
+
         function togglePasswordVisibility(fieldId, btn) {
             const input = document.getElementById(fieldId);
             const icon = btn.querySelector('i');
