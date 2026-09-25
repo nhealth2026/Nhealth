@@ -25,27 +25,27 @@
             <a href="/lab/dashboard" class="lab-brand-link" aria-label="Nhealth Home">
                 <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="lab-brand-logo-img">
             </a>
-        </div>
 
-        <!-- Middle Pills -->
-        <nav class="lab-nav-middle">
-            <button class="lab-nav-pill active" id="navDashboard" onclick="setActiveNav('dashboard')">
-                <i class="fa-solid fa-gauge"></i>
-                <span>Dashboard</span>
-            </button>
-            <button class="lab-nav-pill" id="navPatients" onclick="setActiveNav('patients')">
-                <i class="fa-solid fa-users"></i>
-                <span>Patients</span>
-            </button>
-            <button class="lab-nav-pill" id="navTests" onclick="setActiveNav('tests')">
-                <i class="fa-solid fa-flask"></i>
-                <span>Tests</span>
-            </button>
-            <button class="lab-nav-pill" id="navReports" onclick="setActiveNav('reports')">
-                <i class="fa-regular fa-file-lines"></i>
-                <span>Reports</span>
-            </button>
-        </nav>
+            <!-- Nav Pills — left-aligned next to logo -->
+            <nav class="lab-nav-middle">
+                <button class="lab-nav-pill active" id="navDashboard" onclick="setActiveNav('dashboard')">
+                    <i class="fa-solid fa-gauge"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="lab-nav-pill" id="navPatients" onclick="setActiveNav('patients')">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Patients</span>
+                </button>
+                <button class="lab-nav-pill" id="navTests" onclick="setActiveNav('tests')">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Tests</span>
+                </button>
+                <button class="lab-nav-pill" id="navReports" onclick="setActiveNav('reports')">
+                    <i class="fa-regular fa-file-lines"></i>
+                    <span>Reports</span>
+                </button>
+            </nav>
+        </div>
 
         <!-- Right User / Staff Menu -->
         <div class="lab-nav-right">

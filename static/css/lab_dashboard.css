@@ -45,7 +45,7 @@ body.lab-portal-body {
     padding: 10px 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 20px;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -55,7 +55,8 @@ body.lab-portal-body {
 .lab-nav-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 20px;
+    flex: 1;
 }
 
 .lab-brand-link {
@@ -63,6 +64,9 @@ body.lab-portal-body {
     align-items: center;
     gap: 10px;
     text-decoration: none;
+    padding-right: 20px;
+    border-right: 1.5px solid #e2e8f0;
+    margin-right: 4px;
 }
 
 .lab-brand-logo-img {
