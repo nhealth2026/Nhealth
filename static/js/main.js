@@ -234,10 +234,6 @@ function handleServiceSelectionChange(serviceName) {
 }
 
 function openBookingModal(preselectedService = null) {
-    if (preselectedService && (preselectedService.toLowerCase().includes('rider') || preselectedService.toLowerCase().includes('health support rider'))) {
-        window.location.href = '/rider/book';
-        return;
-    }
     const modal = document.getElementById('bookingModalBackdrop');
     const form = document.getElementById('bookingForm');
     const successView = document.getElementById('bookingSuccessView');
@@ -825,7 +821,11 @@ document.querySelectorAll('.custom-modal-backdrop').forEach(backdrop => {
 
 /* Health Support Rider Modal Controls */
 function openRiderModal() {
-    window.location.href = '/rider/book';
+    const modal = document.getElementById('riderModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 function closeRiderModal(e) {

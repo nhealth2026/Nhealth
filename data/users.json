@@ -18,24 +18,24 @@
     "created_at": "2026-09-25T06:30:48.697451",
     "extra_data": {
       "rating": "4.9",
-      "heading": 0.0,
+      "heading": 90.0,
       "is_online": true,
-      "current_lat": 18.0039,
-      "current_lng": 79.5748,
+      "current_lat": 28.5355,
+      "current_lng": 77.391,
       "total_rides": 142,
       "vehicle_type": "Motorcycle (Hero Splendor+)",
       "vehicle_number": "AP 16 CK 4589",
-      "last_location_time": "2026-09-25T18:00:57.069606"
+      "last_location_time": "2026-09-25T19:16:37.954354"
     },
     "rating": "4.9",
-    "heading": 0.0,
+    "heading": 90.0,
     "is_online": true,
-    "current_lat": 18.0039,
-    "current_lng": 79.5748,
+    "current_lat": 28.5355,
+    "current_lng": 77.391,
     "total_rides": 142,
     "vehicle_type": "Motorcycle (Hero Splendor+)",
     "vehicle_number": "AP 16 CK 4589",
-    "last_location_time": "2026-09-25T18:00:57.069606"
+    "last_location_time": "2026-09-25T19:16:37.954354"
   },
   {
     "id": "USR-PAT-001",

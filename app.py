@@ -1097,7 +1097,7 @@ def api_trip_create():
     """Create a new health support ride request from patient dashboard."""
     import random
     data = request.get_json() or {}
-    trip_id = f"TRIP-{datetime.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
+    trip_id = f"TRIP-{datetime.now().strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:6].upper()}"
     start_otp = str(random.randint(1000, 9999))
     
     trip_record = {
