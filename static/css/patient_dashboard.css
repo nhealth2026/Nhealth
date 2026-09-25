@@ -1555,7 +1555,7 @@ body.patient-dashboard-body {
     padding: 16px;
 }
 .pd-modal-overlay.active {
-    display: flex;
+    display: flex !important;
     animation: pdFadeIn 0.2s ease-out;
 }
 .pd-modal-card {

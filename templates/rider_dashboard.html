@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Rider Cockpit | Nhealth — Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <!-- Rider Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_dashboard.css') }}?v=2.0">
+</head>
+<body class="rider-dashboard-body">
+
+    <!-- Top Navigation Bar -->
+    <header class="rider-top-nav">
+        <a href="/rider/dashboard" class="rider-nav-brand">
+            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" class="rider-brand-img">
+            <span class="rider-badge-partner"><i class="fa-solid fa-motorcycle"></i> Partner</span>
+        </a>
+
+        <div class="rider-nav-controls">
+            <!-- Duty Status Toggle Switch -->
+            <div class="duty-toggle-wrapper {% if user and user.get('is_online') %}online{% endif %}" id="dutyToggleWrapper" onclick="toggleDutyStatus()">
+                <div class="duty-toggle-switch">
+                    <div class="duty-toggle-knob"></div>
+                </div>
+                <span class="duty-toggle-text" id="dutyToggleText">
+                    {% if user and user.get('is_online') %}🟢 Online{% else %}🔴 Offline{% endif %}
+                </span>
+            </div>
+
+            <!-- Profile Chip -->
+            <div class="rider-nav-profile">
+                <div class="rider-avatar">
+                    {{ (user.name[0] if user and user.name else 'R') | upper }}
+                </div>
+                <div class="rider-info-min">
+                    <span class="rider-name">{{ user.name if user else 'Ravi Varma' }}</span>
+                    <span class="rider-rating-tag"><i class="fa-solid fa-star"></i> 4.9 &bull; Hero Rider</span>
+                </div>
+            </div>
+
+            <!-- Logout Button -->
+            <a href="/logout" class="rider-logout-btn" title="Logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Stats Strip -->
+    <div class="rider-stats-strip">
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-value" id="todayEarnings">₹840</span>
+                    <span class="stat-label">Today's Earnings</span>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-value" id="completedTrips">4</span>
+                    <span class="stat-label">Trips Completed</span>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon purple">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-value">98%</span>
+                    <span class="stat-label">Acceptance Rate</span>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon amber">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+                <div class="stat-details">
+                    <span class="stat-value">5.0 ★</span>
+                    <span class="stat-label">Safety Rating</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Cockpit Grid -->
+    <main class="rider-cockpit-main">
+        
+        <!-- ==================== LEFT: LIVE LEAFLET MAP ==================== -->
+        <section class="map-cockpit-card">
+            <div class="map-header">
+                <h2 class="map-title">
+                    <i class="fa-solid fa-map-location-dot" style="color: #0284c7;"></i> Live GPS Navigation
+                </h2>
+                <div class="gps-badge {% if user and user.get('is_online') %}live{% else %}searching{% endif %}" id="gpsBadge">
+                    <span class="gps-pulse-dot"></span>
+                    <span id="gpsStatusText">{% if user and user.get('is_online') %}GPS Streaming Live{% else %}GPS Idle{% endif %}</span>
+                </div>
+            </div>
+
+            <div class="map-container-wrap">
+                <div id="riderLiveMap"></div>
+
+                <!-- Floating Map Controls -->
+                <div class="map-floating-controls">
+                    <button class="map-float-btn" onclick="centerOnRider()" title="Center on my location">
+                        <i class="fa-solid fa-crosshairs"></i>
+                    </button>
+                    <button class="map-float-btn" id="simulateBtn" onclick="toggleSimulation()" title="Simulate Ride Movement (Demo)">
+                        <i class="fa-solid fa-person-biking"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== RIGHT: TASK DISPATCH COCKPIT ==================== -->
+        <section class="task-cockpit-card" id="taskCockpitArea">
+            
+            <!-- STATE 1: OFFLINE VIEW -->
+            <div class="duty-state-offline" id="offlineStateView" style="{% if user and user.get('is_online') %}display: none;{% else %}display: flex;{% endif %}">
+                <div class="offline-icon">
+                    <i class="fa-solid fa-power-off"></i>
+                </div>
+                <h3 class="offline-title">You are Currently Offline</h3>
+                <p class="offline-desc">Turn on duty mode to receive patient accompaniment and hospital transport orders near you.</p>
+                <button class="go-online-btn" onclick="toggleDutyStatus(true)">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Go Online Now</span>
+                </button>
+            </div>
+
+            <!-- STATE 2: ONLINE & SEARCHING (RADAR) -->
+            <div class="duty-state-radar" id="radarStateView" style="{% if user and user.get('is_online') %}display: flex;{% else %}display: none;{% endif %}">
+                <div class="radar-pulse-box">
+                    <div class="radar-circle"></div>
+                    <div class="radar-circle"></div>
+                    <div class="radar-circle"></div>
+                    <div class="radar-center-icon">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+                </div>
+                <h3 class="radar-title">Searching for Nearby Patient Rides...</h3>
+                <p class="radar-desc">Stay on this screen. New patient clinic transport orders will ping automatically with sound alert.</p>
+            </div>
+
+            <!-- STATE 3: INCOMING TASK DISPATCH CARD -->
+            <div class="incoming-task-card" id="incomingTaskView" style="display: none;">
+                <div class="incoming-task-header">
+                    <span class="task-type-badge" id="incomingTaskType"><i class="fa-solid fa-heart-pulse"></i> Patient Transport</span>
+                    <span class="task-fare-badge" id="incomingTaskFare">₹120</span>
+                </div>
+                <div class="incoming-task-body">
+                    <div class="route-step">
+                        <div class="route-dot pickup"></div>
+                        <div>
+                            <div class="route-label">Pickup Location</div>
+                            <div class="route-address" id="incomingPickup">Sector 18, Block B, Main Road</div>
+                        </div>
+                    </div>
+                    <div class="route-line"></div>
+                    <div class="route-step">
+                        <div class="route-dot drop"></div>
+                        <div>
+                            <div class="route-label">Drop Destination</div>
+                            <div class="route-address" id="incomingDrop">Nhealth Diagnostic Lab / Care Clinic</div>
+                        </div>
+                    </div>
+
+                    <div class="patient-preview-box">
+                        <div>
+                            <div style="font-size: 0.72rem; color: #64748b; font-weight: 700;">PATIENT / REQUESTER</div>
+                            <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a;" id="incomingPatientName">Sunita Sharma</div>
+                        </div>
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #0284c7;" id="incomingDistance">~1.2 km away</div>
+                    </div>
+                </div>
+
+                <div class="incoming-task-actions">
+                    <button class="btn-reject-task" onclick="declineTask()">
+                        <i class="fa-solid fa-xmark"></i> Decline
+                    </button>
+                    <button class="btn-accept-task" onclick="acceptCurrentTask()">
+                        <i class="fa-solid fa-check"></i> Accept Task
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATE 4: ACTIVE TASK IN PROGRESS -->
+            <div class="active-task-card" id="activeTaskView" style="display: none;">
+                <div class="active-task-header">
+                    <div>
+                        <div style="font-size: 0.75rem; opacity: 0.9; font-weight: 700;">CURRENT TASK</div>
+                        <div style="font-size: 1.1rem; font-weight: 800;" id="activeTaskTitle">Patient Accompaniment</div>
+                    </div>
+                    <div class="active-status-tag" id="activeStatusTag">On the Way</div>
+                </div>
+
+                <div class="active-task-body">
+                    <!-- Patient contact -->
+                    <div class="patient-contact-strip">
+                        <div>
+                            <div class="patient-meta-name" id="activePatientName">Sunita Sharma</div>
+                            <div style="font-size: 0.75rem; color: #15803d;" id="activeFareText">Estimated Fare: ₹120 (Cash / UPI)</div>
+                        </div>
+                        <a href="tel:9123456780" id="activeCallBtn" class="patient-call-btn">
+                            <i class="fa-solid fa-phone"></i> Call
+                        </a>
+                    </div>
+
+                    <!-- Step 1: Heading to Pickup -->
+                    <div id="stepPickupNav" style="display: flex; flex-direction: column; gap: 10px;">
+                        <a href="#" id="googleNavBtn" target="_blank" class="active-nav-btn">
+                            <i class="fa-solid fa-diamond-turn-right" style="color: #0284c7;"></i> Open Google Navigation
+                        </a>
+                        <button class="btn-complete-trip" style="background: #0284c7;" onclick="markArrivedAtPickup()">
+                            <i class="fa-solid fa-location-crosshairs"></i> I have Arrived at Pickup
+                        </button>
+                    </div>
+
+                    <!-- Step 2: At Pickup - OTP Verification Box -->
+                    <div class="otp-verification-box" id="stepOtpBox" style="display: none;">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: #92400e;">
+                            <i class="fa-solid fa-shield-keyhole"></i> Ask Patient for 4-digit Start OTP
+                        </div>
+                        <input type="text" maxlength="4" placeholder="----" class="otp-input-code" id="otpCodeInput" inputmode="numeric">
+                        <button class="btn-complete-trip" style="background: #d97706; padding: 10px;" onclick="verifyPatientOtp()">
+                            <i class="fa-solid fa-key"></i> Verify &amp; Start Trip
+                        </button>
+                    </div>
+
+                    <!-- Step 3: In Progress -> Complete -->
+                    <div id="stepCompleteBox" style="display: none; flex-direction: column; gap: 10px;">
+                        <a href="#" id="googleNavDropBtn" target="_blank" class="active-nav-btn">
+                            <i class="fa-solid fa-diamond-turn-right" style="color: #10b981;"></i> Navigate to Destination
+                        </a>
+                        <button class="btn-complete-trip" onclick="completeCurrentTrip()">
+                            <i class="fa-solid fa-flag-checkered"></i> Complete Trip &amp; Collect Fare
+                        </button>
+                    </div>
+
+                    <!-- Emergency Cancel / Dismiss Option -->
+                    <div style="margin-top: 14px; text-align: center; border-top: 1px dashed #e2e8f0; padding-top: 10px;">
+                        <button type="button" onclick="cancelCurrentTrip()" style="background: none; border: none; color: #ef4444; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                            <i class="fa-solid fa-ban"></i> Cancel / Dismiss Active Task
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Leaflet Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Rider Cockpit JS Logic -->
+    <script>
+        // State Management
+        let isOnline = {% if user and user.get('is_online') %}true{% else %}false{% endif %};
+        let currentRiderPos = { lat: {{ (user.current_lat if user and user.current_lat else 16.5062)|float }}, lng: {{ (user.current_lng if user and user.current_lng else 80.6480)|float }}, heading: 0 };
+        let map = null;
+        let riderMarker = null;
+        let pickupMarker = null;
+        let dropMarker = null;
+        let routePolyline = null;
+        let currentActiveTask = null;
+        let incomingTask = null;
+        let pollInterval = null;
+        let simulationInterval = null;
+        let isSimulating = false;
+
+        // Initialize Cockpit on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            initGeolocation();
+            if (isOnline) {
+                startTaskPolling();
+            }
+        });
+
+        // Initialize Leaflet Map
+        function initMap() {
+            map = L.map('riderLiveMap', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView([currentRiderPos.lat, currentRiderPos.lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                subdomains: ['a', 'b', 'c'],
+                attribution: '&copy; OpenStreetMap',
+                maxZoom: 19
+            }).addTo(map);
+
+            L.control.zoom({ position: 'topright' }).addTo(map);
+
+            // Invalidate size on mobile load & orientation change
+            setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+            setTimeout(() => { if (map) map.invalidateSize(); }, 900);
+
+            window.addEventListener('resize', () => {
+                if (map) map.invalidateSize();
+            });
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+            });
+
+            // Custom Rider Motorcycle Icon
+            const riderIcon = L.divIcon({
+                className: 'leaflet-rider-marker',
+                html: '<div class="rider-marker-icon-pulse" id="riderMarkerDiv"><i class="fa-solid fa-motorcycle"></i></div>',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
+            riderMarker = L.marker([currentRiderPos.lat, currentRiderPos.lng], { icon: riderIcon }).addTo(map);
+        }
+
+        // Initialize GPS & Streaming
+        function initGeolocation() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        updateRiderLocation(pos.coords.latitude, pos.coords.longitude, pos.coords.heading || 0);
+                    },
+                    (err) => {
+                        console.warn('Geolocation access fallback to default coords:', err.message);
+                    }
+                );
+
+                // Watch GPS movement
+                navigator.geolocation.watchPosition(
+                    (pos) => {
+                        if (isOnline && !isSimulating) {
+                            updateRiderLocation(pos.coords.latitude, pos.coords.longitude, pos.coords.heading || 0, pos.coords.speed || 0);
+                        }
+                    },
+                    (err) => console.warn('GPS Watch error:', err.message),
+                    { enableHighAccuracy: true, maximumAge: 3000, timeout: 5000 }
+                );
+            }
+        }
+
+        // Update Rider Location to Backend & Map
+        async function updateRiderLocation(lat, lng, heading = 0, speed = 0) {
+            currentRiderPos = { lat, lng, heading };
+            if (riderMarker) {
+                riderMarker.setLatLng([lat, lng]);
+            }
+
+            if (isOnline) {
+                try {
+                    const body = { lat, lng, heading, speed };
+                    // If rider has an active trip, include trip_id so DB updates rider coords in trip record
+                    if (currentActiveTask && currentActiveTask.trip_id) {
+                        body.trip_id = currentActiveTask.trip_id;
+                    }
+                    await fetch('/api/rider/location', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                } catch (e) {
+                    console.error('Location sync error:', e);
+                }
+            }
+        }
+
+        function centerOnRider() {
+            if (map && currentRiderPos) {
+                map.setView([currentRiderPos.lat, currentRiderPos.lng], 16);
+            }
+        }
+
+        // Toggle Duty Status (Online / Offline)
+        async function toggleDutyStatus(forceOnline = null) {
+            const nextStatus = forceOnline !== null ? forceOnline : !isOnline;
+
+            try {
+                const res = await fetch('/api/rider/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_online: nextStatus })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    isOnline = nextStatus;
+                    renderDutyState();
+                    if (isOnline) {
+                        startTaskPolling();
+                    } else {
+                        stopTaskPolling();
+                    }
+                }
+            } catch (err) {
+                alert('Could not update status. Check your connection.');
+            }
+        }
+
+        function renderDutyState() {
+            const wrapper = document.getElementById('dutyToggleWrapper');
+            const text = document.getElementById('dutyToggleText');
+            const badge = document.getElementById('gpsBadge');
+            const gpsText = document.getElementById('gpsStatusText');
+            const offlineView = document.getElementById('offlineStateView');
+            const radarView = document.getElementById('radarStateView');
+
+            if (isOnline) {
+                wrapper.classList.add('online');
+                text.textContent = '🟢 Online';
+                badge.className = 'gps-badge live';
+                gpsText.textContent = 'GPS Streaming Live';
+                offlineView.style.display = 'none';
+                if (!currentActiveTask && !incomingTask) {
+                    radarView.style.display = 'flex';
+                }
+            } else {
+                wrapper.classList.remove('online');
+                text.textContent = '🔴 Offline';
+                badge.className = 'gps-badge searching';
+                gpsText.textContent = 'GPS Idle';
+                offlineView.style.display = 'flex';
+                radarView.style.display = 'none';
+                document.getElementById('incomingTaskView').style.display = 'none';
+                if (isSimulating) toggleSimulation();
+            }
+
+            if (map) map.invalidateSize();
+        }
+
+        // Task Dispatch Polling
+        function startTaskPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            fetchTasks();
+            pollInterval = setInterval(fetchTasks, 3000);
+        }
+
+        function stopTaskPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = null;
+        }
+
+        async function fetchTasks() {
+            if (!isOnline) return;
+
+            try {
+                const res = await fetch('/api/rider/tasks');
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    if (data.active_trip) {
+                        const activeStatus = data.active_trip.status;
+                        // Check if trip just completed externally (e.g. cancelled by patient)
+                        if (activeStatus === 'completed' || activeStatus === 'cancelled') {
+                            if (currentActiveTask) {
+                                currentActiveTask = null;
+                                clearTaskMarkers();
+                                renderDutyState();
+                            }
+                        } else {
+                            currentActiveTask = data.active_trip;
+                            incomingTask = null;
+                            renderActiveTrip(data.active_trip);
+                        }
+                    } else if (data.available_tasks && data.available_tasks.length > 0 && !currentActiveTask) {
+                        incomingTask = data.available_tasks[0];
+                        renderIncomingTask(incomingTask);
+                    } else {
+                        if (!currentActiveTask) {
+                            incomingTask = null;
+                            document.getElementById('incomingTaskView').style.display = 'none';
+                            document.getElementById('activeTaskView').style.display = 'none';
+                            document.getElementById('radarStateView').style.display = 'flex';
+                            clearTaskMarkers();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Task fetch error:', err);
+            }
+        }
+
+        function renderIncomingTask(task) {
+            document.getElementById('radarStateView').style.display = 'none';
+            document.getElementById('activeTaskView').style.display = 'none';
+            const card = document.getElementById('incomingTaskView');
+            card.style.display = 'block';
+
+            document.getElementById('incomingTaskType').innerHTML = `<i class="fa-solid fa-heart-pulse"></i> ${task.trip_type || 'Patient Transport'}`;
+            document.getElementById('incomingTaskFare').textContent = `₹${task.fare_amount || 120}`;
+            document.getElementById('incomingPickup').textContent = task.pickup_address || 'Current Location';
+            document.getElementById('incomingDrop').textContent = task.drop_address || 'Clinic / Lab Destination';
+            document.getElementById('incomingPatientName').textContent = task.patient_name || 'Patient';
+
+            // Show Pickup on Map
+            if (task.pickup_lat && task.pickup_lng) {
+                showPickupOnMap(task.pickup_lat, task.pickup_lng, task.drop_lat, task.drop_lng);
+            }
+        }
+
+        function renderActiveTrip(trip) {
+            document.getElementById('radarStateView').style.display = 'none';
+            document.getElementById('incomingTaskView').style.display = 'none';
+            const card = document.getElementById('activeTaskView');
+            card.style.display = 'block';
+
+            document.getElementById('activeTaskTitle').textContent = trip.task_type || trip.trip_type || 'Patient Accompaniment';
+            document.getElementById('activePatientName').textContent = trip.patient_name || 'Patient';
+            document.getElementById('activeFareText').textContent = `Fare: ₹${trip.fare_amount || 120} (Cash / UPI)`;
+            document.getElementById('activeCallBtn').href = `tel:${trip.patient_phone || '9123456780'}`;
+
+            const tag = document.getElementById('activeStatusTag');
+            const stepPickup = document.getElementById('stepPickupNav');
+            const stepOtp = document.getElementById('stepOtpBox');
+            const stepComplete = document.getElementById('stepCompleteBox');
+
+            // Google Maps Nav Link
+            const gNav = document.getElementById('googleNavBtn');
+            gNav.href = `https://www.google.com/maps/dir/?api=1&destination=${trip.pickup_lat || 16.5062},${trip.pickup_lng || 80.6480}`;
+
+            const gNavDrop = document.getElementById('googleNavDropBtn');
+            gNavDrop.href = `https://www.google.com/maps/dir/?api=1&destination=${trip.drop_lat || 16.5150},${trip.drop_lng || 80.6350}`;
+
+            const status = trip.status || 'accepted';
+            if (status === 'accepted') {
+                tag.textContent = 'Heading to Pickup';
+                stepPickup.style.display = 'flex';
+                stepOtp.style.display = 'none';
+                stepComplete.style.display = 'none';
+                // Draw OSRM route from rider to pickup on map
+                if (trip.pickup_lat && trip.pickup_lng) {
+                    drawRouteToPickup(currentRiderPos.lat, currentRiderPos.lng, trip.pickup_lat, trip.pickup_lng);
+                }
+            } else if (status === 'arrived') {
+                tag.textContent = 'Arrived at Pickup';
+                stepPickup.style.display = 'none';
+                stepOtp.style.display = 'flex';
+                stepComplete.style.display = 'none';
+            } else if (status === 'in_progress' || status === 'in_transit') {
+                tag.textContent = 'Trip in Progress';
+                stepPickup.style.display = 'none';
+                stepOtp.style.display = 'none';
+                stepComplete.style.display = 'flex';
+            }
+
+            showPickupOnMap(trip.pickup_lat, trip.pickup_lng, trip.drop_lat, trip.drop_lng);
+        }
+
+        async function acceptCurrentTask() {
+            if (!incomingTask) return;
+
+            try {
+                const res = await fetch('/api/rider/accept_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trip_id: incomingTask.trip_id,
+                        // Send current rider GPS so patient sees live marker immediately
+                        rider_lat: currentRiderPos.lat,
+                        rider_lng: currentRiderPos.lng
+                    })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    currentActiveTask = data.trip || incomingTask;
+                    currentActiveTask.status = 'accepted';
+                    incomingTask = null;
+                    renderActiveTrip(currentActiveTask);
+                    // Draw OSRM route from rider to pickup
+                    drawRouteToPickup(currentRiderPos.lat, currentRiderPos.lng, currentActiveTask.pickup_lat, currentActiveTask.pickup_lng);
+                } else {
+                    alert(data.message || 'Could not accept task.');
+                }
+            } catch (err) {
+                alert('Network error while accepting task.');
+            }
+        }
+
+        function declineTask() {
+            incomingTask = null;
+            document.getElementById('incomingTaskView').style.display = 'none';
+            document.getElementById('radarStateView').style.display = 'flex';
+            clearTaskMarkers();
+        }
+
+        async function markArrivedAtPickup() {
+            if (!currentActiveTask) return;
+
+            try {
+                const res = await fetch('/api/rider/update_task_status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trip_id: currentActiveTask.trip_id,
+                        status: 'arrived'
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    currentActiveTask.status = 'arrived';
+                    renderActiveTrip(currentActiveTask);
+                }
+            } catch (err) {
+                alert('Error updating status.');
+            }
+        }
+
+        async function verifyPatientOtp() {
+            const code = document.getElementById('otpCodeInput').value.trim();
+            if (!code || code.length !== 4) {
+                alert('Please enter the 4-digit OTP provided by the patient.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/rider/verify_otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trip_id: currentActiveTask.trip_id,
+                        otp: code
+                    })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    alert('✅ OTP Verified Successfully! Trip Started.');
+                    currentActiveTask.status = 'in_progress';
+                    renderActiveTrip(currentActiveTask);
+                } else {
+                    alert(data.message || '❌ Invalid OTP code. Ask patient for the 4-digit start pin.');
+                }
+            } catch (err) {
+                alert('Network error verifying OTP.');
+            }
+        }
+
+        async function completeCurrentTrip() {
+            if (!confirm('Are you sure you want to complete this trip and collect payment?')) return;
+
+            try {
+                const res = await fetch('/api/rider/update_task_status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trip_id: currentActiveTask.trip_id,
+                        status: 'completed'
+                    })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert('🎉 Trip Completed Successfully! ₹' + (currentActiveTask.fare_amount || 120) + ' added to your daily earnings.');
+                    currentActiveTask = null;
+                    clearTaskMarkers();
+                    renderDutyState();
+
+                    // Update stats counters
+                    const earnings = document.getElementById('todayEarnings');
+                    const currentVal = parseInt(earnings.textContent.replace('₹', '')) || 840;
+                    earnings.textContent = `₹${currentVal + 120}`;
+
+                    const trips = document.getElementById('completedTrips');
+                    trips.textContent = (parseInt(trips.textContent) || 4) + 1;
+                }
+            } catch (err) {
+                alert('Error completing trip.');
+            }
+        }
+
+        async function cancelCurrentTrip() {
+            if (!currentActiveTask) return;
+            if (!confirm('Are you sure you want to cancel / dismiss this active task?')) return;
+
+            try {
+                const res = await fetch('/api/rider/update_task_status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        trip_id: currentActiveTask.trip_id,
+                        status: 'cancelled'
+                    })
+                });
+                if (res.ok) {
+                    currentActiveTask = null;
+                    clearTaskMarkers();
+                    renderDutyState();
+                    if (map && currentRiderPos) {
+                        map.setView([currentRiderPos.lat, currentRiderPos.lng], 15);
+                    }
+                }
+            } catch (err) {
+                alert('Error cancelling trip.');
+            }
+        }
+
+        // Map Helper Functions
+        function showPickupOnMap(pLat, pLng, dLat, dLng) {
+            clearTaskMarkers();
+
+            if (pLat && pLng) {
+                const pickupIcon = L.divIcon({
+                    className: 'leaflet-marker-pickup',
+                    html: '<div style="background:#10b981; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,0.3); font-size:0.85rem;"><i class="fa-solid fa-person-walking-luggage"></i></div>',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+                pickupMarker = L.marker([pLat, pLng], { icon: pickupIcon }).addTo(map).bindPopup('<b>Pickup Location</b>');
+            }
+
+            if (dLat && dLng) {
+                const dropIcon = L.divIcon({
+                    className: 'leaflet-marker-drop',
+                    html: '<div style="background:#f43f5e; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,0.3); font-size:0.85rem;"><i class="fa-solid fa-flag-checkered"></i></div>',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+                dropMarker = L.marker([dLat, dLng], { icon: dropIcon }).addTo(map).bindPopup('<b>Drop Destination</b>');
+            }
+
+            // Fit map bounds
+            const bounds = [];
+            if (currentRiderPos) bounds.push([currentRiderPos.lat, currentRiderPos.lng]);
+            if (pLat && pLng) bounds.push([pLat, pLng]);
+            if (dLat && dLng) bounds.push([dLat, dLng]);
+            if (bounds.length > 1) {
+                map.fitBounds(bounds, { padding: [50, 50] });
+            }
+        }
+
+        // Draw OSRM real road route from rider position to pickup point
+        async function drawRouteToPickup(fromLat, fromLng, toLat, toLng) {
+            if (!fromLat || !toLat) return;
+            try {
+                const url = `https://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                    if (routePolyline) { map.removeLayer(routePolyline); routePolyline = null; }
+                    routePolyline = L.geoJSON(data.routes[0].geometry, {
+                        style: { color: '#0284c7', weight: 5, opacity: 0.85, lineJoin: 'round', lineCap: 'round' }
+                    }).addTo(map);
+                }
+            } catch (e) {
+                console.warn('Route draw error:', e);
+            }
+        }
+
+        function clearTaskMarkers() {
+            if (pickupMarker) { map.removeLayer(pickupMarker); pickupMarker = null; }
+            if (dropMarker) { map.removeLayer(dropMarker); dropMarker = null; }
+            if (routePolyline) { map.removeLayer(routePolyline); routePolyline = null; }
+        }
+
+        // Demo Simulation Mode (Smooth Motorcycle Animation)
+        function toggleSimulation() {
+            const btn = document.getElementById('simulateBtn');
+            if (isSimulating) {
+                clearInterval(simulationInterval);
+                isSimulating = false;
+                btn.style.background = '#ffffff';
+                btn.style.color = '#0f172a';
+            } else {
+                isSimulating = true;
+                btn.style.background = '#0284c7';
+                btn.style.color = '#ffffff';
+
+                let angle = 0;
+                const baseLat = currentRiderPos.lat;
+                const baseLng = currentRiderPos.lng;
+
+                simulationInterval = setInterval(() => {
+                    angle += 0.05;
+                    const simLat = baseLat + 0.003 * Math.sin(angle);
+                    const simLng = baseLng + 0.003 * Math.cos(angle);
+                    updateRiderLocation(simLat, simLng, Math.round((angle * 180 / Math.PI) % 360), 24);
+                }, 1500);
+            }
+        }
+    </script>
+</body>
+</html>

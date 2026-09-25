@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Rider Partner Registration | Nhealth — Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Rider Auth Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_auth.css') }}?v=1.0">
+</head>
+<body class="rider-auth-page">
+
+    <!-- Mobile Top Navigation Bar -->
+    <header class="rider-mobile-navbar">
+        <a href="/" class="rider-nav-logo" aria-label="Nhealth Home">
+            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="rider-brand-logo-img">
+        </a>
+        <button class="rider-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="rider-mobile-drawer" id="mobileDrawer">
+        <a href="/" class="rider-drawer-link"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="/login" class="rider-drawer-link"><i class="fa-regular fa-user"></i> Patient Login</a>
+        <a href="/login?role=doctor" class="rider-drawer-link"><i class="fa-solid fa-user-doctor"></i> Doctor Login</a>
+        <a href="/login/lab" class="rider-drawer-link"><i class="fa-solid fa-flask-vial"></i> Lab Login</a>
+        <a href="/login/rider" class="rider-drawer-link"><i class="fa-solid fa-motorcycle"></i> Rider Login</a>
+        <a href="/signup/rider" class="rider-drawer-link active"><i class="fa-solid fa-id-card"></i> Join as Rider</a>
+    </div>
+
+    <!-- Main Centered Container (Laptop Frame) -->
+    <div class="rider-auth-page-outer">
+        <div class="rider-auth-frame signup-frame">
+            <div class="rider-auth-container">
+        
+                <!-- ==================== LEFT SHOWCASE PANEL (Desktop) ==================== -->
+                <div class="rider-showcase-panel">
+                    <div class="rider-showcase-top">
+                        <!-- Nhealth Brand Logo -->
+                        <a href="/" class="rider-showcase-logo" aria-label="Nhealth Home">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="rider-showcase-logo-img">
+                        </a>
+
+                        <!-- Header -->
+                        <div class="rider-showcase-header">
+                            <h1 class="rider-showcase-title">Join as Health Rider</h1>
+                            <p class="rider-showcase-subtitle">Earn daily with trusted patient accompaniment, hospital visits, and healthcare clinic transport</p>
+                        </div>
+
+                        <!-- 3 Features List -->
+                        <div class="rider-features-list">
+                            <div class="rider-feature-item">
+                                <div class="rider-feature-icon-wrap">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                                <div class="rider-feature-text">
+                                    <span class="rider-feature-title">High Earnings &amp; Fast Payouts</span>
+                                    <span class="rider-feature-desc">Earn ₹500 - ₹1,500 daily with flexible duty hours.</span>
+                                </div>
+                            </div>
+
+                            <div class="rider-feature-item">
+                                <div class="rider-feature-icon-wrap">
+                                    <i class="fa-solid fa-heart-pulse"></i>
+                                </div>
+                                <div class="rider-feature-text">
+                                    <span class="rider-feature-title">Impactful Healthcare Mission</span>
+                                    <span class="rider-feature-desc">Help patients and seniors reach hospitals &amp; doctor OPD clinics safely.</span>
+                                </div>
+                            </div>
+
+                            <div class="rider-feature-item">
+                                <div class="rider-feature-icon-wrap">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div class="rider-feature-text">
+                                    <span class="rider-feature-title">Zero Friction &amp; Fast Approval</span>
+                                    <span class="rider-feature-desc">Register in 2 minutes and start taking orders right away.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rider Illustration / Photo -->
+                    <img src="{{ url_for('static', filename='images/health_support_rider.png') }}" alt="Health Support Rider" class="rider-showcase-bg-img">
+                </div>
+
+                <!-- ==================== RIGHT FORM PANEL (Desktop & Mobile) ==================== -->
+                <div class="rider-form-panel">
+                    <div class="rider-auth-card signup-card">
+                        
+                        <!-- Center Header with Motorcycle Icon -->
+                        <div class="rider-card-header">
+                            <div class="rider-top-badge">
+                                <i class="fa-solid fa-motorcycle"></i>
+                            </div>
+                            <h2 class="rider-card-title">Rider Partner Registration</h2>
+                            <p class="rider-card-subtitle">Complete 3 simple steps to activate your rider account</p>
+                        </div>
+
+                        <!-- Mobile Step Wizard Indicator -->
+                        <div class="rider-mobile-wizard-bar" id="mobileWizardBar">
+                            <div class="rider-step-line">
+                                <div class="rider-step-line-fill" id="wizardLineFill"></div>
+                            </div>
+
+                            <div class="rider-step-item active" id="stepIndicator1">
+                                <div class="rider-step-circle">1</div>
+                                <span class="rider-step-label">Personal</span>
+                            </div>
+
+                            <div class="rider-step-item" id="stepIndicator2">
+                                <div class="rider-step-circle">2</div>
+                                <span class="rider-step-label">Vehicle</span>
+                            </div>
+
+                            <div class="rider-step-item" id="stepIndicator3">
+                                <div class="rider-step-circle">3</div>
+                                <span class="rider-step-label">Documents</span>
+                            </div>
+                        </div>
+
+                        <!-- Alert Message Box -->
+                        <div id="riderSignupAlert" class="rider-alert"></div>
+
+                        <!-- Multi-Step / Full Form -->
+                        <form id="riderSignupForm" onsubmit="handleRiderSignup(event)" novalidate>
+                            
+                            <!-- ==================== STEP 1: PERSONAL DETAILS ==================== -->
+                            <div class="rider-step-section" id="stepSection1">
+                                <div class="rider-section-header">
+                                    <i class="fa-solid fa-user"></i>
+                                    <span>Personal &amp; Contact Details</span>
+                                </div>
+
+                                <!-- Row 1: Full Name & City -->
+                                <div class="rider-grid-2">
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderName"><span>Full Name<span class="rider-req">*</span></span></label>
+                                        <input type="text" id="riderName" class="rider-form-input no-icon" placeholder="Enter your full name" required>
+                                    </div>
+
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderCity"><span>Operating City<span class="rider-req">*</span></span></label>
+                                        <select id="riderCity" class="rider-select" required>
+                                            <option value="" disabled selected>Select operating city</option>
+                                            <option value="Vijayawada" selected>Vijayawada</option>
+                                            <option value="Visakhapatnam">Visakhapatnam</option>
+                                            <option value="Guntur">Guntur</option>
+                                            <option value="Tirupati">Tirupati</option>
+                                            <option value="Kurnool">Kurnool</option>
+                                            <option value="Kakinada">Kakinada</option>
+                                            <option value="Rajahmundry">Rajahmundry</option>
+                                            <option value="Nellore">Nellore</option>
+                                            <option value="Hyderabad">Hyderabad</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Row 2: Mobile Number & Email -->
+                                <div class="rider-grid-2">
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderPhone"><span>Mobile Number<span class="rider-req">*</span></span></label>
+                                        <div class="rider-phone-wrapper">
+                                            <span class="rider-phone-prefix">+91 <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: #64748b;"></i></span>
+                                            <input type="tel" id="riderPhone" class="rider-form-input" placeholder="Enter 10-digit mobile" maxlength="10" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderEmail"><span>Email Address<span class="rider-req">*</span></span></label>
+                                        <input type="email" id="riderEmail" class="rider-form-input no-icon" placeholder="Enter email address" required>
+                                    </div>
+                                </div>
+
+                                <!-- Row 3: Password & Confirm Password -->
+                                <div class="rider-grid-2">
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderPassword"><span>Password<span class="rider-req">*</span></span></label>
+                                        <div class="rider-input-wrapper">
+                                            <input type="password" id="riderPassword" class="rider-form-input no-icon" placeholder="Create password" required>
+                                            <button type="button" class="rider-eye-toggle" onclick="togglePasswordVisibility('riderPassword', this)" aria-label="Toggle password">
+                                                <i class="fa-regular fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderConfirmPassword"><span>Confirm Password<span class="rider-req">*</span></span></label>
+                                        <div class="rider-input-wrapper">
+                                            <input type="password" id="riderConfirmPassword" class="rider-form-input no-icon" placeholder="Confirm password" required>
+                                            <button type="button" class="rider-eye-toggle" onclick="togglePasswordVisibility('riderConfirmPassword', this)" aria-label="Toggle password">
+                                                <i class="fa-regular fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Next Button for Step 1 -->
+                                <div class="mobile-only-btn" style="margin-top: 14px;">
+                                    <button type="button" class="rider-btn-primary" onclick="goToStep(2)">
+                                        <span>Next: Vehicle Details</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ==================== STEP 2: VEHICLE & DRIVING CREDENTIALS ==================== -->
+                            <div class="rider-step-section" id="stepSection2">
+                                <div class="rider-section-header">
+                                    <i class="fa-solid fa-motorcycle"></i>
+                                    <span>Vehicle &amp; Driving Credentials</span>
+                                </div>
+
+                                <!-- Row 1: Vehicle Type & Vehicle Number -->
+                                <div class="rider-grid-2">
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderVehicleType"><span>Vehicle Type<span class="rider-req">*</span></span></label>
+                                        <select id="riderVehicleType" class="rider-select" required>
+                                            <option value="Motorcycle (Two-Wheeler)" selected>Motorcycle / Bike (Two-Wheeler)</option>
+                                            <option value="Scooter (Two-Wheeler)">Scooter (Activa / Jupiter / Access)</option>
+                                            <option value="Electric Vehicle (EV Bike)">Electric Bike / EV Scooter</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderVehicleNumber"><span>Vehicle Registration Number<span class="rider-req">*</span></span></label>
+                                        <input type="text" id="riderVehicleNumber" class="rider-form-input no-icon" placeholder="e.g. AP 16 CK 4589" style="text-transform: uppercase;" required>
+                                    </div>
+                                </div>
+
+                                <!-- Row 2: Driving License Number & Emergency Contact -->
+                                <div class="rider-grid-2">
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderDlNumber"><span>Driving License (DL) Number<span class="rider-req">*</span></span></label>
+                                        <input type="text" id="riderDlNumber" class="rider-form-input no-icon" placeholder="e.g. AP16 20220019283" style="text-transform: uppercase;" required>
+                                    </div>
+
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderEmergencyPhone"><span>Emergency Contact Number</span></label>
+                                        <input type="tel" id="riderEmergencyPhone" class="rider-form-input no-icon" placeholder="Family / Relative mobile" maxlength="10">
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Buttons for Step 2 -->
+                                <div class="mobile-step-nav">
+                                    <button type="button" class="rider-btn-outline" style="flex: 1;" onclick="goToStep(1)">
+                                        <i class="fa-solid fa-arrow-left"></i>
+                                        <span>Back</span>
+                                    </button>
+                                    <button type="button" class="rider-btn-primary" style="flex: 2;" onclick="goToStep(3)">
+                                        <span>Next: Upload Documents</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ==================== STEP 3: DOCUMENT UPLOADS & KYC ==================== -->
+                            <div class="rider-step-section" id="stepSection3">
+                                <div class="rider-section-header">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>KYC Documents Verification</span>
+                                </div>
+
+                                <!-- 3 Document Upload Cards -->
+                                <div class="rider-upload-grid">
+                                    <!-- Card 1: Driving License -->
+                                    <div class="rider-upload-card" onclick="document.getElementById('fileDl').click()">
+                                        <input type="file" id="fileDl" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusDl')">
+                                        <span class="rider-upload-title">Driving License (DL)<span class="rider-req">*</span></span>
+                                        <span class="rider-upload-subtitle">Front &amp; Back photo</span>
+                                        <button type="button" class="rider-upload-btn">
+                                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            <span>Upload</span>
+                                        </button>
+                                        <span class="rider-file-status" id="statusDl"><i class="fa-solid fa-circle-check"></i> DL Attached</span>
+                                    </div>
+
+                                    <!-- Card 2: Aadhaar Card / ID -->
+                                    <div class="rider-upload-card" onclick="document.getElementById('fileAadhaar').click()">
+                                        <input type="file" id="fileAadhaar" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusAadhaar')">
+                                        <span class="rider-upload-title">Aadhaar Card<span class="rider-req">*</span></span>
+                                        <span class="rider-upload-subtitle">National ID proof</span>
+                                        <button type="button" class="rider-upload-btn">
+                                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            <span>Upload</span>
+                                        </button>
+                                        <span class="rider-file-status" id="statusAadhaar"><i class="fa-solid fa-circle-check"></i> Aadhaar Attached</span>
+                                    </div>
+
+                                    <!-- Card 3: Vehicle RC -->
+                                    <div class="rider-upload-card" onclick="document.getElementById('fileRc').click()">
+                                        <input type="file" id="fileRc" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusRc')">
+                                        <span class="rider-upload-title">Vehicle RC Book<span class="rider-req">*</span></span>
+                                        <span class="rider-upload-subtitle">Registration Certificate</span>
+                                        <button type="button" class="rider-upload-btn">
+                                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            <span>Upload</span>
+                                        </button>
+                                        <span class="rider-file-status" id="statusRc"><i class="fa-solid fa-circle-check"></i> RC Attached</span>
+                                    </div>
+                                </div>
+
+                                <!-- Terms Checkbox -->
+                                <div class="rider-checkbox-group" style="margin-top: 14px; margin-bottom: 20px;">
+                                    <input type="checkbox" id="riderTerms" class="rider-checkbox" required>
+                                    <label for="riderTerms" class="rider-checkbox-label">
+                                        I confirm that I possess a valid Driving License and agree to Nhealth's <a href="javascript:void(0)" onclick="alert('Nhealth Rider Terms: Safe patient transit, timely medicine delivery, road safety adherence.')">Rider Partner Terms</a> and <a href="javascript:void(0)" onclick="alert('Nhealth Safety Policy: Verified identity, strict non-disclosure of medical records.')">Safety Policy</a>.
+                                    </label>
+                                </div>
+
+                                <!-- Submit Buttons -->
+                                <div style="display: flex; gap: 10px;">
+                                    <button type="button" class="rider-btn-outline mobile-only-inline-back" style="flex: 1; display: none;" onclick="goToStep(2)">
+                                        <i class="fa-solid fa-arrow-left"></i>
+                                        <span>Back</span>
+                                    </button>
+                                    <button type="submit" class="rider-btn-primary" id="riderSignupSubmitBtn" style="flex: 2;">
+                                        <i class="fa-solid fa-motorcycle"></i>
+                                        <span>Complete Registration</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                    <!-- Footer Link Centered Below Card -->
+                    <div class="rider-card-footer-link">
+                        Already registered as a Rider? <a href="/login/rider">Login to Rider Portal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        let currentStep = 1;
+
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobileDrawer');
+            if (drawer) drawer.classList.toggle('open');
+        }
+
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        function handleFileSelected(input, statusElId) {
+            const statusEl = document.getElementById(statusElId);
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${fileName.length > 15 ? fileName.substring(0, 12) + '...' : fileName}`;
+                statusEl.style.display = 'block';
+            }
+        }
+
+        // Responsive Wizard Navigation
+        function goToStep(step) {
+            if (window.innerWidth >= 992) {
+                return;
+            }
+
+            const alertBox = document.getElementById('riderSignupAlert');
+            alertBox.style.display = 'none';
+
+            // Validation before advancing from Step 1
+            if (step === 2 && currentStep === 1) {
+                const name = document.getElementById('riderName').value.trim();
+                const phone = document.getElementById('riderPhone').value.trim();
+                const email = document.getElementById('riderEmail').value.trim();
+                const city = document.getElementById('riderCity').value;
+                const pwd = document.getElementById('riderPassword').value;
+                const cpwd = document.getElementById('riderConfirmPassword').value;
+
+                if (!name || !phone || !email || !city || !pwd) {
+                    alertBox.textContent = 'Please fill out all required fields in Personal Details.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (phone.length < 10) {
+                    alertBox.textContent = 'Please enter a valid 10-digit mobile number.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (pwd.length < 6) {
+                    alertBox.textContent = 'Password must be at least 6 characters long.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (pwd !== cpwd) {
+                    alertBox.textContent = 'Passwords do not match. Please verify.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+            }
+
+            // Validation before advancing from Step 2
+            if (step === 3 && currentStep === 2) {
+                const vNum = document.getElementById('riderVehicleNumber').value.trim();
+                const dlNum = document.getElementById('riderDlNumber').value.trim();
+
+                if (!vNum || !dlNum) {
+                    alertBox.textContent = 'Please provide your Vehicle Number and Driving License (DL) Number.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+            }
+
+            currentStep = step;
+            updateStepVisibility();
+        }
+
+        function updateStepVisibility() {
+            const isMobile = window.innerWidth < 992;
+            const s1 = document.getElementById('stepSection1');
+            const s2 = document.getElementById('stepSection2');
+            const s3 = document.getElementById('stepSection3');
+            const ind1 = document.getElementById('stepIndicator1');
+            const ind2 = document.getElementById('stepIndicator2');
+            const ind3 = document.getElementById('stepIndicator3');
+            const line = document.getElementById('wizardLineFill');
+            const backBtnInline = document.querySelector('.mobile-only-inline-back');
+
+            if (!isMobile) {
+                s1.style.display = 'block';
+                s2.style.display = 'block';
+                s3.style.display = 'block';
+                if (backBtnInline) backBtnInline.style.display = 'none';
+                return;
+            }
+
+            s1.style.display = (currentStep === 1) ? 'block' : 'none';
+            s2.style.display = (currentStep === 2) ? 'block' : 'none';
+            s3.style.display = (currentStep === 3) ? 'block' : 'none';
+
+            if (backBtnInline) {
+                backBtnInline.style.display = (currentStep === 3) ? 'flex' : 'none';
+            }
+
+            ind1.className = 'rider-step-item' + (currentStep === 1 ? ' active' : (currentStep > 1 ? ' completed' : ''));
+            ind2.className = 'rider-step-item' + (currentStep === 2 ? ' active' : (currentStep > 2 ? ' completed' : ''));
+            ind3.className = 'rider-step-item' + (currentStep === 3 ? ' active' : '');
+
+            if (line) {
+                line.style.width = (currentStep === 1 ? '0%' : (currentStep === 2 ? '50%' : '100%'));
+            }
+        }
+
+        window.addEventListener('resize', updateStepVisibility);
+        document.addEventListener('DOMContentLoaded', updateStepVisibility);
+
+        async function handleRiderSignup(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('riderSignupAlert');
+            const submitBtn = document.getElementById('riderSignupSubmitBtn');
+
+            const name = document.getElementById('riderName').value.trim();
+            const city = document.getElementById('riderCity').value;
+            const phone = document.getElementById('riderPhone').value.trim();
+            const email = document.getElementById('riderEmail').value.trim();
+            const pwd = document.getElementById('riderPassword').value;
+            const cpwd = document.getElementById('riderConfirmPassword').value;
+            const vehicleType = document.getElementById('riderVehicleType').value;
+            const vehicleNumber = document.getElementById('riderVehicleNumber').value.trim().toUpperCase();
+            const dlNumber = document.getElementById('riderDlNumber').value.trim().toUpperCase();
+            const emergencyPhone = document.getElementById('riderEmergencyPhone').value.trim();
+            const terms = document.getElementById('riderTerms').checked;
+
+            alertBox.style.display = 'none';
+
+            if (!name || !city || !phone || !email || !pwd || !vehicleNumber || !dlNumber) {
+                alertBox.textContent = 'Please fill out all required fields marked with *.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (phone.length < 10) {
+                alertBox.textContent = 'Please enter a valid 10-digit mobile number.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (pwd.length < 6) {
+                alertBox.textContent = 'Password must be at least 6 characters long.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (pwd !== cpwd) {
+                alertBox.textContent = 'Passwords do not match.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (!terms) {
+                alertBox.textContent = 'You must accept the Rider Partner Terms and Safety Policy.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Creating Rider Account...</span>';
+
+            try {
+                const res = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        role: 'rider',
+                        name: name,
+                        phone: phone,
+                        email: email,
+                        password: pwd,
+                        city: city,
+                        reg_number: dlNumber,
+                        vehicle_type: vehicleType,
+                        vehicle_number: vehicleNumber,
+                        emergency_phone: emergencyPhone
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    if (data.user) {
+                        localStorage.setItem('nhealth_user', JSON.stringify(data.user));
+                    }
+                    alertBox.textContent = '🎉 ' + (data.message || 'Rider account created successfully! Redirecting to Rider Dashboard...');
+                    alertBox.className = 'rider-alert success';
+                    alertBox.style.display = 'block';
+
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/rider/dashboard';
+                    }, 1200);
+                } else {
+                    alertBox.textContent = data.message || 'Failed to create rider account. Please try again.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-motorcycle"></i> <span>Complete Registration</span>';
+                }
+            } catch (err) {
+                alertBox.textContent = 'Network error. Please try again.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-motorcycle"></i> <span>Complete Registration</span>';
+            }
+        }
+    </script>
+</body>
+</html>

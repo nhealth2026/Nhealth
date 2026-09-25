@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Book Health Support Rider — Nhealth Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Dynamic Rider Booking Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/book_rider.css') }}?v=2.0">
+</head>
+<body class="book-rider-body">
+
+    <!-- ==================== TOP NAVIGATION BAR ==================== -->
+    <header class="br-top-nav">
+        <div class="br-nav-left">
+            <a href="/patient/dashboard" class="br-back-btn" title="Return to Dashboard">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/">
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth Logo" class="br-brand-logo-img">
+            </a>
+            <span class="br-badge-partner">
+                <i class="fa-solid fa-shield-halved"></i> Verified Medical Transport
+            </span>
+        </div>
+
+        <div class="br-nav-right">
+            <div class="br-user-chip" title="Logged in Patient">
+                <div class="br-avatar-circle">
+                    {{ (user.name[0]|upper) if user and user.name else 'P' }}
+                </div>
+                <div style="display: flex; flex-direction: column; text-align: left;">
+                    <span style="font-size: 0.85rem; font-weight: 800; color: var(--br-dark);">{{ user.name if user else 'Valued Patient' }}</span>
+                    <span style="font-size: 0.72rem; color: var(--br-gray);"><i class="fa-solid fa-location-dot" style="color: #0baaa2;"></i> {{ user.city if user and user.city else 'Vijayawada' }}</span>
+                </div>
+            </div>
+            <a href="/patient/dashboard" class="br-back-btn" style="background: transparent; color: #ef4444; padding: 6px 8px;" title="Exit Booking">
+                <i class="fa-solid fa-xmark" style="font-size: 1.1rem;"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN WORKSPACE (Split Screen) ==================== -->
+    <div class="br-main-workspace">
+
+        <!-- ==================== LEFT CONTROL PANEL ==================== -->
+        <aside class="br-control-panel" id="bookingControlPanel">
+            
+            <!-- Booking Form State -->
+            <div id="bookingFormSection">
+                <div class="br-panel-header">
+                    <h1 class="br-panel-title">
+                        <i class="fa-solid fa-motorcycle" style="color: var(--br-primary);"></i>
+                        Book Health Support Rider
+                    </h1>
+                    <p class="br-panel-subtitle">
+                        Safe, door-to-hospital accompaniment for patients attending doctor OPDs, diagnostic scans, and clinical treatments.
+                    </p>
+                </div>
+
+                <div class="br-panel-body">
+                    
+                    <!-- GPS Auto-Detect Button -->
+                    <button type="button" class="br-gps-detect-btn" id="btnGpsAutoDetect" onclick="detectLiveGpsLocation()">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="gps-pulse-ring"></div>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 800; font-size: 0.86rem; color: #166534;" id="gpsDetectBtnText">Auto-Detect My Current GPS Location</div>
+                                <div style="font-size: 0.72rem; color: #15803d; opacity: 0.9;" id="gpsDetectSubText">Click to place pickup marker at your exact doorstep</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-crosshairs" style="font-size: 1.15rem; color: #16a34a;"></i>
+                    </button>
+
+                    <!-- Ride Type Selector (Human Transport Only) -->
+                    <div>
+                        <label class="loc-input-label" style="margin-bottom: 6px;">Select Patient Transport Service</label>
+                        <div class="br-mode-selector">
+                            <div class="br-mode-card selected" id="optOneWay" onclick="selectServiceMode('oneway', 120, this)">
+                                <i class="fa-solid fa-person-walking-luggage"></i>
+                                <div class="br-mode-title">One-Way Transport</div>
+                                <div class="br-mode-desc">Home to Clinic / Hospital OPD</div>
+                                <div class="br-mode-price" id="priceOneWay">₹120</div>
+                            </div>
+                            <div class="br-mode-card" id="optRoundTrip" onclick="selectServiceMode('roundtrip', 250, this)">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                                <div class="br-mode-title">Round-Trip &amp; OPD Wait</div>
+                                <div class="br-mode-desc">Rider waits during OPD &amp; drops back</div>
+                                <div class="br-mode-price" id="priceRoundTrip">₹250</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pickup & Drop Locations -->
+                    <div class="br-location-section">
+                        <!-- Pickup Input -->
+                        <div class="location-input-row">
+                            <div class="loc-dot pickup" title="Pickup Location"></div>
+                            <div class="loc-input-wrap">
+                                <label class="loc-input-label">🟢 Pickup Location (Your Address)</label>
+                                <input type="text" class="loc-text-input" id="inputPickupAddress" placeholder="Enter pickup locality or drag green pin on map" value="{{ user.address if user and user.address else 'Benz Circle, MG Road, Vijayawada' }}" onfocus="setMapSelectMode('pickup')" onchange="handleAddressInputChange('pickup')">
+                            </div>
+                            <button type="button" style="background: none; border: none; color: var(--br-primary); cursor: pointer; padding: 4px;" onclick="detectLiveGpsLocation()" title="Detect GPS">
+                                <i class="fa-solid fa-location-crosshairs"></i>
+                            </button>
+                        </div>
+
+                        <!-- Drop Input -->
+                        <div class="location-input-row">
+                            <div class="loc-dot drop" title="Destination Location"></div>
+                            <div class="loc-input-wrap">
+                                <label class="loc-input-label">🔴 Hospital / Clinic Drop</label>
+                                <input type="text" class="loc-text-input" id="inputDropAddress" placeholder="Select hospital chip below or drag red pin" value="Apollo Hospitals, Suryaraopeta, Vijayawada" onfocus="setMapSelectMode('drop')" onchange="handleAddressInputChange('drop')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Hospital Chips -->
+                    <div class="hospital-chips-wrap">
+                        <span class="hospital-chips-label"><i class="fa-solid fa-hospital" style="color: var(--br-primary);"></i> Quick Select Destination Hospital:</span>
+                        <div class="hospital-chips-row">
+                            <button type="button" class="hospital-chip" onclick="selectHospitalDestination('Apollo Hospitals, Suryaraopeta, Vijayawada', 16.5050, 80.6550)">
+                                <i class="fa-solid fa-plus" style="color: #0baaa2;"></i> Apollo Hospitals
+                            </button>
+                            <button type="button" class="hospital-chip" onclick="selectHospitalDestination('Manipal Hospitals, Tadepalli, Vijayawada', 16.4870, 80.6080)">
+                                <i class="fa-solid fa-plus" style="color: #0baaa2;"></i> Manipal Hospital
+                            </button>
+                            <button type="button" class="hospital-chip" onclick="selectHospitalDestination('KIMS ICON Hospital, Vijayawada', 16.5200, 80.6300)">
+                                <i class="fa-solid fa-plus" style="color: #0baaa2;"></i> KIMS ICON
+                            </button>
+                            <button type="button" class="hospital-chip" onclick="selectHospitalDestination('Govt General Hospital (GGH), Vijayawada', 16.5085, 80.6275)">
+                                <i class="fa-solid fa-plus" style="color: #0baaa2;"></i> GGH Vijayawada
+                            </button>
+                            <button type="button" class="hospital-chip" onclick="selectHospitalDestination('Ramesh Cardiac & Multispeciality Hospital', 16.5180, 80.6370)">
+                                <i class="fa-solid fa-plus" style="color: #0baaa2;"></i> Ramesh Hospitals
+                            </button>
+                            <button type="button" class="hospital-chip" onclick="selectHospitalDestination('Care Hospitals, Benz Circle', 16.5120, 80.6400)">
+                                <i class="fa-solid fa-plus" style="color: #0baaa2;"></i> Care Hospital
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Door / House & Landmark Details -->
+                    <div class="detail-grid-2">
+                        <div class="br-input-group">
+                            <label class="br-input-label">Door / Flat / House No.</label>
+                            <input type="text" class="br-input-control" id="inputDoorNo" placeholder="e.g. Flat 302, Sai Residency" value="Flat 401, Sri Krishna Apts">
+                        </div>
+                        <div class="br-input-group">
+                            <label class="br-input-label">Landmark for Rider</label>
+                            <input type="text" class="br-input-control" id="inputLandmark" placeholder="e.g. Opposite SBI ATM" value="Near Sweet Magic Bakery">
+                        </div>
+                    </div>
+
+                    <!-- Patient Contact Information -->
+                    <div class="detail-grid-2">
+                        <div class="br-input-group">
+                            <label class="br-input-label">Patient Name</label>
+                            <input type="text" class="br-input-control" id="inputPatientName" value="{{ user.name if user and user.name else 'Rohit Kumar' }}">
+                        </div>
+                        <div class="br-input-group">
+                            <label class="br-input-label">Contact Phone</label>
+                            <input type="tel" class="br-input-control" id="inputPatientPhone" value="{{ user.phone if user and user.phone else '9123456780' }}">
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Route & Fare Summary Card -->
+                    <div class="route-fare-summary-card">
+                        <div class="route-meta-left">
+                            <div class="route-stats-row">
+                                <span class="route-stat-item"><i class="fa-solid fa-route"></i> <span id="summaryDistanceText">2.8 km</span></span>
+                                <span>&bull;</span>
+                                <span class="route-stat-item"><i class="fa-regular fa-clock"></i> <span id="summaryDurationText">8 mins drive</span></span>
+                            </div>
+                            <div style="font-size: 0.72rem; opacity: 0.9; margin-top: 3px;" id="summaryRouteLabel">
+                                Road-Optimized Route &bull; Live GPS Dispatch
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">Total Calculated Fare</div>
+                            <div class="fare-display-val" id="summaryFareDisplay">₹120</div>
+                        </div>
+                    </div>
+
+                    <!-- Confirm & Request Button -->
+                    <button type="button" class="btn-confirm-rider-action" id="btnConfirmBooking" onclick="submitRiderBooking()">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Confirm &amp; Dispatch Health Rider</span>
+                    </button>
+
+                    <div style="text-align: center; font-size: 0.73rem; color: var(--br-gray); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa-solid fa-shield-heart" style="color: #10b981;"></i>
+                        <span>100% Background-Verified Healthcare Riders &bull; Start OTP Protected</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ==================== LIVE TRACKING SECTION (Hidden Initially) ==================== -->
+            <div class="br-tracking-card" id="liveTrackingSection">
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--br-border); padding-bottom: 12px;">
+                    <div>
+                        <span style="background: #e0f2fe; color: #0284c7; font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase;">
+                            <i class="fa-solid fa-circle-dot fa-fade" style="color: #0284c7;"></i> Live Dispatch
+                        </span>
+                        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--br-dark); margin-top: 4px;" id="trackLiveStatusHeading">
+                            Rider On The Way
+                        </h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.72rem; color: var(--br-gray);">Trip ID</span>
+                        <div style="font-weight: 800; font-size: 0.82rem; color: var(--br-slate);" id="trackTripIdText">TRIP-2609-XXXX</div>
+                    </div>
+                </div>
+
+                <!-- 4-Digit Security Start OTP Card — hidden until rider accepts -->
+                <div class="tracking-otp-box" style="display:none;">
+                    <div>
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-key"></i> 4-Digit Start Trip OTP
+                        </div>
+                        <div style="font-size: 0.75rem; color: #15803d; margin-top: 2px;">
+                            Share this OTP with rider when they arrive
+                        </div>
+                    </div>
+                    <div class="tracking-otp-code" id="trackOtpDisplay">----</div>
+                </div>
+
+                <!-- Driver & Vehicle Profile Strip — hidden until rider accepts -->
+                <div class="driver-info-strip" style="display:none;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #0baaa2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; font-size: 0.94rem; color: var(--br-dark);" id="trackRiderName">Your Rider</div>
+                            <div style="font-size: 0.75rem; color: var(--br-gray);" id="trackRiderVehicle">Motorcycle</div>
+                            <div style="font-size: 0.72rem; color: #f59e0b; font-weight: 700; margin-top: 2px;">
+                                <i class="fa-solid fa-star"></i> 4.9 &bull; Background Verified
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="tel:" class="map-action-btn" style="background: #10b981; color: #ffffff; border-color: #059669; width: 40px; height: 40px; text-decoration: none;" title="Call Health Rider">
+                        <i class="fa-solid fa-phone"></i>
+                    </a>
+                </div>
+
+                <!-- Live Status Steps -->
+                <div style="display: flex; justify-content: space-between; position: relative; padding: 10px 0;">
+                    <div style="text-align: center; flex: 1;">
+                        <div style="width: 26px; height: 26px; border-radius: 50%; background: #0284c7; color: #fff; margin: 0 auto 4px auto; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;" id="stepIcon1"><i class="fa-solid fa-check"></i></div>
+                        <div style="font-size: 0.68rem; font-weight: 700; color: #0284c7;" id="stepText1">Assigned</div>
+                    </div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="width: 26px; height: 26px; border-radius: 50%; background: #e2e8f0; color: #64748b; margin: 0 auto 4px auto; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;" id="stepIcon2"><i class="fa-solid fa-motorcycle"></i></div>
+                        <div style="font-size: 0.68rem; font-weight: 700; color: #64748b;" id="stepText2">On Way</div>
+                    </div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="width: 26px; height: 26px; border-radius: 50%; background: #e2e8f0; color: #64748b; margin: 0 auto 4px auto; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;" id="stepIcon3"><i class="fa-solid fa-location-dot"></i></div>
+                        <div style="font-size: 0.68rem; font-weight: 700; color: #64748b;" id="stepText3">Arrived</div>
+                    </div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="width: 26px; height: 26px; border-radius: 50%; background: #e2e8f0; color: #64748b; margin: 0 auto 4px auto; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;" id="stepIcon4"><i class="fa-solid fa-flag-checkered"></i></div>
+                        <div style="font-size: 0.68rem; font-weight: 700; color: #64748b;" id="stepText4">Completed</div>
+                    </div>
+                </div>
+
+                <!-- Live ETA and Fare Summary -->
+                <div style="background: #f8fafc; border: 1px solid var(--br-border); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 0.72rem; color: var(--br-gray);">Estimated Arrival</div>
+                        <div style="font-size: 1.1rem; font-weight: 800; color: var(--br-dark);" id="trackEtaText">~3 mins (1.2 km away)</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.72rem; color: var(--br-gray);">Trip Amount</div>
+                        <div style="font-size: 1.1rem; font-weight: 800; color: var(--br-primary);" id="trackFareText">₹120</div>
+                    </div>
+                </div>
+
+                <!-- Cancel Booking Option -->
+                <div style="margin-top: 8px; display: flex; gap: 10px;">
+                    <button type="button" class="pd-btn-secondary" style="flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid #fee2e2; color: #ef4444; background: #fff; font-weight: 700; font-size: 0.82rem; cursor: pointer;" onclick="cancelActiveTrip()">
+                        <i class="fa-solid fa-ban"></i> Cancel Request
+                    </button>
+                    <button type="button" class="pd-btn-secondary" style="flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--br-border); color: var(--br-slate); background: #fff; font-weight: 700; font-size: 0.82rem; cursor: pointer;" onclick="resetToBookingForm()">
+                        <i class="fa-solid fa-plus"></i> New Booking
+                    </button>
+                </div>
+
+            </div>
+
+        </aside>
+
+        <!-- ==================== RIGHT LEAFLET MAP VIEW ==================== -->
+        <main class="br-map-view">
+            
+            <!-- Map Container -->
+            <div id="riderBookingMap"></div>
+
+            <!-- Floating Mode Selector Pill -->
+            <div class="map-mode-selector-pill" id="mapModePill">
+                <button type="button" class="map-mode-tab pickup active" id="tabModePickup" onclick="setMapSelectMode('pickup')">
+                    <i class="fa-solid fa-location-dot" style="color: #4ade80;"></i>
+                    <span>Set Pickup 🟢</span>
+                </button>
+                <button type="button" class="map-mode-tab drop" id="tabModeDrop" onclick="setMapSelectMode('drop')">
+                    <i class="fa-solid fa-hospital" style="color: #fb7185;"></i>
+                    <span>Set Hospital Drop 🔴</span>
+                </button>
+            </div>
+
+            <!-- Floating Map Actions -->
+            <div class="map-floating-actions">
+                <button type="button" class="map-action-btn" onclick="detectLiveGpsLocation()" title="Auto-Detect My Current GPS Location">
+                    <i class="fa-solid fa-crosshairs" style="color: #10b981;"></i>
+                </button>
+                <button type="button" class="map-action-btn" onclick="fitRouteBounds()" title="Fit Complete Route">
+                    <i class="fa-solid fa-expand" style="color: var(--br-primary);"></i>
+                </button>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- ==================== JAVASCRIPT CONTROLLER ==================== -->
+    <script>
+        // State variables
+        let map = null;
+        let pickupMarker = null;
+        let dropMarker = null;
+        let riderLiveMarker = null;
+        let routePolyline = null;
+        let currentMapMode = 'pickup'; // 'pickup' | 'drop'
+        
+        let selectedServiceMode = 'oneway';
+        let baseFare = 120;
+        let calculatedFare = 120;
+        let calculatedDistanceKm = 2.8;
+        let calculatedDurationMins = 8;
+        
+        // Coordinates (Default: Benz Circle to Apollo Hospitals, Vijayawada)
+        let pickupCoords = { lat: 16.5062, lng: 80.6480 };
+        let dropCoords = { lat: 16.5050, lng: 80.6550 };
+        let riderLiveCoords = { lat: 16.5090, lng: 80.6420 };
+
+        let activeTripId = null;
+        let trackingPollInterval = null;
+        let riderSimInterval = null;
+
+        // Initialize Map & Geolocation on page load
+        // Initialize Map & Geolocation on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initLeafletMap();
+            // Automatically attempt GPS auto-detection on first visit
+            if (navigator.geolocation) {
+                detectLiveGpsLocation(false); // silent first check
+            }
+        });
+
+        // Initialize Leaflet Map
+        function initLeafletMap() {
+            const defaultCenter = [16.5062, 80.6480]; // Vijayawada center
+            
+            map = L.map('riderBookingMap', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView(defaultCenter, 14);
+
+            // OpenStreetMap Standard Tiles with robust subdomains
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                subdomains: ['a', 'b', 'c'],
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            L.control.zoom({ position: 'topright' }).addTo(map);
+
+            // Ensure tile sizing recalculates seamlessly on mobile layout load & orientation change
+            setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+            setTimeout(() => { if (map) map.invalidateSize(); }, 400);
+            setTimeout(() => { if (map) map.invalidateSize(); }, 900);
+
+            window.addEventListener('resize', () => {
+                if (map) map.invalidateSize();
+            });
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+            });
+
+            // Custom Leaflet Div Icons
+            const pickupIcon = L.divIcon({
+                className: 'custom-leaflet-pin',
+                html: `<div style="background:#10b981; color:#ffffff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px solid #ffffff; box-shadow:0 4px 14px rgba(16,185,129,0.6); font-size:0.95rem; cursor:grab;"><i class="fa-solid fa-person-walking"></i></div>`,
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
+            });
+
+            const dropIcon = L.divIcon({
+                className: 'custom-leaflet-pin',
+                html: `<div style="background:#f43f5e; color:#ffffff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px solid #ffffff; box-shadow:0 4px 14px rgba(244,63,94,0.6); font-size:0.95rem; cursor:grab;"><i class="fa-solid fa-hospital"></i></div>`,
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
+            });
+
+            // Create Draggable Markers
+            pickupMarker = L.marker([pickupCoords.lat, pickupCoords.lng], {
+                icon: pickupIcon,
+                draggable: true,
+                title: "Drag to set pickup location"
+            }).addTo(map);
+
+            dropMarker = L.marker([dropCoords.lat, dropCoords.lng], {
+                icon: dropIcon,
+                draggable: true,
+                title: "Drag to set hospital destination"
+            }).addTo(map);
+
+            pickupMarker.bindPopup("<b>🟢 Pickup Location</b><br>Drag pin or click map to move");
+            dropMarker.bindPopup("<b>🔴 Hospital / Clinic Drop</b><br>Drag pin or click map to move");
+
+            // Marker Drag Events
+            pickupMarker.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                pickupCoords = { lat: pos.lat, lng: pos.lng };
+                reverseGeocode(pos.lat, pos.lng, 'pickup');
+                fetchOsrmRoute();
+            });
+
+            dropMarker.on('dragend', function(e) {
+                const pos = e.target.getLatLng();
+                dropCoords = { lat: pos.lat, lng: pos.lng };
+                reverseGeocode(pos.lat, pos.lng, 'drop');
+                fetchOsrmRoute();
+            });
+
+            // Map Click Event (Sets Pin based on active mode)
+            map.on('click', function(e) {
+                const clickedLat = e.latlng.lat;
+                const clickedLng = e.latlng.lng;
+
+                if (currentMapMode === 'pickup') {
+                    pickupCoords = { lat: clickedLat, lng: clickedLng };
+                    pickupMarker.setLatLng([clickedLat, clickedLng]);
+                    reverseGeocode(clickedLat, clickedLng, 'pickup');
+                } else {
+                    dropCoords = { lat: clickedLat, lng: clickedLng };
+                    dropMarker.setLatLng([clickedLat, clickedLng]);
+                    reverseGeocode(clickedLat, clickedLng, 'drop');
+                }
+                fetchOsrmRoute();
+            });
+
+            // Initial Route Query
+            fetchOsrmRoute();
+        }
+
+        // Toggle Active Map Placement Mode (Pickup 🟢 vs Drop 🔴)
+        function setMapSelectMode(mode) {
+            currentMapMode = mode;
+            const tabPickup = document.getElementById('tabModePickup');
+            const tabDrop = document.getElementById('tabModeDrop');
+
+            if (map) map.invalidateSize();
+
+            if (mode === 'pickup') {
+                tabPickup.classList.add('active');
+                tabDrop.classList.remove('active');
+                map.panTo([pickupCoords.lat, pickupCoords.lng]);
+                pickupMarker.openPopup();
+            } else {
+                tabDrop.classList.add('active');
+                tabPickup.classList.remove('active');
+                map.panTo([dropCoords.lat, dropCoords.lng]);
+                dropMarker.openPopup();
+            }
+        }
+
+        // Select Service Mode (One-Way ₹120 vs Round-Trip ₹250)
+        function selectServiceMode(mode, basePrice, el) {
+            selectedServiceMode = mode;
+            baseFare = basePrice;
+
+            document.querySelectorAll('.br-mode-card').forEach(c => c.classList.remove('selected'));
+            if (el) el.classList.add('selected');
+
+            calculateDynamicFare();
+        }
+
+        // Quick Select Destination Hospital Chip
+        function selectHospitalDestination(hospitalName, lat, lng) {
+            document.getElementById('inputDropAddress').value = hospitalName;
+            dropCoords = { lat: lat, lng: lng };
+            if (dropMarker) {
+                dropMarker.setLatLng([lat, lng]);
+                dropMarker.bindPopup(`<b>🔴 ${hospitalName}</b>`).openPopup();
+            }
+            fetchOsrmRoute();
+            setMapSelectMode('drop');
+        }
+
+        // GPS Auto-Detection with Geocoding
+        function detectLiveGpsLocation(showAlert = true) {
+            const btn = document.getElementById('btnGpsAutoDetect');
+            const btnText = document.getElementById('gpsDetectBtnText');
+            const btnSub = document.getElementById('gpsDetectSubText');
+
+            if (!navigator.geolocation) {
+                if (showAlert) alert('Geolocation is not supported by your browser.');
+                return;
+            }
+
+            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Detecting GPS Location...';
+            if (btnSub) btnSub.textContent = 'Contacting satellite sensors...';
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    pickupCoords = { lat: lat, lng: lng };
+
+                    if (pickupMarker) {
+                        pickupMarker.setLatLng([lat, lng]);
+                        pickupMarker.bindPopup("<b>🟢 Your Current GPS Location</b>").openPopup();
+                    }
+                    if (map) {
+                        map.invalidateSize();
+                        map.setView([lat, lng], 15);
+                    }
+
+                    if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#16a34a"></i> Location Auto-Detected!';
+                    if (btnSub) btnSub.textContent = `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+
+                    reverseGeocode(lat, lng, 'pickup');
+                    fetchOsrmRoute();
+                },
+                (error) => {
+                    console.warn('GPS detection warning:', error.message);
+                    if (btnText) btnText.textContent = 'Auto-Detect My Current GPS Location';
+                    if (btnSub) btnSub.textContent = 'Click to place pickup marker at your exact doorstep';
+                    if (showAlert) {
+                        alert('Could not auto-detect location. Please ensure location permissions are allowed or drag the green marker.');
+                    }
+                },
+                { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+            );
+        }
+
+        // Reverse Geocode (Lat/Lng -> Readable Street Address via OpenStreetMap Nominatim)
+        async function reverseGeocode(lat, lng, target) {
+            try {
+                const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+                const response = await fetch(url, { headers: { 'User-Agent': 'NhealthRiderBooking/2.0' } });
+                const data = await response.json();
+
+                if (data && data.display_name) {
+                    const addressParts = [];
+                    if (data.address.road || data.address.pedestrian) addressParts.push(data.address.road || data.address.pedestrian);
+                    if (data.address.suburb || data.address.neighbourhood || data.address.residential) addressParts.push(data.address.suburb || data.address.neighbourhood || data.address.residential);
+                    if (data.address.city || data.address.town || data.address.county) addressParts.push(data.address.city || data.address.town || data.address.county);
+                    
+                    const cleanAddress = addressParts.length > 0 ? addressParts.join(', ') : data.display_name.split(',').slice(0, 3).join(',');
+
+                    if (target === 'pickup') {
+                        document.getElementById('inputPickupAddress').value = cleanAddress;
+                    } else {
+                        document.getElementById('inputDropAddress').value = cleanAddress;
+                    }
+                }
+            } catch (err) {
+                console.warn('Reverse geocoding notice:', err);
+            }
+        }
+
+        // Manual text input change handler
+        function handleAddressInputChange(target) {
+            // Recalculate route on edit
+            fetchOsrmRoute();
+        }
+
+        // Fetch Real-World Driving Road Route via OSRM Driving Engine
+        async function fetchOsrmRoute() {
+            if (!pickupCoords || !dropCoords) return;
+
+            const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lng},${pickupCoords.lat};${dropCoords.lng},${dropCoords.lat}?overview=full&geometries=geojson`;
+
+            try {
+                const res = await fetch(osrmUrl);
+                const data = await res.json();
+
+                if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                    const route = data.routes[0];
+                    calculatedDistanceKm = parseFloat((route.distance / 1000).toFixed(1));
+                    calculatedDurationMins = Math.max(3, Math.round(route.duration / 60));
+
+                    // Render glowing road polyline
+                    if (routePolyline && map) {
+                        map.removeLayer(routePolyline);
+                    }
+
+                    routePolyline = L.geoJSON(route.geometry, {
+                        style: {
+                            color: '#0284c7',
+                            weight: 6,
+                            opacity: 0.85,
+                            lineJoin: 'round',
+                            lineCap: 'round',
+                            dashArray: null
+                        }
+                    }).addTo(map);
+
+                    // Update UI Stats
+                    document.getElementById('summaryDistanceText').textContent = `${calculatedDistanceKm} km`;
+                    document.getElementById('summaryDurationText').textContent = `${calculatedDurationMins} mins drive`;
+
+                    calculateDynamicFare();
+                } else {
+                    // Fallback straight distance calculation
+                    fallbackStraightRoute();
+                }
+            } catch (err) {
+                console.warn('OSRM router fallback:', err);
+                fallbackStraightRoute();
+            }
+        }
+
+        // Straight line fallback if OSRM is offline
+        function fallbackStraightRoute() {
+            const dLat = (dropCoords.lat - pickupCoords.lat) * (Math.PI / 180);
+            const dLon = (dropCoords.lng - pickupCoords.lng) * (Math.PI / 180);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(pickupCoords.lat * (Math.PI / 180)) * Math.cos(dropCoords.lat * (Math.PI / 180)) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const straightKm = parseFloat((6371 * c).toFixed(1));
+            calculatedDistanceKm = Math.max(1.0, straightKm);
+            calculatedDurationMins = Math.max(4, Math.round(calculatedDistanceKm * 2.5));
+
+            if (routePolyline && map) map.removeLayer(routePolyline);
+            routePolyline = L.polyline([[pickupCoords.lat, pickupCoords.lng], [dropCoords.lat, dropCoords.lng]], {
+                color: '#0284c7',
+                weight: 5,
+                dashArray: '8, 8'
+            }).addTo(map);
+
+            document.getElementById('summaryDistanceText').textContent = `${calculatedDistanceKm} km`;
+            document.getElementById('summaryDurationText').textContent = `${calculatedDurationMins} mins drive`;
+            calculateDynamicFare();
+        }
+
+        // Fit map bounds to encompass pickup, drop and route
+        function fitRouteBounds() {
+            if (!map || !pickupCoords || !dropCoords) return;
+            map.invalidateSize();
+            map.fitBounds([
+                [pickupCoords.lat, pickupCoords.lng],
+                [dropCoords.lat, dropCoords.lng]
+            ], { padding: [40, 40], maxZoom: 16 });
+        }
+
+        // Dynamic Fare Calculation Math
+        function calculateDynamicFare() {
+            let fare = baseFare;
+            // Additional per-km surcharge beyond 3 km (₹14/km)
+            if (calculatedDistanceKm > 3.0) {
+                const extraKm = calculatedDistanceKm - 3.0;
+                fare += Math.round(extraKm * 14);
+            }
+            if (selectedServiceMode === 'roundtrip') {
+                fare = Math.max(250, fare + 130);
+            }
+
+            calculatedFare = fare;
+            document.getElementById('summaryFareDisplay').textContent = `₹${calculatedFare}`;
+            if (selectedServiceMode === 'oneway') {
+                document.getElementById('priceOneWay').textContent = `₹${calculatedFare}`;
+            } else {
+                document.getElementById('priceRoundTrip').textContent = `₹${calculatedFare}`;
+            }
+        }
+
+        // Submit Rider Booking
+        async function submitRiderBooking() {
+            const btn = document.getElementById('btnConfirmBooking');
+            const pName = document.getElementById('inputPatientName').value.trim() || 'Patient';
+            const pPhone = document.getElementById('inputPatientPhone').value.trim() || '9123456780';
+            const pickupAddr = document.getElementById('inputPickupAddress').value.trim() || 'Pickup Location';
+            const dropAddr = document.getElementById('inputDropAddress').value.trim() || 'Hospital Destination';
+            const doorNo = document.getElementById('inputDoorNo').value.trim();
+            const landmark = document.getElementById('inputLandmark').value.trim();
+
+            const fullPickup = doorNo ? `${doorNo}, ${pickupAddr} (Landmark: ${landmark})` : pickupAddr;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Dispatching Nearest Rider...';
+
+            try {
+                const response = await fetch('/api/trip/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        patient_name: pName,
+                        patient_phone: pPhone,
+                        pickup_address: fullPickup,
+                        drop_address: dropAddr,
+                        pickup_lat: pickupCoords.lat,
+                        pickup_lng: pickupCoords.lng,
+                        drop_lat: dropCoords.lat,
+                        drop_lng: dropCoords.lng,
+                        task_type: selectedServiceMode === 'roundtrip' ? 'Round-Trip Patient Hospital Escort' : 'One-Way Patient Clinic Transport',
+                        fare_amount: calculatedFare,
+                        distance_km: calculatedDistanceKm
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    activeTripId = data.trip.trip_id;
+                    transitionToLiveTracking(data.trip);
+                } else {
+                    alert(data.message || 'Could not dispatch rider. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirm &amp; Dispatch Health Rider';
+                }
+            } catch (err) {
+                alert('Network error while booking rider.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirm &amp; Dispatch Health Rider';
+            }
+        }
+
+        // Switch to Live Tracking UI State — shows "Searching" immediately, no rider info yet
+        function transitionToLiveTracking(trip) {
+            document.getElementById('bookingFormSection').style.display = 'none';
+            document.getElementById('liveTrackingSection').style.display = 'flex';
+            document.getElementById('mapModePill').style.display = 'none';
+
+            // Populate Trip Meta
+            document.getElementById('trackTripIdText').textContent = trip.trip_id;
+            document.getElementById('trackFareText').textContent = `₹${trip.fare_amount || calculatedFare}`;
+
+            // ——— RAPIDO STYLE: Hide OTP and rider info until a rider accepts ———
+            setTrackingState('searching');
+
+            // Start Live Polling (no simulation — all state driven by DB)
+            startLiveTracking(trip.trip_id);
+        }
+
+        // Set tracking UI state based on trip status
+        function setTrackingState(status, trip) {
+            const heading = document.getElementById('trackLiveStatusHeading');
+            const otpBox = document.querySelector('.tracking-otp-box');
+            const driverStrip = document.querySelector('.driver-info-strip');
+            const etaBox = document.querySelector('.route-fare-summary-card') || document.querySelector('[id="trackEtaText"]')?.closest('div[style]');
+
+            if (status === 'searching') {
+                // Hide rider info — no captain accepted yet
+                heading.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin" style="color:#0284c7"></i> Searching for Nearest Rider...`;
+                if (otpBox) otpBox.style.display = 'none';
+                if (driverStrip) driverStrip.style.display = 'none';
+                document.getElementById('trackEtaText').textContent = 'Looking for available rider...';
+
+                // Reset step indicators
+                ['stepIcon2','stepIcon3','stepIcon4'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) { el.style.background = '#e2e8f0'; el.style.color = '#64748b'; }
+                });
+                ['stepText2','stepText3','stepText4'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.color = '#64748b';
+                });
+
+                // Remove any previous rider marker
+                if (riderLiveMarker && map) { map.removeLayer(riderLiveMarker); riderLiveMarker = null; }
+
+            } else if (status === 'accepted' && trip) {
+                // Rider accepted! Now show all rider info
+                heading.innerHTML = `<i class="fa-solid fa-motorcycle" style="color:#0284c7"></i> Rider On The Way`;
+                if (otpBox) otpBox.style.display = 'flex';
+                if (driverStrip) driverStrip.style.display = 'flex';
+
+                // Populate OTP and rider details
+                document.getElementById('trackOtpDisplay').textContent = trip.start_otp || '----';
+                document.getElementById('trackRiderName').textContent = trip.rider_name || 'Your Rider';
+                document.getElementById('trackRiderVehicle').innerHTML = `${trip.rider_vehicle || 'Motorcycle'} &bull; <strong style="color:var(--br-slate);">${trip.rider_vehicle || ''}</strong>`;
+
+                // Update rider phone call button
+                const callBtn = document.querySelector('.driver-info-strip a[href^="tel:"]');
+                if (callBtn && trip.rider_phone) callBtn.href = `tel:${trip.rider_phone}`;
+
+                // Show "On Way" step
+                document.getElementById('stepIcon2').style.background = '#0284c7';
+                document.getElementById('stepIcon2').style.color = '#fff';
+                document.getElementById('stepText2').style.color = '#0284c7';
+                document.getElementById('trackEtaText').textContent = 'Rider is heading to your door';
+
+                // Place rider marker at their real GPS position
+                updateRiderMarkerOnMap(trip.rider_lat, trip.rider_lng, trip.rider_name || 'Your Rider');
+
+            } else if (status === 'arrived' && trip) {
+                heading.innerHTML = `<i class="fa-solid fa-location-dot" style="color:#10b981"></i> Rider Arrived at Your Door! 📍`;
+                if (otpBox) otpBox.style.display = 'flex';
+                if (driverStrip) driverStrip.style.display = 'flex';
+
+                // Arrived step
+                document.getElementById('stepIcon3').style.background = '#10b981';
+                document.getElementById('stepIcon3').style.color = '#fff';
+                document.getElementById('stepText3').style.color = '#10b981';
+                document.getElementById('trackEtaText').textContent = 'Please share your OTP with the rider';
+
+                updateRiderMarkerOnMap(trip.rider_lat || pickupCoords.lat, trip.rider_lng || pickupCoords.lng, trip.rider_name || 'Your Rider');
+                if (riderLiveMarker) riderLiveMarker.bindPopup(`<b>📍 Rider Arrived!</b><br>Share OTP: <b>${trip.start_otp}</b>`).openPopup();
+
+            } else if ((status === 'in_progress' || status === 'in_transit') && trip) {
+                heading.innerHTML = `<i class="fa-solid fa-road" style="color:#f59e0b"></i> Trip In Progress — Heading to Hospital`;
+                if (otpBox) otpBox.style.display = 'none'; // OTP no longer needed
+                if (driverStrip) driverStrip.style.display = 'flex';
+
+                // In progress steps
+                document.getElementById('stepIcon4').style.background = '#f59e0b';
+                document.getElementById('stepIcon4').style.color = '#fff';
+                document.getElementById('stepText4').style.color = '#f59e0b';
+                document.getElementById('trackEtaText').textContent = 'On the way to hospital';
+
+                updateRiderMarkerOnMap(trip.rider_lat, trip.rider_lng, trip.rider_name || 'Your Rider');
+            }
+        }
+
+        // Place or update the rider marker at real GPS coordinates
+        function updateRiderMarkerOnMap(lat, lng, riderName) {
+            if (!lat || !lng || !map) return;
+
+            const riderIcon = L.divIcon({
+                className: 'leaflet-rider-pulse-marker',
+                html: `<div style="background:#0284c7; color:#fff; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px solid #fff; box-shadow:0 4px 18px rgba(2,132,199,0.7); font-size:1.2rem;"><i class="fa-solid fa-motorcycle"></i></div>`,
+                iconSize: [44, 44],
+                iconAnchor: [22, 22]
+            });
+
+            if (riderLiveMarker) {
+                riderLiveMarker.setLatLng([lat, lng]);
+            } else {
+                riderLiveMarker = L.marker([lat, lng], { icon: riderIcon }).addTo(map);
+                riderLiveMarker.bindPopup(`<b>🛵 ${riderName}</b><br>Your Health Rider`);
+            }
+
+            riderLiveCoords = { lat, lng };
+        }
+
+        // TRUE LIVE TRACKING — polls DB every 2s, all state driven by actual trip status
+        function startLiveTracking(tripId) {
+            if (trackingPollInterval) clearInterval(trackingPollInterval);
+            if (riderSimInterval) clearInterval(riderSimInterval);
+
+            let lastStatus = 'searching';
+
+            trackingPollInterval = setInterval(async () => {
+                try {
+                    const res = await fetch(`/api/trip/${tripId}/live`);
+                    const data = await res.json();
+
+                    if (res.ok && data.status === 'success' && data.trip) {
+                        const trip = data.trip;
+                        const newStatus = trip.status;
+
+                        // Update UI only when status changes (or on first accepted to show rider coords)
+                        if (newStatus !== lastStatus || newStatus === 'accepted') {
+                            lastStatus = newStatus;
+                            setTrackingState(newStatus, trip);
+                        } else if ((newStatus === 'accepted' || newStatus === 'in_progress' || newStatus === 'in_transit') && trip.rider_lat && trip.rider_lng) {
+                            // Smoothly update rider marker position each poll even if status unchanged
+                            updateRiderMarkerOnMap(trip.rider_lat, trip.rider_lng, trip.rider_name || 'Your Rider');
+                        }
+
+                        // Terminal states
+                        if (newStatus === 'completed') {
+                            clearInterval(trackingPollInterval);
+                            clearInterval(riderSimInterval);
+
+                            document.getElementById('trackLiveStatusHeading').innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981"></i> Trip Completed! Thank you for choosing Nhealth.`;
+                            // Mark all steps done
+                            ['stepIcon1','stepIcon2','stepIcon3','stepIcon4'].forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) { el.style.background = '#10b981'; el.style.color = '#fff'; }
+                            });
+
+                            setTimeout(() => {
+                                alert('🎉 Health Rider trip completed successfully! Thank you for choosing Nhealth.');
+                                resetToBookingForm();
+                            }, 2000);
+                        } else if (newStatus === 'cancelled') {
+                            clearInterval(trackingPollInterval);
+                            alert('Your Health Rider booking has been cancelled.');
+                            resetToBookingForm();
+                        }
+                    }
+                } catch (e) {
+                    // Network error — silently retry next interval
+                    console.warn('Live tracking poll error:', e);
+                }
+            }, 2000); // Poll every 2 seconds
+        }
+
+        // Cancel Active Trip
+        function cancelActiveTrip() {
+            if (confirm('Are you sure you want to cancel this Health Support Rider booking?')) {
+                if (trackingPollInterval) clearInterval(trackingPollInterval);
+                if (riderSimInterval) clearInterval(riderSimInterval);
+                if (riderLiveMarker && map) map.removeLayer(riderLiveMarker);
+                // Optionally notify backend
+                if (activeTripId) {
+                    fetch('/api/rider/update_task_status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ trip_id: activeTripId, status: 'cancelled' })
+                    }).catch(() => {});
+                }
+                alert('Your Health Rider booking has been cancelled.');
+                resetToBookingForm();
+            }
+        }
+
+        // Reset to initial booking form
+        function resetToBookingForm() {
+            if (trackingPollInterval) clearInterval(trackingPollInterval);
+            if (riderSimInterval) clearInterval(riderSimInterval);
+            if (riderLiveMarker && map) map.removeLayer(riderLiveMarker);
+            riderLiveMarker = null;
+            activeTripId = null;
+
+            document.getElementById('liveTrackingSection').style.display = 'none';
+            document.getElementById('bookingFormSection').style.display = 'block';
+            document.getElementById('mapModePill').style.display = 'flex';
+
+            const btn = document.getElementById('btnConfirmBooking');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirm &amp; Dispatch Health Rider';
+            
+            fitRouteBounds();
+        }
+    </script>
+</body>
+</html>

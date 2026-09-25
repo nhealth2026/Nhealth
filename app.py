@@ -646,6 +646,14 @@ def patient_dashboard():
     return render_template('patient_dashboard.html', user=patient, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
+@app.route('/rider/book')
+@app.route('/book-rider')
+def book_rider_page():
+    """Render the dedicated Dynamic Health Support Rider Booking Page with Live Map & Route Highlighting."""
+    patient = get_current_patient()
+    return render_template('book_rider.html', user=patient, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/contact')
 @app.route('/contact-us')
 def contact_page():
@@ -659,6 +667,8 @@ def login_page():
     role = request.args.get('role', 'patient')
     if role == 'lab':
         return redirect(url_for('login_lab_page'))
+    if role == 'rider':
+        return redirect(url_for('login_rider_page'))
     return render_template('login.html', role=role, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
@@ -676,12 +686,21 @@ def login_pharmacy_page():
     return render_template('login.html', role='pharmacy', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
+@app.route('/login/rider')
+@app.route('/rider/login')
+def login_rider_page():
+    """Render dedicated Rider Login page."""
+    return render_template('login_rider.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/signup')
 def signup_page():
     """Render the Signup page (defaults to patient or uses role query)."""
     role = request.args.get('role', 'patient')
     if role == 'lab':
         return redirect(url_for('signup_lab_page'))
+    if role == 'rider':
+        return redirect(url_for('signup_rider_page'))
     if role in ['doctor', 'partner']:
         return render_template('signup_partner.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
     return render_template('signup_patient.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
@@ -705,6 +724,13 @@ def signup_doctor_page():
 def signup_lab_page():
     """Render dedicated Lab Sign Up page (matching reference design for both desktop and mobile views)."""
     return render_template('signup_lab.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/signup/rider')
+@app.route('/rider/signup')
+def signup_rider_page():
+    """Render dedicated Rider Sign Up page (3-step streamlined onboarding)."""
+    return render_template('signup_rider.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
 @app.route('/lab/dashboard')
@@ -743,6 +769,27 @@ def pharmacy_dashboard():
             "email": "pharmacy@nhealth.in"
         }
     return render_template('pharmacy_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/rider/dashboard')
+def rider_dashboard():
+    """Render Rider Cockpit Dashboard."""
+    user = session.get('user')
+    if not user or user.get('role') != 'rider':
+        user = {
+            "id": "USR-RIDER-001",
+            "name": "Ravi Varma",
+            "role": "rider",
+            "city": "Vijayawada",
+            "phone": "9876543222",
+            "email": "rider@nhealth.in",
+            "vehicle_type": "Motorcycle (Hero Splendor+)",
+            "vehicle_number": "AP 16 CK 4589",
+            "is_online": True,
+            "rating": "4.9",
+            "total_rides": 142
+        }
+    return render_template('rider_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
 @app.route('/api/auth/signup', methods=['POST'])
@@ -815,6 +862,11 @@ def auth_signup():
             "gender": data.get('gender', 'Male'),
             "blood_group": data.get('blood_group', 'O+'),
             "address": address or f"{city or 'Vijayawada'}, Andhra Pradesh",
+            "vehicle_type": data.get('vehicle_type', data.get('vehicleType', 'Motorcycle (Two-Wheeler)')),
+            "vehicle_number": data.get('vehicle_number', data.get('vehicleNumber', '')),
+            "is_online": True,
+            "rating": "5.0",
+            "total_rides": 0,
             "password": generate_password_hash(password),
             "created_at": datetime.now().isoformat()
         }
@@ -827,7 +879,16 @@ def auth_signup():
         session['user_id'] = user_record["id"]
         session['user'] = clean_user
 
-        redirect_url = '/lab/dashboard' if role == 'lab' else ('/pharmacy/dashboard' if role in ['pharmacy', 'pharma'] else ('/patient/dashboard' if role == 'patient' else '/'))
+        if role in ['pharmacy', 'pharma']:
+            redirect_url = '/pharmacy/dashboard'
+        elif role == 'lab':
+            redirect_url = '/lab/dashboard'
+        elif role == 'rider':
+            redirect_url = '/rider/dashboard'
+        elif role == 'patient':
+            redirect_url = '/patient/dashboard'
+        else:
+            redirect_url = '/'
 
         return jsonify({
             "status": "success",
@@ -912,6 +973,8 @@ def auth_login():
             redirect_url = '/pharmacy/dashboard'
         elif user_role == 'lab' or role == 'lab':
             redirect_url = '/lab/dashboard'
+        elif user_role == 'rider' or role == 'rider':
+            redirect_url = '/rider/dashboard'
         elif user_role == 'doctor' or role == 'doctor':
             redirect_url = '/'
         else:
@@ -929,6 +992,152 @@ def auth_login():
             "status": "error",
             "message": f"Login failed: {str(e)}"
         }), 500
+
+
+# ==================== RIDER & TRIP REAL-TIME API ROUTES ====================
+
+@app.route('/api/rider/status', methods=['POST'])
+def api_rider_status():
+    """Toggle online/offline duty status for rider."""
+    data = request.get_json() or {}
+    user = session.get('user')
+    rider_id = data.get('rider_id') or (user.get('id') if user else 'USR-RIDER-001')
+    is_online = data.get('is_online', True)
+    db.update_rider_duty_status(rider_id, is_online)
+    if user and user.get('id') == rider_id:
+        session['user']['is_online'] = is_online
+    return jsonify({"status": "success", "is_online": is_online})
+
+
+@app.route('/api/rider/location', methods=['POST'])
+def api_rider_location():
+    """Update live GPS location stream from rider phone."""
+    data = request.get_json() or {}
+    user = session.get('user')
+    rider_id = data.get('rider_id') or (user.get('id') if user else 'USR-RIDER-001')
+    lat = data.get('lat', 16.5020)
+    lng = data.get('lng', 80.6430)
+    heading = data.get('heading', 0)
+    active_trip_id = data.get('trip_id')
+    db.update_rider_location(rider_id, lat, lng, heading, active_trip_id)
+    return jsonify({"status": "success", "lat": lat, "lng": lng, "heading": heading})
+
+
+@app.route('/api/rider/tasks', methods=['GET'])
+def api_rider_tasks():
+    """Get active trip and available dispatch task queue for rider cockpit."""
+    user = session.get('user')
+    rider_id = request.args.get('rider_id') or (user.get('id') if user else 'USR-RIDER-001')
+    
+    all_trips = db.get_all_trips()
+    active_trip = None
+    for t in all_trips:
+        if t.get('rider_id') == rider_id and t.get('status') in ('accepted', 'arrived', 'in_progress', 'in_transit'):
+            active_trip = t
+            break
+            
+    available = db.get_available_tasks_for_riders()
+    return jsonify({
+        "status": "success",
+        "active_trip": active_trip,
+        "available_tasks": available
+    })
+
+
+@app.route('/api/rider/accept_task', methods=['POST'])
+def api_rider_accept_task():
+    """Rider accepts an incoming task."""
+    data = request.get_json() or {}
+    trip_id = data.get('trip_id')
+    user = session.get('user') or {}
+    rider_id = data.get('rider_id') or user.get('id', 'USR-RIDER-001')
+    rider_name = user.get('name', 'Ravi Varma')
+    rider_phone = user.get('phone', '9876543222')
+    # Try to get vehicle from various fields
+    rider_vehicle = (user.get('vehicle_number') or 
+                     user.get('extra_data', {}).get('vehicle_number') if isinstance(user.get('extra_data'), dict) else None) or 'AP 16 CK 4589'
+    # Rider current GPS position (sent from cockpit)
+    rider_lat = data.get('rider_lat')
+    rider_lng = data.get('rider_lng')
+    
+    success = db.accept_trip_by_rider(trip_id, rider_id, rider_name, rider_phone, rider_vehicle, rider_lat, rider_lng)
+    if success:
+        trip = db.get_trip_by_id(trip_id)
+        if trip:
+            return jsonify({"status": "success", "message": "Trip accepted successfully!", "trip": trip})
+        return jsonify({"status": "success", "message": "Trip accepted!"})
+    return jsonify({"status": "error", "message": "Failed to accept trip. It may have already been accepted."}), 400
+
+
+@app.route('/api/rider/update_task_status', methods=['POST'])
+def api_rider_update_task_status():
+    """Update task lifecycle state (arrived, completed, cancelled)."""
+    data = request.get_json() or {}
+    trip_id = data.get('trip_id')
+    status = data.get('status', 'arrived')
+    db.update_trip_status(trip_id, status)
+    trip = db.get_trip_by_id(trip_id)
+    return jsonify({"status": "success", "trip": trip})
+
+
+@app.route('/api/rider/verify_otp', methods=['POST'])
+def api_rider_verify_otp():
+    """Verify 4-digit start OTP provided by patient."""
+    data = request.get_json() or {}
+    trip_id = data.get('trip_id')
+    otp = data.get('otp', '').strip()
+    success, msg = db.verify_trip_otp(trip_id, otp)
+    if success:
+        return jsonify({"status": "success", "message": msg, "trip": db.get_trip_by_id(trip_id)})
+    return jsonify({"status": "error", "message": msg}), 400
+
+
+@app.route('/api/trip/create', methods=['POST'])
+def api_trip_create():
+    """Create a new health support ride request from patient dashboard."""
+    import random
+    data = request.get_json() or {}
+    trip_id = f"TRIP-{datetime.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
+    start_otp = str(random.randint(1000, 9999))
+    
+    trip_record = {
+        "trip_id": trip_id,
+        "patient_name": data.get('patient_name', 'Patient').strip(),
+        "patient_phone": data.get('patient_phone', '9123456780').strip(),
+        "task_type": data.get('task_type', 'Patient OPD Accompaniment'),
+        "pickup_address": data.get('pickup_address', 'Benz Circle, Vijayawada').strip(),
+        "pickup_lat": float(data.get('pickup_lat', 16.5062)),
+        "pickup_lng": float(data.get('pickup_lng', 80.6480)),
+        "drop_address": data.get('drop_address', 'Ramesh Hospitals, Vijayawada').strip(),
+        "drop_lat": float(data.get('drop_lat', 16.5150)),
+        "drop_lng": float(data.get('drop_lng', 80.6350)),
+        "rider_lat": 16.5020,
+        "rider_lng": 80.6430,
+        "rider_heading": 45,
+        "fare_amount": int(data.get('fare_amount', 120)),
+        "distance_km": float(data.get('distance_km', 2.5)),
+        "start_otp": start_otp,
+        "status": "searching"
+    }
+    
+    db.create_rider_trip(trip_record)
+    return jsonify({
+        "status": "success",
+        "message": "Health Support Rider requested! Searching for nearest rider...",
+        "trip": trip_record
+    }), 201
+
+
+@app.route('/api/trip/<trip_id>/live', methods=['GET'])
+def api_trip_live(trip_id):
+    """Retrieve real-time GPS coordinates, ETA, and status of trip."""
+    trip = db.get_trip_by_id(trip_id)
+    if not trip:
+        return jsonify({"status": "error", "message": "Trip not found"}), 404
+    return jsonify({
+        "status": "success",
+        "trip": trip
+    })
 
 
 @app.route('/api/auth/logout', methods=['POST', 'GET'])

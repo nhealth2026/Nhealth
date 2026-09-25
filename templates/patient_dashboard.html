@@ -14,6 +14,9 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
+    <!-- Leaflet CSS for Live Rider Tracking -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
     <!-- Consultation Dashboard Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/patient_dashboard.css') }}?v=1.2">
 </head>
@@ -72,7 +75,13 @@
                         <div class="m-service-icon-circle">
                             <img src="{{ url_for('static', filename='images/services/srv_online_consult.png') }}" alt="Online Consultation" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-video\'></i>'">
                         </div>
-                        <span class="m-service-name">Online Consultation</span>
+                        <span class="m-service-name">Online Consult</span>
+                    </div>
+                    <div class="m-service-tile" onclick="openRiderBookingModal()" style="border: 1.5px solid #bae6fd; background: #f0f9ff;">
+                        <div class="m-service-icon-circle" style="background: #e0f2fe; color: #0284c7;">
+                            <i class="fa-solid fa-motorcycle" style="color: #0284c7; font-size: 1.2rem;"></i>
+                        </div>
+                        <span class="m-service-name" style="color: #0284c7; font-weight: 800;">Health Rider</span>
                     </div>
                     <div class="m-service-tile" onclick="openServiceBookingModal('Doctor Home Visit', 'General Physician & Specialist home visits across Vijayawada, Guntur & AP.', 'fa-house-medical')">
                         <div class="m-service-icon-circle">
@@ -92,17 +101,27 @@
                         </div>
                         <span class="m-service-name">Pharmacy</span>
                     </div>
-                    <div class="m-service-tile" onclick="openServiceBookingModal('Physiotherapy at Home', 'Certified physiotherapists for pain relief and post-surgery rehabilitation.', 'fa-person-walking')">
-                        <div class="m-service-icon-circle">
-                            <img src="{{ url_for('static', filename='images/services/srv_physio.png') }}" alt="Physiotherapy" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-person-walking\'></i>'">
-                        </div>
-                        <span class="m-service-name">Physiotherapy</span>
-                    </div>
                     <div class="m-service-tile" onclick="openServiceBookingModal('Senior Eldercare Support', '24/7 daily vitals check and compassionate companion care for elderly.', 'fa-hand-holding-heart')">
                         <div class="m-service-icon-circle">
                             <img src="{{ url_for('static', filename='images/services/srv_eldercare.png') }}" alt="Eldercare" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-hand-holding-heart\'></i>'">
                         </div>
                         <span class="m-service-name">Eldercare</span>
+                    </div>
+                </div>
+
+                <!-- Express Rider Quick Dispatch Banner -->
+                <div style="margin-top: 12px; background: linear-gradient(135deg, #0284c7, #0369a1); border-radius: 14px; padding: 14px 16px; color: #ffffff; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);" onclick="openRiderBookingModal()">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                            <i class="fa-solid fa-person-biking"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 800; font-size: 0.92rem;">Need Patient Transport?</div>
+                            <div style="font-size: 0.74rem; opacity: 0.9;">Safe patient accompaniment to hospital, OPD &amp; clinic</div>
+                        </div>
+                    </div>
+                    <div style="background: #ffffff; color: #0284c7; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; white-space: nowrap;">
+                        Book &rarr;
                     </div>
                 </div>
             </div>
@@ -575,6 +594,11 @@
                     <i class="fa-solid fa-hand-holding-heart"></i>
                     <span>Eldercare</span>
                 </button>
+                <button class="d-nav-link" onclick="openRiderBookingModal()" style="background: #f0f9ff; border: 1.5px solid #bae6fd; color: #0284c7; font-weight: 700; margin: 4px 0;">
+                    <i class="fa-solid fa-motorcycle" style="color: #0284c7; font-size: 1.1rem;"></i>
+                    <span>Health Support Rider</span>
+                    <span style="background: #0284c7; color: #fff; font-size: 0.62rem; padding: 2px 7px; border-radius: 10px; margin-left: auto; font-weight: 800;">LIVE</span>
+                </button>
                 <button class="d-nav-link" onclick="goToDeskScreen('dScreenRx'); setDeskNavActive(this)">
                     <i class="fa-solid fa-file-medical"></i>
                     <span>Medical Records</span>
@@ -608,6 +632,10 @@
                 </div>
 
                 <div class="d-header-right">
+                    <!-- Quick Book Rider Button in Topbar -->
+                    <button class="pd-btn-primary" style="padding: 8px 16px; font-size: 0.84rem; background: #0284c7; display: inline-flex; align-items: center; gap: 8px; border-radius: 30px; font-weight: 700; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);" onclick="openRiderBookingModal()" title="Book Patient Transport Rider">
+                        <i class="fa-solid fa-motorcycle"></i> <span>Book Health Rider</span>
+                    </button>
                     <button class="d-icon-btn" onclick="openSosModal()" title="Emergency SOS" style="color: #ef4444;"><i class="fa-solid fa-shield-heart"></i></button>
                     <button class="d-icon-btn" onclick="showToast('You have 1 verified prescription')" aria-label="Notifications"><i class="fa-regular fa-bell"></i></button>
                     <div class="d-user-pill" onclick="openPatientProfileModal()" title="View Patient Profile">
@@ -639,6 +667,32 @@
                         <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Consult a Doctor" class="d-hero-doctor-img" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}'">
                     </div>
 
+                    <!-- Health Support Rider Quick Dispatch Hero Card on Desktop -->
+                    <div style="background: linear-gradient(135deg, #0284c7, #0369a1); border-radius: 16px; padding: 18px 24px; color: #ffffff; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; box-shadow: 0 6px 22px rgba(2, 132, 199, 0.22); cursor: pointer;" onclick="openRiderBookingModal()">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.65rem; border: 2px solid rgba(255,255,255,0.4); flex-shrink: 0;">
+                                <i class="fa-solid fa-motorcycle"></i>
+                            </div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <span style="background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Live GPS Tracking</span>
+                                    <span style="font-size: 0.8rem; opacity: 0.95;"><i class="fa-solid fa-star" style="color: #fef08a;"></i> 4.9 Verified Rider Partners</span>
+                                </div>
+                                <h3 style="font-family: var(--pd-font-heading); font-size: 1.25rem; font-weight: 800; margin: 0;">Need Patient Hospital / Clinic Transport?</h3>
+                                <p style="font-size: 0.85rem; opacity: 0.95; margin: 3px 0 0 0;">Safe, door-to-hospital patient accompaniment with live Leaflet map tracking and security OTP.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.25rem; font-weight: 900;">From ₹120</div>
+                                <span style="font-size: 0.74rem; opacity: 0.9;"><i class="fa-solid fa-bolt"></i> ~3 min arrival</span>
+                            </div>
+                            <button class="pd-btn-primary" style="background: #ffffff; color: #0284c7; padding: 12px 22px; font-weight: 800; font-size: 0.92rem; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15); white-space: nowrap;" onclick="event.stopPropagation(); openRiderBookingModal();">
+                                <i class="fa-solid fa-motorcycle"></i> Book Rider &rarr;
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Popular Specialties -->
                     <div class="d-section-title">
                         <span>Popular Specialties</span>
@@ -664,6 +718,10 @@
                         <div class="d-spec-card" onclick="filterDeskBySpecialty('All')">
                             <div class="d-spec-icon-box"><i class="fa-solid fa-stethoscope"></i></div>
                             <div class="d-spec-name">All Doctors</div>
+                        </div>
+                        <div class="d-spec-card" onclick="openRiderBookingModal()" style="border: 1.5px solid #bae6fd; background: #f0f9ff;">
+                            <div class="d-spec-icon-box" style="background: #e0f2fe; color: #0284c7;"><i class="fa-solid fa-motorcycle"></i></div>
+                            <div class="d-spec-name" style="color: #0284c7; font-weight: 800;">Health Rider</div>
                         </div>
                         <div class="d-spec-card" onclick="openServiceBookingModal('Doctor Home Visit', 'General Physician & Specialist home visits across AP.', 'fa-house-medical')">
                             <div class="d-spec-icon-box"><i class="fa-solid fa-house-medical"></i></div>
@@ -1236,6 +1294,166 @@
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="pd-btn-primary" onclick="toggleFullScreen(); closeModal('videoSettingsModal');"><i class="fa-solid fa-expand"></i> Toggle Fullscreen Mode</button>
                 <button class="pd-btn-secondary" onclick="closeModal('videoSettingsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Health Support Rider Booking Modal -->
+    <div class="pd-modal-overlay" id="riderBookingModal" onclick="if(event.target === this) closeModal('riderBookingModal')">
+        <div class="pd-modal-card" style="max-width: 500px;">
+            <button class="pd-modal-close-btn" onclick="closeModal('riderBookingModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+                <div style="width: 52px; height: 52px; border-radius: 14px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 1.5px solid #bae6fd;">
+                    <i class="fa-solid fa-motorcycle"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: #0f172a;">Book Patient Transport Rider</h3>
+                    <p style="font-size: 0.8rem; color: #64748b;">Live GPS tracked patient accompaniment to hospitals, clinics &amp; doctor OPDs</p>
+                </div>
+            </div>
+
+            <!-- Human Healthcare Transport Options -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+                <div class="rider-type-opt selected" id="optPatientRide" onclick="selectRiderTaskType('One-Way Patient Transport', 120, this)" style="border: 2px solid #0284c7; background: #f0f9ff; border-radius: 12px; padding: 12px 10px; text-align: center; cursor: pointer;">
+                    <i class="fa-solid fa-person-walking-luggage" style="color: #0284c7; font-size: 1.3rem; margin-bottom: 6px; display: block;"></i>
+                    <div style="font-size: 0.82rem; font-weight: 800; color: #0f172a;">One-Way Transport</div>
+                    <div style="font-size: 0.72rem; color: #64748b; margin-bottom: 4px;">Direct clinic/hospital ride</div>
+                    <div style="font-size: 0.82rem; font-weight: 800; color: #0284c7;">₹120</div>
+                </div>
+
+                <div class="rider-type-opt" id="optRoundTripRide" onclick="selectRiderTaskType('Round-Trip & OPD Wait', 250, this)" style="border: 1.5px solid #e2e8f0; background: #ffffff; border-radius: 12px; padding: 12px 10px; text-align: center; cursor: pointer;">
+                    <i class="fa-solid fa-hand-holding-medical" style="color: #10b981; font-size: 1.3rem; margin-bottom: 6px; display: block;"></i>
+                    <div style="font-size: 0.82rem; font-weight: 800; color: #0f172a;">Round-Trip &amp; Wait</div>
+                    <div style="font-size: 0.72rem; color: #64748b; margin-bottom: 4px;">Pickup, OPD wait &amp; drop back</div>
+                    <div style="font-size: 0.82rem; font-weight: 800; color: #10b981;">₹250</div>
+                </div>
+            </div>
+
+            <!-- Booking Inputs -->
+            <div class="m-input-group">
+                <label class="m-input-label">Patient Full Name</label>
+                <input type="text" class="m-text-input" value="{{ user.name if user else '' }}" id="riderBookPatientName">
+            </div>
+
+            <div class="m-input-group">
+                <label class="m-input-label">Patient Phone Number</label>
+                <input type="tel" class="m-text-input" value="{{ user.phone if user else '9123456780' }}" id="riderBookPatientPhone">
+            </div>
+
+            <div class="m-input-group">
+                <label class="m-input-label">Patient Pickup Location (Home / Residence)</label>
+                <input type="text" class="m-text-input" value="{{ user.address if user and user.address else 'Sector 18, Block B, Main Road' }}" id="riderBookPickup">
+            </div>
+
+            <div class="m-input-group">
+                <label class="m-input-label">Destination Hospital / Clinic / OPD Center</label>
+                <input type="text" class="m-text-input" value="Nhealth Care Hospital &amp; OPD Center" id="riderBookDrop">
+            </div>
+
+            <!-- Live Fare & ETA Summary -->
+            <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-size: 0.74rem; color: #64748b; font-weight: 700;">ESTIMATED FARE &bull; SPEEDY DISPATCH</div>
+                    <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Nearest Rider: <span style="color: #10b981;">~3 mins away</span></div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1.4rem; font-weight: 900; color: #0284c7;" id="riderEstFareDisplay">₹120</div>
+                    <span style="font-size: 0.7rem; color: #64748b;">Pay Cash / UPI</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="pd-btn-primary" style="flex: 2; padding: 12px; font-weight: 800; background: #0284c7;" id="btnConfirmRider" onclick="confirmRiderBooking()"><i class="fa-solid fa-motorcycle"></i> Request Health Rider Now</button>
+                <button class="pd-btn-secondary" style="flex: 1; padding: 12px;" onclick="closeModal('riderBookingModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Live Real-Time Rider Tracking Modal -->
+    <div class="pd-modal-overlay" id="riderLiveTrackingModal" style="backdrop-filter: blur(8px);" onclick="if(event.target === this) closeLiveTrackingModal()">
+        <div class="pd-modal-card" style="max-width: 620px; width: 95%; padding: 0; overflow: hidden; border-radius: 20px;">
+            
+            <!-- Tracking Header -->
+            <div style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">Live GPS Tracking</div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin: 0;" id="trackTaskTitle">Patient Accompaniment</h3>
+                </div>
+                <button onclick="closeLiveTrackingModal()" style="background: rgba(255,255,255,0.2); border: none; color: #ffffff; width: 34px; height: 34px; border-radius: 50%; font-size: 1rem; cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Leaflet Interactive Map Container -->
+            <div style="position: relative; width: 100%; height: 280px; background: #e2e8f0;">
+                <div id="patientTrackingMap" style="width: 100%; height: 100%;"></div>
+                
+                <!-- Live Status Floating Chip -->
+                <div style="position: absolute; top: 12px; left: 12px; z-index: 400; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); color: #ffffff; padding: 6px 14px; border-radius: 30px; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse 1.5s infinite;"></span>
+                    <span id="trackLiveEtaText">Rider is on the way (ETA: 3 mins)</span>
+                </div>
+            </div>
+
+            <!-- Rider Details & Start OTP Strip -->
+            <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; background: #ffffff;">
+                
+                <!-- Driver Info Card -->
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 48px; height: 48px; border-radius: 50%; background: #e0f2fe; color: #0284c7; border: 2px solid #bae6fd; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800;">
+                            <span id="trackRiderInitial">R</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 1rem; font-weight: 800; color: #0f172a;" id="trackRiderName">Ravi Varma</div>
+                            <div style="font-size: 0.78rem; color: #64748b;" id="trackVehicleDetails">Honda Activa &bull; AP 16 BK 4421</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 800;"><i class="fa-solid fa-star"></i> 4.9</span>
+                        <a href="tel:9876543222" id="trackRiderCallBtn" style="width: 40px; height: 40px; border-radius: 50%; background: #ecfdf5; color: #059669; border: 1.5px solid #a7f3d0; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1rem;">
+                            <i class="fa-solid fa-phone"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 4-Digit Start Ride OTP Box -->
+                <div style="background: #f0fdf4; border: 2px dashed #86efac; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 0.74rem; font-weight: 800; color: #166534; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-shield-keyhole"></i> Start Ride Security OTP
+                        </div>
+                        <div style="font-size: 0.76rem; color: #4b5563;">Share with rider upon arrival to begin ride</div>
+                    </div>
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 1.65rem; font-weight: 900; color: #15803d; letter-spacing: 4px; background: #ffffff; padding: 4px 14px; border-radius: 8px; border: 1.5px solid #86efac;" id="trackStartOtpDisplay">
+                        4829
+                    </div>
+                </div>
+
+                <!-- Status Progress Strip -->
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: #64748b; font-weight: 700; padding: 6px 0;">
+                    <span id="stepTag1" style="color: #0284c7;"><i class="fa-solid fa-circle-check"></i> Assigned</span>
+                    <span>&rarr;</span>
+                    <span id="stepTag2" style="color: #0284c7;"><i class="fa-solid fa-motorcycle"></i> On Way</span>
+                    <span>&rarr;</span>
+                    <span id="stepTag3"><i class="fa-regular fa-circle"></i> Arrived</span>
+                    <span>&rarr;</span>
+                    <span id="stepTag4"><i class="fa-regular fa-circle"></i> In Progress</span>
+                </div>
+
+                <!-- Fare & Actions -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 6px;">
+                    <div>
+                        <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Fare Amount:</span>
+                        <strong style="font-size: 1.15rem; color: #0f172a; margin-left: 4px;" id="trackFareAmount">₹120</strong>
+                    </div>
+                    <button onclick="cancelActiveTrip()" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 8px 16px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+                        Cancel Ride
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -2201,6 +2419,11 @@
             closeModal('serviceBookingModal');
         }
 
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.add('active');
+        }
+
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.classList.remove('active');
@@ -2311,6 +2534,246 @@
             }, 2600);
         }
 
+        // ==========================================================================
+        // HEALTH SUPPORT RIDER BOOKING & REAL-TIME TRACKING CONTROLLER
+        // ==========================================================================
+        let selectedRiderType = 'One-Way Patient Transport';
+        let selectedRiderFare = 120;
+        let activeTripId = null;
+        let trackingMap = null;
+        let trackingRiderMarker = null;
+        let trackingPickupMarker = null;
+        let trackingDropMarker = null;
+        let trackingPollTimer = null;
+
+        function openRiderBookingModal() {
+            window.location.href = '/rider/book';
+        }
+
+        function selectRiderTaskType(type, fare, el) {
+            selectedRiderType = type;
+            selectedRiderFare = fare;
+
+            document.querySelectorAll('.rider-type-opt').forEach(opt => {
+                opt.style.border = '1.5px solid #e2e8f0';
+                opt.style.background = '#ffffff';
+            });
+            if (el) {
+                el.style.border = '2px solid #0284c7';
+                el.style.background = '#f0f9ff';
+            }
+            const fareDisp = document.getElementById('riderEstFareDisplay');
+            if (fareDisp) fareDisp.textContent = `₹${fare}`;
+        }
+
+        async function confirmRiderBooking() {
+            const btn = document.getElementById('btnConfirmRider');
+            const pName = document.getElementById('riderBookPatientName').value.trim() || (CURRENT_USER ? CURRENT_USER.name : 'Patient');
+            const pPhone = document.getElementById('riderBookPatientPhone').value.trim() || (CURRENT_USER ? CURRENT_USER.phone : '9123456780');
+            const pPickup = document.getElementById('riderBookPickup').value.trim() || 'Sector 18, Block B, Main Road';
+            const pDrop = document.getElementById('riderBookDrop').value.trim() || 'Nhealth Care Hospital & OPD Center';
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Finding Nearest Rider...';
+
+            try {
+                const res = await fetch('/api/trip/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        patient_name: pName,
+                        patient_phone: pPhone,
+                        pickup_address: pPickup,
+                        drop_address: pDrop,
+                        trip_type: selectedRiderType,
+                        fare_amount: selectedRiderFare,
+                        pickup_lat: 28.5380,
+                        pickup_lng: 77.3930,
+                        drop_lat: 28.5430,
+                        drop_lng: 77.4010
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    closeModal('riderBookingModal');
+                    showToast('🎉 Rider assigned! Connecting live tracking...');
+                    openLiveTrackingModal(data.trip.trip_id, data.trip);
+                } else {
+                    showToast(data.message || 'Could not dispatch rider. Please try again.');
+                }
+            } catch (err) {
+                showToast('Network error while booking rider.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-motorcycle"></i> Request Health Rider Now';
+            }
+        }
+
+        function openLiveTrackingModal(tripId, tripData) {
+            activeTripId = tripId;
+            openModal('riderLiveTrackingModal');
+
+            // Set Meta
+            if (tripData) {
+                document.getElementById('trackTaskTitle').textContent = tripData.trip_type || selectedRiderType;
+                document.getElementById('trackFareAmount').textContent = `₹${tripData.fare_amount || selectedRiderFare}`;
+                document.getElementById('trackStartOtpDisplay').textContent = tripData.start_otp || '4829';
+            }
+
+            // Init Map with slight delay for modal render
+            setTimeout(() => {
+                initTrackingMap(tripData);
+                startTrackingPolling(tripId);
+            }, 300);
+        }
+
+        function initTrackingMap(trip) {
+            const mapContainer = document.getElementById('patientTrackingMap');
+            if (!mapContainer) return;
+
+            if (trackingMap) {
+                trackingMap.remove();
+                trackingMap = null;
+            }
+
+            const initialLat = trip && trip.rider_lat ? trip.rider_lat : 28.5355;
+            const initialLng = trip && trip.rider_lng ? trip.rider_lng : 77.3910;
+
+            trackingMap = L.map('patientTrackingMap', {
+                zoomControl: false
+            }).setView([initialLat, initialLng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(trackingMap);
+
+            L.control.zoom({ position: 'topright' }).addTo(trackingMap);
+
+            // Custom Rider Bike Icon
+            const bikeIcon = L.divIcon({
+                className: 'leaflet-rider-marker',
+                html: '<div style="background:#0284c7; color:#ffffff; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.15rem; box-shadow:0 4px 14px rgba(2,132,199,0.6); border:2.5px solid #ffffff;"><i class="fa-solid fa-motorcycle"></i></div>',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
+            trackingRiderMarker = L.marker([initialLat, initialLng], { icon: bikeIcon }).addTo(trackingMap);
+
+            // Pickup & Drop Markers
+            const pLat = trip && trip.pickup_lat ? trip.pickup_lat : 28.5380;
+            const pLng = trip && trip.pickup_lng ? trip.pickup_lng : 77.3930;
+            const dLat = trip && trip.drop_lat ? trip.drop_lat : 28.5430;
+            const dLng = trip && trip.drop_lng ? trip.drop_lng : 77.4010;
+
+            const pickupIcon = L.divIcon({
+                className: 'leaflet-pickup-marker',
+                html: '<div style="background:#10b981; color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,0.25); font-size:0.8rem;"><i class="fa-solid fa-person-walking-luggage"></i></div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            trackingPickupMarker = L.marker([pLat, pLng], { icon: pickupIcon }).addTo(trackingMap).bindPopup('<b>Your Pickup Location</b>');
+
+            const dropIcon = L.divIcon({
+                className: 'leaflet-drop-marker',
+                html: '<div style="background:#f43f5e; color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 3px 8px rgba(0,0,0,0.25); font-size:0.8rem;"><i class="fa-solid fa-flag-checkered"></i></div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            trackingDropMarker = L.marker([dLat, dLng], { icon: dropIcon }).addTo(trackingMap).bindPopup('<b>Destination</b>');
+
+            trackingMap.fitBounds([
+                [initialLat, initialLng],
+                [pLat, pLng],
+                [dLat, dLng]
+            ], { padding: [40, 40] });
+        }
+
+        function startTrackingPolling(tripId) {
+            if (trackingPollTimer) clearInterval(trackingPollTimer);
+            trackingPollTimer = setInterval(() => pollTripStatus(tripId), 2500);
+        }
+
+        async function pollTripStatus(tripId) {
+            if (!tripId) return;
+
+            try {
+                const res = await fetch(`/api/trip/${tripId}/live`);
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success' && data.trip) {
+                    updateLiveTrackingUI(data.trip);
+                }
+            } catch (err) {
+                console.warn('Tracking poll error:', err);
+            }
+        }
+
+        function updateLiveTrackingUI(trip) {
+            // Update Rider Marker on map
+            if (trackingRiderMarker && trip.rider_lat && trip.rider_lng) {
+                trackingRiderMarker.setLatLng([trip.rider_lat, trip.rider_lng]);
+            }
+
+            // Update Start OTP
+            if (trip.start_otp) {
+                document.getElementById('trackStartOtpDisplay').textContent = trip.start_otp;
+            }
+
+            // Update Status & ETA Text
+            const etaText = document.getElementById('trackLiveEtaText');
+            const s1 = document.getElementById('stepTag1');
+            const s2 = document.getElementById('stepTag2');
+            const s3 = document.getElementById('stepTag3');
+            const s4 = document.getElementById('stepTag4');
+
+            if (trip.status === 'requested' || trip.status === 'assigned') {
+                etaText.textContent = 'Rider assigned (ETA: 4 mins)';
+                s1.style.color = '#0284c7';
+            } else if (trip.status === 'accepted') {
+                etaText.textContent = 'Rider is on the way (ETA: 2 mins)';
+                s1.style.color = '#0284c7';
+                s2.style.color = '#0284c7';
+            } else if (trip.status === 'arrived') {
+                etaText.textContent = '📍 Rider has arrived at pickup!';
+                s1.style.color = '#0284c7';
+                s2.style.color = '#0284c7';
+                s3.style.color = '#10b981';
+                s3.innerHTML = '<i class="fa-solid fa-circle-check"></i> Arrived';
+            } else if (trip.status === 'in_progress') {
+                etaText.textContent = '🚀 Trip in progress to destination';
+                s1.style.color = '#0284c7';
+                s2.style.color = '#0284c7';
+                s3.style.color = '#10b981';
+                s4.style.color = '#10b981';
+                s4.innerHTML = '<i class="fa-solid fa-circle-check"></i> In Progress';
+            } else if (trip.status === 'completed') {
+                etaText.textContent = '🎉 Trip Completed Successfully!';
+                clearInterval(trackingPollTimer);
+                setTimeout(() => {
+                    alert('🎉 Your Health Rider trip has been completed. Thank you for choosing Nhealth!');
+                    closeLiveTrackingModal();
+                }, 1000);
+            }
+        }
+
+        function closeLiveTrackingModal() {
+            if (trackingPollTimer) {
+                clearInterval(trackingPollTimer);
+                trackingPollTimer = null;
+            }
+            closeModal('riderLiveTrackingModal');
+        }
+
+        function cancelActiveTrip() {
+            if (confirm('Are you sure you want to cancel this ride request?')) {
+                closeLiveTrackingModal();
+                showToast('Ride request cancelled.');
+            }
+        }
+
         // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', () => {
             populatePatientDetails(CURRENT_USER);
@@ -2318,5 +2781,8 @@
             selectDoctor('priya-sharma');
         });
     </script>
+    
+    <!-- Leaflet JS for Interactive Live Tracking -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </body>
 </html>

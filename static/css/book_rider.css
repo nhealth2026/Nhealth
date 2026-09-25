@@ -1,0 +1,747 @@
+/* ==========================================================================
+   Nhealth - Dynamic Health Support Rider Booking Stylesheet (book_rider.css)
+   Mobile-first, responsive map with interactive route polyline & live dispatch
+   ========================================================================== */
+
+:root {
+    --br-primary: #0284c7;
+    --br-primary-hover: #0369a1;
+    --br-primary-light: #e0f2fe;
+    --br-emerald: #10b981;
+    --br-emerald-dark: #059669;
+    --br-emerald-light: #ecfdf5;
+    --br-amber: #f59e0b;
+    --br-rose: #f43f5e;
+    --br-dark: #0f172a;
+    --br-slate: #1e293b;
+    --br-gray: #64748b;
+    --br-border: #e2e8f0;
+    --br-card-bg: #ffffff;
+    --br-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body.book-rider-body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8fafc;
+    color: var(--br-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==================== TOP NAVIGATION BAR ==================== */
+.br-top-nav {
+    height: 60px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--br-border);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    width: 100%;
+}
+
+.br-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.br-brand-logo-img {
+    height: 32px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    display: block;
+}
+
+.br-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--br-slate);
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    transition: background 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.br-back-btn:hover {
+    background: #e2e8f0;
+    color: var(--br-dark);
+}
+
+.br-badge-partner {
+    background: #e0f2fe;
+    color: var(--br-primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #bae6fd;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.br-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.br-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--br-slate);
+}
+
+.br-avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0baaa2, #0284c7);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.82rem;
+    flex-shrink: 0;
+}
+
+/* ==================== MAIN WORKSPACE ==================== */
+.br-main-workspace {
+    flex: 1;
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+/* ==================== LEFT CONTROL PANEL ==================== */
+.br-control-panel {
+    width: 440px;
+    max-width: 100%;
+    background: #ffffff;
+    border-right: 1px solid var(--br-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 500;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 4px 0 25px rgba(0,0,0,0.06);
+    flex-shrink: 0;
+}
+
+.br-panel-header {
+    padding: 18px 20px 12px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.br-panel-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--br-dark);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.br-panel-subtitle {
+    font-size: 0.8rem;
+    color: var(--br-gray);
+    line-height: 1.4;
+}
+
+.br-panel-body {
+    padding: 16px 20px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+}
+
+/* Auto-Detect Location Banner */
+.br-gps-detect-btn {
+    width: 100%;
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    color: #166534;
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.br-gps-detect-btn:hover {
+    background: #dcfce7;
+    border-color: #4ade80;
+}
+
+.gps-pulse-ring {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #16a34a;
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+    animation: gpsWave 1.6s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes gpsWave {
+    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); }
+    100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+/* Ride Type Mode Selector */
+.br-mode-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+}
+
+.br-mode-card {
+    border: 1.5px solid var(--br-border);
+    border-radius: 12px;
+    padding: 10px 8px;
+    background: #ffffff;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.br-mode-card.selected {
+    border-color: var(--br-primary);
+    background: #f0f9ff;
+    box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+.br-mode-card i {
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+    display: block;
+    color: var(--br-primary);
+}
+
+.br-mode-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--br-dark);
+}
+
+.br-mode-desc {
+    font-size: 0.68rem;
+    color: var(--br-gray);
+    margin-bottom: 3px;
+    line-height: 1.2;
+}
+
+.br-mode-price {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--br-primary);
+}
+
+/* Location Fields with Route Connector */
+.br-location-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid var(--br-border);
+    border-radius: 14px;
+    padding: 12px;
+    width: 100%;
+}
+
+.location-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.loc-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.loc-dot.pickup {
+    background: var(--br-emerald);
+    border: 2.5px solid #d1fae5;
+}
+
+.loc-dot.drop {
+    background: var(--br-rose);
+    border: 2.5px solid #ffe4e6;
+}
+
+.loc-input-wrap {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+}
+
+.loc-input-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--br-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.loc-text-input {
+    width: 100%;
+    height: 36px;
+    border: 1.5px solid var(--br-border);
+    border-radius: 8px;
+    padding: 0 10px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    color: var(--br-dark);
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.loc-text-input:focus {
+    border-color: var(--br-primary);
+}
+
+/* Quick Hospital Search Chips */
+.hospital-chips-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.hospital-chips-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--br-gray);
+}
+
+.hospital-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+}
+
+.hospital-chip {
+    background: #ffffff;
+    border: 1px solid var(--br-border);
+    color: var(--br-slate);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.hospital-chip:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: var(--br-primary);
+}
+
+/* Door / Landmark Input Grid */
+.detail-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+}
+
+.br-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.br-input-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.br-input-control {
+    width: 100%;
+    height: 36px;
+    border: 1.5px solid var(--br-border);
+    border-radius: 8px;
+    padding: 0 10px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    color: var(--br-dark);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.br-input-control:focus {
+    border-color: var(--br-primary);
+}
+
+/* Dynamic Route Distance & Fare Summary Card */
+.route-fare-summary-card {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(2, 132, 199, 0.25);
+    width: 100%;
+    gap: 8px;
+}
+
+.route-meta-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.route-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    flex-wrap: wrap;
+}
+
+.route-stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.fare-display-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+/* Main Action Button */
+.btn-confirm-rider-action {
+    width: 100%;
+    background: var(--br-emerald);
+    color: #ffffff;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+    transition: transform 0.15s, background 0.2s;
+}
+
+.btn-confirm-rider-action:hover {
+    background: var(--br-emerald-dark);
+    transform: translateY(-1px);
+}
+
+/* ==================== RIGHT LEAFLET MAP VIEW ==================== */
+.br-map-view {
+    flex: 1;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background: #e2e8f0;
+    min-height: 0;
+}
+
+#riderBookingMap {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100%;
+    z-index: 1;
+    background: #f1f5f9;
+}
+
+/* Floating Map Mode Selector Pill */
+.map-mode-selector-pill {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 400;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(8px);
+    border-radius: 30px;
+    padding: 3px;
+    display: flex;
+    gap: 3px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+    max-width: 92%;
+    white-space: nowrap;
+}
+
+.map-mode-tab {
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.map-mode-tab.active {
+    background: var(--br-primary);
+    color: #ffffff;
+}
+
+.map-mode-tab.drop.active {
+    background: var(--br-rose);
+}
+
+/* Floating Map Buttons */
+.map-floating-actions {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.map-action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: var(--br-dark);
+    border: 1px solid var(--br-border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.2s;
+}
+
+.map-action-btn:hover {
+    background: #f8fafc;
+    transform: scale(1.05);
+}
+
+/* ==================== LIVE TRACKING OVERLAY CARD ==================== */
+.br-tracking-card {
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 20px 24px 20px;
+    width: 100%;
+}
+
+.tracking-otp-box {
+    background: #f0fdf4;
+    border: 2px dashed #86efac;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.tracking-otp-code {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #15803d;
+    letter-spacing: 4px;
+    background: #ffffff;
+    padding: 3px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #86efac;
+}
+
+.driver-info-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid var(--br-border);
+    padding: 10px 14px;
+    border-radius: 12px;
+    width: 100%;
+}
+
+/* ==================== RESPONSIVE DESIGN FOR MOBILE & TABLETS ==================== */
+@media (max-width: 991px) {
+    body.book-rider-body {
+        overflow-y: auto !important;
+        height: auto !important;
+    }
+
+    .br-top-nav {
+        padding: 0 12px;
+        height: 52px;
+    }
+
+    .br-brand-logo-img {
+        height: 26px;
+        max-width: 110px;
+    }
+
+    .br-badge-partner {
+        display: none;
+    }
+
+    .br-user-chip span {
+        display: none;
+    }
+
+    .br-main-workspace {
+        flex-direction: column-reverse;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .br-map-view {
+        height: 320px !important;
+        min-height: 320px !important;
+        max-height: 320px !important;
+        width: 100% !important;
+        flex: none;
+        order: 1;
+    }
+
+    #riderBookingMap {
+        height: 320px !important;
+        min-height: 320px !important;
+        width: 100% !important;
+    }
+
+    .br-control-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        border-right: none;
+        box-shadow: none;
+        order: 2;
+    }
+
+    .br-panel-header {
+        padding: 14px 16px 10px 16px;
+    }
+
+    .br-panel-title {
+        font-size: 1.15rem;
+    }
+
+    .br-panel-subtitle {
+        font-size: 0.76rem;
+    }
+
+    .br-panel-body {
+        padding: 12px 16px 28px 16px;
+        gap: 12px;
+    }
+
+    .map-mode-selector-pill {
+        top: 8px;
+        padding: 2px;
+    }
+
+    .map-mode-tab {
+        padding: 4px 9px;
+        font-size: 0.7rem;
+    }
+
+    .map-floating-actions {
+        bottom: 12px;
+        right: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .detail-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .br-mode-selector {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .route-fare-summary-card {
+        padding: 10px 12px;
+    }
+
+    .fare-display-val {
+        font-size: 1.35rem;
+    }
+}

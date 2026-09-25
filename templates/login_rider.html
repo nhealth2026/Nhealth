@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Rider Partner Login | Nhealth — Healthcare at Home</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Rider Auth Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_auth.css') }}?v=1.0">
+</head>
+<body class="rider-auth-page">
+
+    <!-- Mobile Top Navigation Bar -->
+    <header class="rider-mobile-navbar">
+        <a href="/" class="rider-nav-logo" aria-label="Nhealth Home">
+            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="rider-brand-logo-img">
+        </a>
+        <button class="rider-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="rider-mobile-drawer" id="mobileDrawer">
+        <a href="/" class="rider-drawer-link"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="/login" class="rider-drawer-link"><i class="fa-regular fa-user"></i> Patient Login</a>
+        <a href="/login?role=doctor" class="rider-drawer-link"><i class="fa-solid fa-user-doctor"></i> Doctor Login</a>
+        <a href="/login/lab" class="rider-drawer-link"><i class="fa-solid fa-flask-vial"></i> Lab Login</a>
+        <a href="/login/rider" class="rider-drawer-link active"><i class="fa-solid fa-motorcycle"></i> Rider Login</a>
+        <a href="/signup/rider" class="rider-drawer-link"><i class="fa-solid fa-id-card"></i> Join as Rider</a>
+    </div>
+
+    <!-- Main Centered Container (Laptop Frame) -->
+    <div class="rider-auth-page-outer">
+        <div class="rider-auth-frame">
+            <div class="rider-auth-container">
+        
+                <!-- ==================== LEFT SHOWCASE PANEL (Desktop) ==================== -->
+                <div class="rider-showcase-panel">
+                    <div class="rider-showcase-top">
+                        <!-- Nhealth Brand Logo -->
+                        <a href="/" class="rider-showcase-logo" aria-label="Nhealth Home">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" class="rider-showcase-logo-img">
+                        </a>
+
+                        <!-- Header -->
+                        <div class="rider-showcase-header">
+                            <h1 class="rider-showcase-title">Rider Partner Portal</h1>
+                            <p class="rider-showcase-subtitle">Sign in to go online, accept patient accompaniment rides, and track your daily earnings</p>
+                        </div>
+
+                        <!-- 3 Features List -->
+                        <div class="rider-features-list">
+                            <div class="rider-feature-item">
+                                <div class="rider-feature-icon-wrap">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div class="rider-feature-text">
+                                    <span class="rider-feature-title">Real-Time Ride Dispatch</span>
+                                    <span class="rider-feature-desc">Receive instant patient ride and OPD accompaniment requests near you.</span>
+                                </div>
+                            </div>
+
+                            <div class="rider-feature-item">
+                                <div class="rider-feature-icon-wrap">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </div>
+                                <div class="rider-feature-text">
+                                    <span class="rider-feature-title">Transparent Daily Earnings</span>
+                                    <span class="rider-feature-desc">Earn ₹500 - ₹1,500 daily with zero commission deduction.</span>
+                                </div>
+                            </div>
+
+                            <div class="rider-feature-item">
+                                <div class="rider-feature-icon-wrap">
+                                    <i class="fa-solid fa-shield-heart"></i>
+                                </div>
+                                <div class="rider-feature-text">
+                                    <span class="rider-feature-title">Healthcare Rider Support</span>
+                                    <span class="rider-feature-desc">24/7 safety hotline and verified clinic partners.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rider Illustration / Photo -->
+                    <img src="{{ url_for('static', filename='images/health_support_rider.png') }}" alt="Health Support Rider" class="rider-showcase-bg-img">
+                </div>
+
+                <!-- ==================== RIGHT FORM PANEL (Desktop & Mobile) ==================== -->
+                <div class="rider-form-panel">
+                    <div class="rider-auth-card">
+                        
+                        <!-- Center Header with Motorcycle Icon -->
+                        <div class="rider-card-header">
+                            <div class="rider-top-badge">
+                                <i class="fa-solid fa-motorcycle"></i>
+                            </div>
+                            <h2 class="rider-card-title">Rider Login</h2>
+                            <p class="rider-card-subtitle">Enter your mobile number or email to start duty</p>
+                        </div>
+
+                        <!-- Alert Message Box -->
+                        <div id="riderAlert" class="rider-alert"></div>
+
+                        <!-- Demo Credentials Quick Fill Chip -->
+                        <div style="background: #f0fdf4; border: 1px dashed #86efac; border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem;">
+                            <div>
+                                <strong style="color: #166534;"><i class="fa-solid fa-key"></i> Demo Rider:</strong>
+                                <span style="color: #374151; margin-left: 4px;">rider@nhealth.in</span>
+                            </div>
+                            <button type="button" onclick="fillDemoRider()" style="background: #16a34a; color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+                                Auto Fill
+                            </button>
+                        </div>
+
+                        <!-- Form -->
+                        <form id="riderLoginForm" onsubmit="handleRiderLogin(event)" novalidate>
+                            
+                            <!-- Mobile Number / Email -->
+                            <div class="rider-form-group">
+                                <label class="rider-form-label" for="riderIdentifier">Mobile Number / Email <span class="rider-req">*</span></label>
+                                <div class="rider-input-wrapper">
+                                    <i class="fa-regular fa-user rider-input-icon"></i>
+                                    <input type="text" id="riderIdentifier" class="rider-form-input" placeholder="e.g. 9876543222 or rider@nhealth.in" required autocomplete="username">
+                                </div>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="rider-form-group">
+                                <div class="rider-form-label">
+                                    <span>Password <span class="rider-req">*</span></span>
+                                    <a href="javascript:void(0)" onclick="handleForgotPassword()" class="rider-forgot-link">Forgot Password?</a>
+                                </div>
+                                <div class="rider-input-wrapper">
+                                    <i class="fa-solid fa-lock rider-input-icon"></i>
+                                    <input type="password" id="riderPassword" class="rider-form-input" placeholder="Enter your password" required autocomplete="current-password">
+                                    <button type="button" class="rider-eye-toggle" onclick="togglePasswordVisibility('riderPassword', this)" aria-label="Toggle password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Remember Me -->
+                            <div class="rider-checkbox-group">
+                                <input type="checkbox" id="riderRemember" class="rider-checkbox" checked>
+                                <label for="riderRemember" class="rider-checkbox-label">Keep me signed in on this device</label>
+                            </div>
+
+                            <!-- Primary Login Button -->
+                            <button type="submit" class="rider-btn-primary" id="riderLoginBtn">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                                <span>Login to Rider Portal</span>
+                            </button>
+
+                            <!-- Divider -->
+                            <div class="rider-divider">
+                                <span>or</span>
+                            </div>
+
+                            <!-- Register Outline Button -->
+                            <a href="/signup/rider" class="rider-btn-outline">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>Join as New Rider Partner</span>
+                            </a>
+
+                            <!-- Disclaimer -->
+                            <p class="rider-disclaimer-text">
+                                By logging in, you agree to Nhealth's <a href="javascript:void(0)" onclick="alert('Nhealth Rider Partner Terms: Safe driving compliance, respectful patient interaction, and live GPS broadcast during duty hours.')">Rider Partner Terms</a> &amp; <a href="javascript:void(0)" onclick="alert('Nhealth Privacy Policy: 100% confidential and secure data handling.')">Privacy Policy</a>
+                            </p>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobileDrawer');
+            if (drawer) drawer.classList.toggle('open');
+        }
+
+        function fillDemoRider() {
+            document.getElementById('riderIdentifier').value = 'rider@nhealth.in';
+            document.getElementById('riderPassword').value = 'password123';
+        }
+
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        function handleForgotPassword() {
+            const id = document.getElementById('riderIdentifier').value.trim();
+            const alertBox = document.getElementById('riderAlert');
+            if (!id) {
+                alertBox.textContent = 'Please enter your registered mobile number or email above first.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+            alertBox.textContent = `Password reset link / OTP sent to ${id}. Please check your SMS.`;
+            alertBox.className = 'rider-alert success';
+            alertBox.style.display = 'block';
+        }
+
+        async function handleRiderLogin(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('riderAlert');
+            const btn = document.getElementById('riderLoginBtn');
+            const identifier = document.getElementById('riderIdentifier').value.trim();
+            const password = document.getElementById('riderPassword').value;
+
+            alertBox.style.display = 'none';
+
+            if (!identifier || !password) {
+                alertBox.textContent = 'Please enter both your mobile/email and password.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Logging in...</span>';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        role: 'rider',
+                        identifier: identifier,
+                        password: password
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    alertBox.textContent = '🎉 ' + (data.message || 'Login successful! Redirecting to Cockpit...');
+                    alertBox.className = 'rider-alert success';
+                    alertBox.style.display = 'block';
+
+                    if (data.user) {
+                        localStorage.setItem('nhealth_user', JSON.stringify(data.user));
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/rider/dashboard';
+                    }, 600);
+                } else {
+                    alertBox.textContent = data.message || 'Invalid rider credentials. Please try again.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Login to Rider Portal</span>';
+                }
+            } catch (err) {
+                alertBox.textContent = 'Network error. Please check your internet connection.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> <span>Login to Rider Portal</span>';
+            }
+        }
+    </script>
+</body>
+</html>
