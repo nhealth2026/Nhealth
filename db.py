@@ -46,7 +46,8 @@ def init_db():
             minconn=1,
             maxconn=10,
             dsn=DATABASE_URL,
-            sslmode='require'
+            sslmode='require',
+            connect_timeout=3
         )
         
         # Test connection & create tables

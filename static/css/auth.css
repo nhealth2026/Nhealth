@@ -1038,3 +1038,59 @@
     color: #0baaa2;
     transform: rotate(90deg);
 }
+
+/* Quick Role Tabs for Fast One-Touch Switching (Patient, Pharmacy, Lab, Doctor) */
+.auth-quick-role-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 1.1rem;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.quick-role-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 6px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.quick-role-tab i {
+    font-size: 0.88rem;
+}
+
+.quick-role-tab:hover:not(.active) {
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.quick-role-tab.active {
+    background: #ffffff;
+    color: #0080ff;
+    box-shadow: 0 2px 8px rgba(0, 128, 255, 0.15);
+}
+
+@media (max-width: 520px) {
+    .auth-quick-role-tabs {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    .quick-role-tab {
+        padding: 9px 8px;
+        font-size: 0.82rem;
+    }
+}

@@ -669,6 +669,13 @@ def login_lab_page():
     return render_template('login_lab.html', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
+@app.route('/login/pharmacy')
+@app.route('/pharmacy/login')
+def login_pharmacy_page():
+    """Render Login page pre-configured for Pharmacy Partner."""
+    return render_template('login.html', role='pharmacy', services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/signup')
 def signup_page():
     """Render the Signup page (defaults to patient or uses role query)."""
@@ -701,6 +708,7 @@ def signup_lab_page():
 
 
 @app.route('/lab/dashboard')
+@app.route('/dashboard/lab')
 def lab_dashboard():
     """Render Lab Partner Dashboard."""
     user = session.get('user')
@@ -718,6 +726,7 @@ def lab_dashboard():
 
 
 @app.route('/pharmacy/dashboard')
+@app.route('/dashboard/pharmacy')
 @app.route('/pharma/dashboard')
 @app.route('/pharmacy')
 def pharmacy_dashboard():
@@ -898,8 +907,15 @@ def auth_login():
         session['user_id'] = matched['id']
         session['user'] = clean_user
 
-        user_role = clean_user.get('role', 'patient')
-        redirect_url = '/lab/dashboard' if user_role == 'lab' else ('/pharmacy/dashboard' if user_role in ['pharmacy', 'pharma'] else ('/patient/dashboard' if user_role == 'patient' else '/'))
+        user_role = clean_user.get('role', '') or role or 'patient'
+        if user_role in ['pharmacy', 'pharma'] or role in ['pharmacy', 'pharma']:
+            redirect_url = '/pharmacy/dashboard'
+        elif user_role == 'lab' or role == 'lab':
+            redirect_url = '/lab/dashboard'
+        elif user_role == 'doctor' or role == 'doctor':
+            redirect_url = '/'
+        else:
+            redirect_url = '/patient/dashboard'
 
         return jsonify({
             "status": "success",

@@ -57,6 +57,22 @@
                         </a>
                     </div>
 
+                    <!-- Quick Role Switcher (One-touch for Patient, Pharmacy, Lab, Doctor) -->
+                    <div class="auth-quick-role-tabs" id="quickRoleTabs">
+                        <button type="button" class="quick-role-tab active" data-role="patient" onclick="setQuickLoginRole('patient')">
+                            <i class="fa-regular fa-user"></i> <span>Patient</span>
+                        </button>
+                        <button type="button" class="quick-role-tab" data-role="pharmacy" onclick="setQuickLoginRole('pharmacy')">
+                            <i class="fa-solid fa-pills"></i> <span>Pharmacy</span>
+                        </button>
+                        <button type="button" class="quick-role-tab" data-role="lab" onclick="setQuickLoginRole('lab')">
+                            <i class="fa-solid fa-flask-vial"></i> <span>Lab Partner</span>
+                        </button>
+                        <button type="button" class="quick-role-tab" data-role="doctor" onclick="setQuickLoginRole('doctor')">
+                            <i class="fa-solid fa-user-doctor"></i> <span>Doctor</span>
+                        </button>
+                    </div>
+
                     <!-- Service & Account Role Selector Dropdown -->
                     <div class="auth-service-selector-wrap">
                         <label class="auth-service-label" for="authServiceSelector">
@@ -67,22 +83,13 @@
                             <i class="fa-regular fa-user auth-service-icon" id="serviceSelectorIcon"></i>
                             <select id="authServiceSelector" class="auth-service-select" onchange="onLoginServiceChange(this)">
                                 <optgroup label="👤 Patients &amp; Individuals">
-                                    <option value="patient" data-role="patient" data-badge="Patient Account Login" data-icon="fa-regular fa-user" data-title="Welcome Back to Nhealth" data-sub="Sign in to access your consultations, prescriptions, and reports" data-placeholder="Mobile Number or Email" data-signup="/signup/patient" {% if role != 'doctor' and role != 'lab' %}selected{% endif %}>
+                                    <option value="patient" data-role="patient" data-badge="Patient Account Login" data-icon="fa-regular fa-user" data-title="Welcome Back to Nhealth" data-sub="Sign in to access your consultations, prescriptions, and reports" data-placeholder="Mobile Number or Email" data-signup="/signup/patient" {% if role != 'doctor' and role != 'lab' and role != 'pharmacy' and role != 'pharma' %}selected{% endif %}>
                                         👤 Patient Account Login
                                     </option>
                                 </optgroup>
-                                <optgroup label="🩺 Doctor &amp; Clinical Services">
-                                    <option value="doctor-consult" data-role="doctor" data-badge="Online Doctor Consultation" data-icon="fa-solid fa-user-doctor" data-title="Doctor &amp; Specialist Portal" data-sub="Sign in to manage appointments, patients, and teleconsultations" data-placeholder="Doctor Mobile Number or Email" data-signup="/signup/doctor?service=doctor-consult" {% if role == 'doctor' %}selected{% endif %}>
-                                        🩺 Online Doctor Consultation
-                                    </option>
-                                    <option value="home-visits" data-role="doctor" data-badge="Doctor Home Visits" data-icon="fa-solid fa-house-medical" data-title="Doctor Home Visits Portal" data-sub="Sign in to view doorstep consultation requests and patient schedules" data-placeholder="Doctor Mobile Number or Email" data-signup="/signup/doctor?service=home-visits">
-                                        🏠 Doctor Home Visits
-                                    </option>
-                                    <option value="mental-health" data-role="doctor" data-badge="Mental Health &amp; Counseling" data-icon="fa-solid fa-brain" data-title="Mental Health Partner Portal" data-sub="Sign in for confidential tele-counseling and patient sessions" data-placeholder="Counselor Mobile Number or Email" data-signup="/signup/doctor?service=mental-health">
-                                        🧠 Mental Health &amp; Counseling
-                                    </option>
-                                    <option value="hospital-opd" data-role="doctor" data-badge="Premium OPD &amp; Hospital Assistance" data-icon="fa-solid fa-square-plus" data-title="Hospital &amp; OPD Partner Portal" data-sub="Sign in to manage VIP priority patient check-ins and OPD queues" data-placeholder="Hospital Partner Mobile or Email" data-signup="/signup/doctor?service=hospital-opd">
-                                        🏥 Premium OPD &amp; Hospital Assistance
+                                <optgroup label="💊 Pharmacy Partners">
+                                    <option value="e-pharmacy" data-role="pharmacy" data-badge="Pharmacy Partner Login" data-icon="fa-solid fa-prescription-bottle-medical" data-title="Pharmacy Partner Portal" data-sub="Sign in to manage prescription fulfillment, inventory &amp; doorstep medicine orders" data-placeholder="Pharmacy Mobile Number or Email" data-signup="/signup/partner?service=e-pharmacy" {% if role == 'pharmacy' or role == 'pharma' %}selected{% endif %}>
+                                        💊 Doorstep E-Pharmacy (Pharmacy Partner)
                                     </option>
                                 </optgroup>
                                 <optgroup label="🧪 Diagnostics &amp; Lab Services">
@@ -97,6 +104,20 @@
                                     </option>
                                     <option value="screening" data-role="doctor" data-badge="Full Body Preventive Screening" data-icon="fa-solid fa-stethoscope" data-title="Preventive Screening Portal" data-sub="Sign in to process comprehensive 85+ parameter health checkups" data-placeholder="Screening Partner Mobile or Email" data-signup="/signup/doctor?service=screening">
                                         📋 Full Body Preventive Screening
+                                    </option>
+                                </optgroup>
+                                <optgroup label="🩺 Doctor &amp; Clinical Services">
+                                    <option value="doctor-consult" data-role="doctor" data-badge="Online Doctor Consultation" data-icon="fa-solid fa-user-doctor" data-title="Doctor &amp; Specialist Portal" data-sub="Sign in to manage appointments, patients, and teleconsultations" data-placeholder="Doctor Mobile Number or Email" data-signup="/signup/doctor?service=doctor-consult" {% if role == 'doctor' %}selected{% endif %}>
+                                        🩺 Online Doctor Consultation
+                                    </option>
+                                    <option value="home-visits" data-role="doctor" data-badge="Doctor Home Visits" data-icon="fa-solid fa-house-medical" data-title="Doctor Home Visits Portal" data-sub="Sign in to view doorstep consultation requests and patient schedules" data-placeholder="Doctor Mobile Number or Email" data-signup="/signup/doctor?service=home-visits">
+                                        🏠 Doctor Home Visits
+                                    </option>
+                                    <option value="mental-health" data-role="doctor" data-badge="Mental Health &amp; Counseling" data-icon="fa-solid fa-brain" data-title="Mental Health Partner Portal" data-sub="Sign in for confidential tele-counseling and patient sessions" data-placeholder="Counselor Mobile Number or Email" data-signup="/signup/doctor?service=mental-health">
+                                        🧠 Mental Health &amp; Counseling
+                                    </option>
+                                    <option value="hospital-opd" data-role="doctor" data-badge="Premium OPD &amp; Hospital Assistance" data-icon="fa-solid fa-square-plus" data-title="Hospital &amp; OPD Partner Portal" data-sub="Sign in to manage VIP priority patient check-ins and OPD queues" data-placeholder="Hospital Partner Mobile or Email" data-signup="/signup/doctor?service=hospital-opd">
+                                        🏥 Premium OPD &amp; Hospital Assistance
                                     </option>
                                 </optgroup>
                                 <optgroup label="👩‍⚕️ Nursing &amp; Home Care">
@@ -122,10 +143,7 @@
                                         ❤️ Chronic Disease Care Programmes
                                     </option>
                                 </optgroup>
-                                <optgroup label="💊 Pharmacy, Emergency &amp; Mobility">
-                                    <option value="e-pharmacy" data-role="doctor" data-badge="Doorstep E-Pharmacy Partner" data-icon="fa-solid fa-prescription-bottle-medical" data-title="Pharmacy Partner Portal" data-sub="Sign in to manage prescription fulfillment and 2-hr express deliveries" data-placeholder="Pharmacy Mobile Number or Email" data-signup="/signup/doctor?service=e-pharmacy">
-                                        💊 Doorstep E-Pharmacy
-                                    </option>
+                                <optgroup label="🚑 Emergency &amp; Mobility">
                                     <option value="ambulance" data-role="doctor" data-badge="24/7 Smart Ambulance &amp; SOS" data-icon="fa-solid fa-truck-medical" data-title="Ambulance &amp; SOS Dispatch Portal" data-sub="Sign in for 24/7 live ambulance tracking and rapid emergency dispatch" data-placeholder="Fleet / Driver Mobile or Email" data-signup="/signup/doctor?service=ambulance">
                                         🚑 24/7 Smart Ambulance &amp; SOS
                                     </option>
@@ -344,25 +362,37 @@
             // Update Showcase Hero Image
             const heroImg = document.getElementById('showcaseHeroImg');
             if (heroImg) {
-                if (role === 'patient') {
-                    heroImg.src = "{{ url_for('static', filename='images/auth/patient_care_home.jpg') }}";
-                } else {
-                    heroImg.src = "{{ url_for('static', filename='images/auth/doctor_team.jpg') }}";
-                }
+                // hero image could be updated per role here
             }
+
+            // Update active quick role tab
+            document.querySelectorAll('.quick-role-tab').forEach(btn => {
+                const bRole = btn.getAttribute('data-role');
+                if (bRole === role) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
         }
 
-        function switchLoginRole(role) {
+        function setQuickLoginRole(role) {
             const selector = document.getElementById('authServiceSelector');
             if (!selector) return;
-            if (role === 'doctor') {
-                selector.value = 'doctor-consult';
+            if (role === 'pharmacy' || role === 'pharma') {
+                selector.value = 'e-pharmacy';
             } else if (role === 'lab') {
                 selector.value = 'lab-tests';
+            } else if (role === 'doctor') {
+                selector.value = 'doctor-consult';
             } else {
                 selector.value = 'patient';
             }
             onLoginServiceChange(selector);
+        }
+
+        function switchLoginRole(role) {
+            setQuickLoginRole(role);
         }
 
         // Initialize from URL parameters on page load
@@ -375,6 +405,8 @@
             if (selector) {
                 if (serviceParam && selector.querySelector(`option[value="${serviceParam}"]`)) {
                     selector.value = serviceParam;
+                } else if (roleParam === 'pharmacy' || roleParam === 'pharma') {
+                    selector.value = 'e-pharmacy';
                 } else if (roleParam === 'doctor') {
                     selector.value = 'doctor-consult';
                 } else if (roleParam === 'lab') {
@@ -473,7 +505,13 @@
                     alertBox.style.display = 'block';
                     showAuthToast(data.message, 'success');
                     setTimeout(() => {
-                        const targetUrl = (data.user && data.user.role === 'doctor') ? '/' : '/patient/dashboard';
+                        const uRole = (data.user && data.user.role) || role || 'patient';
+                        const targetUrl = data.redirect || (
+                            (uRole === 'pharmacy' || uRole === 'pharma') ? '/pharmacy/dashboard' :
+                            (uRole === 'lab') ? '/lab/dashboard' :
+                            (uRole === 'doctor') ? '/' :
+                            '/patient/dashboard'
+                        );
                         window.location.href = targetUrl;
                     }, 1000);
                 } else {

@@ -279,5 +279,27 @@
     "address": "Kaleswara Rao Market Road",
     "password": "scrypt:32768:8:1$vL9bkUkTzQL1WM0Q$4dfdd33df0b537939f1201c5086e4d0604eb7a03403a99357dfd0431f5d277b72303ec79da73a78866108683419d93bd765459187bbdf4bdaec34a1d95126b5c",
     "created_at": "2026-09-24T13:59:45.013613"
+  },
+  {
+    "id": "USR-DOC-2609-188A",
+    "role": "doctor",
+    "name": "pendala laxmi",
+    "owner_name": "",
+    "email": "laxmi@gmail.com",
+    "phone": "1234567890",
+    "whatsapp": "1234567890",
+    "specialization": "Doorstep E-Pharmacy",
+    "clinic_name": "sree sai",
+    "reg_number": "2343556t7456",
+    "gst_number": "",
+    "city": "Vijayawada",
+    "state": "Andhra Pradesh",
+    "pincode": "",
+    "age": 32,
+    "gender": "Male",
+    "blood_group": "O+",
+    "address": "Vijayawada, Andhra Pradesh",
+    "password": "scrypt:32768:8:1$bQjDqQV7M4efCobk$e7100c924eb35d2e49d2b4f10f2bad2fa01112c8d729a1e6783b8ebe38f4dd7b98e1125c7bbf402e248fb38b0580bb1f787d14c1eb0acd94b885691b4465e27c",
+    "created_at": "2026-09-25T14:54:37.010010"
   }
 ]
