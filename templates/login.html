@@ -181,13 +181,13 @@
                         <!-- Identifier (Email or Phone) -->
                         <div class="auth-input-group">
                             <i class="fa-regular fa-envelope auth-field-icon" id="identifierIcon"></i>
-                            <input type="text" name="identifier" id="loginIdentifier" class="auth-form-input" placeholder="Mobile Number or Email" required autocomplete="username">
+                            <input type="text" name="identifier" id="loginIdentifier" class="auth-form-input" placeholder="Mobile Number or Email" required autocomplete="username" autocapitalize="none" spellcheck="false">
                         </div>
 
                         <!-- Password -->
                         <div class="auth-input-group">
                             <i class="fa-solid fa-lock auth-field-icon"></i>
-                            <input type="password" name="password" id="loginPassword" class="auth-form-input" placeholder="Password" required autocomplete="current-password">
+                            <input type="password" name="password" id="loginPassword" class="auth-form-input" placeholder="Password" required autocomplete="current-password" autocapitalize="none" spellcheck="false">
                             <button type="button" class="auth-eye-toggle" onclick="togglePasswordVisibility('loginPassword', this)" aria-label="Toggle password visibility">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
@@ -455,7 +455,7 @@
             const alertBox = document.getElementById('authAlertBox');
             const submitBtn = document.getElementById('loginSubmitBtn');
             const identifier = document.getElementById('loginIdentifier').value.trim();
-            const password = document.getElementById('loginPassword').value;
+            const password = document.getElementById('loginPassword').value.trim();
             const role = document.getElementById('loginRole').value;
 
             alertBox.style.display = 'none';
