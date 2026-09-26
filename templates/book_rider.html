@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     
     <!-- Dynamic Rider Booking Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/book_rider.css') }}?v=2.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/book_rider.css') }}?v=3.1">
 </head>
 <body class="book-rider-body">
 
@@ -106,16 +106,39 @@
 
                     <!-- Pickup & Drop Locations -->
                     <div class="br-location-section">
-                        <!-- Pickup Input -->
+                        <!-- Pickup Input with Manual Option -->
                         <div class="location-input-row">
                             <div class="loc-dot pickup" title="Pickup Location"></div>
                             <div class="loc-input-wrap">
-                                <label class="loc-input-label">🟢 Pickup Location (Your Address)</label>
-                                <input type="text" class="loc-text-input" id="inputPickupAddress" placeholder="Enter pickup locality or drag green pin on map" value="{{ user.address if user and user.address else 'Benz Circle, MG Road, Vijayawada' }}" onfocus="setMapSelectMode('pickup')" onchange="handleAddressInputChange('pickup')">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                                    <label class="loc-input-label" style="margin-bottom: 0;">🟢 Pickup Location (Your Address)</label>
+                                    <button type="button" class="btn-manual-toggle" id="btnToggleManualPickup" onclick="toggleManualPickupEntry()" style="background: none; border: none; color: #0284c7; font-size: 0.73rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span id="txtManualPickupToggle">Enter Manually</span>
+                                    </button>
+                                </div>
+                                <input type="text" class="loc-text-input" id="inputPickupAddress" placeholder="Enter pickup locality, town, village or street" value="{{ user.address if user and user.address else 'Benz Circle, MG Road, Vijayawada' }}" onfocus="setMapSelectMode('pickup')" oninput="liveGeocodeAddress(this.value,'pickup')" onchange="handleAddressInputChange('pickup')">
+                                <span id="geocodeHintPickup" style="font-size:0.68rem;color:#0284c7;font-weight:700;display:none;margin-top:2px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Locating on map...</span>
                             </div>
                             <button type="button" style="background: none; border: none; color: var(--br-primary); cursor: pointer; padding: 4px;" onclick="detectLiveGpsLocation()" title="Detect GPS">
                                 <i class="fa-solid fa-location-crosshairs"></i>
                             </button>
+                        </div>
+
+                        <!-- Manual Location Entry Form Expansion (Requirements 12 & 13) -->
+                        <div class="manual-address-card" id="manualPickupCard" style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 12px; margin-top: 6px; margin-bottom: 8px;">
+                            <div style="font-size: 0.74rem; font-weight: 800; color: #166534; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fa-solid fa-house-chimney"></i> Manual Address Details (Town / Village / City)</span>
+                                <span style="font-size: 0.68rem; font-weight: 600; color: #15803d;">GPS Fallback</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <input type="text" class="br-input-control" id="manualStreetArea" placeholder="House / Flat No., Colony or Street" style="font-size: 0.8rem; background: #fff;" oninput="syncManualPickupAddress()">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <input type="text" class="br-input-control" id="manualCityTown" placeholder="Town / Village / City Name" style="font-size: 0.8rem; background: #fff;" oninput="syncManualPickupAddress()">
+                                    <input type="text" class="br-input-control" id="manualPincode" placeholder="6-digit Pincode" maxlength="6" style="font-size: 0.8rem; background: #fff;" oninput="syncManualPickupAddress()">
+                                </div>
+                                <input type="text" class="br-input-control" id="manualLandmark" placeholder="Prominent Landmark (e.g. Near Bus Stand, Panchayat Office)" style="font-size: 0.8rem; background: #fff;" oninput="syncManualPickupAddress()">
+                            </div>
                         </div>
 
                         <!-- Drop Input -->
@@ -123,7 +146,8 @@
                             <div class="loc-dot drop" title="Destination Location"></div>
                             <div class="loc-input-wrap">
                                 <label class="loc-input-label">🔴 Hospital / Clinic Drop</label>
-                                <input type="text" class="loc-text-input" id="inputDropAddress" placeholder="Select hospital chip below or drag red pin" value="Apollo Hospitals, Suryaraopeta, Vijayawada" onfocus="setMapSelectMode('drop')" onchange="handleAddressInputChange('drop')">
+                                <input type="text" class="loc-text-input" id="inputDropAddress" placeholder="Select hospital chip below or drag red pin" value="Apollo Hospitals, Suryaraopeta, Vijayawada" onfocus="setMapSelectMode('drop')" oninput="liveGeocodeAddress(this.value,'drop')" onchange="handleAddressInputChange('drop')">
+                                <span id="geocodeHintDrop" style="font-size:0.68rem;color:#f43f5e;font-weight:700;display:none;margin-top:2px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Locating on map...</span>
                             </div>
                         </div>
                     </div>
@@ -177,7 +201,7 @@
                         </div>
                     </div>
 
-                    <!-- Dynamic Route & Fare Summary Card -->
+                    <!-- Dynamic Route & Fare Summary Card (Online Payment Only) -->
                     <div class="route-fare-summary-card">
                         <div class="route-meta-left">
                             <div class="route-stats-row">
@@ -186,24 +210,41 @@
                                 <span class="route-stat-item"><i class="fa-regular fa-clock"></i> <span id="summaryDurationText">8 mins drive</span></span>
                             </div>
                             <div style="font-size: 0.72rem; opacity: 0.9; margin-top: 3px;" id="summaryRouteLabel">
-                                Road-Optimized Route &bull; Live GPS Dispatch
+                                Road-Optimized Route &bull; Online Payment (UPI / QR)
                             </div>
                         </div>
                         <div style="text-align: right;">
                             <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">Total Calculated Fare</div>
                             <div class="fare-display-val" id="summaryFareDisplay">₹120</div>
+                            <div style="font-size: 0.68rem; color: #dcfce7; font-weight: 700; margin-top: 2px;"><i class="fa-solid fa-credit-card"></i> Online Payment Only</div>
                         </div>
                     </div>
 
-                    <!-- Confirm & Request Button -->
-                    <button type="button" class="btn-confirm-rider-action" id="btnConfirmBooking" onclick="submitRiderBooking()">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>Confirm &amp; Dispatch Health Rider</span>
+                    <!-- Mandatory Policy & Terms Notice Box -->
+                    <div class="br-policy-warning-box" style="margin-top: 14px; margin-bottom: 14px;">
+                        <div class="br-policy-item">
+                            <i class="fa-solid fa-circle-exclamation" style="color: #d97706; font-size: 1.05rem; margin-top: 2px;"></i>
+                            <div style="font-size: 0.82rem; color: #92400e; font-weight: 700; line-height: 1.45;">
+                                Once booked, the service cannot be cancelled or refunded.
+                            </div>
+                        </div>
+                        <div class="br-policy-item">
+                            <i class="fa-solid fa-calendar-check" style="color: #0284c7; font-size: 1.05rem; margin-top: 2px;"></i>
+                            <div style="font-size: 0.82rem; color: #075985; font-weight: 700; line-height: 1.45;">
+                                The payment is valid only on that day.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pay First & Confirm Button -->
+                    <button type="button" class="btn-confirm-rider-action" id="btnConfirmBooking" onclick="initiateRiderPayment()" style="background: linear-gradient(135deg, #0284c7, #0369a1); font-size: 0.95rem;">
+                        <i class="fa-solid fa-lock"></i>
+                        <span id="btnConfirmBookingText">Pay ₹120 Online &amp; Book Service</span>
                     </button>
 
-                    <div style="text-align: center; font-size: 0.73rem; color: var(--br-gray); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <div style="text-align: center; font-size: 0.73rem; color: var(--br-gray); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <i class="fa-solid fa-shield-heart" style="color: #10b981;"></i>
-                        <span>100% Background-Verified Healthcare Riders &bull; Start OTP Protected</span>
+                        <span>Payment required before dispatch &bull; Automatic Tax Invoice Generated</span>
                     </div>
 
                 </div>
@@ -289,17 +330,23 @@
                     <div style="text-align: right;">
                         <div style="font-size: 0.72rem; color: var(--br-gray);">Trip Amount</div>
                         <div style="font-size: 1.1rem; font-weight: 800; color: var(--br-primary);" id="trackFareText">₹120</div>
+                        <div style="font-size: 0.68rem; color: #16a34a; font-weight: 700; margin-top: 2px;"><i class="fa-solid fa-credit-card"></i> Online Only</div>
                     </div>
                 </div>
 
-                <!-- Cancel Booking Option -->
-                <div style="margin-top: 8px; display: flex; gap: 10px;">
-                    <button type="button" class="pd-btn-secondary" style="flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid #fee2e2; color: #ef4444; background: #fff; font-weight: 700; font-size: 0.82rem; cursor: pointer;" onclick="cancelActiveTrip()">
-                        <i class="fa-solid fa-ban"></i> Cancel Request
+                <!-- Live Tracking Actions & Policy -->
+                <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                    <button type="button" style="width: 100%; padding: 11px; border-radius: 10px; border: 1.5px solid #10b981; color: #047857; background: #ecfdf5; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;" onclick="viewActiveTripInvoice()">
+                        <i class="fa-solid fa-file-invoice"></i> View Tax Invoice &amp; Payment Receipt
                     </button>
-                    <button type="button" class="pd-btn-secondary" style="flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--br-border); color: var(--br-slate); background: #fff; font-weight: 700; font-size: 0.82rem; cursor: pointer;" onclick="resetToBookingForm()">
-                        <i class="fa-solid fa-plus"></i> New Booking
-                    </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" style="flex: 1; padding: 9px; border-radius: 10px; border: 1.5px solid #fee2e2; color: #b91c1c; background: #fff; font-weight: 700; font-size: 0.76rem; cursor: pointer;" onclick="cancelActiveTrip()">
+                            <i class="fa-solid fa-ban"></i> Cancellation Policy
+                        </button>
+                        <button type="button" style="flex: 1; padding: 9px; border-radius: 10px; border: 1.5px solid var(--br-border); color: var(--br-slate); background: #fff; font-weight: 700; font-size: 0.76rem; cursor: pointer;" onclick="resetToBookingForm()">
+                            <i class="fa-solid fa-plus"></i> New Booking
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -310,7 +357,7 @@
         <main class="br-map-view">
             
             <!-- Map Container -->
-            <div id="riderBookingMap"></div>
+            <div id="riderBookingMap" style="width:100%;height:100%;min-height:400px;"></div>
 
             <!-- Floating Mode Selector Pill -->
             <div class="map-mode-selector-pill" id="mapModePill">
@@ -395,9 +442,16 @@
             L.control.zoom({ position: 'topright' }).addTo(map);
 
             // Ensure tile sizing recalculates seamlessly on mobile layout load & orientation change
+            // Multiple attempts needed because CSS flex layout may settle after JS fires
+            requestAnimationFrame(() => { if (map) map.invalidateSize(); });
             setTimeout(() => { if (map) map.invalidateSize(); }, 100);
             setTimeout(() => { if (map) map.invalidateSize(); }, 400);
             setTimeout(() => { if (map) map.invalidateSize(); }, 900);
+            setTimeout(() => { if (map) map.invalidateSize(); }, 1800);
+
+            window.addEventListener('load', () => { 
+                setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+            });
 
             window.addEventListener('resize', () => {
                 if (map) map.invalidateSize();
@@ -590,10 +644,112 @@
             }
         }
 
+        // Real-time address input → map geocoding (debounced, Rapido-style)
+        let _geocodeDebounce = {};
+        function liveGeocodeAddress(query, target) {
+            query = query.trim();
+            clearTimeout(_geocodeDebounce[target]);
+            const hintEl = document.getElementById(target === 'pickup' ? 'geocodeHintPickup' : 'geocodeHintDrop');
+            if (query.length < 4) {
+                if (hintEl) hintEl.style.display = 'none';
+                return;
+            }
+            if (hintEl) hintEl.style.display = 'inline';
+            _geocodeDebounce[target] = setTimeout(async () => {
+                try {
+                    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', India')}&limit=1&addressdetails=1`;
+                    const res = await fetch(url, { headers: { 'User-Agent': 'NhealthLiveGeocode/2.0' } });
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        const lat = parseFloat(data[0].lat);
+                        const lon = parseFloat(data[0].lon);
+                        if (target === 'pickup') {
+                            pickupCoords = { lat, lng: lon };
+                            if (pickupMarker) {
+                                pickupMarker.setLatLng([lat, lon]);
+                                pickupMarker.bindPopup(`<b>🟢 Pickup: ${data[0].display_name.split(',').slice(0,2).join(',')}</b>`).openPopup();
+                            }
+                            if (map) { map.invalidateSize(); map.setView([lat, lon], 15); }
+                        } else {
+                            dropCoords = { lat, lng: lon };
+                            if (dropMarker) {
+                                dropMarker.setLatLng([lat, lon]);
+                                dropMarker.bindPopup(`<b>🔴 Drop: ${data[0].display_name.split(',').slice(0,2).join(',')}</b>`).openPopup();
+                            }
+                            if (map) { map.invalidateSize(); map.setView([lat, lon], 15); }
+                        }
+                        fetchOsrmRoute();
+                    }
+                } catch(e) { console.warn('Live geocode error:', e); }
+                finally { if (hintEl) hintEl.style.display = 'none'; }
+            }, 650); // 650ms debounce — feels instant but not spammy
+        }
+
+
         // Manual text input change handler
         function handleAddressInputChange(target) {
             // Recalculate route on edit
             fetchOsrmRoute();
+        }
+
+
+        // Toggle Manual Location Entry (Requirements 12 & 13)
+        function toggleManualPickupEntry() {
+            const card = document.getElementById('manualPickupCard');
+            const txt = document.getElementById('txtManualPickupToggle');
+            if (!card) return;
+            if (card.style.display === 'none' || !card.style.display) {
+                card.style.display = 'block';
+                if (txt) txt.textContent = 'Hide Manual Entry';
+                const streetInput = document.getElementById('manualStreetArea');
+                if (streetInput) streetInput.focus();
+            } else {
+                card.style.display = 'none';
+                if (txt) txt.textContent = 'Enter Manually';
+            }
+        }
+
+        // Synchronize manual fields to main pickup input (Requirement 14)
+        function syncManualPickupAddress() {
+            const street = document.getElementById('manualStreetArea')?.value.trim() || '';
+            const cityTown = document.getElementById('manualCityTown')?.value.trim() || '';
+            const pincode = document.getElementById('manualPincode')?.value.trim() || '';
+            const landmark = document.getElementById('manualLandmark')?.value.trim() || '';
+
+            const parts = [];
+            if (street) parts.push(street);
+            if (landmark) parts.push(`Near ${landmark}`);
+            if (cityTown) parts.push(cityTown);
+            if (pincode) parts.push(pincode);
+
+            if (parts.length > 0) {
+                document.getElementById('inputPickupAddress').value = parts.join(', ');
+                if (cityTown && (!pickupCoords || pickupCoords.lat === 16.5062)) {
+                    forwardGeocodeManual(cityTown);
+                }
+            }
+        }
+
+        // Forward Geocoding for manual town/village entry (best effort fallback)
+        async function forwardGeocodeManual(query) {
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', India')}&limit=1`;
+                const res = await fetch(url, { headers: { 'User-Agent': 'NhealthManualGeocode/2.0' } });
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    pickupCoords = { lat: lat, lng: lon };
+                    if (pickupMarker) {
+                        pickupMarker.setLatLng([lat, lon]);
+                        pickupMarker.bindPopup(`<b>🟢 Pickup: ${query}</b>`).openPopup();
+                    }
+                    if (map) map.setView([lat, lon], 14);
+                    fetchOsrmRoute();
+                }
+            } catch (e) {
+                console.warn('Manual geocoding fallback:', e);
+            }
         }
 
         // Fetch Real-World Driving Road Route via OSRM Driving Engine
@@ -690,6 +846,8 @@
 
             calculatedFare = fare;
             document.getElementById('summaryFareDisplay').textContent = `₹${calculatedFare}`;
+            const btnPayText = document.getElementById('btnConfirmBookingText');
+            if (btnPayText) btnPayText.textContent = `Pay ₹${calculatedFare} Online & Book Service`;
             if (selectedServiceMode === 'oneway') {
                 document.getElementById('priceOneWay').textContent = `₹${calculatedFare}`;
             } else {
@@ -697,20 +855,93 @@
             }
         }
 
-        // Submit Rider Booking
-        async function submitRiderBooking() {
-            const btn = document.getElementById('btnConfirmBooking');
+        let currentTrip = null;
+        let currentTripInvoice = null;
+        let selectedPaymentMethod = 'upi';
+
+        // Direct Booking trigger redirects to Pay First
+        function submitRiderBooking() {
+            initiateRiderPayment();
+        }
+
+        // Validate and Open Online Payment Modal (Patient must pay first before booking)
+        function initiateRiderPayment() {
+            const pName = document.getElementById('inputPatientName').value.trim();
+            const pPhone = document.getElementById('inputPatientPhone').value.trim();
+            const pickupAddr = document.getElementById('inputPickupAddress').value.trim();
+            const dropAddr = document.getElementById('inputDropAddress').value.trim();
+
+            if (!pName) {
+                alert('Please enter the patient name.');
+                document.getElementById('inputPatientName').focus();
+                return;
+            }
+            if (!pPhone || pPhone.length < 10) {
+                alert('Please enter a valid 10-digit mobile number.');
+                document.getElementById('inputPatientPhone').focus();
+                return;
+            }
+            if (!pickupAddr) {
+                alert('Please specify the pickup location.');
+                return;
+            }
+            if (!dropAddr) {
+                alert('Please specify destination hospital/clinic.');
+                return;
+            }
+
+            // Sync payment modal details
+            document.getElementById('modalPayFare').textContent = `₹${calculatedFare}`;
+            document.getElementById('btnPayActionAmount').textContent = `₹${calculatedFare}`;
+            document.getElementById('modalPayModeName').textContent = selectedServiceMode === 'roundtrip' ? 'Round-Trip Hospital Escort' : 'One-Way Patient Transit';
+            document.getElementById('payPatientNameSummary').textContent = pName;
+            document.getElementById('payRouteSummary').textContent = `${pickupAddr} ➔ ${dropAddr}`;
+
+            document.getElementById('riderPaymentModal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('riderPaymentModal').style.display = 'none';
+        }
+
+        function selectPayMethod(method, el) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.br-pay-tab').forEach(t => t.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            document.getElementById('paySectionUpi').style.display = method === 'upi' ? 'block' : 'none';
+            document.getElementById('paySectionCard').style.display = method === 'card' ? 'block' : 'none';
+            document.getElementById('paySectionNetbank').style.display = method === 'netbank' ? 'block' : 'none';
+        }
+
+        // Execute payment authorization, then create trip with automatic invoice
+        async function executeOnlinePayment() {
+            const btn = document.getElementById('btnPayAction');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Secure Payment...';
+
+            setTimeout(async () => {
+                btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Payment Authorized! Dispatching Rider...';
+                const txnId = 'PAY-UPI-' + Date.now().toString().slice(-8) + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                await submitRiderBookingWithPayment(txnId, selectedPaymentMethod);
+            }, 1100);
+        }
+
+        async function submitRiderBookingWithPayment(txnId, paymentMode) {
             const pName = document.getElementById('inputPatientName').value.trim() || 'Patient';
             const pPhone = document.getElementById('inputPatientPhone').value.trim() || '9123456780';
             const pickupAddr = document.getElementById('inputPickupAddress').value.trim() || 'Pickup Location';
             const dropAddr = document.getElementById('inputDropAddress').value.trim() || 'Hospital Destination';
-            const doorNo = document.getElementById('inputDoorNo').value.trim();
-            const landmark = document.getElementById('inputLandmark').value.trim();
+            const doorNo = document.getElementById('inputDoorNo')?.value.trim() || '';
+            const landmark = document.getElementById('inputLandmark')?.value.trim() || '';
 
-            const fullPickup = doorNo ? `${doorNo}, ${pickupAddr} (Landmark: ${landmark})` : pickupAddr;
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Dispatching Nearest Rider...';
+            let fullPickup = pickupAddr;
+            if (doorNo && !pickupAddr.toLowerCase().includes(doorNo.toLowerCase())) {
+                fullPickup = `${doorNo}, ${fullPickup}`;
+            }
+            if (landmark && !fullPickup.toLowerCase().includes(landmark.toLowerCase())) {
+                fullPickup = `${fullPickup} (Landmark: ${landmark})`;
+            }
 
             try {
                 const response = await fetch('/api/trip/create', {
@@ -727,24 +958,49 @@
                         drop_lng: dropCoords.lng,
                         task_type: selectedServiceMode === 'roundtrip' ? 'Round-Trip Patient Hospital Escort' : 'One-Way Patient Clinic Transport',
                         fare_amount: calculatedFare,
-                        distance_km: calculatedDistanceKm
+                        distance_km: calculatedDistanceKm,
+                        payment_id: txnId,
+                        payment_mode: paymentMode === 'card' ? 'Online Debit/Credit Card' : (paymentMode === 'netbank' ? 'Online NetBanking' : 'Online UPI / QR')
                     })
                 });
 
                 const data = await response.json();
 
                 if (response.ok && data.status === 'success') {
+                    currentTrip = data.trip;
+                    currentTripInvoice = data.invoice || null;
                     activeTripId = data.trip.trip_id;
-                    transitionToLiveTracking(data.trip);
+
+                    // Close payment modal
+                    closePaymentModal();
+
+                    // Generate & Show Automatic Tax Invoice Modal
+                    openInvoiceModal(data.invoice || {
+                        invoice_number: data.trip.invoice_number,
+                        invoice_date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+                        trip_id: data.trip.trip_id,
+                        patient_name: pName,
+                        patient_phone: pPhone,
+                        pickup_address: fullPickup,
+                        drop_address: dropAddr,
+                        distance_km: calculatedDistanceKm,
+                        fare_amount: calculatedFare,
+                        payment_id: txnId,
+                        payment_mode: 'Online (UPI / QR / Cards)',
+                        payment_status: 'PAID'
+                    });
+
                 } else {
-                    alert(data.message || 'Could not dispatch rider. Please try again.');
+                    alert(data.message || 'Payment received but could not dispatch rider. Please try again.');
+                    const btn = document.getElementById('btnPayAction');
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirm &amp; Dispatch Health Rider';
+                    btn.innerHTML = `<i class="fa-solid fa-lock"></i> Authorize &amp; Pay ₹${calculatedFare}`;
                 }
             } catch (err) {
-                alert('Network error while booking rider.');
+                alert('Network error while processing booking.');
+                const btn = document.getElementById('btnPayAction');
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirm &amp; Dispatch Health Rider';
+                btn.innerHTML = `<i class="fa-solid fa-lock"></i> Authorize &amp; Pay ₹${calculatedFare}`;
             }
         }
 
@@ -920,23 +1176,64 @@
             }, 2000); // Poll every 2 seconds
         }
 
-        // Cancel Active Trip
-        function cancelActiveTrip() {
-            if (confirm('Are you sure you want to cancel this Health Support Rider booking?')) {
-                if (trackingPollInterval) clearInterval(trackingPollInterval);
-                if (riderSimInterval) clearInterval(riderSimInterval);
-                if (riderLiveMarker && map) map.removeLayer(riderLiveMarker);
-                // Optionally notify backend
-                if (activeTripId) {
-                    fetch('/api/rider/update_task_status', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ trip_id: activeTripId, status: 'cancelled' })
-                    }).catch(() => {});
-                }
-                alert('Your Health Rider booking has been cancelled.');
-                resetToBookingForm();
+        // Open Automatic Tax Invoice Modal
+        function openInvoiceModal(invoice) {
+            if (!invoice) return;
+            currentTripInvoice = invoice;
+
+            document.getElementById('invDisplayNumber').textContent = invoice.invoice_number || 'NH-INV-20260926-0001';
+            document.getElementById('invDisplayDate').textContent = invoice.invoice_date || (new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }));
+            document.getElementById('invDisplayTripId').textContent = invoice.trip_id || activeTripId || 'TRIP-XXXX';
+            document.getElementById('invDisplayTxnId').textContent = invoice.payment_id || 'PAY-UPI-XXXX';
+            document.getElementById('invDisplayPaymentMode').textContent = invoice.payment_mode || 'Online (UPI / QR)';
+            document.getElementById('invDisplayPatient').textContent = invoice.patient_name || 'Patient';
+            document.getElementById('invDisplayPhone').textContent = invoice.patient_phone || '';
+            document.getElementById('invDisplayPickup').textContent = invoice.pickup_address || '';
+            document.getElementById('invDisplayDrop').textContent = invoice.drop_address || '';
+            document.getElementById('invDisplayTaskType').textContent = invoice.task_type || 'Health Support Rider Accompaniment';
+            document.getElementById('invDisplayDist').textContent = `${invoice.distance_km || calculatedDistanceKm} km`;
+            document.getElementById('invDisplayFareRate').textContent = `₹${invoice.fare_amount || calculatedFare}.00`;
+            document.getElementById('invDisplayTotal').textContent = `₹${invoice.fare_amount || calculatedFare}.00`;
+            document.getElementById('invDisplayGrandTotal').textContent = `₹${invoice.fare_amount || calculatedFare}.00`;
+
+            document.getElementById('riderInvoiceModal').style.display = 'flex';
+        }
+
+        // Close Invoice Modal and Proceed to Live GPS Tracking
+        function closeInvoiceAndTrack() {
+            document.getElementById('riderInvoiceModal').style.display = 'none';
+            if (currentTrip) {
+                transitionToLiveTracking(currentTrip);
             }
+        }
+
+        // Re-view Invoice anytime from Live Tracking Card
+        async function viewActiveTripInvoice() {
+            if (currentTripInvoice) {
+                openInvoiceModal(currentTripInvoice);
+                return;
+            }
+            if (activeTripId) {
+                try {
+                    const res = await fetch(`/api/trip/${activeTripId}/invoice`);
+                    const data = await res.json();
+                    if (data.status === 'success' && data.invoice) {
+                        openInvoiceModal(data.invoice);
+                        return;
+                    }
+                } catch (e) {}
+            }
+            alert('Loading invoice receipt... Please wait a moment.');
+        }
+
+        // Print Invoice / Save as PDF
+        function printInvoice() {
+            window.print();
+        }
+
+        // Cancellation Policy Warning (Non-refundable & Same-day validity)
+        function cancelActiveTrip() {
+            alert("⚠️ Booking Policy Notice:\n\n• Once booked, the service cannot be cancelled or refunded.\n• The payment is valid only on that day.\n\nYour background-verified Health Support Rider has already been assigned and dispatched to ensure timely healthcare accompaniment.");
         }
 
         // Reset to initial booking form
@@ -946,17 +1243,310 @@
             if (riderLiveMarker && map) map.removeLayer(riderLiveMarker);
             riderLiveMarker = null;
             activeTripId = null;
+            currentTrip = null;
+            currentTripInvoice = null;
 
             document.getElementById('liveTrackingSection').style.display = 'none';
             document.getElementById('bookingFormSection').style.display = 'block';
             document.getElementById('mapModePill').style.display = 'flex';
 
             const btn = document.getElementById('btnConfirmBooking');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Confirm &amp; Dispatch Health Rider';
+            if (btn) {
+                btn.disabled = false;
+                const btnText = document.getElementById('btnConfirmBookingText');
+                if (btnText) btnText.textContent = `Pay ₹${calculatedFare} Online & Book Service`;
+            }
             
             fitRouteBounds();
         }
     </script>
+
+    <!-- ==================== ONLINE PAYMENT GATEWAY MODAL ==================== -->
+    <div class="br-modal-overlay" id="riderPaymentModal">
+        <div class="br-modal-card">
+            <div class="br-modal-header">
+                <div class="br-modal-title">
+                    <i class="fa-solid fa-shield-halved" style="color: #0284c7;"></i>
+                    <span>Secure Online Payment</span>
+                </div>
+                <button type="button" class="br-modal-close-btn" onclick="closePaymentModal()" aria-label="Close Payment Modal">&times;</button>
+            </div>
+            <div class="br-modal-body">
+                <!-- Amount & Service Summary -->
+                <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1.5px solid #bae6fd; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 0.72rem; color: #0369a1; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Amount to Pay</div>
+                        <div style="font-size: 1.55rem; font-weight: 900; color: #0284c7;" id="modalPayFare">₹120</div>
+                        <div style="font-size: 0.75rem; color: #475569; font-weight: 600;" id="modalPayModeName">Health Support Rider Transit</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="background: #ffffff; border: 1px solid #7dd3fc; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800;">
+                            <i class="fa-solid fa-lock"></i> 256-Bit SSL
+                        </span>
+                        <div style="font-size: 0.7rem; color: #0284c7; font-weight: 700; margin-top: 6px;">Instant Confirmation</div>
+                    </div>
+                </div>
+
+                <!-- Mandatory Policy Warning Box -->
+                <div class="br-policy-warning-box">
+                    <div class="br-policy-item">
+                        <i class="fa-solid fa-circle-exclamation" style="color: #d97706; font-size: 1.05rem; margin-top: 2px;"></i>
+                        <div style="font-size: 0.82rem; color: #92400e; font-weight: 700; line-height: 1.45;">
+                            Once booked, the service cannot be cancelled or refunded.
+                        </div>
+                    </div>
+                    <div class="br-policy-item">
+                        <i class="fa-solid fa-calendar-check" style="color: #0284c7; font-size: 1.05rem; margin-top: 2px;"></i>
+                        <div style="font-size: 0.82rem; color: #075985; font-weight: 700; line-height: 1.45;">
+                            The payment is valid only on that day.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Summary Details -->
+                <div style="background: #f8fafc; border: 1px solid var(--br-border); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.78rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span style="color: #64748b;">Patient:</span>
+                        <strong style="color: #0f172a;" id="payPatientNameSummary">Patient</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #64748b;">Route:</span>
+                        <span style="color: #0f172a; font-weight: 600; max-width: 65%; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="payRouteSummary">Clinic Transit</span>
+                    </div>
+                </div>
+
+                <!-- Payment Tabs -->
+                <div class="br-pay-tabs">
+                    <div class="br-pay-tab active" onclick="selectPayMethod('upi', this)">
+                        <i class="fa-solid fa-qrcode"></i> UPI / QR Code
+                    </div>
+                    <div class="br-pay-tab" onclick="selectPayMethod('card', this)">
+                        <i class="fa-solid fa-credit-card"></i> Cards
+                    </div>
+                    <div class="br-pay-tab" onclick="selectPayMethod('netbank', this)">
+                        <i class="fa-solid fa-building-columns"></i> NetBanking
+                    </div>
+                </div>
+
+                <!-- UPI Section -->
+                <div id="paySectionUpi">
+                    <div class="br-qr-box">
+                        <div style="font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 8px;">Scan with Any UPI App (GPay, PhonePe, Paytm, BHIM)</div>
+                        <div class="br-qr-img">
+                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                                <rect width="100" height="100" fill="#ffffff"/>
+                                <rect x="5" y="5" width="28" height="28" fill="#0f172a" rx="4"/>
+                                <rect x="9" y="9" width="20" height="20" fill="#ffffff" rx="2"/>
+                                <rect x="13" y="13" width="12" height="12" fill="#0284c7" rx="2"/>
+                                <rect x="67" y="5" width="28" height="28" fill="#0f172a" rx="4"/>
+                                <rect x="71" y="9" width="20" height="20" fill="#ffffff" rx="2"/>
+                                <rect x="75" y="13" width="12" height="12" fill="#0284c7" rx="2"/>
+                                <rect x="5" y="67" width="28" height="28" fill="#0f172a" rx="4"/>
+                                <rect x="9" y="71" width="20" height="20" fill="#ffffff" rx="2"/>
+                                <rect x="13" y="75" width="12" height="12" fill="#0284c7" rx="2"/>
+                                <rect x="38" y="10" width="6" height="6" fill="#0f172a"/>
+                                <rect x="48" y="10" width="6" height="6" fill="#0f172a"/>
+                                <rect x="58" y="14" width="6" height="6" fill="#0284c7"/>
+                                <rect x="38" y="24" width="6" height="6" fill="#0f172a"/>
+                                <rect x="48" y="20" width="6" height="6" fill="#0f172a"/>
+                                <rect x="10" y="38" width="6" height="6" fill="#0f172a"/>
+                                <rect x="20" y="44" width="6" height="6" fill="#0284c7"/>
+                                <rect x="28" y="38" width="6" height="6" fill="#0f172a"/>
+                                <rect x="38" y="38" width="8" height="8" fill="#0284c7" rx="2"/>
+                                <rect x="52" y="38" width="6" height="6" fill="#0f172a"/>
+                                <rect x="62" y="42" width="6" height="6" fill="#0f172a"/>
+                                <rect x="74" y="38" width="6" height="6" fill="#0284c7"/>
+                                <rect x="84" y="44" width="6" height="6" fill="#0f172a"/>
+                                <rect x="38" y="52" width="6" height="6" fill="#0f172a"/>
+                                <rect x="48" y="52" width="8" height="8" fill="#0284c7" rx="2"/>
+                                <rect x="62" y="54" width="6" height="6" fill="#0f172a"/>
+                                <rect x="72" y="50" width="6" height="6" fill="#0f172a"/>
+                                <rect x="82" y="54" width="6" height="6" fill="#0f172a"/>
+                                <rect x="38" y="68" width="6" height="6" fill="#0284c7"/>
+                                <rect x="48" y="74" width="6" height="6" fill="#0f172a"/>
+                                <rect x="58" y="68" width="6" height="6" fill="#0f172a"/>
+                                <rect x="68" y="72" width="6" height="6" fill="#0284c7"/>
+                                <rect x="78" y="68" width="6" height="6" fill="#0f172a"/>
+                                <rect x="88" y="74" width="6" height="6" fill="#0f172a"/>
+                                <rect x="38" y="84" width="6" height="6" fill="#0f172a"/>
+                                <rect x="50" y="84" width="6" height="6" fill="#0284c7"/>
+                                <rect x="62" y="84" width="6" height="6" fill="#0f172a"/>
+                                <rect x="74" y="84" width="6" height="6" fill="#0f172a"/>
+                                <rect x="84" y="84" width="6" height="6" fill="#0284c7"/>
+                            </svg>
+                        </div>
+                        <div style="font-size: 0.72rem; color: #64748b;">
+                            UPI ID: <strong style="color: #0284c7;">nhealth.payment@icici</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Section -->
+                <div id="paySectionCard" style="display: none; margin-bottom: 14px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <input type="text" placeholder="Card Number (4532 •••• •••• 8921)" maxlength="19" class="br-input-control" value="4532 9821 7734 8921">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" placeholder="MM/YY" maxlength="5" class="br-input-control" value="08/29" style="flex: 1;">
+                            <input type="password" placeholder="CVV" maxlength="3" class="br-input-control" value="382" style="flex: 1;">
+                        </div>
+                        <input type="text" placeholder="Name on Card" class="br-input-control" value="Cardholder">
+                    </div>
+                </div>
+
+                <!-- NetBanking Section -->
+                <div id="paySectionNetbank" style="display: none; margin-bottom: 14px;">
+                    <select class="br-input-control" style="font-weight: 600;">
+                        <option value="sbi">State Bank of India (SBI)</option>
+                        <option value="hdfc">HDFC Bank</option>
+                        <option value="icici">ICICI Bank</option>
+                        <option value="axis">Axis Bank</option>
+                        <option value="kotak">Kotak Mahindra Bank</option>
+                    </select>
+                </div>
+
+                <!-- Authorize & Pay Button -->
+                <button type="button" class="br-btn-pay-action" id="btnPayAction" onclick="executeOnlinePayment()">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Authorize &amp; Pay <span id="btnPayActionAmount">₹120</span></span>
+                </button>
+
+                <div style="text-align: center; font-size: 0.7rem; color: #64748b; margin-top: 10px;">
+                    <i class="fa-solid fa-receipt"></i> Official Tax Invoice with Automatic Numbering generated immediately.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== AUTOMATIC TAX INVOICE & RECEIPT MODAL ==================== -->
+    <div class="br-modal-overlay" id="riderInvoiceModal">
+        <div class="br-modal-card invoice-modal-card">
+            <div class="br-modal-header no-print">
+                <div class="br-modal-title">
+                    <i class="fa-solid fa-file-invoice" style="color: #10b981;"></i>
+                    <span>Tax Invoice &amp; Payment Receipt</span>
+                </div>
+                <button type="button" class="br-modal-close-btn" onclick="closeInvoiceAndTrack()" aria-label="Close Invoice">&times;</button>
+            </div>
+            
+            <div class="br-modal-body">
+                <!-- Printable Invoice Paper -->
+                <div class="invoice-paper" id="invoicePrintArea">
+                    
+                    <!-- Header -->
+                    <div class="invoice-header-row">
+                        <div>
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" style="height: 38px; width: auto; object-fit: contain;">
+                            <div style="font-size: 0.72rem; color: #64748b; margin-top: 3px;">
+                                Nhealth Healthcare Services Pvt. Ltd. &bull; GSTIN: 37AABCN1234F1Z8
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="background: #e0f2fe; color: #0284c7; font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;">
+                                TAX INVOICE
+                            </span>
+                            <div style="font-size: 0.72rem; color: #64748b; margin-top: 4px;">Original for Recipient</div>
+                        </div>
+                    </div>
+
+                    <!-- Meta Grid (Invoice Number, Date, Status) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 14px;">
+                        <div>
+                            <div style="font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 700;">Automatic Invoice Number</div>
+                            <div style="font-size: 1.05rem; font-weight: 900; color: #0284c7; font-family: monospace;" id="invDisplayNumber">NH-INV-20260926-0001</div>
+                            <div style="font-size: 0.72rem; color: #475569; margin-top: 4px;">
+                                <strong>Date &amp; Time:</strong> <span id="invDisplayDate">26 Sep 2026, 05:00 PM</span>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 700;">Payment Status</div>
+                            <div style="margin: 2px 0;">
+                                <span style="background: #dcfce7; color: #166534; font-weight: 800; padding: 3px 8px; border-radius: 4px; font-size: 0.76rem;">
+                                    <i class="fa-solid fa-circle-check"></i> PAID (ONLINE)
+                                </span>
+                            </div>
+                            <div style="font-size: 0.72rem; color: #475569;">
+                                <strong>Txn ID:</strong> <span id="invDisplayTxnId" style="font-family: monospace;">PAY-UPI-XXXX</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #64748b;" id="invDisplayPaymentMode">Online (UPI / QR)</div>
+                        </div>
+                    </div>
+
+                    <!-- Billed To Patient -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.78rem;">
+                        <div style="font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Billed To (Patient Details)</div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                            <span><strong>Name:</strong> <span id="invDisplayPatient">Patient Name</span></span>
+                            <span><strong>Phone:</strong> <span id="invDisplayPhone">9123456780</span></span>
+                        </div>
+                        <div style="margin-bottom: 2px;">
+                            <strong>Pickup:</strong> <span id="invDisplayPickup">Pickup Address</span>
+                        </div>
+                        <div>
+                            <strong>Destination:</strong> <span id="invDisplayDrop">Hospital / Clinic</span>
+                        </div>
+                    </div>
+
+                    <!-- Itemized Table -->
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>Service Description</th>
+                                <th style="text-align: center;">Distance</th>
+                                <th style="text-align: right;">Rate</th>
+                                <th style="text-align: right;">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong id="invDisplayTaskType">Health Support Rider Accompaniment</strong>
+                                    <div style="font-size: 0.7rem; color: #64748b;">Verified medical escort &amp; transit support</div>
+                                </td>
+                                <td style="text-align: center;" id="invDisplayDist">2.8 km</td>
+                                <td style="text-align: right;" id="invDisplayFareRate">₹120.00</td>
+                                <td style="text-align: right; font-weight: 700;" id="invDisplayTotal">₹120.00</td>
+                            </tr>
+                            <tr style="color: #64748b; font-size: 0.76rem;">
+                                <td colspan="3" style="text-align: right;">GST / Healthcare Transport Cess (0% Exempt)</td>
+                                <td style="text-align: right;">₹0.00</td>
+                            </tr>
+                            <tr style="font-size: 0.95rem; font-weight: 900; background: #f8fafc; border-top: 2px solid #0284c7;">
+                                <td colspan="3" style="text-align: right; color: #0f172a;">Total Paid (INR):</td>
+                                <td style="text-align: right; color: #0284c7;" id="invDisplayGrandTotal">₹120.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Crucial Policy Notice Box in Invoice -->
+                    <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 10px 12px; margin-top: 12px;">
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #92400e; text-transform: uppercase; margin-bottom: 4px;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Important Booking &amp; Payment Policies:
+                        </div>
+                        <div style="font-size: 0.78rem; color: #92400e; font-weight: 700; margin-bottom: 2px;">
+                            &bull; Once booked, the service cannot be cancelled or refunded.
+                        </div>
+                        <div style="font-size: 0.78rem; color: #075985; font-weight: 700;">
+                            &bull; The payment is valid only on that day.
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 0.68rem; color: #94a3b8; margin-top: 12px;">
+                        This is a computer-generated tax invoice and requires no physical signature. Thank you for choosing Nhealth.
+                    </div>
+
+                </div>
+
+                <!-- Modal Action Buttons (Hidden when printing) -->
+                <div class="no-print" style="margin-top: 16px; display: flex; gap: 10px;">
+                    <button type="button" class="pd-btn-secondary" style="flex: 1; padding: 12px; border-radius: 10px; border: 1.5px solid #0284c7; color: #0284c7; background: #f0f9ff; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="printInvoice()">
+                        <i class="fa-solid fa-print"></i> Print / Save PDF
+                    </button>
+                    <button type="button" class="btn-confirm-rider-action" style="flex: 1.4; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="closeInvoiceAndTrack()">
+                        <i class="fa-solid fa-motorcycle"></i> Proceed to Live Tracking &rarr;
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

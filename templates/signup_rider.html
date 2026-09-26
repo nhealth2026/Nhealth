@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- Rider Auth Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_auth.css') }}?v=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_auth.css') }}?v=2.1">
 </head>
 <body class="rider-auth-page">
 
@@ -92,8 +92,26 @@
                         </div>
                     </div>
 
-                    <!-- Rider Illustration / Photo -->
-                    <img src="{{ url_for('static', filename='images/health_support_rider.png') }}" alt="Health Support Rider" class="rider-showcase-bg-img">
+                    <!-- Health Support Rider Showcase Card (Clean Illustration & Matter Design) -->
+                    <div class="rider-showcase-feature-card">
+                        <div class="rider-card-photo-wrap" style="background: linear-gradient(135deg, #e0f2fe, #f0fdf4); display: flex; align-items: center; justify-content: center; padding: 12px;">
+                            <img src="{{ url_for('static', filename='images/health_support_rider.png') }}" alt="Nhealth Health Support Rider" class="rider-card-photo" style="object-fit: contain; max-height: 160px;">
+                        </div>
+                        <div class="rider-card-matter">
+                            <div class="rider-matter-pill">Health Support Rider</div>
+                            <h3 class="rider-matter-headline">Trusted Pick &amp; Drop, Full-Day Support &amp; Complete Healthcare Assistance</h3>
+                            <p class="rider-matter-scope">&mdash; From Hospital Visits, OPDs to Procedures,<br>Medicines, Reports &amp; Essentials Delivered to Your Doorstep.</p>
+                            <div class="rider-matter-tagline">
+                                <span class="tag-pick">Pick</span>
+                                <span class="tag-dot">&bull;</span>
+                                <span class="tag-support">Support</span>
+                                <span class="tag-dot">&bull;</span>
+                                <span class="tag-drop">Drop</span>
+                                <span class="tag-dot">&bull;</span>
+                                <span class="tag-brand">Your Healthcare, Simplified.</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ==================== RIGHT FORM PANEL (Desktop & Mobile) ==================== -->
@@ -144,7 +162,7 @@
                                     <span>Personal &amp; Contact Details</span>
                                 </div>
 
-                                <!-- Row 1: Full Name & City -->
+                                <!-- Row 1: Full Name & State / UT (All-India) -->
                                 <div class="rider-grid-2">
                                     <div class="rider-form-group">
                                         <label class="rider-form-label" for="riderName"><span>Full Name<span class="rider-req">*</span></span></label>
@@ -152,39 +170,92 @@
                                     </div>
 
                                     <div class="rider-form-group">
-                                        <label class="rider-form-label" for="riderCity"><span>Operating City<span class="rider-req">*</span></span></label>
-                                        <select id="riderCity" class="rider-select" required>
-                                            <option value="" disabled selected>Select operating city</option>
-                                            <option value="Vijayawada" selected>Vijayawada</option>
-                                            <option value="Visakhapatnam">Visakhapatnam</option>
-                                            <option value="Guntur">Guntur</option>
-                                            <option value="Tirupati">Tirupati</option>
-                                            <option value="Kurnool">Kurnool</option>
-                                            <option value="Kakinada">Kakinada</option>
-                                            <option value="Rajahmundry">Rajahmundry</option>
-                                            <option value="Nellore">Nellore</option>
-                                            <option value="Hyderabad">Hyderabad</option>
+                                        <label class="rider-form-label" for="riderState"><span>State / Union Territory<span class="rider-req">*</span></span></label>
+                                        <select id="riderState" class="rider-select" required>
+                                            <option value="" disabled>Select State / UT</option>
+                                            <option value="Andhra Pradesh" selected>Andhra Pradesh</option>
+                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                            <option value="Assam">Assam</option>
+                                            <option value="Bihar">Bihar</option>
+                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                            <option value="Goa">Goa</option>
+                                            <option value="Gujarat">Gujarat</option>
+                                            <option value="Haryana">Haryana</option>
+                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                            <option value="Jharkhand">Jharkhand</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Kerala">Kerala</option>
+                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                            <option value="Maharashtra">Maharashtra</option>
+                                            <option value="Manipur">Manipur</option>
+                                            <option value="Meghalaya">Meghalaya</option>
+                                            <option value="Mizoram">Mizoram</option>
+                                            <option value="Nagaland">Nagaland</option>
+                                            <option value="Odisha">Odisha</option>
+                                            <option value="Punjab">Punjab</option>
+                                            <option value="Rajasthan">Rajasthan</option>
+                                            <option value="Sikkim">Sikkim</option>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Telangana">Telangana</option>
+                                            <option value="Tripura">Tripura</option>
+                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                            <option value="Uttarakhand">Uttarakhand</option>
+                                            <option value="West Bengal">West Bengal</option>
+                                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                            <option value="Chandigarh">Chandigarh</option>
+                                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                                            <option value="Delhi (NCT)">Delhi (NCT)</option>
+                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                            <option value="Ladakh">Ladakh</option>
+                                            <option value="Lakshadweep">Lakshadweep</option>
+                                            <option value="Puducherry">Puducherry</option>
                                         </select>
                                     </div>
                                 </div>
 
-                                <!-- Row 2: Mobile Number & Email -->
+                                <!-- Row 2: Location Type (City / Town / Village) & Specific Place Name -->
                                 <div class="rider-grid-2">
                                     <div class="rider-form-group">
-                                        <label class="rider-form-label" for="riderPhone"><span>Mobile Number<span class="rider-req">*</span></span></label>
+                                        <label class="rider-form-label" for="riderLocationType"><span>Location Type<span class="rider-req">*</span></span></label>
+                                        <select id="riderLocationType" class="rider-select" onchange="handleLocationTypeChange()" required>
+                                            <option value="City" selected>City / Metropolitan</option>
+                                            <option value="Town">Town / Municipality</option>
+                                            <option value="Village">Village / Gram Panchayat / Mandal</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderCity"><span id="lblCityTownVillage">City / Town / Village Name<span class="rider-req">*</span></span></label>
+                                        <input type="text" id="riderCity" class="rider-form-input no-icon" placeholder="Enter operating city, town or village" value="Vijayawada" required>
+                                    </div>
+                                </div>
+
+                                <!-- Row 3: 2 Mandatory Contact Numbers -->
+                                <div class="rider-grid-2">
+                                    <div class="rider-form-group">
+                                        <label class="rider-form-label" for="riderPhone"><span>Primary Contact Number<span class="rider-req">*</span></span></label>
                                         <div class="rider-phone-wrapper">
                                             <span class="rider-phone-prefix">+91 <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: #64748b;"></i></span>
-                                            <input type="tel" id="riderPhone" class="rider-form-input" placeholder="Enter 10-digit mobile" maxlength="10" required>
+                                            <input type="tel" id="riderPhone" class="rider-form-input" placeholder="Primary 10-digit mobile" maxlength="10" required>
                                         </div>
                                     </div>
 
                                     <div class="rider-form-group">
-                                        <label class="rider-form-label" for="riderEmail"><span>Email Address<span class="rider-req">*</span></span></label>
-                                        <input type="email" id="riderEmail" class="rider-form-input no-icon" placeholder="Enter email address" required>
+                                        <label class="rider-form-label" for="riderSecondaryPhone"><span>Secondary Contact Number<span class="rider-req">*</span></span></label>
+                                        <div class="rider-phone-wrapper">
+                                            <span class="rider-phone-prefix">+91 <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: #64748b;"></i></span>
+                                            <input type="tel" id="riderSecondaryPhone" class="rider-form-input" placeholder="Alternate / Family 10-digit mobile" maxlength="10" required>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Row 3: Password & Confirm Password -->
+                                <!-- Row 4: Email Address -->
+                                <div class="rider-form-group">
+                                    <label class="rider-form-label" for="riderEmail"><span>Email Address<span class="rider-req">*</span></span></label>
+                                    <input type="email" id="riderEmail" class="rider-form-input no-icon" placeholder="Enter email address" required>
+                                </div>
+
+                                <!-- Row 5: Password & Confirm Password -->
                                 <div class="rider-grid-2">
                                     <div class="rider-form-group">
                                         <label class="rider-form-label" for="riderPassword"><span>Password<span class="rider-req">*</span></span></label>
@@ -231,6 +302,9 @@
                                             <option value="Motorcycle (Two-Wheeler)" selected>Motorcycle / Bike (Two-Wheeler)</option>
                                             <option value="Scooter (Two-Wheeler)">Scooter (Activa / Jupiter / Access)</option>
                                             <option value="Electric Vehicle (EV Bike)">Electric Bike / EV Scooter</option>
+                                            <option value="Four-Wheeler / Car (Hatchback / Sedan / SUV)">Four-Wheeler / Car (Hatchback / Sedan / SUV)</option>
+                                            <option value="Four-Wheeler (Cab / Taxi / Patient Transport)">Four-Wheeler / Cab (Patient Transport)</option>
+                                            <option value="Auto-Rickshaw (Three-Wheeler)">Auto-Rickshaw (Three-Wheeler)</option>
                                         </select>
                                     </div>
 
@@ -240,7 +314,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Row 2: Driving License Number & Emergency Contact -->
+                                <!-- Row 2: Driving License Number & Operating Pincode -->
                                 <div class="rider-grid-2">
                                     <div class="rider-form-group">
                                         <label class="rider-form-label" for="riderDlNumber"><span>Driving License (DL) Number<span class="rider-req">*</span></span></label>
@@ -248,10 +322,23 @@
                                     </div>
 
                                     <div class="rider-form-group">
-                                        <label class="rider-form-label" for="riderEmergencyPhone"><span>Emergency Contact Number</span></label>
-                                        <input type="tel" id="riderEmergencyPhone" class="rider-form-input no-icon" placeholder="Family / Relative mobile" maxlength="10">
+                                        <label class="rider-form-label" for="riderPincode"><span>Operating Area Pincode<span class="rider-req">*</span></span></label>
+                                        <input type="text" id="riderPincode" class="rider-form-input no-icon" placeholder="6-digit Pincode (e.g. 520010)" maxlength="6" required>
                                     </div>
                                 </div>
+
+                                <!-- Mobile Buttons for Step 2 -->
+                                <div class="mobile-step-nav">
+                                    <button type="button" class="rider-btn-outline" style="flex: 1;" onclick="goToStep(1)">
+                                        <i class="fa-solid fa-arrow-left"></i>
+                                        <span>Back</span>
+                                    </button>
+                                    <button type="button" class="rider-btn-primary" style="flex: 2;" onclick="goToStep(3)">
+                                        <span>Next: Upload Documents</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
 
                                 <!-- Mobile Buttons for Step 2 -->
                                 <div class="mobile-step-nav">
@@ -273,42 +360,78 @@
                                     <span>KYC Documents Verification</span>
                                 </div>
 
-                                <!-- 3 Document Upload Cards -->
+                                <!-- 6 Document Upload Cards (Mandatory & Optional) -->
                                 <div class="rider-upload-grid">
-                                    <!-- Card 1: Driving License -->
+                                    <!-- Card 1: Driving License (Mandatory) -->
                                     <div class="rider-upload-card" onclick="document.getElementById('fileDl').click()">
                                         <input type="file" id="fileDl" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusDl')">
                                         <span class="rider-upload-title">Driving License (DL)<span class="rider-req">*</span></span>
                                         <span class="rider-upload-subtitle">Front &amp; Back photo</span>
                                         <button type="button" class="rider-upload-btn">
-                                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            <i class="fa-solid fa-id-card"></i>
                                             <span>Upload</span>
                                         </button>
                                         <span class="rider-file-status" id="statusDl"><i class="fa-solid fa-circle-check"></i> DL Attached</span>
                                     </div>
 
-                                    <!-- Card 2: Aadhaar Card / ID -->
+                                    <!-- Card 2: Aadhaar Card / ID (Mandatory) -->
                                     <div class="rider-upload-card" onclick="document.getElementById('fileAadhaar').click()">
                                         <input type="file" id="fileAadhaar" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusAadhaar')">
                                         <span class="rider-upload-title">Aadhaar Card<span class="rider-req">*</span></span>
                                         <span class="rider-upload-subtitle">National ID proof</span>
                                         <button type="button" class="rider-upload-btn">
-                                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            <i class="fa-solid fa-id-badge"></i>
                                             <span>Upload</span>
                                         </button>
                                         <span class="rider-file-status" id="statusAadhaar"><i class="fa-solid fa-circle-check"></i> Aadhaar Attached</span>
                                     </div>
 
-                                    <!-- Card 3: Vehicle RC -->
+                                    <!-- Card 3: Vehicle RC (Mandatory) -->
                                     <div class="rider-upload-card" onclick="document.getElementById('fileRc').click()">
                                         <input type="file" id="fileRc" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusRc')">
                                         <span class="rider-upload-title">Vehicle RC Book<span class="rider-req">*</span></span>
                                         <span class="rider-upload-subtitle">Registration Certificate</span>
                                         <button type="button" class="rider-upload-btn">
-                                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                            <i class="fa-solid fa-file-invoice"></i>
                                             <span>Upload</span>
                                         </button>
                                         <span class="rider-file-status" id="statusRc"><i class="fa-solid fa-circle-check"></i> RC Attached</span>
+                                    </div>
+
+                                    <!-- Card 4: Individual Photo (Mandatory) -->
+                                    <div class="rider-upload-card" onclick="document.getElementById('fileIndividualPhoto').click()">
+                                        <input type="file" id="fileIndividualPhoto" accept="image/*" style="display: none;" onchange="handleFileSelected(this, 'statusIndividualPhoto')">
+                                        <span class="rider-upload-title">Individual Photo<span class="rider-req">*</span></span>
+                                        <span class="rider-upload-subtitle">Passport / Selfie photo</span>
+                                        <button type="button" class="rider-upload-btn">
+                                            <i class="fa-solid fa-camera"></i>
+                                            <span>Upload</span>
+                                        </button>
+                                        <span class="rider-file-status" id="statusIndividualPhoto"><i class="fa-solid fa-circle-check"></i> Photo Attached</span>
+                                    </div>
+
+                                    <!-- Card 5: Family Photo (Optional) -->
+                                    <div class="rider-upload-card" onclick="document.getElementById('fileFamilyPhoto').click()">
+                                        <input type="file" id="fileFamilyPhoto" accept="image/*" style="display: none;" onchange="handleFileSelected(this, 'statusFamilyPhoto')">
+                                        <span class="rider-upload-title">Family Photo <span class="rider-opt-badge">(Optional)</span></span>
+                                        <span class="rider-upload-subtitle">Family / Guardian photo</span>
+                                        <button type="button" class="rider-upload-btn">
+                                            <i class="fa-solid fa-users"></i>
+                                            <span>Upload</span>
+                                        </button>
+                                        <span class="rider-file-status" id="statusFamilyPhoto"><i class="fa-solid fa-circle-check"></i> Photo Attached</span>
+                                    </div>
+
+                                    <!-- Card 6: Police NOC (Optional) -->
+                                    <div class="rider-upload-card" onclick="document.getElementById('filePoliceNoc').click()">
+                                        <input type="file" id="filePoliceNoc" accept=".pdf,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelected(this, 'statusPoliceNoc')">
+                                        <span class="rider-upload-title">Police NOC <span class="rider-opt-badge">(Optional)</span></span>
+                                        <span class="rider-upload-subtitle">Police clearance / NOC</span>
+                                        <button type="button" class="rider-upload-btn">
+                                            <i class="fa-solid fa-shield-halved"></i>
+                                            <span>Upload</span>
+                                        </button>
+                                        <span class="rider-file-status" id="statusPoliceNoc"><i class="fa-solid fa-circle-check"></i> NOC Attached</span>
                                     </div>
                                 </div>
 
@@ -331,6 +454,17 @@
                                         <span>Complete Registration</span>
                                     </button>
                                 </div>
+
+                                <!-- Divider -->
+                                <div class="rider-divider">
+                                    <span>or</span>
+                                </div>
+
+                                <!-- Login Button -->
+                                <a href="/login/rider" class="rider-btn-outline" id="riderLoginBtn" style="text-decoration: none;">
+                                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                                    <span>Already Registered? Login</span>
+                                </a>
                             </div>
 
                         </form>
@@ -376,6 +510,22 @@
             }
         }
 
+        function handleLocationTypeChange() {
+            const locType = document.getElementById('riderLocationType').value;
+            const lbl = document.getElementById('lblCityTownVillage');
+            const input = document.getElementById('riderCity');
+            if (locType === 'Village') {
+                lbl.innerHTML = '<span>Village &amp; Mandal Name<span class="rider-req">*</span></span>';
+                input.placeholder = 'e.g. Pedavadlapudi Village, Mangalagiri Mandal';
+            } else if (locType === 'Town') {
+                lbl.innerHTML = '<span>Town / Municipality Name<span class="rider-req">*</span></span>';
+                input.placeholder = 'e.g. Tenali, Tadepalligudem, Gudivada';
+            } else {
+                lbl.innerHTML = '<span>City / Corporation Name<span class="rider-req">*</span></span>';
+                input.placeholder = 'e.g. Vijayawada, Visakhapatnam, Hyderabad';
+            }
+        }
+
         // Responsive Wizard Navigation
         function goToStep(step) {
             if (window.innerWidth >= 992) {
@@ -388,20 +538,35 @@
             // Validation before advancing from Step 1
             if (step === 2 && currentStep === 1) {
                 const name = document.getElementById('riderName').value.trim();
+                const state = document.getElementById('riderState').value;
+                const locType = document.getElementById('riderLocationType').value;
+                const city = document.getElementById('riderCity').value.trim();
                 const phone = document.getElementById('riderPhone').value.trim();
+                const secondaryPhone = document.getElementById('riderSecondaryPhone').value.trim();
                 const email = document.getElementById('riderEmail').value.trim();
-                const city = document.getElementById('riderCity').value;
                 const pwd = document.getElementById('riderPassword').value;
                 const cpwd = document.getElementById('riderConfirmPassword').value;
 
-                if (!name || !phone || !email || !city || !pwd) {
+                if (!name || !state || !locType || !city || !phone || !secondaryPhone || !email || !pwd) {
                     alertBox.textContent = 'Please fill out all required fields in Personal Details.';
                     alertBox.className = 'rider-alert error';
                     alertBox.style.display = 'block';
                     return;
                 }
-                if (phone.length < 10) {
-                    alertBox.textContent = 'Please enter a valid 10-digit mobile number.';
+                if (!/^\d{10}$/.test(phone)) {
+                    alertBox.textContent = 'Please enter a valid 10-digit Primary Contact Number.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (!/^\d{10}$/.test(secondaryPhone)) {
+                    alertBox.textContent = 'Please enter a valid 10-digit Secondary Contact Number.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (phone === secondaryPhone) {
+                    alertBox.textContent = 'Primary and Secondary contact numbers must be different.';
                     alertBox.className = 'rider-alert error';
                     alertBox.style.display = 'block';
                     return;
@@ -424,9 +589,16 @@
             if (step === 3 && currentStep === 2) {
                 const vNum = document.getElementById('riderVehicleNumber').value.trim();
                 const dlNum = document.getElementById('riderDlNumber').value.trim();
+                const pincode = document.getElementById('riderPincode').value.trim();
 
-                if (!vNum || !dlNum) {
-                    alertBox.textContent = 'Please provide your Vehicle Number and Driving License (DL) Number.';
+                if (!vNum || !dlNum || !pincode) {
+                    alertBox.textContent = 'Please provide Vehicle Registration Number, DL Number, and Operating Pincode.';
+                    alertBox.className = 'rider-alert error';
+                    alertBox.style.display = 'block';
+                    return;
+                }
+                if (!/^\d{6}$/.test(pincode)) {
+                    alertBox.textContent = 'Please enter a valid 6-digit Pincode.';
                     alertBox.className = 'rider-alert error';
                     alertBox.style.display = 'block';
                     return;
@@ -474,7 +646,10 @@
         }
 
         window.addEventListener('resize', updateStepVisibility);
-        document.addEventListener('DOMContentLoaded', updateStepVisibility);
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStepVisibility();
+            handleLocationTypeChange();
+        });
 
         async function handleRiderSignup(e) {
             e.preventDefault();
@@ -482,28 +657,52 @@
             const submitBtn = document.getElementById('riderSignupSubmitBtn');
 
             const name = document.getElementById('riderName').value.trim();
-            const city = document.getElementById('riderCity').value;
+            const state = document.getElementById('riderState').value;
+            const locationType = document.getElementById('riderLocationType').value;
+            const city = document.getElementById('riderCity').value.trim();
             const phone = document.getElementById('riderPhone').value.trim();
+            const secondaryPhone = document.getElementById('riderSecondaryPhone').value.trim();
             const email = document.getElementById('riderEmail').value.trim();
             const pwd = document.getElementById('riderPassword').value;
             const cpwd = document.getElementById('riderConfirmPassword').value;
             const vehicleType = document.getElementById('riderVehicleType').value;
             const vehicleNumber = document.getElementById('riderVehicleNumber').value.trim().toUpperCase();
             const dlNumber = document.getElementById('riderDlNumber').value.trim().toUpperCase();
-            const emergencyPhone = document.getElementById('riderEmergencyPhone').value.trim();
+            const pincode = document.getElementById('riderPincode').value.trim();
             const terms = document.getElementById('riderTerms').checked;
 
             alertBox.style.display = 'none';
 
-            if (!name || !city || !phone || !email || !pwd || !vehicleNumber || !dlNumber) {
+            if (!name || !state || !locationType || !city || !phone || !secondaryPhone || !email || !pwd || !vehicleNumber || !dlNumber || !pincode) {
                 alertBox.textContent = 'Please fill out all required fields marked with *.';
                 alertBox.className = 'rider-alert error';
                 alertBox.style.display = 'block';
                 return;
             }
 
-            if (phone.length < 10) {
-                alertBox.textContent = 'Please enter a valid 10-digit mobile number.';
+            if (!/^\d{10}$/.test(phone)) {
+                alertBox.textContent = 'Please enter a valid 10-digit Primary Contact Number.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (!/^\d{10}$/.test(secondaryPhone)) {
+                alertBox.textContent = 'Please enter a valid 10-digit Secondary Contact Number.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (phone === secondaryPhone) {
+                alertBox.textContent = 'Primary and Secondary contact numbers must be different.';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (!/^\d{6}$/.test(pincode)) {
+                alertBox.textContent = 'Please enter a valid 6-digit Pincode.';
                 alertBox.className = 'rider-alert error';
                 alertBox.style.display = 'block';
                 return;
@@ -523,6 +722,21 @@
                 return;
             }
 
+            const individualPhotoInput = document.getElementById('fileIndividualPhoto');
+            if (!individualPhotoInput.files || !individualPhotoInput.files[0]) {
+                alertBox.textContent = 'Please upload your Individual Photo (Mandatory).';
+                alertBox.className = 'rider-alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            const fileDl = document.getElementById('fileDl').files[0];
+            const fileAadhaar = document.getElementById('fileAadhaar').files[0];
+            const fileRc = document.getElementById('fileRc').files[0];
+            const fileIndividualPhoto = individualPhotoInput.files[0];
+            const fileFamilyPhoto = document.getElementById('fileFamilyPhoto').files[0];
+            const filePoliceNoc = document.getElementById('filePoliceNoc').files[0];
+
             if (!terms) {
                 alertBox.textContent = 'You must accept the Rider Partner Terms and Safety Policy.';
                 alertBox.className = 'rider-alert error';
@@ -541,13 +755,27 @@
                         role: 'rider',
                         name: name,
                         phone: phone,
+                        secondary_phone: secondaryPhone,
+                        emergency_phone: secondaryPhone,
                         email: email,
                         password: pwd,
+                        state: state,
+                        location_type: locationType,
                         city: city,
+                        town_village: city,
+                        pincode: pincode,
                         reg_number: dlNumber,
                         vehicle_type: vehicleType,
                         vehicle_number: vehicleNumber,
-                        emergency_phone: emergencyPhone
+                        has_individual_photo: true,
+                        individual_photo_name: fileIndividualPhoto.name,
+                        has_family_photo: !!fileFamilyPhoto,
+                        family_photo_name: fileFamilyPhoto ? fileFamilyPhoto.name : null,
+                        has_police_noc: !!filePoliceNoc,
+                        police_noc_name: filePoliceNoc ? filePoliceNoc.name : null,
+                        has_dl: !!fileDl,
+                        has_aadhaar: !!fileAadhaar,
+                        has_rc: !!fileRc
                     })
                 });
 

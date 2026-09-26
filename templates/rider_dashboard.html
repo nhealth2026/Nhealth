@@ -51,8 +51,14 @@
                 </div>
             </div>
 
-            <!-- Logout Button -->
-            <a href="/logout" class="rider-logout-btn" title="Logout">
+            <!-- Trip History Button (Requirement 5) -->
+            <button type="button" class="rider-history-btn" onclick="openTripHistoryModal()" title="View Past Trip History">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span class="history-btn-label">History</span>
+            </button>
+
+            <!-- Logout Button (Requirement 7) -->
+            <a href="/logout" onclick="handleRiderLogout(event)" class="rider-logout-btn" title="Logout">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </a>
         </div>
@@ -220,12 +226,14 @@
                     <div class="patient-contact-strip">
                         <div>
                             <div class="patient-meta-name" id="activePatientName">Sunita Sharma</div>
-                            <div style="font-size: 0.75rem; color: #15803d;" id="activeFareText">Estimated Fare: ₹120 (Cash / UPI)</div>
+                            <div style="font-size: 0.75rem; color: #15803d; font-weight: 700;" id="activeFareText">Estimated Fare: ₹120 • Online Payment Only</div>
                         </div>
                         <a href="tel:9123456780" id="activeCallBtn" class="patient-call-btn">
                             <i class="fa-solid fa-phone"></i> Call
                         </a>
                     </div>
+
+
 
                     <!-- Step 1: Heading to Pickup -->
                     <div id="stepPickupNav" style="display: flex; flex-direction: column; gap: 10px;">
@@ -248,13 +256,13 @@
                         </button>
                     </div>
 
-                    <!-- Step 3: In Progress -> Complete -->
+                    <!-- Step 3: In Progress -> End Trip (Requirement 6) -->
                     <div id="stepCompleteBox" style="display: none; flex-direction: column; gap: 10px;">
                         <a href="#" id="googleNavDropBtn" target="_blank" class="active-nav-btn">
                             <i class="fa-solid fa-diamond-turn-right" style="color: #10b981;"></i> Navigate to Destination
                         </a>
-                        <button class="btn-complete-trip" onclick="completeCurrentTrip()">
-                            <i class="fa-solid fa-flag-checkered"></i> Complete Trip &amp; Collect Fare
+                        <button class="btn-complete-trip" style="background: #10b981;" onclick="completeAndEndTrip()">
+                            <i class="fa-solid fa-flag-checkered"></i> End Trip &amp; Confirm Online Payment
                         </button>
                     </div>
 
@@ -267,9 +275,34 @@
                 </div>
             </div>
 
-        </section>
-
     </main>
+
+    <!-- ==================== TRIP HISTORY MODAL (Requirements 5 & 6) ==================== -->
+    <div class="rider-modal-overlay" id="historyModalOverlay" style="display: none;" onclick="if(event.target === this) closeTripHistoryModal()">
+        <div class="rider-history-modal-card">
+            <div class="rider-history-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Trip History</h3>
+                        <p style="font-size: 0.76rem; color: #64748b; margin: 0;">Completed &amp; ended rides with online payment confirmation</p>
+                    </div>
+                </div>
+                <button type="button" class="rider-modal-close" onclick="closeTripHistoryModal()" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="rider-history-body" id="riderHistoryList">
+                <div style="text-align: center; padding: 40px 20px; color: #64748b;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: #0284c7; margin-bottom: 10px;"></i>
+                    <p style="margin: 0; font-size: 0.85rem;">Loading your past rides...</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Leaflet Map JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -528,7 +561,7 @@
 
             document.getElementById('activeTaskTitle').textContent = trip.task_type || trip.trip_type || 'Patient Accompaniment';
             document.getElementById('activePatientName').textContent = trip.patient_name || 'Patient';
-            document.getElementById('activeFareText').textContent = `Fare: ₹${trip.fare_amount || 120} (Cash / UPI)`;
+            document.getElementById('activeFareText').textContent = `Fare: ₹${trip.fare_amount || 120} • Online Payment Only`;
             document.getElementById('activeCallBtn').href = `tel:${trip.patient_phone || '9123456780'}`;
 
             const tag = document.getElementById('activeStatusTag');
@@ -658,37 +691,181 @@
             }
         }
 
-        async function completeCurrentTrip() {
-            if (!confirm('Are you sure you want to complete this trip and collect payment?')) return;
+        // Complete and End Trip (Requirements 6 & 10: Ended status & Online Payment only)
+        async function completeAndEndTrip() {
+            if (!currentActiveTask) return;
+            if (!confirm('Are you sure you want to end this trip and verify online payment?')) return;
 
             try {
+                const fare = currentActiveTask.fare_amount || 120;
                 const res = await fetch('/api/rider/update_task_status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         trip_id: currentActiveTask.trip_id,
-                        status: 'completed'
+                        status: 'ended'
                     })
                 });
                 const data = await res.json();
 
                 if (res.ok) {
-                    alert('🎉 Trip Completed Successfully! ₹' + (currentActiveTask.fare_amount || 120) + ' added to your daily earnings.');
+                    alert('🎉 Trip Ended Successfully!\n₹' + fare + ' Online Payment Verified.\nTrip has been moved to your History.');
                     currentActiveTask = null;
                     clearTaskMarkers();
                     renderDutyState();
 
                     // Update stats counters
                     const earnings = document.getElementById('todayEarnings');
-                    const currentVal = parseInt(earnings.textContent.replace('₹', '')) || 840;
-                    earnings.textContent = `₹${currentVal + 120}`;
+                    if (earnings) {
+                        const currentVal = parseInt(earnings.textContent.replace('₹', '')) || 840;
+                        earnings.textContent = `₹${currentVal + fare}`;
+                    }
 
                     const trips = document.getElementById('completedTrips');
-                    trips.textContent = (parseInt(trips.textContent) || 4) + 1;
+                    if (trips) {
+                        trips.textContent = (parseInt(trips.textContent) || 4) + 1;
+                    }
+                } else {
+                    alert(data.message || 'Could not end trip.');
                 }
             } catch (err) {
-                alert('Error completing trip.');
+                alert('Error ending trip. Please check your connection.');
             }
+        }
+
+        // Backward compatibility alias
+        async function completeCurrentTrip() {
+            await completeAndEndTrip();
+        }
+
+        // Share Patient Details on WhatsApp using real trip data (Requirement 11)
+        function shareTripDetailsOnWhatsApp() {
+            if (!currentActiveTask) {
+                alert('No active trip in progress to share.');
+                return;
+            }
+            const t = currentActiveTask;
+            const msg = 
+`🚨 *NHEALTH HEALTH SUPPORT RIDER - TRANSIT DETAILS*
+────────────────────────
+👤 *Patient Name:* ${t.patient_name || 'Patient'}
+📞 *Patient Phone:* ${t.patient_phone || 'N/A'}
+📍 *Pickup Location:* ${t.pickup_address || 'Pickup'}
+🏥 *Destination Hospital:* ${t.drop_address || 'Clinic / Hospital'}
+🚗 *Transit Service:* ${t.task_type || 'Patient Accompaniment'}
+💰 *Calculated Fare:* ₹${t.fare_amount || 120} (Online Payment Only)
+🔑 *Start Trip OTP:* ${t.start_otp || '----'}
+🆔 *Trip ID:* ${t.trip_id}
+────────────────────────
+Status: Active Healthcare Escort via Nhealth`;
+
+            const encoded = encodeURIComponent(msg);
+            const waUrl = `https://api.whatsapp.com/send?text=${encoded}`;
+            window.open(waUrl, '_blank');
+        }
+
+        // Trip History Modal (Requirements 5 & 8: Past rides with 12-hour AM/PM format)
+        async function openTripHistoryModal() {
+            const modal = document.getElementById('historyModalOverlay');
+            const listEl = document.getElementById('riderHistoryList');
+            if (!modal || !listEl) return;
+
+            modal.style.display = 'flex';
+            listEl.innerHTML = `
+                <div style="text-align: center; padding: 30px 20px; color: #64748b;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: #0284c7; margin-bottom: 10px;"></i>
+                    <p style="margin: 0; font-size: 0.85rem;">Fetching your trip history...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch('/api/rider/history');
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success' && data.history && data.history.length > 0) {
+                    let html = '';
+                    data.history.forEach(trip => {
+                        const status = (trip.status || 'ended').toLowerCase();
+                        const badgeClass = (status === 'ended' || status === 'completed') ? 'ended' : 'cancelled';
+                        const statusLabel = status.toUpperCase();
+                        
+                        // Requirement 8: Change all rider-facing times to 12-hour AM/PM format
+                        let timeStr = 'Recently';
+                        if (trip.created_at || trip.updated_at) {
+                            try {
+                                const d = new Date(trip.updated_at || trip.created_at);
+                                const datePart = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                                const timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                                timeStr = `${datePart} &bull; ${timePart}`;
+                            } catch (e) {
+                                timeStr = trip.created_at || 'Recently';
+                            }
+                        }
+
+                        html += `
+                            <div class="rider-history-card">
+                                <div class="history-card-top">
+                                    <div>
+                                        <span style="font-size: 0.72rem; color: #64748b; font-weight: 700;">TRIP ID: ${trip.trip_id}</span>
+                                        <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">${trip.patient_name || 'Patient'} (${trip.patient_phone || ''})</div>
+                                    </div>
+                                    <span class="history-status-badge ${badgeClass}">${statusLabel}</span>
+                                </div>
+
+                                <div class="history-route-box">
+                                    <div class="history-route-row">
+                                        <div class="history-route-dot pickup"></div>
+                                        <span style="font-weight: 600;">Pickup:</span>
+                                        <span>${trip.pickup_address || 'Pickup Address'}</span>
+                                    </div>
+                                    <div class="history-route-row">
+                                        <div class="history-route-dot drop"></div>
+                                        <span style="font-weight: 600;">Destination:</span>
+                                        <span>${trip.drop_address || 'Destination'}</span>
+                                    </div>
+                                </div>
+
+                                <div class="history-card-bottom">
+                                    <div><i class="fa-regular fa-clock"></i> ${timeStr}</div>
+                                    <div style="font-weight: 800; color: #15803d; font-size: 0.9rem;">₹${trip.fare_amount || 120} <span style="font-size: 0.72rem; color: #16a34a; font-weight: 600;">(Online Paid)</span></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    listEl.innerHTML = html;
+                } else {
+                    listEl.innerHTML = `
+                        <div style="text-align: center; padding: 40px 20px; color: #64748b;">
+                            <i class="fa-solid fa-receipt" style="font-size: 2.2rem; color: #cbd5e1; margin-bottom: 12px;"></i>
+                            <h4 style="font-size: 1rem; color: #1e293b; margin: 0 0 6px 0;">No Past Trips Yet</h4>
+                            <p style="font-size: 0.8rem; margin: 0;">Completed and ended rides will appear here with online payment records.</p>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; padding: 30px 20px; color: #ef4444;">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
+                        <p style="font-size: 0.85rem; margin: 0;">Could not load trip history. Please check your connection.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function closeTripHistoryModal() {
+            const modal = document.getElementById('historyModalOverlay');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // Rider Logout Handler (Requirement 7: Clean session logout and redirection)
+        async function handleRiderLogout(e) {
+            if (e) e.preventDefault();
+            if (!confirm('Are you sure you want to log out of Rider Cockpit?')) return;
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (err) {}
+            localStorage.removeItem('nhealth_user');
+            window.location.href = '/login/rider';
         }
 
         async function cancelCurrentTrip() {

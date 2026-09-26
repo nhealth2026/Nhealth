@@ -1359,12 +1359,28 @@
                 </div>
                 <div style="text-align: right;">
                     <div style="font-size: 1.4rem; font-weight: 900; color: #0284c7;" id="riderEstFareDisplay">₹120</div>
-                    <span style="font-size: 0.7rem; color: #64748b;">Pay Cash / UPI</span>
+                    <span style="font-size: 0.7rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-credit-card"></i> Online Payment Only (UPI)</span>
+                </div>
+            </div>
+
+            <!-- Mandatory Policy Notice Box -->
+            <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 10px; padding: 10px 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 4px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #d97706; font-size: 0.95rem; margin-top: 2px;"></i>
+                    <div style="font-size: 0.78rem; color: #92400e; font-weight: 700; line-height: 1.4;">
+                        Once booked, the service cannot be cancelled or refunded.
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 8px;">
+                    <i class="fa-solid fa-calendar-check" style="color: #0284c7; font-size: 0.95rem; margin-top: 2px;"></i>
+                    <div style="font-size: 0.78rem; color: #075985; font-weight: 700; line-height: 1.4;">
+                        The payment is valid only on that day.
+                    </div>
                 </div>
             </div>
 
             <div style="display: flex; gap: 10px;">
-                <button class="pd-btn-primary" style="flex: 2; padding: 12px; font-weight: 800; background: #0284c7;" id="btnConfirmRider" onclick="confirmRiderBooking()"><i class="fa-solid fa-motorcycle"></i> Request Health Rider Now</button>
+                <button class="pd-btn-primary" style="flex: 2; padding: 12px; font-weight: 800; background: #0284c7;" id="btnConfirmRider" onclick="confirmRiderBooking()"><i class="fa-solid fa-lock"></i> Pay Online &amp; Request Rider</button>
                 <button class="pd-btn-secondary" style="flex: 1; padding: 12px;" onclick="closeModal('riderBookingModal')">Cancel</button>
             </div>
         </div>

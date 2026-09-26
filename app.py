@@ -773,23 +773,22 @@ def pharmacy_dashboard():
 
 @app.route('/rider/dashboard')
 def rider_dashboard():
-    """Render Rider Cockpit Dashboard."""
+    """Render Rider Cockpit Dashboard with session authentication protection."""
     user = session.get('user')
     if not user or user.get('role') != 'rider':
-        user = {
-            "id": "USR-RIDER-001",
-            "name": "Ravi Varma",
-            "role": "rider",
-            "city": "Vijayawada",
-            "phone": "9876543222",
-            "email": "rider@nhealth.in",
-            "vehicle_type": "Motorcycle (Hero Splendor+)",
-            "vehicle_number": "AP 16 CK 4589",
-            "is_online": True,
-            "rating": "4.9",
-            "total_rides": 142
-        }
+        return redirect(url_for('login_rider_page'))
     return render_template('rider_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
+@app.route('/logout')
+def app_logout():
+    """Log out user, clear session, and redirect cleanly."""
+    user = session.get('user')
+    was_rider = bool(user and user.get('role') == 'rider') or request.args.get('role') == 'rider'
+    session.clear()
+    if was_rider:
+        return redirect(url_for('login_rider_page'))
+    return redirect(url_for('login_page'))
 
 
 @app.route('/api/auth/signup', methods=['POST'])
@@ -825,6 +824,30 @@ def auth_signup():
                 "message": "Please enter a valid 10-digit mobile number."
             }), 400
 
+        # Rider specific 2 mandatory contact numbers & validation
+        clean_sec_phone = ''
+        location_type = data.get('location_type', 'city').strip().lower()
+        town_village = (data.get('town_village') or data.get('city') or city).strip()
+
+        if role == 'rider':
+            secondary_phone = (data.get('secondary_phone') or data.get('emergency_phone') or '').strip()
+            clean_sec_phone = re.sub(r'\D', '', secondary_phone)
+            if len(clean_sec_phone) != 10:
+                return jsonify({
+                    "status": "error",
+                    "message": "Secondary / Alternate Contact Number is mandatory and must be a valid 10-digit number."
+                }), 400
+            if clean_phone == clean_sec_phone:
+                return jsonify({
+                    "status": "error",
+                    "message": "Primary and Secondary contact numbers must be different."
+                }), 400
+            if not data.get('has_individual_photo'):
+                return jsonify({
+                    "status": "error",
+                    "message": "Individual Photo is mandatory for rider verification."
+                }), 400
+
         # Password minimum length check
         if len(password) < 6:
             return jsonify({
@@ -850,6 +873,7 @@ def auth_signup():
             "owner_name": owner_name,
             "email": email,
             "phone": clean_phone,
+            "secondary_phone": clean_sec_phone,
             "whatsapp": data.get('whatsapp', clean_phone).strip(),
             "specialization": data.get('specialization', 'Diagnostic Pathology' if role == 'lab' else ''),
             "clinic_name": data.get('clinic_name', name if role == 'lab' else ''),
@@ -857,16 +881,32 @@ def auth_signup():
             "gst_number": gst_number,
             "city": city or "Vijayawada",
             "state": state,
+            "location_type": location_type,
+            "town_village": town_village,
             "pincode": pincode,
             "age": int(data.get('age', 32)) if str(data.get('age', '')).isdigit() else 32,
             "gender": data.get('gender', 'Male'),
             "blood_group": data.get('blood_group', 'O+'),
-            "address": address or f"{city or 'Vijayawada'}, Andhra Pradesh",
+            "address": address or f"{town_village or city or 'Vijayawada'}, {state}",
             "vehicle_type": data.get('vehicle_type', data.get('vehicleType', 'Motorcycle (Two-Wheeler)')),
             "vehicle_number": data.get('vehicle_number', data.get('vehicleNumber', '')),
             "is_online": True,
             "rating": "5.0",
-            "total_rides": 0,
+            "has_individual_photo": data.get('has_individual_photo', False),
+            "has_family_photo": data.get('has_family_photo', False),
+            "has_police_noc": data.get('has_police_noc', False),
+            "payment_mode": "Online Only",
+            "extra_data": {
+                "secondary_phone": clean_sec_phone,
+                "location_type": location_type,
+                "town_village": town_village,
+                "has_individual_photo": data.get('has_individual_photo', False),
+                "has_family_photo": data.get('has_family_photo', False),
+                "has_police_noc": data.get('has_police_noc', False),
+                "individual_photo_name": data.get('individual_photo_name'),
+                "family_photo_name": data.get('family_photo_name'),
+                "police_noc_name": data.get('police_noc_name')
+            },
             "password": generate_password_hash(password),
             "created_at": datetime.now().isoformat()
         }
@@ -1071,13 +1111,27 @@ def api_rider_accept_task():
 
 @app.route('/api/rider/update_task_status', methods=['POST'])
 def api_rider_update_task_status():
-    """Update task lifecycle state (arrived, completed, cancelled)."""
+    """Update task lifecycle state (arrived, in_progress, completed, ended, cancelled)."""
     data = request.get_json() or {}
     trip_id = data.get('trip_id')
     status = data.get('status', 'arrived')
     db.update_trip_status(trip_id, status)
     trip = db.get_trip_by_id(trip_id)
     return jsonify({"status": "success", "trip": trip})
+
+
+@app.route('/api/rider/history', methods=['GET'])
+def api_rider_history():
+    """Fetch completed, ended, and cancelled trip history for rider cockpit."""
+    user = session.get('user')
+    rider_id = request.args.get('rider_id') or (user.get('id') if user else None)
+    if not rider_id:
+        return jsonify({"status": "error", "message": "Rider authentication required."}), 401
+    history = db.get_rider_trip_history(rider_id)
+    return jsonify({
+        "status": "success",
+        "history": history
+    })
 
 
 @app.route('/api/rider/verify_otp', methods=['POST'])
@@ -1117,15 +1171,87 @@ def api_trip_create():
         "fare_amount": int(data.get('fare_amount', 120)),
         "distance_km": float(data.get('distance_km', 2.5)),
         "start_otp": start_otp,
-        "status": "searching"
+        "status": "searching",
+        "invoice_number": db.generate_next_invoice_number("NH-INV"),
+        "extra_data": {
+            "payment_mode": "Online Only (UPI/QR)",
+            "payment_status": "PAID / Online Verified",
+            "payment_id": data.get('payment_id') or f"PAY-UPI-{datetime.now().strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:6].upper()}",
+            "invoice_number": db.generate_next_invoice_number("NH-INV"),
+            "invoice_date": datetime.now().strftime('%d %b %Y, %I:%M %p'),
+            "paid_amount": int(data.get('fare_amount', 120)),
+            "cancellation_policy": "Once booked, the service cannot be cancelled or refunded.",
+            "validity_policy": "The payment is valid only on that day."
+        }
     }
     
+    # Ensure matching invoice number across record
+    trip_record["invoice_number"] = trip_record["extra_data"]["invoice_number"]
+    
     db.create_rider_trip(trip_record)
+    
+    invoice_payload = {
+        "invoice_number": trip_record["invoice_number"],
+        "invoice_date": trip_record["extra_data"]["invoice_date"],
+        "trip_id": trip_id,
+        "patient_name": trip_record['patient_name'],
+        "patient_phone": trip_record['patient_phone'],
+        "task_type": trip_record['task_type'],
+        "pickup_address": trip_record['pickup_address'],
+        "drop_address": trip_record['drop_address'],
+        "fare_amount": trip_record['fare_amount'],
+        "distance_km": trip_record['distance_km'],
+        "payment_id": trip_record["extra_data"]["payment_id"],
+        "payment_mode": trip_record["extra_data"]["payment_mode"],
+        "payment_status": "PAID",
+        "cancellation_policy": "Once booked, the service cannot be cancelled or refunded.",
+        "validity_policy": "The payment is valid only on that day."
+    }
+    
     return jsonify({
         "status": "success",
-        "message": "Health Support Rider requested! Searching for nearest rider...",
-        "trip": trip_record
+        "message": "Payment verified! Health Support Rider requested. Searching for nearest rider...",
+        "trip": trip_record,
+        "invoice": invoice_payload
     }), 201
+
+
+@app.route('/api/trip/<trip_id>/invoice', methods=['GET'])
+def api_trip_invoice(trip_id):
+    """Retrieve full tax invoice and receipt for a trip."""
+    trip = db.get_trip_by_id(trip_id)
+    if not trip:
+        return jsonify({"status": "error", "message": "Trip not found"}), 404
+    
+    extra = trip.get('extra_data') or {}
+    if isinstance(extra, str):
+        try:
+            extra = json.loads(extra)
+        except Exception:
+            extra = {}
+            
+    invoice_number = extra.get('invoice_number') or trip.get('invoice_number') or f"NH-INV-{trip_id.replace('TRIP-', '')}"
+    invoice_date = extra.get('invoice_date') or datetime.now().strftime('%d %b %Y, %I:%M %p')
+    payment_id = extra.get('payment_id') or f"PAY-UPI-{trip_id[:12]}"
+    
+    invoice = {
+        "invoice_number": invoice_number,
+        "invoice_date": invoice_date,
+        "trip_id": trip.get('trip_id'),
+        "patient_name": trip.get('patient_name'),
+        "patient_phone": trip.get('patient_phone'),
+        "task_type": trip.get('task_type', 'Health Support Rider Accompaniment'),
+        "pickup_address": trip.get('pickup_address'),
+        "drop_address": trip.get('drop_address'),
+        "fare_amount": trip.get('fare_amount', 120),
+        "distance_km": trip.get('distance_km', 2.5),
+        "payment_id": payment_id,
+        "payment_mode": extra.get('payment_mode', 'Online Only (UPI/QR)'),
+        "payment_status": "PAID",
+        "cancellation_policy": "Once booked, the service cannot be cancelled or refunded.",
+        "validity_policy": "The payment is valid only on that day."
+    }
+    return jsonify({"status": "success", "invoice": invoice})
 
 
 @app.route('/api/trip/<trip_id>/live', methods=['GET'])

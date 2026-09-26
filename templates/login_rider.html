@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- Rider Auth Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_auth.css') }}?v=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_auth.css') }}?v=2.1">
 </head>
 <body class="rider-auth-page">
 
@@ -92,8 +92,26 @@
                         </div>
                     </div>
 
-                    <!-- Rider Illustration / Photo -->
-                    <img src="{{ url_for('static', filename='images/health_support_rider.png') }}" alt="Health Support Rider" class="rider-showcase-bg-img">
+                    <!-- Health Support Rider Showcase Card (Matching Photo + Matter Design) -->
+                    <div class="rider-showcase-feature-card">
+                        <div class="rider-card-photo-wrap">
+                            <img src="{{ url_for('static', filename='images/health_support_rider_real.jpg') }}" alt="Nhealth Health Support Rider" class="rider-card-photo">
+                        </div>
+                        <div class="rider-card-matter">
+                            <div class="rider-matter-pill">Health Support Rider</div>
+                            <h3 class="rider-matter-headline">Trusted Pick &amp; Drop, Full-Day Support &amp; Complete Healthcare Assistance</h3>
+                            <p class="rider-matter-scope">&mdash; From Hospital Visits , OPDs to Procedures,<br>Medicines, Reports &amp; Essentials Delivered to Your Doorstep.</p>
+                            <div class="rider-matter-tagline">
+                                <span class="tag-pick">Pick</span>
+                                <span class="tag-dot">&bull;</span>
+                                <span class="tag-support">Support</span>
+                                <span class="tag-dot">&bull;</span>
+                                <span class="tag-drop">Drop</span>
+                                <span class="tag-dot">&bull;</span>
+                                <span class="tag-brand">Your Healthcare, Simplified.</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ==================== RIGHT FORM PANEL (Desktop & Mobile) ==================== -->

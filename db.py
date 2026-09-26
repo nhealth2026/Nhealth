@@ -615,6 +615,64 @@ def create_rider_trip(trip_data):
             json.dump([trip_data], f, indent=2, default=json_serial)
     return True
 
+def generate_next_invoice_number(prefix="NH-INV"):
+    """Generate an automatic, sequential invoice number for today: NH-INV-YYYYMMDD-XXXX."""
+    today_str = datetime.now().strftime("%Y%m%d")
+    search_prefix = f"{prefix}-{today_str}-"
+    next_seq = 1
+
+    if _db_connected:
+        conn = get_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT extra_data->>'invoice_number'
+                    FROM rider_trips
+                    WHERE extra_data->>'invoice_number' LIKE %s;
+                """, (search_prefix + '%',))
+                rows = cur.fetchall()
+                numbers = []
+                for r in rows:
+                    inv = r[0] if r else None
+                    if inv and inv.startswith(search_prefix):
+                        try:
+                            seq_part = int(inv.replace(search_prefix, ''))
+                            numbers.append(seq_part)
+                        except (ValueError, TypeError):
+                            pass
+                if numbers:
+                    next_seq = max(numbers) + 1
+        except Exception as e:
+            print(f"[Invoice Number Gen Error]: {e}")
+        finally:
+            release_connection(conn)
+    else:
+        try:
+            if os.path.exists(TRIPS_FILE):
+                with open(TRIPS_FILE, 'r', encoding='utf-8') as f:
+                    trips = json.load(f)
+                    numbers = []
+                    for t in trips:
+                        extra = t.get('extra_data') or {}
+                        if isinstance(extra, str):
+                            try:
+                                extra = json.loads(extra)
+                            except Exception:
+                                extra = {}
+                        inv = extra.get('invoice_number') or t.get('invoice_number')
+                        if inv and inv.startswith(search_prefix):
+                            try:
+                                seq_part = int(inv.replace(search_prefix, ''))
+                                numbers.append(seq_part)
+                            except (ValueError, TypeError):
+                                pass
+                    if numbers:
+                        next_seq = max(numbers) + 1
+        except Exception:
+            pass
+
+    return f"{search_prefix}{next_seq:04d}"
+
 def get_trip_by_id(trip_id):
     """Retrieve trip by trip_id."""
     if _db_connected:
@@ -762,6 +820,28 @@ def verify_trip_otp(trip_id, otp):
         update_trip_status(trip_id, 'in_transit')
         return True, "OTP verified successfully. Journey started!"
     return False, "Invalid OTP. Please ask the patient for their 4-digit OTP."
+
+def get_rider_trip_history(rider_id):
+    """Fetch completed, ended, or cancelled trips for a rider history view."""
+    if _db_connected:
+        conn = get_connection()
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT * FROM rider_trips
+                    WHERE rider_id = %s AND status IN ('completed', 'ended', 'cancelled')
+                    ORDER BY updated_at DESC, created_at DESC LIMIT 50;
+                """, (rider_id,))
+                return [_clean_record(dict(r)) for r in cur.fetchall()]
+        except Exception as e:
+            print(f"[DB Error get_rider_trip_history]: {e}")
+        finally:
+            release_connection(conn)
+
+    trips = get_all_trips()
+    history = [t for t in trips if t.get('rider_id') == rider_id and t.get('status') in ('completed', 'ended', 'cancelled')]
+    history.sort(key=lambda x: x.get('updated_at') or x.get('created_at') or '', reverse=True)
+    return history
 
 # Initialize on module load
 init_db()

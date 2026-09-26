@@ -206,6 +206,111 @@ body.rider-auth-page {
     opacity: 0.95;
 }
 
+/* Health Support Rider Showcase Card (Matching Photo + Matter Design) */
+.rider-showcase-feature-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid rgba(186, 230, 253, 0.85);
+    box-shadow: 0 10px 28px rgba(12, 35, 64, 0.10), 0 2px 6px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    margin-top: 18px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.rider-card-photo-wrap {
+    width: 100%;
+    height: 185px;
+    overflow: hidden;
+    background: #e0f2fe;
+    position: relative;
+}
+
+.rider-card-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.rider-showcase-feature-card:hover .rider-card-photo {
+    transform: scale(1.02);
+}
+
+.rider-card-matter {
+    padding: 14px 16px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.rider-matter-pill {
+    display: inline-block;
+    background: linear-gradient(135deg, #389ba8 0%, #2a7c88 100%);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 0.30rem 1.1rem;
+    border-radius: 9999px;
+    letter-spacing: -0.2px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 8px rgba(42, 124, 136, 0.25);
+}
+
+.rider-matter-headline {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #0c2340;
+    line-height: 1.35;
+    margin: 0 0 0.35rem 0;
+    text-align: center;
+}
+
+.rider-matter-scope {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #475569;
+    line-height: 1.42;
+    margin: 0 0 0.55rem 0;
+    text-align: center;
+}
+
+.rider-matter-tagline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding-top: 0.55rem;
+    border-top: 1px dashed rgba(203, 213, 225, 0.95);
+    line-height: 1.25;
+    text-align: center;
+    width: 100%;
+}
+
+.rider-matter-tagline .tag-pick { color: #c026d3; }
+.rider-matter-tagline .tag-support { color: #059669; }
+.rider-matter-tagline .tag-drop { color: #4f46e5; }
+.rider-matter-tagline .tag-dot { color: #94a3b8; }
+.rider-matter-tagline .tag-brand { color: #0c2340; }
+
 /* ==================== RIGHT FORM PANEL ==================== */
 .rider-form-panel {
     flex: 1;
@@ -569,16 +674,16 @@ body.rider-auth-page {
 /* Document Upload Cards */
 .rider-upload-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
 }
 
 .rider-upload-card {
     background: var(--rider-bg-light);
     border: 1.5px dashed #cbd5e1;
-    border-radius: 8px;
-    padding: 12px 10px;
+    border-radius: 10px;
+    padding: 12px 8px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -587,21 +692,38 @@ body.rider-auth-page {
     gap: 3px;
     cursor: pointer;
     transition: all 0.2s;
+    min-height: 104px;
 }
 
 .rider-upload-card:hover {
     border-color: var(--rider-primary);
     background: #f0f9ff;
+    transform: translateY(-1px);
 }
 
 .rider-upload-title {
     font-size: 0.76rem;
     font-weight: 700;
     color: var(--rider-navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.rider-opt-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #64748b;
+    background: #e2e8f0;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 2px;
 }
 
 .rider-upload-subtitle {
-    font-size: 0.68rem;
+    font-size: 0.67rem;
     color: var(--rider-text-muted);
 }
 
