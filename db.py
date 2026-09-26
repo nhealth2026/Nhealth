@@ -159,17 +159,36 @@ def _init_json_files():
             with open(fpath, 'w', encoding='utf-8') as f:
                 json.dump([], f)
 
-def get_connection():
-    if _db_connected and _pg_pool:
-        return _pg_pool.getconn()
-    return None
-
-def release_connection(conn):
-    if _db_connected and _pg_pool and conn:
+def _safe_rollback(conn):
+    if conn:
         try:
-            _pg_pool.putconn(conn)
+            conn.rollback()
         except Exception:
             pass
+
+def get_connection():
+    if _db_connected and _pg_pool:
+        try:
+            conn = _pg_pool.getconn()
+            if conn and getattr(conn, 'closed', 0) != 0:
+                _pg_pool.putconn(conn, close=True)
+                conn = _pg_pool.getconn()
+            return conn
+        except Exception as e:
+            print(f"[DB Pool Warning]: {e}")
+            return None
+    return None
+
+def release_connection(conn, is_broken=False):
+    if _db_connected and _pg_pool and conn:
+        try:
+            if is_broken or getattr(conn, 'closed', 0) != 0:
+                _pg_pool.putconn(conn, close=True)
+            else:
+                _pg_pool.putconn(conn)
+        except Exception:
+            pass
+
 
 from datetime import datetime, date
 
@@ -285,10 +304,13 @@ def save_user(user_data):
                 conn.commit()
                 return True
         except Exception as e:
-            conn.rollback()
+            _safe_rollback(conn)
             print(f"[DB Error save_user]: {e}")
+            release_connection(conn, is_broken=True)
+            conn = None
         finally:
-            release_connection(conn)
+            if conn:
+                release_connection(conn)
 
     # JSON Fallback
     users = get_all_users()
@@ -326,10 +348,13 @@ def update_user(user_id, updated_fields):
                     conn.commit()
                     return True
         except Exception as e:
-            conn.rollback()
+            _safe_rollback(conn)
             print(f"[DB Error update_user]: {e}")
+            release_connection(conn, is_broken=True)
+            conn = None
         finally:
-            release_connection(conn)
+            if conn:
+                release_connection(conn)
 
     # JSON Fallback
     users = get_all_users()
@@ -598,10 +623,13 @@ def create_rider_trip(trip_data):
                 conn.commit()
                 return True
         except Exception as e:
-            conn.rollback()
+            _safe_rollback(conn)
             print(f"[DB Error create_rider_trip]: {e}")
+            release_connection(conn, is_broken=True)
+            conn = None
         finally:
-            release_connection(conn)
+            if conn:
+                release_connection(conn)
 
     # JSON Fallback
     try:
@@ -763,10 +791,13 @@ def accept_trip_by_rider(trip_id, rider_id, rider_name, rider_phone, rider_vehic
                 conn.commit()
                 return True
         except Exception as e:
-            conn.rollback()
+            _safe_rollback(conn)
             print(f"[DB Error accept_trip]: {e}")
+            release_connection(conn, is_broken=True)
+            conn = None
         finally:
-            release_connection(conn)
+            if conn:
+                release_connection(conn)
 
     # JSON Fallback
     trips = get_all_trips()
@@ -796,10 +827,13 @@ def update_trip_status(trip_id, status):
                 conn.commit()
                 return True
         except Exception as e:
-            conn.rollback()
+            _safe_rollback(conn)
             print(f"[DB Error update_trip_status]: {e}")
+            release_connection(conn, is_broken=True)
+            conn = None
         finally:
-            release_connection(conn)
+            if conn:
+                release_connection(conn)
 
     # JSON Fallback
     trips = get_all_trips()

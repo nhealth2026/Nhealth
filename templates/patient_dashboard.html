@@ -43,11 +43,12 @@
                 </div>
             </div>
 
-            <!-- Search Bar -->
+            <!-- Search Bar with Symptom Search -->
             <div class="m-search-wrap">
-                <div class="m-search-input-box" onclick="goToScreen('mScreen2')">
+                <div class="m-search-input-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search doctors, specialties..." readonly>
+                    <input type="text" id="mHeroSymptomSearch" placeholder="Search symptom (e.g. Fever, Cough, Joint Pain)..." oninput="searchBySymptom(this.value, 'mobile')" onkeydown="if(event.key==='Enter') searchBySymptom(this.value, 'mobile')">
+                    <button class="m-search-clear-btn" type="button" onclick="document.getElementById('mHeroSymptomSearch').value=''; searchBySymptom('', 'mobile')" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
@@ -55,16 +56,16 @@
             <div class="m-hero-symptom-card" onclick="goToScreen('mScreen2')">
                 <div class="m-symptom-card-info">
                     <h3>How are you feeling today?</h3>
-                    <p>Hello <strong id="mHeroPatientGreeting" style="color: var(--pd-teal-primary);">{{ user.name.split()[0] if user and user.name else 'Patient' }}</strong>! Tell us your health concern and we'll guide you to the right specialist.</p>
+                    <p>Hello <strong id="mHeroPatientGreeting" style="color: var(--pd-teal-primary);">{{ user.name.split()[0] if user and user.name else 'Patient' }}</strong>! Search symptoms like <strong>Fever</strong> to instantly connect with verified doctors.</p>
                     <div class="m-symptom-input-mock">
-                        <span>Describe your symptoms...</span>
-                        <i class="fa-solid fa-microphone"></i>
+                        <span>Tap to describe symptoms or search doctor...</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </div>
                 </div>
                 <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Consult Doctor" class="m-hero-doctor-img" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}'">
             </div>
 
-            <!-- Our Services (6 items with Online Consultation active) -->
+            <!-- Our Services -->
             <div class="m-services-section">
                 <div class="m-section-heading">
                     <span>Our Services</span>
@@ -76,6 +77,12 @@
                             <img src="{{ url_for('static', filename='images/services/srv_online_consult.png') }}" alt="Online Consultation" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-video\'></i>'">
                         </div>
                         <span class="m-service-name">Online Consult</span>
+                    </div>
+                    <div class="m-service-tile" onclick="openServicesHistoryModal('all')" style="border: 1.5px solid #bae6fd; background: #f0f9ff;">
+                        <div class="m-service-icon-circle" style="background: #e0f2fe; color: #0284c7;">
+                            <i class="fa-solid fa-clock-rotate-left" style="color: #0284c7; font-size: 1.15rem;"></i>
+                        </div>
+                        <span class="m-service-name" style="color: #0284c7; font-weight: 800;">Patient History</span>
                     </div>
                     <div class="m-service-tile" onclick="openRiderBookingModal()" style="border: 1.5px solid #bae6fd; background: #f0f9ff;">
                         <div class="m-service-icon-circle" style="background: #e0f2fe; color: #0284c7;">
@@ -100,12 +107,6 @@
                             <img src="{{ url_for('static', filename='images/services/srv_pharmacy.png') }}" alt="Pharmacy" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-pills\'></i>'">
                         </div>
                         <span class="m-service-name">Pharmacy</span>
-                    </div>
-                    <div class="m-service-tile" onclick="openServiceBookingModal('Senior Eldercare Support', '24/7 daily vitals check and compassionate companion care for elderly.', 'fa-hand-holding-heart')">
-                        <div class="m-service-icon-circle">
-                            <img src="{{ url_for('static', filename='images/services/srv_eldercare.png') }}" alt="Eldercare" class="m-service-icon-img" onerror="this.outerHTML='<i class=\'fa-solid fa-hand-holding-heart\'></i>'">
-                        </div>
-                        <span class="m-service-name">Eldercare</span>
                     </div>
                 </div>
 
@@ -137,7 +138,7 @@
                 </div>
             </div>
 
-            <!-- Bottom Navigation -->
+            <!-- Bottom Navigation with History -->
             <nav class="m-app-bottom-nav">
                 <button class="m-nav-item active" onclick="goToScreen('mScreen1'); setBottomNavActive(this)">
                     <i class="fa-solid fa-house"></i>
@@ -147,9 +148,9 @@
                     <i class="fa-solid fa-user-doctor"></i>
                     <span>Consultation</span>
                 </button>
-                <button class="m-nav-item" onclick="goToScreen('mScreenRx'); setBottomNavActive(this)">
-                    <i class="fa-solid fa-file-medical"></i>
-                    <span>Prescription</span>
+                <button class="m-nav-item" onclick="openServicesHistoryModal('all'); setBottomNavActive(this)">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Patient History</span>
                 </button>
                 <button class="m-nav-item" onclick="openPatientProfileModal()">
                     <i class="fa-solid fa-user"></i>
@@ -204,7 +205,10 @@
                 <img src="{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}" alt="Doctor" class="m-profile-img-large" id="mProfileAvatar">
                 <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--pd-navy-dark);" id="mProfileName">Dr. Priya Sharma</h3>
                 <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 6px;" id="mProfileSpec">General Physician &bull; MBBS, MD</p>
-                <span class="pd-badge-avail">Available Now</span>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="pd-badge-avail">Available Now</span>
+                    <span class="doc-id-pill" id="mProfileDocId"><i class="fa-solid fa-id-badge"></i> DOC-NH-74892</span>
+                </div>
             </div>
 
             <div class="m-profile-stats-grid">
@@ -250,10 +254,12 @@
                 </div>
             </div>
 
-            <!-- Sticky Bottom Book Bar -->
-            <div style="padding: 16px; background: #ffffff; border-top: 1px solid #f1f5f9; display: flex; gap: 12px; position: sticky; bottom: 0; z-index: 20;">
-                <button class="pd-btn-secondary" style="flex: 1;" onclick="openDoctorChatModal()"><i class="fa-regular fa-comment-dots"></i> Message</button>
-                <button class="pd-btn-primary" style="flex: 2;" onclick="goToScreen('mScreen4')"><span id="mProfileBookBtn">Book Now &bull; ₹500</span></button>
+            <!-- Sticky Bottom Book Bar (Chat option removed as requested) -->
+            <div style="padding: 14px 16px; background: #ffffff; border-top: 1px solid #f1f5f9; position: sticky; bottom: 0; z-index: 20; box-shadow: 0 -4px 15px rgba(0,0,0,0.04);">
+                <button class="pd-btn-primary" style="width: 100%; padding: 14px; font-size: 0.98rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="goToScreen('mScreen4')">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span id="mProfileBookBtn">Book Consultation Now &bull; <span class="dyn-doc-fee">₹500</span></span>
+                </button>
             </div>
         </div>
 
@@ -454,15 +460,52 @@
                     </div>
                 </div>
 
-                <button class="pd-btn-primary" style="width: 100%; margin-bottom: 12px;" onclick="startVideoCall('mobile')"><i class="fa-solid fa-video"></i> Join Video Call</button>
-                <button class="pd-btn-secondary" style="width: 100%;" onclick="goToScreen('mScreen1')">View Appointment Details</button>
+                <button class="pd-btn-primary" style="width: 100%; margin-bottom: 12px; padding: 14px; font-weight: 800; font-size: 1rem;" onclick="startVideoCall('mobile')"><i class="fa-solid fa-video"></i> Join Video Call</button>
+
+                <!-- Schedule Video Call Option Section -->
+                <div class="m-schedule-option-box" id="mScheduleOptionBox" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 18px 16px; margin-bottom: 16px; text-align: left;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 34px; height: 34px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                                <i class="fa-regular fa-calendar-days"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--pd-navy-dark); margin: 0;">Schedule for Later</h4>
+                                <p style="font-size: 0.74rem; color: #64748b; margin: 0;">Pick your preferred date &amp; time slot:</p>
+                            </div>
+                        </div>
+                        <span class="pd-badge-avail" style="font-size: 0.68rem;">Verified Slot</span>
+                    </div>
+
+                    <!-- Date selector pills -->
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 2px;">
+                        <button type="button" class="m-slot-date-btn active" onclick="selectScheduleDate(this, 'Today')">Today</button>
+                        <button type="button" class="m-slot-date-btn" onclick="selectScheduleDate(this, 'Tomorrow')">Tomorrow</button>
+                        <button type="button" class="m-slot-date-btn" onclick="selectScheduleDate(this, 'Day After')">Day After</button>
+                    </div>
+
+                    <!-- Time slot chips -->
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                        <button type="button" class="m-slot-time-btn" onclick="selectScheduleTime(this, '10:30 AM')"><i class="fa-regular fa-clock"></i> 10:30 AM</button>
+                        <button type="button" class="m-slot-time-btn" onclick="selectScheduleTime(this, '02:00 PM')"><i class="fa-regular fa-clock"></i> 02:00 PM</button>
+                        <button type="button" class="m-slot-time-btn active" onclick="selectScheduleTime(this, '04:30 PM')"><i class="fa-regular fa-clock"></i> 04:30 PM</button>
+                        <button type="button" class="m-slot-time-btn" onclick="selectScheduleTime(this, '06:30 PM')"><i class="fa-regular fa-clock"></i> 06:30 PM</button>
+                    </div>
+
+                    <button type="button" class="pd-btn-secondary" style="width: 100%; padding: 10px; font-size: 0.86rem; font-weight: 700;" onclick="confirmSelectedSchedule()">
+                        <i class="fa-regular fa-calendar-check"></i> Schedule Call (<span id="mSelectedSlotPreview">Today at 04:30 PM</span>)
+                    </button>
+                </div>
+
+                <button class="pd-btn-secondary" style="width: 100%; margin-top: 10px;" onclick="viewAppointmentDoctorDetails('mobile')"><i class="fa-solid fa-user-doctor"></i> View Appointment &amp; Doctor Details</button>
             </div>
         </div>
 
         <!-- ==================== MOBILE SCREEN 7 & 8: LIVE VIDEO CALL ==================== -->
         <div class="pd-screen" id="mScreenVideo">
             <div class="m-video-call-screen">
-                <!-- Doctor Video Feed -->
+                <!-- Doctor Video Feed (Real WebRTC Video & HD Image Fallback) -->
+                <video id="mDoctorRealVideo" autoplay playsinline style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index: 1;"></video>
                 <img src="{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}" alt="Doctor Video Call" class="m-video-doctor-stream" id="mVideoDoctorStream" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
                 
                 <!-- Call Topbar -->
@@ -473,23 +516,29 @@
                     <button class="m-call-btn" style="width: 36px; height: 36px; font-size: 0.9rem;" onclick="endVideoCall('mobile')" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
 
+                <!-- Floating Chat Button on the LEFT side of the video screen (as requested) -->
+                <button type="button" class="video-floating-left-chat-btn" onclick="openDoctorChatModal()" title="Live Chat with Doctor" aria-label="Chat">
+                    <i class="fa-solid fa-comments"></i>
+                    <span class="chat-badge-dot"></span>
+                </button>
+
                 <!-- Patient Picture-in-Picture (WebRTC Real Video & Avatar Fallback) -->
                 <div class="m-video-pip-patient" id="mPatientPipContainer">
-                    <video id="mPatientRealVideo" autoplay playsinline muted style="display: none;"></video>
+                    <video id="mPatientRealVideo" autoplay playsinline muted style="display: none; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
                     <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient Video" id="mPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
                     <div class="video-off-overlay" id="mPipOverlay" style="display: none;">
                         <i class="fa-solid fa-video-slash"></i>
                         <span>Camera Off</span>
                     </div>
-                    <div class="pip-label">You</div>
+                    <div class="pip-label">You (Live)</div>
                 </div>
 
-                <!-- Floating Controls -->
+                <!-- Floating Controls (Chat button placed on the LEFT side) -->
                 <div class="m-video-controls-bar">
+                    <button class="m-call-btn btn-chat-left" onclick="openDoctorChatModal()" aria-label="Chat" title="Chat with Doctor"><i class="fa-regular fa-comment-dots"></i></button>
                     <button class="m-call-btn btn-mute" id="mBtnMute" onclick="toggleMute(this)" aria-label="Mute" title="Mute Microphone"><i class="fa-solid fa-microphone"></i></button>
                     <button class="m-call-btn btn-video" id="mBtnVideo" onclick="toggleVideo(this)" aria-label="Camera" title="Camera On/Off"><i class="fa-solid fa-video"></i></button>
                     <button class="m-call-btn btn-share" id="mBtnShare" onclick="toggleScreenShare(this)" aria-label="Share" title="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-                    <button class="m-call-btn" onclick="openDoctorChatModal()" aria-label="Chat" title="Chat with Doctor"><i class="fa-regular fa-comment-dots"></i></button>
                     <button class="m-call-btn" onclick="openVideoSettingsModal()" aria-label="Settings" title="Call Settings"><i class="fa-solid fa-ellipsis"></i></button>
                     <button class="m-call-btn btn-end" onclick="endVideoCall('mobile')" aria-label="End Call" title="End Call"><i class="fa-solid fa-phone-slash"></i></button>
                 </div>
@@ -541,8 +590,9 @@
                     </div>
                 </div>
 
+                <!-- Prescription Action Buttons: PDF Download REMOVED, Only View Prescription KEPT -->
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
-                    <button class="pd-btn-primary" onclick="printPrescription()"><i class="fa-solid fa-file-arrow-down"></i> Download Prescription PDF</button>
+                    <button class="pd-btn-primary" onclick="openViewPrescriptionModal()"><i class="fa-solid fa-file-medical"></i> View Prescription</button>
                     <button class="pd-btn-secondary" onclick="bookFollowUp()"><i class="fa-regular fa-calendar-plus"></i> Book Free Follow-up</button>
                     <button class="pd-btn-secondary" onclick="goToScreen('mScreen1')"><i class="fa-solid fa-house"></i> Back to Home</button>
                 </div>
@@ -598,6 +648,10 @@
                     <i class="fa-solid fa-motorcycle" style="color: #0284c7; font-size: 1.1rem;"></i>
                     <span>Health Support Rider</span>
                     <span style="background: #0284c7; color: #fff; font-size: 0.62rem; padding: 2px 7px; border-radius: 10px; margin-left: auto; font-weight: 800;">LIVE</span>
+                </button>
+                <button class="d-nav-link" onclick="openServicesHistoryModal('all'); setDeskNavActive(this)">
+                    <i class="fa-solid fa-clock-rotate-left" style="color: #0284c7;"></i>
+                    <span>Patient History</span>
                 </button>
                 <button class="d-nav-link" onclick="goToDeskScreen('dScreenRx'); setDeskNavActive(this)">
                     <i class="fa-solid fa-file-medical"></i>
@@ -660,7 +714,7 @@
                             <h1>Consult a Doctor from Home</h1>
                             <p>Expert verified doctors, trusted healthcare, anytime, anywhere across Andhra Pradesh.</p>
                             <div class="d-hero-search-bar">
-                                <input type="text" placeholder="Search doctor, specialty or symptoms..." id="dHomeSearchInput" onkeydown="if(event.key==='Enter'){handleDoctorSearch(this.value, 'dDoctorsResults'); goToDeskScreen('dScreen2');}">
+                                <input type="text" placeholder="Search symptoms (e.g. Fever, Cough, Chest Pain) or doctor..." id="dHomeSearchInput" onkeydown="if(event.key==='Enter'){handleDoctorSearch(this.value, 'dDoctorsResults'); goToDeskScreen('dScreen2');}">
                                 <button onclick="handleDoctorSearch(document.getElementById('dHomeSearchInput').value, 'dDoctorsResults'); goToDeskScreen('dScreen2');">Search</button>
                             </div>
                         </div>
@@ -793,6 +847,7 @@
                             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
                                 <h1 style="font-family: var(--pd-font-heading); font-size: 1.8rem; font-weight: 800; color: var(--pd-navy-dark);" id="dProfileName">Dr. Priya Sharma</h1>
                                 <span class="pd-badge-avail">Available Now</span>
+                                <span class="doc-id-pill" id="dProfileDocId"><i class="fa-solid fa-id-badge"></i> DOC-NH-74892</span>
                             </div>
                             <p style="color: #64748b; font-size: 1rem; margin-bottom: 8px;" id="dProfileSpec">Senior General Physician &bull; MBBS, MD (Internal Medicine)</p>
                             <div style="display: flex; gap: 20px; font-size: 0.9rem; color: #475569; margin-bottom: 16px;">
@@ -803,8 +858,7 @@
 
                             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
                                 <span style="font-size: 1.5rem; font-weight: 800; color: var(--pd-navy-dark);"><span id="dProfileFee">₹500</span> <small style="font-size: 0.82rem; font-weight: 500; color: #64748b;">Consultation Fee</small></span>
-                                <button class="pd-btn-primary" onclick="goToDeskScreen('dScreen4')">Book Consultation Now</button>
-                                <button class="pd-btn-secondary" onclick="openDoctorChatModal()"><i class="fa-regular fa-comment"></i> Chat</button>
+                                <button class="pd-btn-primary" style="padding: 12px 32px; font-size: 1.05rem;" onclick="goToDeskScreen('dScreen4')"><i class="fa-solid fa-calendar-check"></i> Book Consultation Now</button>
                             </div>
 
                             <!-- Tabs -->
@@ -891,7 +945,7 @@
 
                         <div class="m-input-group">
                             <label class="m-input-label">Symptoms &amp; Health Problem</label>
-                            <textarea class="m-text-input" rows="4">Fever (100°F), sore throat, and mild headache for the past 2 days.</textarea>
+                            <textarea class="m-text-input" rows="4" id="dSymptomsDesc">Fever (100°F), sore throat, and mild headache for the past 2 days.</textarea>
                         </div>
 
                         <div class="m-input-group">
@@ -985,15 +1039,53 @@
                             </div>
                         </div>
 
-                        <button class="pd-btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; margin-bottom: 12px;" onclick="startVideoCall('desktop')"><i class="fa-solid fa-video"></i> Join Video Call</button>
-                        <button class="pd-btn-secondary" style="width: 100%;" onclick="goToDeskScreen('dScreen1')">View Appointment Details</button>
+                        <button class="pd-btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; margin-bottom: 12px; font-weight: 800;" onclick="startVideoCall('desktop')"><i class="fa-solid fa-video"></i> Join Video Call</button>
+
+                        <!-- Scheduled Video Call Section (Below Join Video Call as requested) -->
+                        <!-- Schedule Video Call Option Section for Desktop -->
+                        <div class="m-schedule-option-box" id="dScheduleOptionBox" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 20px 22px; margin-bottom: 18px; text-align: left;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.05rem;">
+                                        <i class="fa-regular fa-calendar-days"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-size: 1rem; font-weight: 800; color: var(--pd-navy-dark); margin: 0;">Schedule Consultation for Later</h4>
+                                        <p style="font-size: 0.78rem; color: #64748b; margin: 0;">Choose your preferred consultation date &amp; time slot:</p>
+                                    </div>
+                                </div>
+                                <span class="pd-badge-avail" style="font-size: 0.72rem;">Free 7-Day Follow-up</span>
+                            </div>
+
+                            <!-- Date selector pills -->
+                            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                                <button type="button" class="m-slot-date-btn active" onclick="selectScheduleDate(this, 'Today')">Today</button>
+                                <button type="button" class="m-slot-date-btn" onclick="selectScheduleDate(this, 'Tomorrow')">Tomorrow</button>
+                                <button type="button" class="m-slot-date-btn" onclick="selectScheduleDate(this, 'Day After')">Day After</button>
+                            </div>
+
+                            <!-- Time slot chips -->
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+                                <button type="button" class="m-slot-time-btn" onclick="selectScheduleTime(this, '10:30 AM')"><i class="fa-regular fa-clock"></i> 10:30 AM</button>
+                                <button type="button" class="m-slot-time-btn" onclick="selectScheduleTime(this, '02:00 PM')"><i class="fa-regular fa-clock"></i> 02:00 PM</button>
+                                <button type="button" class="m-slot-time-btn active" onclick="selectScheduleTime(this, '04:30 PM')"><i class="fa-regular fa-clock"></i> 04:30 PM</button>
+                                <button type="button" class="m-slot-time-btn" onclick="selectScheduleTime(this, '06:30 PM')"><i class="fa-regular fa-clock"></i> 06:30 PM</button>
+                            </div>
+
+                            <button type="button" class="pd-btn-secondary" style="width: 100%; padding: 12px; font-size: 0.92rem; font-weight: 700;" onclick="confirmSelectedSchedule()">
+                                <i class="fa-regular fa-calendar-check"></i> Schedule Appointment (<span id="dSelectedSlotPreview">Today at 04:30 PM</span>)
+                            </button>
+                        </div>
+
+                        <button class="pd-btn-secondary" style="width: 100%;" onclick="viewAppointmentDoctorDetails('desktop')"><i class="fa-solid fa-user-doctor"></i> View Appointment &amp; Doctor Details</button>
                     </div>
                 </div>
 
                 <!-- ==================== DESKTOP SCREEN 7 & 8: LIVE VIDEO CONSULTATION ==================== -->
                 <div class="pd-screen" id="dScreenVideo">
                     <div class="d-video-call-container">
-                        <!-- Full Doctor Stream in HD -->
+                        <!-- Doctor Video Feed (Real WebRTC Video & HD Image Fallback) -->
+                        <video id="dDoctorRealVideo" autoplay playsinline style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index:1;"></video>
                         <img src="{{ url_for('static', filename='images/consultation/video_call_doctor.png') }}" alt="Live Doctor Consultation" class="d-video-stream-full" id="dVideoDoctorStream" onerror="this.src='{{ url_for('static', filename='images/consultation/dr_priya_sharma.png') }}'">
 
                         <!-- Top Overlay -->
@@ -1003,9 +1095,15 @@
                             </div>
                         </div>
 
+                        <!-- Floating Chat Button on the LEFT side of desktop video screen (as requested) -->
+                        <button type="button" class="video-floating-left-chat-btn" onclick="openDoctorChatModal()" title="Live Chat with Doctor" aria-label="Chat">
+                            <i class="fa-solid fa-comments"></i>
+                            <span class="chat-badge-dot"></span>
+                        </button>
+
                         <!-- Patient PiP Window (WebRTC Real Video & Avatar Fallback) -->
                         <div class="d-video-pip-corner" id="dPatientPipContainer">
-                            <video id="dPatientRealVideo" autoplay playsinline muted style="display: none;"></video>
+                            <video id="dPatientRealVideo" autoplay playsinline muted style="display: none; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
                             <img src="{{ url_for('static', filename='images/consultation/video_patient_pip.png') }}" alt="Patient" id="dPatientPip" onerror="this.src='{{ url_for('static', filename='images/consultation/patient_ravi.png') }}'">
                             <div class="video-off-overlay" id="dPipOverlay" style="display: none;">
                                 <i class="fa-solid fa-video-slash"></i>
@@ -1014,13 +1112,13 @@
                             <div class="pip-label">You (HD Feed)</div>
                         </div>
 
-                        <!-- Floating Toolbar with Working Controls -->
+                        <!-- Floating Toolbar with Working Controls (Chat button placed on the LEFT side) -->
                         <div class="d-video-toolbar">
+                            <button class="m-call-btn btn-chat-left" onclick="openDoctorChatModal()" title="In-Call Chat with Doctor" aria-label="Chat"><i class="fa-regular fa-comment"></i></button>
                             <button class="m-call-btn btn-mute" id="dBtnMute" onclick="toggleMute(this)" title="Mute Microphone" aria-label="Mute"><i class="fa-solid fa-microphone"></i></button>
                             <button class="m-call-btn btn-video" id="dBtnVideo" onclick="toggleVideo(this)" title="Turn Off Camera" aria-label="Camera"><i class="fa-solid fa-video"></i></button>
                             <button class="m-call-btn btn-share" id="dBtnShare" onclick="toggleScreenShare(this)" title="Share Screen" aria-label="Share Screen"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-                            <button class="m-call-btn" onclick="openDoctorChatModal()" title="In-Call Chat with Doctor" aria-label="Chat"><i class="fa-regular fa-comment"></i></button>
-                            <button class="m-call-btn" onclick="openVideoSettingsModal()" title="Call Settings & Fullscreen" aria-label="Settings"><i class="fa-solid fa-ellipsis"></i></button>
+                            <button class="m-call-btn" onclick="openVideoSettingsModal()" title="Call Settings &amp; Fullscreen" aria-label="Settings"><i class="fa-solid fa-ellipsis"></i></button>
                             <button class="m-call-btn btn-end" onclick="endVideoCall('desktop')" title="End Consultation" aria-label="End Call"><i class="fa-solid fa-phone-slash"></i></button>
                         </div>
                     </div>
@@ -1067,8 +1165,9 @@
                             </div>
                         </div>
 
+                        <!-- Prescription Action Buttons: PDF Download REMOVED, Only View Prescription KEPT -->
                         <div style="display: flex; gap: 14px;">
-                            <button class="pd-btn-primary" style="flex: 1;" onclick="printPrescription()"><i class="fa-solid fa-file-arrow-down"></i> Download Prescription PDF</button>
+                            <button class="pd-btn-primary" style="flex: 1;" onclick="openViewPrescriptionModal()"><i class="fa-solid fa-file-medical"></i> View Prescription</button>
                             <button class="pd-btn-secondary" style="flex: 1;" onclick="bookFollowUp()"><i class="fa-regular fa-calendar-plus"></i> Book Free Follow-up</button>
                             <button class="pd-btn-secondary" style="flex: 1;" onclick="goToDeskScreen('dScreen1')"><i class="fa-solid fa-house"></i> Back to Home</button>
                         </div>
@@ -1142,11 +1241,18 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="m-input-group" style="margin-bottom: 0;">
+                        <label class="m-input-label" style="font-size: 0.72rem;">Date of Birth</label>
+                        <input type="date" class="m-text-input" id="profileEditDob" value="{{ user.dob if user and user.dob else '' }}" style="padding: 8px 12px; font-size: 0.85rem;" onchange="updateAgeFromDob(this.value)">
+                    </div>
                     <div class="m-input-group" style="margin-bottom: 0;">
                         <label class="m-input-label" style="font-size: 0.72rem;">Age</label>
-                        <input type="number" class="m-text-input" id="profileEditAge" value="{{ user.age if user and user.age else 32 }}" style="padding: 8px 12px; font-size: 0.85rem;">
+                        <input type="number" class="m-text-input" id="profileEditAge" value="{{ user.age if user and user.age else 30 }}" style="padding: 8px 12px; font-size: 0.85rem;">
                     </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="m-input-group" style="margin-bottom: 0;">
                         <label class="m-input-label" style="font-size: 0.72rem;">Gender</label>
                         <select class="m-text-input" id="profileEditGender" style="padding: 8px 12px; font-size: 0.85rem;">
@@ -1171,8 +1277,8 @@
                 </div>
 
                 <div class="m-input-group" style="margin-bottom: 0;">
-                    <label class="m-input-label" style="font-size: 0.72rem;">Care &amp; Delivery Address</label>
-                    <input type="text" class="m-text-input" id="profileEditAddress" value="{{ user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh') }}" placeholder="Door No, Street, Landmark" style="padding: 8px 12px; font-size: 0.85rem;">
+                    <label class="m-input-label" style="font-size: 0.72rem;">Full Care &amp; Delivery Address</label>
+                    <input type="text" class="m-text-input" id="profileEditAddress" value="{{ user.address if user and user.address else (user.city ~ ', Andhra Pradesh' if user and user.city else 'Vijayawada, Andhra Pradesh') }}" placeholder="Door No, Street, Landmark, Area" style="padding: 8px 12px; font-size: 0.85rem;">
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 6px;">
@@ -1474,6 +1580,136 @@
         </div>
     </div>
 
+    <!-- 8. Doctor Review & Rating Modal (Redirected after booking free follow-up) -->
+    <div class="pd-modal-overlay" id="doctorReviewModal">
+        <div class="pd-modal-card" style="max-width: 500px; text-align: center;">
+            <button class="pd-modal-close-btn" onclick="closeModal('doctorReviewModal')"><i class="fa-solid fa-xmark"></i></button>
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; font-size: 1.6rem;">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <h3 style="font-family: var(--pd-font-heading); font-size: 1.3rem; color: var(--pd-navy-dark); margin-bottom: 4px;">Rate Your Consultation</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 16px;">How was your consultation experience with <strong class="dyn-doc-name">Dr. Priya Sharma</strong>?</p>
+
+            <!-- Star Rating Widget -->
+            <div class="interactive-star-rating" id="reviewStarRating">
+                <i class="fa-solid fa-star active" data-rating="1" onclick="setDoctorRating(1)"></i>
+                <i class="fa-solid fa-star active" data-rating="2" onclick="setDoctorRating(2)"></i>
+                <i class="fa-solid fa-star active" data-rating="3" onclick="setDoctorRating(3)"></i>
+                <i class="fa-solid fa-star active" data-rating="4" onclick="setDoctorRating(4)"></i>
+                <i class="fa-solid fa-star active" data-rating="5" onclick="setDoctorRating(5)"></i>
+            </div>
+            <div id="ratingFeedbackText" style="font-size: 0.85rem; font-weight: 700; color: #f59e0b; margin: 8px 0 14px 0;">Excellent (5.0 / 5.0)</div>
+
+            <!-- Quick Review Chips -->
+            <div class="review-tag-chips" style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px;">
+                <span class="review-chip selected" onclick="toggleReviewChip(this)">Accurate Diagnosis</span>
+                <span class="review-chip selected" onclick="toggleReviewChip(this)">Very Patient</span>
+                <span class="review-chip" onclick="toggleReviewChip(this)">Clear Medication Advice</span>
+                <span class="review-chip" onclick="toggleReviewChip(this)">Friendly &amp; Polite</span>
+            </div>
+
+            <div class="m-input-group" style="text-align: left; margin-bottom: 16px;">
+                <label class="m-input-label">Your Feedback / Review (Optional)</label>
+                <textarea class="m-text-input" rows="3" id="doctorReviewComment" placeholder="Share your experience to help other patients..."></textarea>
+            </div>
+
+            <button class="pd-btn-primary" style="width: 100%; padding: 13px; font-weight: 800;" onclick="submitDoctorReview()"><i class="fa-solid fa-paper-plane"></i> Submit Doctor Review</button>
+        </div>
+    </div>
+
+    <!-- 9. All Patient Services History Modal -->
+    <div class="pd-modal-overlay" id="servicesHistoryModal" onclick="if(event.target===this) closeModal('servicesHistoryModal')">
+        <div class="pd-modal-card" style="max-width: 760px; width: 95%; max-height: 85vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 20px;">
+            <div style="background: linear-gradient(135deg, #0baaa2, #077973); color: #ffffff; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-clock-rotate-left" style="font-size: 1.3rem;"></i>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">My Services &amp; Clinical History</h3>
+                        <p style="margin: 0; font-size: 0.76rem; opacity: 0.9;">Chronological records of all appointments, symptoms, prescriptions and orders</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('servicesHistoryModal')" style="background: rgba(255,255,255,0.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- History Filter Tabs -->
+            <div class="history-service-tabs">
+                <button type="button" class="hist-tab-btn active" onclick="switchHistoryTab('consultations', this)"><i class="fa-solid fa-user-doctor"></i> Consultations &amp; Symptoms</button>
+                <button type="button" class="hist-tab-btn" onclick="switchHistoryTab('prescriptions', this)"><i class="fa-solid fa-prescription"></i> Prescriptions</button>
+                <button type="button" class="hist-tab-btn" onclick="switchHistoryTab('labtests', this)"><i class="fa-solid fa-flask-vial"></i> Lab Tests</button>
+                <button type="button" class="hist-tab-btn" onclick="switchHistoryTab('pharmacy', this)"><i class="fa-solid fa-pills"></i> Pharmacy</button>
+                <button type="button" class="hist-tab-btn" onclick="switchHistoryTab('rider', this)"><i class="fa-solid fa-motorcycle"></i> Health Rider</button>
+            </div>
+
+            <!-- History Tab Content Pane -->
+            <div class="history-tab-content-area" id="historyTabContentArea">
+                <!-- Injected dynamically via populateServicesHistory() -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Official View Prescription Modal -->
+    <div class="pd-modal-overlay" id="viewPrescriptionModal" onclick="if(event.target===this) closeModal('viewPrescriptionModal')">
+        <div class="pd-modal-card" style="max-width: 680px; width: 95%; max-height: 90vh; overflow-y: auto; padding: 28px; border-radius: 18px;">
+            <button class="pd-modal-close-btn" onclick="closeModal('viewPrescriptionModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div style="border-bottom: 2px solid #0baaa2; padding-bottom: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" style="height: 30px; margin-bottom: 6px;">
+                    <div style="font-size: 0.72rem; color: #64748b;">Nhealth Digital Healthcare Network &bull; Andhra Pradesh</div>
+                </div>
+                <div style="text-align: right;">
+                    <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--pd-navy-dark);" class="dyn-doc-name">Dr. Priya Sharma</h4>
+                    <div style="font-size: 0.78rem; color: #64748b;" class="dyn-doc-spec">MBBS, MD (Internal Medicine)</div>
+                    <div style="font-size: 0.74rem; color: #0baaa2; font-weight: 700;">Doctor ID: <span class="dyn-doc-id">DOC-NH-74892</span> &bull; Reg: <span class="dyn-doc-reg">APMC-74892</span></div>
+                </div>
+            </div>
+
+            <!-- Patient Demographics & Symptom Record -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.82rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                    <div><strong>Patient Name:</strong> <span class="dyn-patient-name">{{ user.name if user else 'Valued Patient' }}</span></div>
+                    <div><strong>Patient ID:</strong> <span class="dyn-patient-id">{{ user.id if user else 'NH-P-1002' }}</span></div>
+                    <div><strong>Age / Gender:</strong> <span class="dyn-patient-age-gender">{{ user.age if user and user.age else 32 }} Yrs &bull; {{ user.gender if user and user.gender else 'Male' }}</span></div>
+                    <div><strong>Date &amp; Time:</strong> <span id="viewRxDateTime">26 Sep 2026, 11:30 AM</span></div>
+                </div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 0.78rem; color: #475569;">
+                    <strong>Recorded Symptoms:</strong> <span id="viewRxSymptoms">Mild fever (100.4°F), nasal congestion, cold chills for 2 days.</span>
+                    <span class="doc-id-pill" style="font-size: 0.68rem; margin-left: 6px;" id="viewRxSymId">SYM-2026-9814</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <div style="font-size: 1.4rem; font-weight: 800; color: var(--pd-teal-primary); margin-bottom: 8px;">&#8478;</div>
+                <div id="viewPrescriptionMedsFull">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <div style="background: #f0fdfa; border: 1px solid var(--pd-teal-border); border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.82rem;">
+                <strong style="color: var(--pd-teal-primary);"><i class="fa-solid fa-circle-info"></i> Doctor's Clinical Advice:</strong>
+                <p id="viewPrescriptionAdviceText" style="margin: 4px 0 0 0; color: #334155; line-height: 1.5;">Drink 3 liters of warm water daily, adequate rest, warm saline gargling twice a day. Monitor temperature twice daily.</p>
+            </div>
+
+            <!-- Pharmacy Delivery Details Attached to Prescription -->
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <strong style="color: #b45309;"><i class="fa-solid fa-truck-fast"></i> Doorstep Pharmacy Refill:</strong>
+                    <div style="color: #78350f; font-size: 0.75rem;">Deliver to: {{ user.address if user and user.address else 'Home Address, Vijayawada' }}</div>
+                </div>
+                <button class="pd-btn-primary" style="background: #d97706; padding: 6px 14px; font-size: 0.76rem; border-radius: 8px;" onclick="closeModal('viewPrescriptionModal'); openServiceBookingModal('Doorstep Pharmacy', 'Upload your prescription or choose medicines for 60-minute doorstep delivery.', 'fa-pills')">
+                    Order Meds
+                </button>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="pd-btn-primary" style="flex: 2;" onclick="window.print()"><i class="fa-solid fa-print"></i> Print e-Prescription</button>
+                <button class="pd-btn-secondary" style="flex: 1;" onclick="closeModal('viewPrescriptionModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Generic Toast Message -->
     <div id="pdToast" style="display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #0c2340; color: #ffffff; padding: 12px 24px; border-radius: 50px; font-size: 0.88rem; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.25); z-index: 99999;">
         <span id="pdToastText">Notification message</span>
@@ -1485,6 +1721,7 @@
         const DOCTORS = [
             {
                 id: 'priya-sharma',
+                doctorId: 'DOC-NH-74892',
                 name: 'Dr. Priya Sharma',
                 spec: 'General Physician',
                 degrees: 'MBBS, MD (Internal Medicine)',
@@ -1500,6 +1737,7 @@
                 about: 'Dr. Priya Sharma is a senior general physician with over 12 years of clinical practice in internal medicine, chronic disease management, and family preventive healthcare across Andhra Pradesh.',
                 experience: 'Senior Consultant Physician at Apollo Hospitals, Vijayawada (6 yrs); Former Medical Officer at King George Hospital, Vizag (6 yrs). Over 15,000+ satisfied patient consultations.',
                 specialisations: ['General Medicine', 'Preventive Care', 'Lifestyle Management', 'Fever & Infections', 'Hypertension & Diabetes Control'],
+                symptoms: ['fever', 'high fever', 'viral fever', 'cold', 'cough', 'headache', 'flu', 'weakness', 'vomiting', 'stomach ache', 'infection', 'fatigue', 'diabetes', 'bp', 'general', 'throat infection'],
                 reviews: [
                     { user: 'Suresh V.', rating: 5, date: '2 days ago', comment: 'Dr. Priya is very patient and explained the medication clearly. Felt much better within 2 days.' },
                     { user: 'Lakshmi K.', rating: 5, date: '1 week ago', comment: 'Quick video connection and very professional prescription. Highly recommended!' }
@@ -1513,6 +1751,7 @@
             },
             {
                 id: 'rohan-mehta',
+                doctorId: 'DOC-NH-61245',
                 name: 'Dr. Rohan Mehta',
                 spec: 'Cardiologist',
                 degrees: 'MBBS, MD (Cardiology)',
@@ -1528,6 +1767,7 @@
                 about: 'Dr. Rohan Mehta specializes in cardiovascular disease diagnosis, ECG analysis, hypertension control, and preventive heart wellness with over a decade of clinical excellence.',
                 experience: 'Consultant Interventional Cardiologist at Manipal Hospitals, Vijayawada (5 yrs); Fellow in Preventive Cardiology, Care Hospitals, Hyderabad (5 yrs).',
                 specialisations: ['Cardiology', 'ECG Analysis', 'Hypertension Management', 'Cholesterol Control', 'Heart Wellness'],
+                symptoms: ['chest pain', 'heart', 'palpitations', 'high bp', 'hypertension', 'breathlessness', 'cholesterol', 'cardiac', 'dizziness', 'blood pressure'],
                 reviews: [
                     { user: 'Ramesh Naidu', rating: 5, date: '3 days ago', comment: 'Excellent doctor. He patiently answered all my questions regarding my blood pressure.' },
                     { user: 'Bhavani S.', rating: 4, date: '2 weeks ago', comment: 'Prompt consultation and clear lifestyle recommendations.' }
@@ -1541,6 +1781,7 @@
             },
             {
                 id: 'anitha-reddy',
+                doctorId: 'DOC-NH-83921',
                 name: 'Dr. Anitha Reddy',
                 spec: 'Dermatologist',
                 degrees: 'MBBS, MD (Dermatology)',
@@ -1556,6 +1797,7 @@
                 about: 'Dr. Anitha Reddy is a board-certified dermatologist with 15+ years of specialized clinical experience treating skin allergies, eczema, acne, hair loss, and cosmetic dermatology.',
                 experience: 'Lead Dermatologist at Ramesh Hospitals, Guntur (8 yrs); Associate Professor of Dermatology, GMC (7 yrs). Renowned speaker and tele-dermatologist.',
                 specialisations: ['Clinical Dermatology', 'Acne & Skin Allergies', 'Eczema & Psoriasis', 'Hair & Scalp Care', 'Cosmetic Dermatology'],
+                symptoms: ['skin', 'skin rash', 'itching', 'allergy', 'acne', 'pimples', 'eczema', 'hair fall', 'hair loss', 'dandruff', 'psoriasis', 'fungal infection'],
                 reviews: [
                     { user: 'Divya M.', rating: 5, date: 'Yesterday', comment: 'My skin rash resolved within 48 hours following her prescription. Very compassionate doctor.' },
                     { user: 'Kiran K.', rating: 5, date: '5 days ago', comment: 'Best dermatologist in the region. Super convenient online video consultation!' }
@@ -1569,6 +1811,7 @@
             },
             {
                 id: 'vikram-patel',
+                doctorId: 'DOC-NH-55923',
                 name: 'Dr. Vikram Patel',
                 spec: 'Orthopedics',
                 degrees: 'MBBS, MS (Orthopedics)',
@@ -1584,6 +1827,7 @@
                 about: 'Dr. Vikram Patel is an orthopedic specialist handling joint pain, arthritis, sports injuries, spine health, and post-fracture physical rehabilitation.',
                 experience: 'Senior Orthopedic Surgeon at NRI General Hospital, Mangalagiri (6 yrs); Fellow in Joint Replacement, Sunshine Hospitals (5 yrs).',
                 specialisations: ['Orthopedic Surgery', 'Joint Pain Management', 'Arthritis Care', 'Spine & Back Health', 'Sports Injuries'],
+                symptoms: ['joint pain', 'knee pain', 'back pain', 'bone pain', 'arthritis', 'fracture', 'sprain', 'swelling', 'neck pain', 'muscle pain', 'ortho', 'shoulder pain'],
                 reviews: [
                     { user: 'Venkat Rao', rating: 5, date: '4 days ago', comment: 'Dr. Vikram diagnosed my knee problem accurately over video call and guided with simple exercises.' },
                     { user: 'Prasad M.', rating: 5, date: '1 week ago', comment: 'Clear explanation of X-ray and very helpful advice.' }
@@ -1688,8 +1932,10 @@
             if (editEmail) editEmail.value = u.email;
             const editCity = document.getElementById('profileEditCity');
             if (editCity) editCity.value = u.city || 'Vijayawada';
+            const editDob = document.getElementById('profileEditDob');
+            if (editDob && u.dob) editDob.value = u.dob;
             const editAge = document.getElementById('profileEditAge');
-            if (editAge) editAge.value = u.age || 32;
+            if (editAge) editAge.value = u.age || 30;
             const editGender = document.getElementById('profileEditGender');
             if (editGender && u.gender) editGender.value = u.gender;
             const editBlood = document.getElementById('profileEditBlood');
@@ -1971,6 +2217,10 @@
             // 4. Update Video Streams & Avatar
             const chatAvatar = document.getElementById('chatDoctorAvatar');
             if (chatAvatar) chatAvatar.src = doc.avatar;
+            const mDocStream = document.getElementById('mVideoDoctorStream');
+            if (mDocStream) mDocStream.src = doc.consultImg || doc.avatar;
+            const dDocStream = document.getElementById('dVideoDoctorStream');
+            if (dDocStream) dDocStream.src = doc.consultImg || doc.avatar;
 
             // 5. Update Prescription medications & advice
             updatePrescriptionUI(doc);
@@ -1998,19 +2248,40 @@
             if (dAdvice) dAdvice.textContent = doc.advice;
         }
 
-        // Live Search Handling
+        // Live Search & Symptom-Based Doctor Matching
         function handleDoctorSearch(query, targetListId) {
             const q = (query || '').toLowerCase().trim();
             const filtered = DOCTORS.filter(d => 
                 d.name.toLowerCase().includes(q) ||
                 d.spec.toLowerCase().includes(q) ||
-                d.specialisations.some(s => s.toLowerCase().includes(q))
+                (d.doctorId && d.doctorId.toLowerCase().includes(q)) ||
+                d.specialisations.some(s => s.toLowerCase().includes(q)) ||
+                (d.symptoms && d.symptoms.some(sym => sym.toLowerCase().includes(q))) ||
+                (d.about && d.about.toLowerCase().includes(q))
             );
 
             if (targetListId === 'mDoctorsList') {
                 populateMobileDoctors(filtered);
             } else {
                 populateDesktopDoctors(filtered);
+            }
+        }
+
+        // Search By Symptom (e.g. Fever -> General Physician / Priya Sharma)
+        function searchBySymptom(symptom, mode) {
+            const sym = (symptom || '').trim();
+            if (mode === 'mobile') {
+                goToScreen('mScreen2');
+                const input = document.getElementById('mDocSearchInput');
+                if (input) input.value = sym;
+                handleDoctorSearch(sym, 'mDoctorsList');
+                if (sym) showToast(`Showing verified doctors treating: ${sym}`);
+            } else {
+                goToDeskScreen('dScreen2');
+                const input = document.getElementById('dHomeSearchInput');
+                if (input) input.value = sym;
+                handleDoctorSearch(sym, 'dDoctorsResults');
+                if (sym) showToast(`Showing verified doctors treating: ${sym}`);
             }
         }
 
@@ -2095,6 +2366,12 @@
             }
         }
 
+        let hasPaidConsultation = {};
+        try {
+            const savedPaid = localStorage.getItem('nhealth_paid_consultations');
+            if (savedPaid) hasPaidConsultation = JSON.parse(savedPaid);
+        } catch(e) {}
+
         function simulatePaymentSuccess(viewMode) {
             showToast(`Processing payment of ₹${currentDoctor.fee}...`);
             const randTxn = `TXN-NH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -2105,6 +2382,35 @@
             const dApptEl = document.getElementById('dAppointmentId');
             if (dApptEl) dApptEl.textContent = randAppt;
 
+            // Track payment status for doctor
+            if (currentDoctor && currentDoctor.id) {
+                hasPaidConsultation[currentDoctor.id] = true;
+                try {
+                    localStorage.setItem('nhealth_paid_consultations', JSON.stringify(hasPaidConsultation));
+                } catch(e) {}
+            }
+
+            // Save patient symptoms record
+            const symText = viewMode === 'mobile' 
+                ? (document.getElementById('mSymptomsDesc')?.value || document.getElementById('mSymptomsText')?.value || 'Seasonal viral fever, cold and headache for 2 days')
+                : (document.getElementById('dSymptomsDesc')?.value || document.getElementById('dSymptomsText')?.value || 'Seasonal viral fever, cold and headache for 2 days');
+            savePatientSymptomRecord(symText, currentDoctor ? currentDoctor.doctorId : 'DOC-NH-74892', currentDoctor ? currentDoctor.name : 'Dr. Priya Sharma');
+
+            // Broadcast to Doctor dashboard that patient has booked and paid
+            try {
+                if (window.consultationChannel) {
+                    window.consultationChannel.postMessage({
+                        type: 'PATIENT_BOOKED_CONSULTATION',
+                        patient: CURRENT_USER,
+                        symptoms: symText,
+                        doctor: currentDoctor ? {
+                            name: currentDoctor.name,
+                            doctorId: currentDoctor.doctorId
+                        } : null
+                    });
+                }
+            } catch(e) {}
+
             setTimeout(() => {
                 if (viewMode === 'mobile') {
                     goToScreen('mScreen6');
@@ -2112,6 +2418,50 @@
                     goToDeskScreen('dScreen6');
                 }
             }, 600);
+        }
+
+        // Schedule Slot Selection Controllers
+        let selectedSchedDate = 'Today';
+        let selectedSchedTime = '04:30 PM';
+
+        function selectScheduleDate(btn, dateStr) {
+            document.querySelectorAll('.m-slot-date-btn').forEach(b => {
+                if (b.textContent.trim() === dateStr) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+            selectedSchedDate = dateStr;
+            updateSlotPreview();
+        }
+
+        function selectScheduleTime(btn, timeStr) {
+            document.querySelectorAll('.m-slot-time-btn').forEach(b => {
+                if (b.textContent.includes(timeStr)) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+            selectedSchedTime = timeStr;
+            updateSlotPreview();
+        }
+
+        function updateSlotPreview() {
+            const elMob = document.getElementById('mSelectedSlotPreview');
+            if (elMob) elMob.textContent = `${selectedSchedDate} at ${selectedSchedTime}`;
+            const elDesk = document.getElementById('dSelectedSlotPreview');
+            if (elDesk) elDesk.textContent = `${selectedSchedDate} at ${selectedSchedTime}`;
+        }
+
+        function confirmSelectedSchedule() {
+            const docName = currentDoctor ? currentDoctor.name : 'Dr. Priya Sharma';
+            showToast(`🗓️ Video consultation scheduled with ${docName} for ${selectedSchedDate} at ${selectedSchedTime}!`);
+            try {
+                if (window.consultationChannel) {
+                    window.consultationChannel.postMessage({
+                        type: 'PATIENT_SCHEDULED_APPOINTMENT',
+                        doctor: docName,
+                        slot: `${selectedSchedDate}, ${selectedSchedTime}`,
+                        patient: CURRENT_USER
+                    });
+                }
+            } catch(e) {}
         }
 
         // Real-Time WebRTC Video Call State & Media Controllers
@@ -2124,6 +2474,11 @@
         let isSharingScreen = false;
 
         async function initRealTimeMedia() {
+            const mV = document.getElementById('mPatientRealVideo');
+            const dV = document.getElementById('dPatientRealVideo');
+            const mImg = document.getElementById('mPatientPip');
+            const dImg = document.getElementById('dPatientPip');
+
             try {
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     const stream = await navigator.mediaDevices.getUserMedia({
@@ -2133,11 +2488,6 @@
                     localUserMediaStream = stream;
 
                     // Attach to mobile and desktop patient video elements
-                    const mV = document.getElementById('mPatientRealVideo');
-                    const dV = document.getElementById('dPatientRealVideo');
-                    const mImg = document.getElementById('mPatientPip');
-                    const dImg = document.getElementById('dPatientPip');
-
                     if (mV) {
                         mV.srcObject = stream;
                         mV.style.display = 'block';
@@ -2151,13 +2501,31 @@
                     if (mImg) mImg.style.display = 'none';
                     if (dImg) dImg.style.display = 'none';
 
+                    // Broadcast to Doctor dashboard that patient camera is live
+                    try {
+                        if (window.consultationChannel) {
+                            window.consultationChannel.postMessage({
+                                type: 'PATIENT_VIDEO_ACTIVE',
+                                patientName: (CURRENT_USER && CURRENT_USER.name) ? CURRENT_USER.name : 'Patient'
+                            });
+                        }
+                    } catch(e) {}
+
                     showToast('🎥 Live camera and microphone connected in HD!');
                 } else {
-                    showToast('Live consultation active (HD Avatar Mode)');
+                    if (mImg) mImg.style.display = 'block';
+                    if (dImg) dImg.style.display = 'block';
+                    if (mV) mV.style.display = 'none';
+                    if (dV) dV.style.display = 'none';
+                    showToast('Live consultation active (HD Feed)');
                 }
             } catch (err) {
-                console.log('Webcam/Mic access denied or unavailable:', err);
-                showToast('Consultation connected (HD Avatar Mode)');
+                console.log('Webcam/Mic access denied or unavailable (HTTP LAN):', err);
+                if (mImg) mImg.style.display = 'block';
+                if (dImg) dImg.style.display = 'block';
+                if (mV) mV.style.display = 'none';
+                if (dV) dV.style.display = 'none';
+                showToast('Consultation connected in HD Feed');
             }
         }
 
@@ -2394,8 +2762,291 @@
             }, 400);
         }
 
+        // Free Follow-up Booking & Redirection to Doctor Review Option (as requested)
         function bookFollowUp() {
-            showToast(`Free follow-up scheduled for 7 days later with ${currentDoctor.name}!`);
+            const docName = (currentDoctor && currentDoctor.name) ? currentDoctor.name : 'Dr. Priya Sharma';
+            showToast(`🎉 Free follow-up confirmed for 7 days later with ${docName}! Opening Doctor Review...`);
+            setTimeout(() => {
+                openDoctorReviewModal();
+            }, 800);
+        }
+
+        // Doctor Review Modal Handlers
+        let selectedDoctorRating = 5;
+        function openDoctorReviewModal() {
+            const modal = document.getElementById('doctorReviewModal');
+            if (modal) modal.classList.add('active');
+            setDoctorRating(5);
+        }
+
+        function setDoctorRating(stars) {
+            selectedDoctorRating = stars;
+            const container = document.getElementById('reviewStarRating');
+            if (!container) return;
+            const starIcons = container.querySelectorAll('i');
+            starIcons.forEach((s, idx) => {
+                if (idx < stars) {
+                    s.classList.add('active');
+                    s.style.color = '#f59e0b';
+                } else {
+                    s.classList.remove('active');
+                    s.style.color = '#cbd5e1';
+                }
+            });
+            const textEl = document.getElementById('ratingFeedbackText');
+            const labels = ['', 'Poor (1.0)', 'Fair (2.0)', 'Good (3.0)', 'Very Good (4.0)', 'Excellent (5.0)'];
+            if (textEl) textEl.textContent = labels[stars] || `${stars}.0`;
+        }
+
+        function toggleReviewChip(el) {
+            el.classList.toggle('selected');
+        }
+
+        function submitDoctorReview() {
+            const docName = (currentDoctor && currentDoctor.name) ? currentDoctor.name : 'Dr. Priya Sharma';
+            const comment = document.getElementById('doctorReviewComment')?.value || 'Excellent consultation experience and clear guidance.';
+            showToast(`⭐ Thank you! Your ${selectedDoctorRating}-star review for ${docName} has been submitted.`);
+            closeModal('doctorReviewModal');
+            
+            // Add review to current doctor object dynamically
+            if (currentDoctor && currentDoctor.reviews) {
+                currentDoctor.reviews.unshift({
+                    user: (CURRENT_USER && CURRENT_USER.name) ? CURRENT_USER.name : 'Valued Patient',
+                    rating: selectedDoctorRating,
+                    date: 'Just Now',
+                    comment: comment
+                });
+            }
+        }
+
+        // View Appointment Details -> Redirect to Respective Doctor Details
+        function viewAppointmentDoctorDetails(mode) {
+            if (currentDoctor && currentDoctor.id) {
+                if (mode === 'mobile') {
+                    selectDoctor(currentDoctor.id);
+                    goToScreen('mScreen3');
+                } else {
+                    selectDoctor(currentDoctor.id);
+                    goToDeskScreen('dScreen3');
+                }
+                showToast(`Viewing consultation details with ${currentDoctor.name}`);
+            } else {
+                if (mode === 'mobile') goToScreen('mScreen2');
+                else goToDeskScreen('dScreen2');
+            }
+        }
+
+        // Doctor Prescribed Redirection
+        function openDoctorPrescribed(mode) {
+            if (mode === 'mobile') {
+                goToScreen('mScreenRx');
+            } else {
+                goToDeskScreen('dScreenRx');
+            }
+            showToast('Viewing Doctor Prescribed digital Rx & medication details');
+        }
+
+        // Official View Prescription Modal
+        function openViewPrescriptionModal() {
+            const modal = document.getElementById('viewPrescriptionModal');
+            if (!modal) return;
+
+            const doc = currentDoctor || DOCTORS[0];
+            const medsContainer = document.getElementById('viewPrescriptionMedsFull');
+            if (medsContainer && doc.medications) {
+                medsContainer.innerHTML = doc.medications.map((m, idx) => `
+                    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.02);">
+                        <div>
+                            <div style="font-weight: 800; font-size: 0.92rem; color: #0f172a;">${idx + 1}. ${m.name}</div>
+                            <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">${m.dosage}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 800;">${m.timing}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            modal.classList.add('active');
+            showToast('Viewing verified clinical electronic prescription (e-Rx)');
+        }
+
+        // Patient Symptoms Storage Function
+        function savePatientSymptomRecord(symptomText, doctorId, doctorName) {
+            const now = new Date();
+            const uniqueId = 'SYM-' + now.getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+            const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            const record = {
+                id: uniqueId,
+                symptoms: symptomText || 'High fever, cold, throat pain and headache for 2 days',
+                date: dateStr,
+                time: timeStr,
+                doctorId: doctorId || 'DOC-NH-74892',
+                doctorName: doctorName || 'Dr. Priya Sharma',
+                pharmacyInfo: {
+                    partner: 'Nhealth Express Partner Pharmacy (Apollo Benz Circle)',
+                    address: (CURRENT_USER && CURRENT_USER.address) ? CURRENT_USER.address : 'Door No. 4-20, Benz Circle, Vijayawada',
+                    status: 'Ready for Immediate Dispense',
+                    deliveryEstimate: '60 Minutes Doorstep Delivery'
+                }
+            };
+
+            let history = [];
+            try {
+                const stored = localStorage.getItem('nhealth_patient_symptoms_history');
+                if (stored) history = JSON.parse(stored);
+            } catch(e) {}
+            history.unshift(record);
+            try {
+                localStorage.setItem('nhealth_patient_symptoms_history', JSON.stringify(history));
+            } catch(e) {}
+
+            const viewSym = document.getElementById('viewRxSymptoms');
+            if (viewSym) viewSym.textContent = record.symptoms;
+            const viewSymId = document.getElementById('viewRxSymId');
+            if (viewSymId) viewSymId.textContent = uniqueId;
+            const viewDateTime = document.getElementById('viewRxDateTime');
+            if (viewDateTime) viewDateTime.textContent = `${dateStr}, ${timeStr}`;
+
+            // Broadcast message across tabs for Doctor dashboard live sync
+            try {
+                if (window.consultationChannel) {
+                    window.consultationChannel.postMessage({
+                        type: 'PATIENT_SYMPTOMS_UPDATED',
+                        record: record,
+                        patient: CURRENT_USER
+                    });
+                }
+            } catch(e) {}
+
+            return record;
+        }
+
+        // All Patient Services History Controller
+        function openServicesHistoryModal(activeTab) {
+            const modal = document.getElementById('servicesHistoryModal');
+            if (modal) modal.classList.add('active');
+            switchHistoryTab(activeTab || 'consultations');
+        }
+
+        function switchHistoryTab(tabName, clickedBtn) {
+            document.querySelectorAll('.hist-tab-btn').forEach(b => b.classList.remove('active'));
+            if (clickedBtn) {
+                clickedBtn.classList.add('active');
+            } else {
+                const defaultBtn = document.querySelector(`.hist-tab-btn[onclick*="${tabName}"]`);
+                if (defaultBtn) defaultBtn.classList.add('active');
+            }
+
+            const container = document.getElementById('historyTabContentArea');
+            if (!container) return;
+
+            let symptomsHist = [];
+            try {
+                const stored = localStorage.getItem('nhealth_patient_symptoms_history');
+                if (stored) symptomsHist = JSON.parse(stored);
+            } catch(e) {}
+            const latestSymId = (symptomsHist[0] && symptomsHist[0].id) ? symptomsHist[0].id : 'SYM-2026-9814';
+
+            if (tabName === 'consultations') {
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px;">
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <div>
+                                    <span style="background: #ecfdf5; color: #059669; font-weight: 800; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px;"><i class="fa-solid fa-circle-check"></i> Active &bull; Free Follow-up Eligible</span>
+                                    <h4 style="margin: 4px 0 2px 0; font-size: 1.05rem; color: #0f172a;">Online Video Consultation</h4>
+                                    <div style="font-size: 0.8rem; color: #64748b;">Dr. Priya Sharma &bull; General Physician &bull; Doctor ID: <strong>DOC-NH-74892</strong></div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <strong style="color: #0f172a; font-size: 0.95rem;">₹500</strong>
+                                    <div style="font-size: 0.72rem; color: #64748b;">Today, 11:30 AM</div>
+                                </div>
+                            </div>
+                            <div style="background: #f8fafc; border-radius: 8px; padding: 10px 12px; font-size: 0.78rem; color: #475569; margin-bottom: 12px;">
+                                <strong>Recorded Symptoms:</strong> Fever (101.4°F), cold chills, nasal blockage and mild throat pain.
+                                <div style="color: #0284c7; margin-top: 3px; font-size: 0.73rem;">Unique ID: <strong>${latestSymId}</strong> &bull; Pharmacy Booking: <span style="color: #10b981; font-weight: 700;">Verified</span></div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="pd-btn-primary" style="padding: 6px 14px; font-size: 0.78rem;" onclick="closeModal('servicesHistoryModal'); openViewPrescriptionModal();"><i class="fa-solid fa-file-medical"></i> View Prescription</button>
+                                <button class="pd-btn-secondary" style="padding: 6px 14px; font-size: 0.78rem;" onclick="closeModal('servicesHistoryModal'); bookFollowUp();"><i class="fa-regular fa-calendar-plus"></i> Book Free Follow-up</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <div>
+                                    <span style="background: #f1f5f9; color: #64748b; font-weight: 800; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px;"><i class="fa-solid fa-check"></i> Completed</span>
+                                    <h4 style="margin: 4px 0 2px 0; font-size: 1.05rem; color: #0f172a;">Heart &amp; BP Clinical Review</h4>
+                                    <div style="font-size: 0.8rem; color: #64748b;">Dr. Rohan Mehta &bull; Cardiologist &bull; Doctor ID: <strong>DOC-NH-61245</strong></div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <strong style="color: #0f172a; font-size: 0.95rem;">₹600</strong>
+                                    <div style="font-size: 0.72rem; color: #64748b;">15 Aug 2026</div>
+                                </div>
+                            </div>
+                            <div style="background: #f8fafc; border-radius: 8px; padding: 10px 12px; font-size: 0.78rem; color: #475569;">
+                                <strong>Recorded Symptoms:</strong> Mild chest palpitations and routine blood pressure monitoring.
+                                <div style="color: #0284c7; margin-top: 3px; font-size: 0.73rem;">Unique ID: <strong>SYM-2026-7128</strong> &bull; Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (tabName === 'prescriptions') {
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px;">
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="background: #ecfdf5; color: #059669; font-weight: 800; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px;"><i class="fa-solid fa-file-prescription"></i> Verified e-Prescription</span>
+                                <h4 style="margin: 4px 0 2px 0; font-size: 1rem; color: #0f172a;">Rx: Viral Fever &amp; Respiratory Care</h4>
+                                <div style="font-size: 0.78rem; color: #64748b;">Dr. Priya Sharma (DOC-NH-74892) &bull; Paracetamol 650mg, Cetirizine 10mg</div>
+                            </div>
+                            <button class="pd-btn-primary" style="padding: 8px 16px; font-size: 0.8rem;" onclick="closeModal('servicesHistoryModal'); openViewPrescriptionModal();"><i class="fa-regular fa-eye"></i> View Prescription</button>
+                        </div>
+                    </div>
+                `;
+            } else if (tabName === 'labtests') {
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px;">
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="background: #e0f2fe; color: #0284c7; font-weight: 800; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px;"><i class="fa-solid fa-flask-vial"></i> Report Ready</span>
+                                <h4 style="margin: 4px 0 2px 0; font-size: 1rem; color: #0f172a;">Complete Blood Count (CBC) with ESR</h4>
+                                <div style="font-size: 0.78rem; color: #64748b;">Sri Venkateswara Diagnostics &bull; Sample collected at Home</div>
+                            </div>
+                            <button class="pd-btn-primary" style="padding: 8px 16px; font-size: 0.8rem;" onclick="showToast('Loading digital laboratory diagnostic report...');"><i class="fa-regular fa-file-pdf"></i> View Report</button>
+                        </div>
+                    </div>
+                `;
+            } else if (tabName === 'pharmacy') {
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px;">
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="background: #ecfdf5; color: #059669; font-weight: 800; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px;"><i class="fa-solid fa-truck-fast"></i> Order Delivered</span>
+                                <h4 style="margin: 4px 0 2px 0; font-size: 1rem; color: #0f172a;">Order #PH-8942 &bull; Fever Relief Kit</h4>
+                                <div style="font-size: 0.78rem; color: #64748b;">Apollo Pharmacy Benz Circle &bull; Delivered in 42 Mins</div>
+                            </div>
+                            <strong style="color: #0f172a;">₹340</strong>
+                        </div>
+                    </div>
+                `;
+            } else if (tabName === 'rider') {
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px;">
+                        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="background: #f1f5f9; color: #64748b; font-weight: 800; font-size: 0.72rem; padding: 2px 8px; border-radius: 6px;"><i class="fa-solid fa-person-biking"></i> Completed Trip</span>
+                                <h4 style="margin: 4px 0 2px 0; font-size: 1rem; color: #0f172a;">Hospital OPD Patient Accompaniment</h4>
+                                <div style="font-size: 0.78rem; color: #64748b;">Rider: Suresh K. &bull; AP 16 BY 4412 &bull; Distance: 4.8 km</div>
+                            </div>
+                            <strong style="color: #0284c7;">₹120</strong>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         // Modals Management
@@ -2445,6 +3096,23 @@
             if (modal) modal.classList.remove('active');
         }
 
+        function updateAgeFromDob(dobVal) {
+            if (!dobVal) return;
+            try {
+                const birthDate = new Date(dobVal);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                if (age >= 0) {
+                    const ageInput = document.getElementById('profileEditAge');
+                    if (ageInput) ageInput.value = age;
+                }
+            } catch (e) {}
+        }
+
         // Patient Profile Save Handler (Saves to server and syncs locally)
         async function savePatientProfile(e) {
             e.preventDefault();
@@ -2460,6 +3128,7 @@
                 phone: document.getElementById('profileEditPhone')?.value.trim() || CURRENT_USER.phone,
                 email: document.getElementById('profileEditEmail')?.value.trim() || CURRENT_USER.email,
                 city: document.getElementById('profileEditCity')?.value.trim() || CURRENT_USER.city,
+                dob: document.getElementById('profileEditDob')?.value || CURRENT_USER.dob || '',
                 age: document.getElementById('profileEditAge')?.value || CURRENT_USER.age,
                 gender: document.getElementById('profileEditGender')?.value || CURRENT_USER.gender,
                 blood_group: document.getElementById('profileEditBlood')?.value || CURRENT_USER.blood_group,
@@ -2511,6 +3180,39 @@
         }
 
         // Chat functionality
+        // Real-Time BroadcastChannel for instant two-way Patient <-> Doctor connection
+        let isDoctorOnlineLive = false;
+        try {
+            window.consultationChannel = new BroadcastChannel('nhealth_consultation_channel');
+            window.consultationChannel.onmessage = function(ev) {
+                const msg = ev.data;
+                if (!msg) return;
+                if (msg.type === 'DOCTOR_VIDEO_ACTIVE') {
+                    isDoctorOnlineLive = true;
+                    const mDocReal = document.getElementById('mDoctorRealVideo');
+                    const dDocReal = document.getElementById('dDoctorRealVideo');
+                    const mDocImg = document.getElementById('mVideoDoctorStream');
+                    const dDocImg = document.getElementById('dVideoDoctorStream');
+                    if (mDocReal) { mDocReal.style.display = 'block'; }
+                    if (dDocReal) { dDocReal.style.display = 'block'; }
+                    if (mDocImg) { mDocImg.style.display = 'none'; }
+                    if (dDocImg) { dDocImg.style.display = 'none'; }
+                    showToast('🟢 Doctor is connected live in HD video!');
+                } else if (msg.type === 'DOCTOR_CHAT_MESSAGE') {
+                    isDoctorOnlineLive = true;
+                    const box = document.getElementById('chatMessagesBox');
+                    if (box) {
+                        const docDiv = document.createElement('div');
+                        docDiv.className = 'pd-chat-msg doctor';
+                        docDiv.textContent = msg.text;
+                        box.appendChild(docDiv);
+                        box.scrollTop = box.scrollHeight;
+                    }
+                    showToast(`Doctor: ${msg.text.slice(0, 35)}...`);
+                }
+            };
+        } catch(e) {}
+
         function sendChatMessage() {
             const input = document.getElementById('chatInputText');
             const box = document.getElementById('chatMessagesBox');
@@ -2526,14 +3228,29 @@
             input.value = '';
             box.scrollTop = box.scrollHeight;
 
-            // Auto reply from doctor
-            setTimeout(() => {
-                const docDiv = document.createElement('div');
-                docDiv.className = 'pd-chat-msg doctor';
-                docDiv.textContent = `Understood. I am reviewing your notes carefully. Please start the video call whenever you are ready so I can examine you.`;
-                box.appendChild(docDiv);
-                box.scrollTop = box.scrollHeight;
-            }, 700);
+            // Broadcast to Doctor dashboard in real time
+            try {
+                if (window.consultationChannel) {
+                    window.consultationChannel.postMessage({
+                        type: 'PATIENT_CHAT_MESSAGE',
+                        text: text,
+                        sender: (CURRENT_USER && CURRENT_USER.name) ? CURRENT_USER.name : 'Patient'
+                    });
+                }
+            } catch(e) {}
+
+            // Fallback auto-reply only if doctor tab has not connected
+            if (!isDoctorOnlineLive) {
+                setTimeout(() => {
+                    if (!isDoctorOnlineLive) {
+                        const docDiv = document.createElement('div');
+                        docDiv.className = 'pd-chat-msg doctor';
+                        docDiv.textContent = `Understood. I am reviewing your symptoms and preparing your consultation notes.`;
+                        box.appendChild(docDiv);
+                        box.scrollTop = box.scrollHeight;
+                    }
+                }, 1000);
+            }
         }
 
         // Generic Toast Notification

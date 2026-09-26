@@ -279,7 +279,59 @@
     transform: rotate(180deg);
 }
 
-/* Legacy Role Selector Tabs (Preserved for compatibility) */
+/* 2-Toggle Pill Tabs: Patient vs Doctor / Partner (Exact Match to Reference Mockup) */
+.auth-toggle-pill-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #f1f5f9;
+    padding: 5px;
+    border-radius: 50px;
+    margin-bottom: 1.25rem;
+    gap: 6px;
+    border: 1.5px solid #e2e8f0;
+    align-items: center;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.auth-toggle-pill-btn {
+    border: 1.5px solid transparent;
+    background: transparent;
+    padding: 10px 14px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: #64748b;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.auth-toggle-pill-btn:hover:not(.active) {
+    color: #0a2540;
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.auth-toggle-pill-btn.active {
+    background: #ffffff;
+    color: #0284c7;
+    font-weight: 800;
+    border-color: #e0f2fe;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.auth-toggle-pill-btn i {
+    font-size: 0.95rem;
+}
+
+/* Quick Role Tabs & Compatibility styles */
+.auth-quick-role-tabs,
 .auth-role-tabs {
     display: flex;
     background: #f1f5f9;
@@ -292,6 +344,7 @@
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
+.quick-role-tab,
 .auth-role-tab {
     flex: 1;
     border: none;
@@ -312,11 +365,13 @@
     white-space: nowrap;
 }
 
+.quick-role-tab:hover:not(.active),
 .auth-role-tab:hover:not(.active) {
     color: #0a2540;
     background: rgba(255, 255, 255, 0.6);
 }
 
+.quick-role-tab.active,
 .auth-role-tab.active {
     background: #ffffff;
     color: #0080ff;
@@ -401,6 +456,19 @@
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
+}
+
+.auth-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    width: 100%;
+}
+
+@media (max-width: 580px) {
+    .auth-form-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .auth-input-group {
