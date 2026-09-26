@@ -89,7 +89,9 @@ def clear_failed_attempts(key):
 
 def _ensure_patient_fields(user_dict):
     if not user_dict.get('age'):
-        user_dict['age'] = 32
+        user_dict['age'] = 30
+    if not user_dict.get('dob'):
+        user_dict['dob'] = '1995-05-15'
     if not user_dict.get('gender'):
         user_dict['gender'] = 'Male'
     if not user_dict.get('blood_group'):
@@ -800,6 +802,29 @@ def rider_dashboard():
     return render_template('rider_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
+@app.route('/doctor/dashboard')
+@app.route('/dashboard/doctor')
+@app.route('/doctor')
+def doctor_dashboard():
+    """Render Doctor Partner Dashboard matching reference design."""
+    user = session.get('user')
+    if not user or user.get('role') != 'doctor':
+        user = {
+            "id": "USR-DOC-001",
+            "name": "Dr. Arjun Reddy",
+            "doctor_id": "DOC78456",
+            "qualification": "MBBS, MD (General Medicine)",
+            "specialization": "General Physician",
+            "experience": "8+ Years",
+            "reg_number": "APMC/12345",
+            "role": "doctor",
+            "city": "Vijayawada",
+            "phone": "9876543210",
+            "email": "doctor@nhealth.in"
+        }
+    return render_template('doctor_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
+
+
 @app.route('/api/auth/signup', methods=['POST'])
 def auth_signup():
     """Handle new patient or doctor/partner account registration with security validation."""
@@ -813,10 +838,38 @@ def auth_signup():
         city = data.get('city', '').strip()
         state = data.get('state', 'Andhra Pradesh').strip()
         pincode = data.get('pincode', '').strip()
-        address = data.get('address', '').strip()
+        address = (data.get('address') or data.get('full_address', '')).strip()
+        dob = (data.get('dob') or data.get('date_of_birth', '')).strip()
+        gender = (data.get('gender') or 'Male').strip()
         reg_number = (data.get('reg_number') or data.get('registrationNumber', '')).strip()
         gst_number = (data.get('gst_number') or data.get('gstNumber', '')).strip()
         password = data.get('password', '').strip()
+
+        # Calculate age if dob is given
+        calculated_age = None
+        if dob:
+            try:
+                birth_date = datetime.strptime(dob, '%Y-%m-%d')
+                today = date.today()
+                calculated_age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            except Exception:
+                try:
+                    for fmt in ('%d-%m-%Y', '%d/%m/%Y', '%Y/%m/%d'):
+                        try:
+                            birth_date = datetime.strptime(dob, fmt)
+                            today = date.today()
+                            calculated_age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+                            dob = birth_date.strftime('%Y-%m-%d')
+                            break
+                        except ValueError:
+                            continue
+                except Exception:
+                    pass
+        if calculated_age is None:
+            if str(data.get('age', '')).isdigit():
+                calculated_age = int(data.get('age'))
+            else:
+                calculated_age = 30
 
         # Required fields validation
         if not name or not phone or not password:
@@ -866,8 +919,9 @@ def auth_signup():
             "city": city or "Vijayawada",
             "state": state,
             "pincode": pincode,
-            "age": int(data.get('age', 32)) if str(data.get('age', '')).isdigit() else 32,
-            "gender": data.get('gender', 'Male'),
+            "age": calculated_age,
+            "dob": dob,
+            "gender": gender,
             "blood_group": data.get('blood_group', 'O+'),
             "address": address or f"{city or 'Vijayawada'}, Andhra Pradesh",
             "vehicle_type": data.get('vehicle_type', data.get('vehicleType', 'Motorcycle (Two-Wheeler)')),
@@ -994,6 +1048,37 @@ def auth_login():
                     "city": "Vijayawada",
                     "password": "password123"
                 }
+            elif identifier_lower in ['priya.sharma@nhealth.in', 'dr.priya@nhealth.in', 'priya@gmail.com', 'priya@nhealth.in', 'priya'] or clean_digits in ['9848011223']:
+                matched = {
+                    "id": "USR-DOC-002",
+                    "role": "doctor",
+                    "name": "Dr. Priya Sharma",
+                    "doctor_id": "DOC-NH-74892",
+                    "qualification": "MBBS, MD (General Medicine)",
+                    "specialization": "General Physician & Internal Medicine",
+                    "experience": "9+ Years",
+                    "reg_number": "APMC/74892",
+                    "clinic_name": "Nhealth Prime Care Center",
+                    "email": identifier_lower if '@' in identifier_lower else "priya.sharma@nhealth.in",
+                    "phone": clean_digits or "9848011223",
+                    "city": "Vijayawada",
+                    "password": "password123"
+                }
+            elif identifier_lower in ['doctor@nhealth.in', 'doctor@gmail.com', 'dr.arjun@nhealth.in'] or clean_digits in ['9876543210']:
+                matched = {
+                    "id": "USR-DOC-001",
+                    "role": "doctor",
+                    "name": "Dr. Arjun Reddy",
+                    "doctor_id": "DOC78456",
+                    "qualification": "MBBS, MD (General Medicine)",
+                    "specialization": "General Physician",
+                    "experience": "8+ Years",
+                    "reg_number": "APMC/12345",
+                    "email": identifier_lower if '@' in identifier_lower else "doctor@nhealth.in",
+                    "phone": clean_digits or "9876543210",
+                    "city": "Vijayawada",
+                    "password": "password123"
+                }
             elif identifier_lower in ['patient@nhealth.in', 'patient@gmail.com'] or clean_digits in ['9123456780']:
                 matched = {
                     "id": "USR-PAT-001",
@@ -1032,7 +1117,7 @@ def auth_login():
         elif user_role == 'rider' or role == 'rider':
             redirect_url = '/rider/dashboard'
         elif user_role == 'doctor' or role == 'doctor':
-            redirect_url = '/'
+            redirect_url = '/doctor/dashboard'
         else:
             redirect_url = '/patient/dashboard'
 
@@ -1242,6 +1327,14 @@ def user_profile():
             try:
                 updates['age'] = int(data['age'])
             except (ValueError, TypeError):
+                pass
+        if 'dob' in data and data['dob'].strip():
+            updates['dob'] = data['dob'].strip()
+            try:
+                birth_date = datetime.strptime(data['dob'].strip(), '%Y-%m-%d')
+                today = date.today()
+                updates['age'] = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            except Exception:
                 pass
         if 'gender' in data and data['gender'].strip():
             updates['gender'] = data['gender'].strip()

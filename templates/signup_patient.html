@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Authentication Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=1.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=2.0">
 </head>
 <body class="auth-page-body">
 
@@ -57,8 +57,20 @@
                         </a>
                     </div>
 
+                    <!-- 2-Toggle Pill Tabs: Patient vs Doctor / Partner (Exact Match to Reference Mockup) -->
+                    <div class="auth-toggle-pill-wrap" id="authPortalToggle">
+                        <a href="/signup/patient" class="auth-toggle-pill-btn active" id="tabBtnPatient">
+                            <i class="fa-regular fa-user"></i>
+                            <span>Patient Sign Up</span>
+                        </a>
+                        <a href="/signup/partner" class="auth-toggle-pill-btn" id="tabBtnPartner">
+                            <i class="fa-solid fa-user-doctor"></i>
+                            <span>Doctor / Partner</span>
+                        </a>
+                    </div>
+                    
                     <!-- Service & Account Role Selector Dropdown -->
-                    <div class="auth-service-selector-wrap">
+                    <div class="auth-service-selector-wrap" style="display: none;">
                         <label class="auth-service-label" for="authServiceSelector">
                             <span>Select Account / Service Type</span>
                             <span class="service-count-pill">All 19 Services</span>
@@ -184,6 +196,27 @@
                             <input type="tel" name="whatsapp" id="patientWhatsApp" class="auth-form-input" placeholder="WhatsApp Number" maxlength="10">
                         </div>
 
+                        <!-- Gender & Date of Birth Row -->
+                        <div class="auth-form-row">
+                            <!-- Gender -->
+                            <div class="auth-input-group select-group">
+                                <i class="fa-solid fa-venus-mars auth-field-icon"></i>
+                                <select name="gender" id="patientGender" class="auth-form-select" required>
+                                    <option value="" disabled selected>Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down auth-select-arrow"></i>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="auth-input-group">
+                                <i class="fa-regular fa-calendar-days auth-field-icon" title="Date of Birth"></i>
+                                <input type="text" name="dob" id="patientDob" class="auth-form-input" placeholder="Date of Birth (DD-MM-YYYY)" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" required title="Date of Birth" max="2026-12-31">
+                            </div>
+                        </div>
+
                         <!-- City / District Dropdown -->
                         <div class="auth-input-group select-group">
                             <i class="fa-solid fa-location-dot auth-field-icon"></i>
@@ -194,6 +227,12 @@
                                 {% endfor %}
                             </select>
                             <i class="fa-solid fa-chevron-down auth-select-arrow"></i>
+                        </div>
+
+                        <!-- Full Address -->
+                        <div class="auth-input-group">
+                            <i class="fa-solid fa-house-chimney-medical auth-field-icon"></i>
+                            <input type="text" name="address" id="patientAddress" class="auth-form-input" placeholder="Full Address (Door / Flat No, Street, Landmark, Area)" required autocomplete="street-address">
                         </div>
 
                         <!-- Password -->
@@ -478,15 +517,18 @@
             const email = document.getElementById('patientEmail').value.trim();
             const phone = document.getElementById('patientPhone').value.trim();
             const whatsapp = document.getElementById('patientWhatsApp').value.trim();
+            const gender = document.getElementById('patientGender').value;
+            const dob = document.getElementById('patientDob').value.trim();
             const city = document.getElementById('patientCity').value;
+            const address = document.getElementById('patientAddress').value.trim();
             const password = document.getElementById('patientPassword').value;
             const confirmPassword = document.getElementById('patientConfirmPassword').value;
             const terms = document.getElementById('patientTerms').checked;
 
             alertBox.style.display = 'none';
 
-            if (!name || !email || !phone || !city || !password) {
-                alertBox.textContent = 'Please fill out all required fields.';
+            if (!name || !email || !phone || !gender || !dob || !city || !address || !password) {
+                alertBox.textContent = 'Please fill out all required fields (Name, Email, Phone, Gender, Date of Birth, City, and Full Address).';
                 alertBox.className = 'auth-alert-box error';
                 alertBox.style.display = 'block';
                 return;
@@ -533,7 +575,10 @@
                         email: email,
                         phone: phone,
                         whatsapp: whatsapp || phone,
+                        gender: gender,
+                        dob: dob,
                         city: city,
+                        address: address,
                         password: password
                     })
                 });
