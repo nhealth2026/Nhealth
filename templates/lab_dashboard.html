@@ -47,12 +47,31 @@
         <nav class="lab-sidebar-nav">
             <ul class="lab-sidebar-menu">
                 <li>
-                    <a class="lab-sidebar-item active" id="sideItemDashboard" onclick="setSidebarActive('dashboard'); showScreen('dashboardScreen'); closeMobileSidebar();">
+                    <a class="lab-sidebar-item" id="sideItemDashboard" onclick="setSidebarActive('dashboard'); showScreen('dashboardScreen'); closeMobileSidebar();">
                         <div class="lab-sidebar-item-left">
                             <i class="fa-solid fa-gauge"></i>
                             <span>Dashboard</span>
                         </div>
                     </a>
+                </li>
+                <li class="lab-sidebar-add-new-wrap">
+                    <a class="lab-sidebar-item lab-sidebar-add-new" onclick="toggleAddNewDropdown(event)">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add New</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down lab-add-new-chevron" id="addNewChevron"></i>
+                    </a>
+                    <div class="lab-add-new-dropdown" id="addNewDropdown">
+                        <a class="lab-add-new-option" onclick="openAddNewPatientModal(); closeMobileSidebar(); closeAddNewDropdown();">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>Add Patient</span>
+                        </a>
+                        <a class="lab-add-new-option" onclick="openSubLoginModal(); closeMobileSidebar(); closeAddNewDropdown();">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            <span>Sub Login</span>
+                        </a>
+                    </div>
                 </li>
                 <li>
                     <a class="lab-sidebar-item" id="sideItemSearch" onclick="setSidebarActive('search'); focusPatientSearch(); closeMobileSidebar();">
@@ -84,6 +103,14 @@
                         <div class="lab-sidebar-item-left">
                             <i class="fa-solid fa-pen-to-square"></i>
                             <span>Enter Results</span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a class="lab-sidebar-item" id="sideItemHistory" onclick="setSidebarActive('history'); showScreen('historyScreen'); closeMobileSidebar();">
+                        <div class="lab-sidebar-item-left">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>History</span>
                         </div>
                     </a>
                 </li>
@@ -482,38 +509,54 @@
                             <input type="text" placeholder="Search test name..." id="testSearchInput" oninput="filterTestList()">
                         </div>
 
-                        <div class="lab-test-radio-list">
-                            <label class="lab-test-radio-label selected" onclick="chooseTest('CBC')">
-                                <input type="radio" name="selectedTestRadio" value="CBC" checked>
+                        <div class="lab-test-radio-list" id="testCheckboxList">
+                            <label class="lab-test-radio-label selected" id="lblTest_CBC" onclick="toggleTestCheckbox('CBC', event)">
+                                <input type="checkbox" id="chkTest_CBC" value="CBC" checked onchange="onTestCheckboxChange('CBC', event)">
                                 <span>Complete Blood Count (CBC)</span>
                             </label>
-                            <label class="lab-test-radio-label" onclick="chooseTest('RBS')">
-                                <input type="radio" name="selectedTestRadio" value="RBS">
+                            <label class="lab-test-radio-label selected" id="lblTest_RBS" onclick="toggleTestCheckbox('RBS', event)">
+                                <input type="checkbox" id="chkTest_RBS" value="RBS" checked onchange="onTestCheckboxChange('RBS', event)">
                                 <span>Random Blood Sugar (RBS)</span>
                             </label>
-                            <label class="lab-test-radio-label" onclick="chooseTest('LFT')">
-                                <input type="radio" name="selectedTestRadio" value="LFT">
+                            <label class="lab-test-radio-label selected" id="lblTest_LFT" onclick="toggleTestCheckbox('LFT', event)">
+                                <input type="checkbox" id="chkTest_LFT" value="LFT" checked onchange="onTestCheckboxChange('LFT', event)">
                                 <span>Liver Function Test (LFT)</span>
                             </label>
-                            <label class="lab-test-radio-label" onclick="chooseTest('KFT')">
-                                <input type="radio" name="selectedTestRadio" value="KFT">
+                            <label class="lab-test-radio-label" id="lblTest_KFT" onclick="toggleTestCheckbox('KFT', event)">
+                                <input type="checkbox" id="chkTest_KFT" value="KFT" onchange="onTestCheckboxChange('KFT', event)">
                                 <span>Kidney Function Test (KFT)</span>
                             </label>
-                            <label class="lab-test-radio-label" onclick="chooseTest('LIPID')">
-                                <input type="radio" name="selectedTestRadio" value="LIPID">
+                            <label class="lab-test-radio-label" id="lblTest_LIPID" onclick="toggleTestCheckbox('LIPID', event)">
+                                <input type="checkbox" id="chkTest_LIPID" value="LIPID" onchange="onTestCheckboxChange('LIPID', event)">
                                 <span>Lipid Profile (Cholesterol)</span>
                             </label>
-                            <label class="lab-test-radio-label" onclick="chooseTest('THYROID')">
-                                <input type="radio" name="selectedTestRadio" value="THYROID">
+                            <label class="lab-test-radio-label" id="lblTest_THYROID" onclick="toggleTestCheckbox('THYROID', event)">
+                                <input type="checkbox" id="chkTest_THYROID" value="THYROID" onchange="onTestCheckboxChange('THYROID', event)">
                                 <span>Thyroid Profile (T3, T4, TSH)</span>
                             </label>
-                            <label class="lab-test-radio-label" onclick="chooseTest('URINE')">
-                                <input type="radio" name="selectedTestRadio" value="URINE">
+                            <label class="lab-test-radio-label" id="lblTest_URINE" onclick="toggleTestCheckbox('URINE', event)">
+                                <input type="checkbox" id="chkTest_URINE" value="URINE" onchange="onTestCheckboxChange('URINE', event)">
                                 <span>Urine Routine &amp; Microscopic</span>
                             </label>
-                            <label class="lab-test-radio-label" onclick="chooseTest('HBA1C')">
-                                <input type="radio" name="selectedTestRadio" value="HBA1C">
+                            <label class="lab-test-radio-label" id="lblTest_HBA1C" onclick="toggleTestCheckbox('HBA1C', event)">
+                                <input type="checkbox" id="chkTest_HBA1C" value="HBA1C" onchange="onTestCheckboxChange('HBA1C', event)">
                                 <span>HbA1c (Glycated Hemoglobin)</span>
+                            </label>
+                            <label class="lab-test-radio-label" id="lblTest_VITD" onclick="toggleTestCheckbox('VITD', event)">
+                                <input type="checkbox" id="chkTest_VITD" value="VITD" onchange="onTestCheckboxChange('VITD', event)">
+                                <span>Vitamin D (25-OH)</span>
+                            </label>
+                            <label class="lab-test-radio-label" id="lblTest_BLOODGRP" onclick="toggleTestCheckbox('BLOODGRP', event)">
+                                <input type="checkbox" id="chkTest_BLOODGRP" value="BLOODGRP" onchange="onTestCheckboxChange('BLOODGRP', event)">
+                                <span>Blood Grouping &amp; Rh Typing</span>
+                            </label>
+                            <label class="lab-test-radio-label" id="lblTest_DENGUE" onclick="toggleTestCheckbox('DENGUE', event)">
+                                <input type="checkbox" id="chkTest_DENGUE" value="DENGUE" onchange="onTestCheckboxChange('DENGUE', event)">
+                                <span>Dengue NS1 Antigen Test</span>
+                            </label>
+                            <label class="lab-test-radio-label" id="lblTest_VITB12" onclick="toggleTestCheckbox('VITB12', event)">
+                                <input type="checkbox" id="chkTest_VITB12" value="VITB12" onchange="onTestCheckboxChange('VITB12', event)">
+                                <span>Serum Calcium &amp; Vitamin B12</span>
                             </label>
                         </div>
                     </div>
@@ -521,13 +564,13 @@
                     <!-- Right: Selected Test Summary -->
                     <div class="lab-selected-test-summary-card">
                         <div>
-                            <div class="lab-summary-tag">Selected Test</div>
-                            <div class="lab-summary-test-title" id="summaryTestTitle">Complete Blood Count (CBC)</div>
-                            <div class="lab-summary-desc" id="summaryTestDesc">Includes: Hb, RBC, WBC, Platelets, PCV, Indices etc.</div>
+                            <div class="lab-summary-tag">Selected Tests</div>
+                            <div class="lab-summary-test-title" id="summaryTestTitle">3 Tests Selected</div>
+                            <div class="lab-summary-desc" id="summaryTestDesc">Includes: CBC, RBS, LFT</div>
                         </div>
 
                         <div style="margin-top: 24px;">
-                            <button class="lab-btn-primary-action" style="width: 100%; justify-content: center;" onclick="showScreen('resultsScreen')">
+                            <button class="lab-btn-primary-action" id="btnProceedEnterResults" style="width: 100%; justify-content: center;" onclick="proceedToEnterResults()">
                                 <span>Proceed to Enter Results</span>
                                 <i class="fa-solid fa-arrow-right"></i>
                             </button>
@@ -565,6 +608,14 @@
                         <div class="lab-wizard-circle">4</div>
                         <span>Save &amp; Print</span>
                     </div>
+                </div>
+
+                <!-- Test Progress Indicator -->
+                <div class="lab-test-progress" id="testProgressIndicator" style="display: none;">
+                    <span class="lab-test-progress-label" id="progressTestLabel">Test <strong>1</strong> of <strong>3</strong></span>
+                    <div class="lab-test-progress-dots" id="progressTestDots">
+                    </div>
+                    <span class="lab-test-progress-name" id="progressTestName">Complete Blood Count (CBC)</span>
                 </div>
 
                 <!-- Patient & Test Info Ribbon -->
@@ -605,7 +656,7 @@
                         <i class="fa-solid fa-arrow-left"></i>
                         <span>Back</span>
                     </button>
-                    <button class="lab-btn-primary-action" onclick="saveAndContinue()">
+                    <button class="lab-btn-primary-action" id="btnSaveResults" onclick="saveAndContinue()">
                         <span>Save &amp; Continue</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
@@ -677,6 +728,51 @@
                     </div>
                 </div>
 
+            </div>
+
+            <!-- ==================== SCREEN 6: PATIENT TEST HISTORY ==================== -->
+            <div class="lab-card" id="historyScreen" style="display: none;">
+                <div class="lab-screen-header">
+                    <div>
+                        <h2 class="lab-screen-title">Patient Test &amp; Report History</h2>
+                        <p class="lab-screen-sub">Archive of verified test records and generated clinical diagnostic reports</p>
+                    </div>
+                    <div class="lab-search-filter-wrap">
+                        <div class="lab-queue-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="historySearchInput" placeholder="Search history by name, ID, or phone..." oninput="onHistorySearchInput(this.value)">
+                            <button class="lab-search-clear-btn" id="historySearchClearBtn" onclick="clearHistorySearch()" style="display: none;">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Table View for History -->
+                <div class="lab-table-container">
+                    <table class="lab-queue-table" id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Patient Name</th>
+                                <th>Patient ID</th>
+                                <th>Mobile</th>
+                                <th>Test(s) Conducted</th>
+                                <th>Verified Date</th>
+                                <th>Status</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Cards View for History -->
+                <div class="lab-mobile-queue-container" id="historyMobileCards">
+                    <!-- Populated dynamically by JS on mobile view -->
+                </div>
             </div>
 
         </main>
@@ -758,25 +854,9 @@
                 </div>
             </div>
 
-            <!-- Test Title -->
-            <div class="lab-print-test-title" id="r_testTitle">
-                COMPLETE BLOOD COUNT (CBC)
+            <div id="r_reportContainer">
+                <!-- Populated dynamically -->
             </div>
-
-            <!-- Results Table -->
-            <table class="lab-print-results-table">
-                <thead>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Result</th>
-                        <th>Unit</th>
-                        <th>Reference Range</th>
-                    </tr>
-                </thead>
-                <tbody id="r_tableBody">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
 
             <!-- Report Footer with Signature -->
             <div class="lab-print-footer">
@@ -862,6 +942,105 @@
                 <button class="lab-btn-primary-action" onclick="saveLabSettings()">
                     <i class="fa-solid fa-floppy-disk"></i>
                     <span>Save Settings</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SCREEN 7: ADD NEW PATIENT MODAL ==================== -->
+    <div class="lab-settings-modal-backdrop" id="addNewPatientModal" onclick="if(event.target===this) closeAddNewPatientModal()">
+        <div class="lab-settings-paper">
+            <div class="lab-settings-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="lab-settings-icon-wrap" style="background:#d1fae5; color:#10b981;">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Add New Patient</h3>
+                        <p style="font-size: 0.78rem; color: #64748b; margin: 0;">Register a new patient for testing</p>
+                    </div>
+                </div>
+                <button class="lab-modal-close-btn" onclick="closeAddNewPatientModal()" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="lab-settings-body">
+                <div class="lab-settings-grid">
+                    <div class="lab-settings-field">
+                        <label for="newPatName">Patient Name</label>
+                        <input type="text" id="newPatName" placeholder="e.g. Ramesh Kumar">
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="newPatAge">Age / Gender</label>
+                        <input type="text" id="newPatAge" placeholder="e.g. 45 Years / Male">
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="newPatMobile">Mobile Number</label>
+                        <input type="text" id="newPatMobile" placeholder="+91 ">
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="newPatTests">Tests to be done (comma-separated)</label>
+                        <input type="text" id="newPatTests" placeholder="e.g. CBC, RBS, LFT">
+                    </div>
+                </div>
+            </div>
+            <div class="lab-settings-footer">
+                <button class="lab-btn-secondary" onclick="closeAddNewPatientModal()">Cancel</button>
+                <button class="lab-btn-primary-action" onclick="submitNewPatient()">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add Patient</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SCREEN 8: SUB LOGIN (STAFF / OPERATOR) MODAL ==================== -->
+    <div class="lab-settings-modal-backdrop" id="subLoginModal" onclick="if(event.target===this) closeSubLoginModal()">
+        <div class="lab-settings-paper" style="max-width: 460px;">
+            <div class="lab-settings-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="lab-settings-icon-wrap" style="background:#eff6ff; color:#2563eb;">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Staff Sub-Login</h3>
+                        <p style="font-size: 0.78rem; color: #64748b; margin: 0;">Login as Technician, Phlebotomist, or Operator</p>
+                    </div>
+                </div>
+                <button class="lab-modal-close-btn" onclick="closeSubLoginModal()" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="lab-settings-body">
+                <div class="lab-settings-grid" style="grid-template-columns: 1fr;">
+                    <div class="lab-settings-field">
+                        <label for="subStaffName">Staff Member / Operator Name</label>
+                        <input type="text" id="subStaffName" placeholder="e.g. Ramesh Varma" value="Ramesh Varma">
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="subStaffRole">Role / Designation</label>
+                        <select id="subStaffRole" style="width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: #0f172a; background: #fff;">
+                            <option value="Senior Lab Technician" selected>Senior Lab Technician</option>
+                            <option value="Phlebotomist / Collector">Phlebotomist / Collector</option>
+                            <option value="Assistant Pathologist">Assistant Pathologist</option>
+                            <option value="Data Entry Operator">Data Entry Operator</option>
+                        </select>
+                    </div>
+                    <div class="lab-settings-field">
+                        <label for="subStaffPin">4-Digit Security PIN</label>
+                        <input type="password" id="subStaffPin" placeholder="••••" maxlength="6" value="1234">
+                    </div>
+                </div>
+                <div style="background: #f8fafc; border-radius: 8px; padding: 10px 12px; font-size: 0.76rem; color: #64748b; display: flex; align-items: center; gap: 8px; margin-top: 14px;">
+                    <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i>
+                    <span>Sub-login session links results entered to your operator ID.</span>
+                </div>
+            </div>
+            <div class="lab-settings-footer">
+                <button class="lab-btn-secondary" onclick="closeSubLoginModal()">Cancel</button>
+                <button class="lab-btn-primary-action" onclick="submitSubLogin()">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Login Operator</span>
                 </button>
             </div>
         </div>
@@ -994,6 +1173,39 @@
                     { key: 'hba1c_val', name: 'HbA1c (Glycated Hb)', defaultVal: '5.8', unit: '%', ref: '4.0 - 5.6 (Normal)' },
                     { key: 'eag', name: 'Estimated Avg Glucose (eAG)', defaultVal: '120', unit: 'mg/dL', ref: '90 - 130' }
                 ]
+            },
+            'VITD': {
+                name: 'Vitamin D (25-OH)',
+                desc: 'Includes: 25-Hydroxy Vitamin D level assessment.',
+                parameters: [
+                    { key: 'vitd_val', name: '25-OH Vitamin D', defaultVal: '32', unit: 'ng/mL', ref: '30 - 100 (Sufficient)' }
+                ]
+            },
+            'BLOODGRP': {
+                name: 'Blood Grouping & Rh Typing',
+                desc: 'Includes: ABO Blood Group and Rh Factor determination.',
+                parameters: [
+                    { key: 'abo', name: 'ABO Blood Group', defaultVal: 'B', unit: '', ref: 'A / B / AB / O' },
+                    { key: 'rh', name: 'Rh Factor (D)', defaultVal: 'Positive', unit: '', ref: 'Positive / Negative' }
+                ]
+            },
+            'DENGUE': {
+                name: 'Dengue NS1 Antigen Test',
+                desc: 'Includes: NS1 Antigen detection for early Dengue diagnosis.',
+                parameters: [
+                    { key: 'ns1', name: 'Dengue NS1 Antigen', defaultVal: 'Negative', unit: '', ref: 'Negative' },
+                    { key: 'igg', name: 'Dengue IgG Antibody', defaultVal: 'Negative', unit: '', ref: 'Negative' },
+                    { key: 'igm', name: 'Dengue IgM Antibody', defaultVal: 'Negative', unit: '', ref: 'Negative' }
+                ]
+            },
+            'VITB12': {
+                name: 'Serum Calcium & Vitamin B12',
+                desc: 'Includes: Serum Calcium, Ionized Calcium, and Vitamin B12 levels.',
+                parameters: [
+                    { key: 'ca_total', name: 'Serum Calcium (Total)', defaultVal: '9.4', unit: 'mg/dL', ref: '8.5 - 10.5' },
+                    { key: 'ca_ion', name: 'Ionized Calcium', defaultVal: '4.8', unit: 'mg/dL', ref: '4.5 - 5.3' },
+                    { key: 'b12', name: 'Vitamin B12', defaultVal: '380', unit: 'pg/mL', ref: '200 - 900' }
+                ]
             }
         };
 
@@ -1004,6 +1216,22 @@
         let selectedPatient = PATIENTS_QUEUE[0];
         let currentActiveTestCode = "CBC";
         let enteredParameterValues = {};
+        
+        let patientTestsList = [];
+        let selectedTestCodes = ['CBC', 'RBS', 'LFT'];
+        let currentTestIndex = 0;
+        let allTestResults = {};
+
+        // Historical Patient Records
+        let PATIENTS_HISTORY = [
+            { sNo: 1, name: "Ravi Teja", id: "NH0001230", mobile: "+91 98480 11223", age: "42 Years / Male", tests: "CBC", completedDate: "20 May 2026, 10:30 AM", status: "Verified" },
+            { sNo: 2, name: "Lakshmi Devi", id: "NH0001231", mobile: "+91 97001 99887", age: "36 Years / Female", tests: "Thyroid Profile", completedDate: "20 May 2026, 09:45 AM", status: "Verified" },
+            { sNo: 3, name: "Kiran Kumar", id: "NH0001232", mobile: "+91 99591 44556", age: "49 Years / Male", tests: "Lipid Profile, RBS", completedDate: "19 May 2026, 04:15 PM", status: "Verified" },
+            { sNo: 4, name: "S. Nageswara Rao", id: "NH0001233", mobile: "+91 94401 77665", age: "55 Years / Male", tests: "LFT, KFT", completedDate: "19 May 2026, 11:20 AM", status: "Verified" },
+            { sNo: 5, name: "M. Anuradha", id: "NH0001229", mobile: "+91 91234 88990", age: "31 Years / Female", tests: "HbA1c, Urine Routine", completedDate: "18 May 2026, 02:40 PM", status: "Verified" }
+        ];
+
+        let historySearchQuery = "";
 
         // Initialization
         document.addEventListener('DOMContentLoaded', () => {
@@ -1011,6 +1239,7 @@
             syncUserData();
             renderQueue();
             renderDashboardRecentPatients();
+            renderHistory();
             loadTestParameters(currentActiveTestCode);
 
             // Default: show dashboard
@@ -1023,6 +1252,11 @@
                 if (staffMenu && staffBtn && !staffBtn.contains(e.target) && !staffMenu.contains(e.target)) {
                     staffMenu.classList.remove('open');
                 }
+                const addDropdown = document.getElementById('addNewDropdown');
+                const addWrap = document.querySelector('.lab-sidebar-add-new-wrap');
+                if (addDropdown && addWrap && !addWrap.contains(e.target)) {
+                    closeAddNewDropdown();
+                }
             });
         });
 
@@ -1034,6 +1268,7 @@
                 'patients':  'sideItemQueue',
                 'tests':     'sideItemTests',
                 'results':   'sideItemResults',
+                'history':   'sideItemHistory',
                 'reports':   'sideItemReports',
                 'settings':  'sideItemSettings'
             };
@@ -1060,6 +1295,9 @@
             } else if (navKey === 'tests') {
                 setSidebarActive('tests');
                 showScreen('selectScreen');
+            } else if (navKey === 'history') {
+                setSidebarActive('history');
+                showScreen('historyScreen');
             } else if (navKey === 'reports') {
                 setSidebarActive('reports');
                 openReportModal();
@@ -1089,16 +1327,28 @@
             });
         }
 
-        // Filter and Render Queue Table & Mobile Cards
+        // Filter and Render Queue Table & Mobile Cards (Supports Name, Mobile Number, Patient ID, Tests)
         function getFilteredPatients() {
             if (!queueSearchQuery) return PATIENTS_QUEUE;
             const q = queueSearchQuery.toLowerCase().trim();
-            return PATIENTS_QUEUE.filter(p => 
-                p.name.toLowerCase().includes(q) ||
-                p.id.toLowerCase().includes(q) ||
-                p.tests.toLowerCase().includes(q) ||
-                p.status.toLowerCase().includes(q)
-            );
+            const cleanQ = q.replace(/[^0-9a-z]/gi, '');
+            return PATIENTS_QUEUE.filter(p => {
+                const pName = (p.name || '').toLowerCase();
+                const pId = (p.id || '').toLowerCase();
+                const pTests = (p.tests || '').toLowerCase();
+                const pStatus = (p.status || '').toLowerCase();
+                const pMobile = (p.mobile || '').toLowerCase();
+                const cleanMobile = pMobile.replace(/[^0-9]/g, '');
+                const cleanId = pId.replace(/[^0-9a-z]/gi, '');
+
+                return pName.includes(q) ||
+                    pId.includes(q) ||
+                    (cleanQ.length > 0 && cleanId.includes(cleanQ)) ||
+                    pMobile.includes(q) ||
+                    (cleanQ.length > 0 && cleanMobile.includes(cleanQ)) ||
+                    pTests.includes(q) ||
+                    pStatus.includes(q);
+            });
         }
 
         function renderQueue() {
@@ -1264,51 +1514,184 @@
             }
         }
 
-        // Verify Patient Action (Opens Screen 2)
+        function mapTestNameToCode(name) {
+            name = name.toLowerCase().trim();
+            if (name === "cbc" || name.includes("complete blood")) return "CBC";
+            if (name === "rbs" || name.includes("random blood sugar") || name.includes("blood sugar")) return "RBS";
+            if (name === "lft" || name.includes("liver function")) return "LFT";
+            if (name === "kft" || name.includes("kidney function")) return "KFT";
+            if (name.includes("thyroid") || name === "tsh" || name.includes("free t3") || name.includes("free t4") || name.includes("t3") || name.includes("t4")) return "THYROID";
+            if (name.includes("lipid") || name.includes("cholesterol")) return "LIPID";
+            if (name.includes("urine")) return "URINE";
+            if (name.includes("hba1c") || name.includes("glycated")) return "HBA1C";
+            if (name.includes("vitamin d") || name.includes("vit d")) return "VITD";
+            if (name.includes("creatinine") || name.includes("bun") || name.includes("serum creatinine")) return "KFT";
+            if (name.includes("blood group") || name.includes("rh")) return "BLOODGRP";
+            if (name.includes("dengue") || name.includes("ns1")) return "DENGUE";
+            if (name.includes("calcium") || name.includes("vit b12") || name.includes("b12") || name.includes("vitamin b")) return "VITB12";
+            return "CBC";
+        }
+
+        // Verify Patient Action (Opens Screen 2 & Pre-selects all prescribed tests)
         function verifyPatient(patientId) {
-            const p = PATIENTS_QUEUE.find(item => item.id === patientId);
-            if (!p) return;
-            selectedPatient = p;
+            try {
+                const p = PATIENTS_QUEUE.find(item => String(item.id).trim().toLowerCase() === String(patientId).trim().toLowerCase());
+                if (!p) {
+                    console.warn("Patient not found for ID:", patientId);
+                    return;
+                }
+                selectedPatient = p;
 
-            // Populate Step 1 & 2 fields
-            document.getElementById('selPatientName').textContent = p.name;
-            document.getElementById('selPatientId').textContent = p.id;
-            document.getElementById('selPatientAgeGender').textContent = p.age;
-            document.getElementById('selPatientMobile').textContent = p.mobile;
-            document.getElementById('selPatientVisitDate').textContent = "24 Sep 2026";
-            document.getElementById('selPatientTests').textContent = p.tests;
+                const setVal = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = text || '-';
+                };
 
-            // Populate Step 3 Ribbon
-            document.getElementById('ribbonPatientName').textContent = p.name;
-            document.getElementById('ribbonPatientId').textContent = p.id;
-            document.getElementById('ribbonPatientAgeGender').textContent = p.age;
+                // Populate Step 1 & 2 fields
+                setVal('selPatientName', p.name);
+                setVal('selPatientId', p.id);
+                setVal('selPatientAgeGender', p.age);
+                setVal('selPatientMobile', p.mobile);
+                const visitDate = p.received ? p.received.split(' ').slice(0, 3).join(' ') : "24 Sep 2026";
+                setVal('selPatientVisitDate', visitDate);
+                setVal('selPatientTests', p.tests);
 
-            // Populate Step 4 Confirmation
-            document.getElementById('confirmSuccessMsg').textContent = `The results have been saved for ${p.name} (${p.id}).`;
+                // Populate Step 3 Ribbon
+                setVal('ribbonPatientName', p.name);
+                setVal('ribbonPatientId', p.id);
+                setVal('ribbonPatientAgeGender', p.age);
 
-            // Populate Clinical Report
-            document.getElementById('r_patientName').textContent = p.name;
-            document.getElementById('r_patientId').textContent = p.id;
-            document.getElementById('r_patientAgeGender').textContent = p.age;
-            document.getElementById('r_sampleLabId').textContent = `SD-2026-${p.id.replace('NH', '')}`;
+                // Populate Step 4 Confirmation
+                setVal('confirmSuccessMsg', `The results have been saved for ${p.name} (${p.id}).`);
 
-            // Auto-detect test from patient's tests string
-            let detectedTest = "CBC";
-            if (p.tests.includes("Thyroid") || p.tests.includes("TSH")) detectedTest = "THYROID";
-            else if (p.tests.includes("Lipid")) detectedTest = "LIPID";
-            else if (p.tests.includes("Urine")) detectedTest = "URINE";
-            else if (p.tests.includes("HbA1c")) detectedTest = "HBA1C";
-            else if (p.tests.includes("KFT")) detectedTest = "KFT";
-            else if (p.tests.includes("LFT")) detectedTest = "LFT";
-            else if (p.tests.includes("RBS")) detectedTest = "RBS";
+                // Populate Clinical Report Header
+                setVal('r_patientName', p.name);
+                setVal('r_patientId', p.id);
+                setVal('r_patientAgeGender', p.age);
+                const cleanLabId = String(p.id).replace(/[^0-9]/g, '') || '1234';
+                setVal('r_sampleLabId', `SD-2026-${cleanLabId}`);
 
-            chooseTest(detectedTest);
-            showScreen('selectScreen');
+                // Parse tests and deduplicate test codes
+                const rawTests = (p.tests || 'CBC').split(',').map(t => t.trim()).filter(Boolean);
+                const rawCodes = rawTests.map(t => mapTestNameToCode(t));
+                const uniqueCodes = [...new Set(rawCodes)];
+                patientTestsList = uniqueCodes.length > 0 ? uniqueCodes : ['CBC'];
+                
+                // Pre-select ALL prescribed tests (e.g. CBC, RBS, LFT all 3 selected at a time)
+                selectedTestCodes = [...patientTestsList];
+                currentTestIndex = 0;
+                allTestResults = {};
+
+                // Filter test selection checkboxes to match patient's prescribed tests and check them
+                document.querySelectorAll('.lab-test-radio-label').forEach(lbl => {
+                    const chk = lbl.querySelector('input[type="checkbox"]');
+                    if (chk) {
+                        const code = chk.value;
+                        if (patientTestsList.includes(code)) {
+                            lbl.style.display = 'flex';
+                            chk.checked = true;
+                            lbl.classList.add('selected');
+                        } else {
+                            lbl.style.display = 'none';
+                            chk.checked = false;
+                            lbl.classList.remove('selected');
+                        }
+                    }
+                });
+
+                updateSelectedTestsSummary();
+                showScreen('selectScreen');
+            } catch (err) {
+                console.error("Error executing verifyPatient:", err);
+                showScreen('selectScreen');
+            }
+        }
+
+        // Multi-Test Selection Checkbox Handlers
+        function toggleTestCheckbox(testCode, event) {
+            if (event && event.target && event.target.tagName === 'INPUT') {
+                return;
+            }
+            const chk = document.getElementById(`chkTest_${testCode}`);
+            const lbl = document.getElementById(`lblTest_${testCode}`);
+            if (chk) {
+                chk.checked = !chk.checked;
+                if (chk.checked) {
+                    if (!selectedTestCodes.includes(testCode)) selectedTestCodes.push(testCode);
+                    if (lbl) lbl.classList.add('selected');
+                } else {
+                    selectedTestCodes = selectedTestCodes.filter(c => c !== testCode);
+                    if (lbl) lbl.classList.remove('selected');
+                }
+                updateSelectedTestsSummary();
+            }
+        }
+
+        function onTestCheckboxChange(testCode, event) {
+            const chk = document.getElementById(`chkTest_${testCode}`);
+            const lbl = document.getElementById(`lblTest_${testCode}`);
+            if (chk) {
+                if (chk.checked) {
+                    if (!selectedTestCodes.includes(testCode)) selectedTestCodes.push(testCode);
+                    if (lbl) lbl.classList.add('selected');
+                } else {
+                    selectedTestCodes = selectedTestCodes.filter(c => c !== testCode);
+                    if (lbl) lbl.classList.remove('selected');
+                }
+                updateSelectedTestsSummary();
+            }
+        }
+
+        function selectAllPrescribedTests() {
+            selectedTestCodes = [...patientTestsList];
+            patientTestsList.forEach(code => {
+                const chk = document.getElementById(`chkTest_${code}`);
+                const lbl = document.getElementById(`lblTest_${code}`);
+                if (chk) chk.checked = true;
+                if (lbl) lbl.classList.add('selected');
+            });
+            updateSelectedTestsSummary();
+        }
+
+        function updateSelectedTestsSummary() {
+            const titleEl = document.getElementById('summaryTestTitle');
+            const descEl = document.getElementById('summaryTestDesc');
+            const btnEl = document.getElementById('btnProceedEnterResults');
+
+            if (selectedTestCodes.length === 0) {
+                if (titleEl) titleEl.textContent = "No Tests Selected";
+                if (descEl) descEl.textContent = "Please select at least one test to proceed.";
+                if (btnEl) {
+                    btnEl.disabled = true;
+                    btnEl.style.opacity = '0.5';
+                    btnEl.style.cursor = 'not-allowed';
+                }
+                return;
+            }
+
+            if (btnEl) {
+                btnEl.disabled = false;
+                btnEl.style.opacity = '1';
+                btnEl.style.cursor = 'pointer';
+            }
+
+            if (selectedTestCodes.length === 1) {
+                const code = selectedTestCodes[0];
+                const info = TEST_CATALOG[code] || TEST_CATALOG['CBC'];
+                if (titleEl) titleEl.textContent = info.name;
+                if (descEl) descEl.textContent = info.desc;
+                if (btnEl) btnEl.innerHTML = `<span>Proceed to Enter Results (1 Test)</span> <i class="fa-solid fa-arrow-right"></i>`;
+            } else {
+                const names = selectedTestCodes.map(c => (TEST_CATALOG[c]?.name || c)).join(', ');
+                if (titleEl) titleEl.textContent = `${selectedTestCodes.length} Tests Selected`;
+                if (descEl) descEl.textContent = `Includes: ${names}`;
+                if (btnEl) btnEl.innerHTML = `<span>Proceed to Enter Results (${selectedTestCodes.length} Tests)</span> <i class="fa-solid fa-arrow-right"></i>`;
+            }
         }
 
         // Switch Screen helper
         function showScreen(screenId) {
-            const screens = ['dashboardScreen', 'queueScreen', 'selectScreen', 'resultsScreen', 'confirmScreen'];
+            const screens = ['dashboardScreen', 'queueScreen', 'selectScreen', 'resultsScreen', 'confirmScreen', 'historyScreen'];
             screens.forEach(s => {
                 const el = document.getElementById(s);
                 if (el) el.style.display = (s === screenId) ? 'block' : 'none';
@@ -1319,6 +1702,7 @@
             else if (screenId === 'queueScreen') setSidebarActive('patients');
             else if (screenId === 'selectScreen') setSidebarActive('tests');
             else if (screenId === 'resultsScreen') setSidebarActive('results');
+            else if (screenId === 'historyScreen') setSidebarActive('history');
 
             // Update mobile bottom nav active state
             document.querySelectorAll('.lab-mob-nav-item').forEach(btn => btn.classList.remove('active'));
@@ -1334,26 +1718,13 @@
             currentActiveTestCode = testCode;
             const testInfo = TEST_CATALOG[testCode] || TEST_CATALOG['CBC'];
 
-            // Update Radio selection state
-            document.querySelectorAll('.lab-test-radio-label').forEach(lbl => {
-                const radio = lbl.querySelector('input[type="radio"]');
-                if (radio && radio.value === testCode) {
-                    lbl.classList.add('selected');
-                    radio.checked = true;
-                } else {
-                    lbl.classList.remove('selected');
-                }
-            });
-
-            // Update Step 2 Summary card
-            document.getElementById('summaryTestTitle').textContent = testInfo.name;
-            document.getElementById('summaryTestDesc').textContent = testInfo.desc;
-
             // Update Step 3 Ribbon
-            document.getElementById('ribbonTestName').textContent = testInfo.name;
+            const ribEl = document.getElementById('ribbonTestName');
+            if (ribEl) ribEl.textContent = testInfo.name;
 
             // Update Clinical Report Header
-            document.getElementById('r_testTitle').textContent = testInfo.name.toUpperCase();
+            const repEl = document.getElementById('r_testTitle');
+            if (repEl) repEl.textContent = testInfo.name.toUpperCase();
 
             // Load test parameters into Step 3
             loadTestParameters(testCode);
@@ -1367,49 +1738,278 @@
             });
         }
 
+        function calculateFlag(valStr, refRange) {
+            if (!valStr || !refRange) return '';
+            const num = parseFloat(String(valStr).replace(/[^0-9.-]/g, ''));
+            if (isNaN(num)) return '';
+
+            // Handle '< 200' or '<= 150'
+            if (refRange.includes('<')) {
+                const match = refRange.match(/<\s*([0-9.]+)/);
+                if (match) {
+                    const maxVal = parseFloat(match[1]);
+                    if (num > maxVal) return 'H';
+                    return '';
+                }
+            }
+            // Handle '> 40' or '>= 30'
+            if (refRange.includes('>')) {
+                const match = refRange.match(/>\s*([0-9.]+)/);
+                if (match) {
+                    const minVal = parseFloat(match[1]);
+                    if (num < minVal) return 'L';
+                    return '';
+                }
+            }
+            // Handle '13.5 - 17.5' or '40 - 50' or '4.0 - 5.6'
+            const rangeMatch = refRange.match(/([0-9.]+)\s*-\s*([0-9.]+)/);
+            if (rangeMatch) {
+                const minVal = parseFloat(rangeMatch[1]);
+                const maxVal = parseFloat(rangeMatch[2]);
+                if (num < minVal) return 'L';
+                if (num > maxVal) return 'H';
+                return '';
+            }
+            return '';
+        }
+
+        function updateRowFlag(paramKey, refRange) {
+            const input = document.getElementById(`param_${paramKey}`);
+            const badge = document.getElementById(`flagBadge_${paramKey}`);
+            if (!input || !badge) return;
+            const flag = calculateFlag(input.value, refRange);
+            badge.textContent = flag || '-';
+            badge.className = `lab-flag-badge ${flag === 'L' ? 'flag-low' : flag === 'H' ? 'flag-high' : 'flag-normal'}`;
+        }
+
         // Dynamically load test parameter rows into Step 3 table
         function loadTestParameters(testCode) {
             const testInfo = TEST_CATALOG[testCode] || TEST_CATALOG['CBC'];
             const tbody = document.getElementById('resultsTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             testInfo.parameters.forEach(param => {
+                const initFlag = calculateFlag(param.defaultVal, param.ref);
+                const flagClass = initFlag === 'L' ? 'flag-low' : initFlag === 'H' ? 'flag-high' : 'flag-normal';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${param.name}</strong></td>
                     <td>
-                        <input type="text" class="lab-result-input" id="param_${param.key}" value="${param.defaultVal}">
+                        <input type="text" class="lab-result-input" id="param_${param.key}" value="${param.defaultVal}" oninput="updateRowFlag('${param.key}', '${param.ref}')">
                     </td>
-                    <td>${param.unit || '-'}</td>
+                    <td style="text-align: center;">
+                        <span id="flagBadge_${param.key}" class="lab-flag-badge ${flagClass}">${initFlag || '-'}</span>
+                    </td>
                     <td>${param.ref}</td>
+                    <td>${param.unit || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
+        function proceedToEnterResults() {
+            updateTestProgressUI();
+            showScreen('resultsScreen');
+        }
+
+        function toggleAddNewDropdown(e) {
+            if (e) e.stopPropagation();
+            const dd = document.getElementById('addNewDropdown');
+            const ch = document.getElementById('addNewChevron');
+            if (dd) dd.classList.toggle('open');
+            if (ch) ch.classList.toggle('open');
+        }
+
+        function closeAddNewDropdown() {
+            const dd = document.getElementById('addNewDropdown');
+            const ch = document.getElementById('addNewChevron');
+            if (dd) dd.classList.remove('open');
+            if (ch) ch.classList.remove('open');
+        }
+
+        function openSubLoginModal() {
+            const modal = document.getElementById('subLoginModal');
+            if (modal) modal.classList.add('open');
+        }
+
+        function closeSubLoginModal() {
+            const modal = document.getElementById('subLoginModal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        function submitSubLogin() {
+            const name = document.getElementById('subStaffName').value.trim();
+            const role = document.getElementById('subStaffRole').value.trim();
+            const pin = document.getElementById('subStaffPin').value.trim();
+            if (!name) {
+                alert('Please enter operator / staff name');
+                return;
+            }
+            if (!pin) {
+                alert('Please enter 4-digit PIN');
+                return;
+            }
+
+            // Update topbar display with sub-login operator info
+            const staffNameEl = document.getElementById('navStaffName');
+            if (staffNameEl) staffNameEl.textContent = name;
+
+            const roleEl = document.querySelector('.lab-profile-role');
+            if (roleEl) roleEl.textContent = role;
+
+            closeSubLoginModal();
+
+            // Display floating confirmation notification
+            showToastNotification(`Logged in as operator: ${name} (${role})`);
+        }
+
+        function showToastNotification(msg) {
+            let toast = document.getElementById('labToastNotice');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'labToastNotice';
+                toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:10px;font-size:0.86rem;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 10px 25px rgba(0,0,0,0.2);z-index:99999;transition:all 0.3s ease;transform:translateY(100px);opacity:0;';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i><span>${msg}</span>`;
+            setTimeout(() => {
+                toast.style.transform = 'translateY(0)';
+                toast.style.opacity = '1';
+            }, 50);
+            setTimeout(() => {
+                toast.style.transform = 'translateY(100px)';
+                toast.style.opacity = '0';
+            }, 3500);
+        }
+
+        function openAddNewPatientModal() {
+            const modal = document.getElementById('addNewPatientModal');
+            if (modal) modal.classList.add('open');
+        }
+
+        function closeAddNewPatientModal() {
+            const modal = document.getElementById('addNewPatientModal');
+            if (modal) modal.classList.remove('open');
+            // Clear inputs
+            document.getElementById('newPatName').value = '';
+            document.getElementById('newPatAge').value = '';
+            document.getElementById('newPatMobile').value = '';
+            document.getElementById('newPatTests').value = '';
+        }
+
+        function submitNewPatient() {
+            const name = document.getElementById('newPatName').value.trim();
+            const age = document.getElementById('newPatAge').value.trim();
+            const mobile = document.getElementById('newPatMobile').value.trim();
+            const tests = document.getElementById('newPatTests').value.trim();
+
+            if (!name || !tests) {
+                alert('Please enter patient name and tests.');
+                return;
+            }
+
+            const newId = "NH" + Math.floor(Math.random() * 90000 + 10000);
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            const newPat = {
+                sNo: PATIENTS_QUEUE.length + 1,
+                name: name,
+                id: newId,
+                tests: tests,
+                received: `${dateStr} ${timeStr}`,
+                status: "Pending",
+                age: age || "Unknown",
+                mobile: mobile || "N/A"
+            };
+
+            PATIENTS_QUEUE.unshift(newPat);
+            // Re-assign serial numbers
+            PATIENTS_QUEUE.forEach((p, idx) => p.sNo = idx + 1);
+
+            closeAddNewPatientModal();
+            renderQueue();
+            renderDashboardRecentPatients();
+            
+            setSidebarActive('patients');
+            showScreen('queueScreen');
+        }
+
+        function updateTestProgressUI() {
+            const container = document.getElementById('testProgressIndicator');
+            if (!container) return;
+            if (patientTestsList.length > 1) {
+                container.style.display = 'flex';
+                document.getElementById('progressTestLabel').innerHTML = `Test <strong>${currentTestIndex + 1}</strong> of <strong>${patientTestsList.length}</strong>`;
+                
+                const dots = document.getElementById('progressTestDots');
+                dots.innerHTML = '';
+                for (let i = 0; i < patientTestsList.length; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'lab-test-dot';
+                    if (i < currentTestIndex) dot.classList.add('completed');
+                    else if (i === currentTestIndex) dot.classList.add('active');
+                    dots.appendChild(dot);
+                }
+                
+                const testCode = patientTestsList[currentTestIndex];
+                const testInfo = TEST_CATALOG[testCode] || TEST_CATALOG['CBC'];
+                document.getElementById('progressTestName').textContent = testInfo.name;
+                
+                const saveBtn = document.getElementById('btnSaveResults');
+                if (saveBtn) {
+                    if (currentTestIndex < patientTestsList.length - 1) {
+                        saveBtn.innerHTML = `<span>Next Test</span> <i class="fa-solid fa-arrow-right"></i>`;
+                    } else {
+                        saveBtn.innerHTML = `<span>Save &amp; Continue</span> <i class="fa-solid fa-arrow-right"></i>`;
+                    }
+                }
+            } else {
+                container.style.display = 'none';
+                const saveBtn = document.getElementById('btnSaveResults');
+                if (saveBtn) {
+                    saveBtn.innerHTML = `<span>Save &amp; Continue</span> <i class="fa-solid fa-arrow-right"></i>`;
+                }
+            }
+        }
+
         // Save Results in Step 3
         function saveAndContinue() {
-            const testInfo = TEST_CATALOG[currentActiveTestCode] || TEST_CATALOG['CBC'];
-            enteredParameterValues = {};
-
-            // Read values and populate Clinical Report Table
-            const repTbody = document.getElementById('r_tableBody');
-            repTbody.innerHTML = '';
-
+            const testCode = patientTestsList[currentTestIndex];
+            const testInfo = TEST_CATALOG[testCode] || TEST_CATALOG['CBC'];
+            
+            const currentResults = [];
             testInfo.parameters.forEach(param => {
                 const input = document.getElementById(`param_${param.key}`);
                 const val = input ? input.value.trim() : param.defaultVal;
-                enteredParameterValues[param.key] = val;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${param.name}</td>
-                    <td><strong>${val}</strong></td>
-                    <td>${param.unit || '-'}</td>
-                    <td>${param.ref}</td>
-                `;
-                repTbody.appendChild(tr);
+                const flag = calculateFlag(val, param.ref);
+                currentResults.push({
+                    name: param.name,
+                    val: val,
+                    flag: flag,
+                    unit: param.unit,
+                    ref: param.ref
+                });
             });
+            allTestResults[testCode] = {
+                title: testInfo.name,
+                results: currentResults
+            };
+
+            if (currentTestIndex < patientTestsList.length - 1) {
+                currentTestIndex++;
+                const nextTestCode = patientTestsList[currentTestIndex];
+                chooseTest(nextTestCode);
+                updateTestProgressUI();
+                return;
+            }
+
+            // If last test, populate clinical report
+            generateClinicalReport();
 
             // Update Report Generation Time
             const now = new Date();
@@ -1417,17 +2017,214 @@
             const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
             document.getElementById('r_reportTimestamp').textContent = `: ${dateStr} ${timeStr}`;
 
-            // Move to Step 4 confirmation screen
             showScreen('confirmScreen');
         }
 
-        // Mark completed and return to Queue
+        function generateClinicalReport() {
+            const container = document.getElementById('r_reportContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            for (let tCode of Object.keys(allTestResults)) {
+                const testData = allTestResults[tCode];
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'lab-print-test-title';
+                titleDiv.textContent = testData.title.toUpperCase();
+                container.appendChild(titleDiv);
+                
+                const table = document.createElement('table');
+                table.className = 'lab-print-results-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>TEST DESCRIPTION</th>
+                            <th>RESULT</th>
+                            <th style="text-align: center; width: 70px;">FLAG</th>
+                            <th>BIO. REF. RANGE</th>
+                            <th>UNIT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${testData.results.map(r => `
+                            <tr>
+                                <td><strong>${r.name}</strong></td>
+                                <td style="font-weight: 700;">${r.val}</td>
+                                <td style="text-align: center; font-weight: 800; color: ${r.flag === 'L' ? '#2563eb' : r.flag === 'H' ? '#dc2626' : '#64748b'};">${r.flag || '-'}</td>
+                                <td>${r.ref}</td>
+                                <td>${r.unit || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                `;
+                container.appendChild(table);
+            }
+        }
+
+        // Mark completed, archive into History, and return to Queue
         function markCurrentCompletedAndReturn() {
             if (selectedPatient) {
                 selectedPatient.status = "Completed";
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                const histItem = {
+                    sNo: PATIENTS_HISTORY.length + 1,
+                    name: selectedPatient.name,
+                    id: selectedPatient.id,
+                    mobile: selectedPatient.mobile || 'N/A',
+                    age: selectedPatient.age || '45 Years / Male',
+                    tests: selectedPatient.tests,
+                    completedDate: `${dateStr}, ${timeStr}`,
+                    status: "Verified"
+                };
+                PATIENTS_HISTORY.unshift(histItem);
                 renderQueue();
+                renderHistory();
             }
             showScreen('queueScreen');
+        }
+
+        function getFilteredHistory() {
+            if (!historySearchQuery) return PATIENTS_HISTORY;
+            const q = historySearchQuery.toLowerCase().trim();
+            const cleanQ = q.replace(/[^0-9a-z]/gi, '');
+            return PATIENTS_HISTORY.filter(p => {
+                const pName = (p.name || '').toLowerCase();
+                const pId = (p.id || '').toLowerCase();
+                const pMobile = (p.mobile || '').toLowerCase();
+                const cleanMobile = pMobile.replace(/[^0-9]/g, '');
+                const cleanId = pId.replace(/[^0-9a-z]/gi, '');
+                const pTests = (p.tests || '').toLowerCase();
+
+                return pName.includes(q) ||
+                    pId.includes(q) ||
+                    (cleanQ.length > 0 && cleanId.includes(cleanQ)) ||
+                    pMobile.includes(q) ||
+                    (cleanQ.length > 0 && cleanMobile.includes(cleanQ)) ||
+                    pTests.includes(q);
+            });
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            const mobileContainer = document.getElementById('historyMobileCards');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (mobileContainer) mobileContainer.innerHTML = '';
+
+            const list = getFilteredHistory();
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 36px 16px; color: #64748b;">
+                            <i class="fa-solid fa-clock-rotate-left" style="font-size: 1.5rem; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+                            <strong>No historical records found.</strong>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            list.forEach((p, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${idx + 1}</strong></td>
+                    <td style="font-weight: 700; color: #0f172a;">${p.name}</td>
+                    <td style="color: #64748b; font-weight: 500;">${p.id}</td>
+                    <td style="color: #64748b;">${p.mobile}</td>
+                    <td style="color: #1e293b; font-weight: 600;">${p.tests}</td>
+                    <td style="color: #64748b; font-size: 0.82rem;">${p.completedDate}</td>
+                    <td><span class="lab-status-badge completed"><i class="fa-solid fa-check"></i> ${p.status || 'Verified'}</span></td>
+                    <td style="text-align: center;">
+                        <button class="lab-btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewHistoricalReport('${p.id}')">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <span>View Report</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                if (mobileContainer) {
+                    const card = document.createElement('div');
+                    card.className = 'lab-mobile-patient-card';
+                    card.innerHTML = `
+                        <div class="lab-mp-top">
+                            <div class="lab-mp-name-wrap">
+                                <span class="lab-mp-num">#${idx + 1}</span>
+                                <span class="lab-mp-name">${p.name}</span>
+                            </div>
+                            <span class="lab-status-badge completed"><i class="fa-solid fa-check"></i> ${p.status || 'Verified'}</span>
+                        </div>
+                        <div class="lab-mp-info-row">
+                            <span><i class="fa-solid fa-id-badge"></i> ${p.id}</span>
+                            <span><i class="fa-solid fa-phone"></i> ${p.mobile}</span>
+                        </div>
+                        <div class="lab-mp-tests">
+                            <i class="fa-solid fa-flask-vial"></i>
+                            <span>${p.tests}</span>
+                        </div>
+                        <div class="lab-mp-time">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>Verified: ${p.completedDate}</span>
+                        </div>
+                        <button class="lab-mp-verify-btn" style="background:#4361EE;" onclick="viewHistoricalReport('${p.id}')">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <span>View Clinical Report</span>
+                        </button>
+                    `;
+                    mobileContainer.appendChild(card);
+                }
+            });
+        }
+
+        function onHistorySearchInput(val) {
+            historySearchQuery = val;
+            const btn = document.getElementById('historySearchClearBtn');
+            if (btn) btn.style.display = val ? 'flex' : 'none';
+            renderHistory();
+        }
+
+        function clearHistorySearch() {
+            const input = document.getElementById('historySearchInput');
+            if (input) {
+                input.value = '';
+                onHistorySearchInput('');
+                input.focus();
+            }
+        }
+
+        function viewHistoricalReport(patientId) {
+            const p = PATIENTS_HISTORY.find(item => item.id === patientId) || PATIENTS_QUEUE.find(item => item.id === patientId);
+            if (!p) return;
+            const setVal = (id, text) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = text || '-';
+            };
+            setVal('r_patientName', p.name);
+            setVal('r_patientId', p.id);
+            setVal('r_patientAgeGender', p.age || '45 Years / Male');
+            setVal('r_sampleLabId', `SD-2026-${String(p.id).replace(/[^0-9]/g, '') || '1234'}`);
+            setVal('r_reportTimestamp', `: ${p.completedDate || '24 Sep 2026 12:30 PM'}`);
+
+            const tCodes = (p.tests || 'CBC').split(',').map(t => mapTestNameToCode(t));
+            allTestResults = {};
+            tCodes.forEach(code => {
+                const info = TEST_CATALOG[code] || TEST_CATALOG['CBC'];
+                allTestResults[code] = {
+                    title: info.name,
+                    results: info.parameters.map(param => ({
+                        name: param.name,
+                        val: param.defaultVal,
+                        flag: calculateFlag(param.defaultVal, param.ref),
+                        unit: param.unit,
+                        ref: param.ref
+                    }))
+                };
+            });
+            generateClinicalReport();
+            openReportModal();
         }
 
         // Report Modal Controls

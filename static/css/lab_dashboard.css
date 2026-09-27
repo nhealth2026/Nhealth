@@ -1840,25 +1840,40 @@ body.lab-portal-body {
    PRINT MEDIA STYLES
    ===================================================================== */
 @media print {
-    body * { visibility: hidden; }
+    @page {
+        size: A4 portrait;
+        margin: 15mm 12mm;
+    }
+    /* Hide everything except the report */
+    body.lab-portal-body * {
+        visibility: hidden;
+    }
     .lab-report-modal-backdrop,
-    .lab-report-paper,
-    .lab-report-paper * { visibility: visible; }
+    .lab-report-modal-backdrop * {
+        visibility: visible;
+    }
     .lab-report-modal-backdrop {
-        position: absolute;
-        left: 0;
-        top: 0;
-        padding: 0;
-        background: transparent;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: white;
+        z-index: 99999;
     }
     .lab-report-paper {
-        box-shadow: none;
-        padding: 20px;
+        position: absolute;
+        top: 0; left: 0;
         width: 100%;
         max-width: 100%;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
     }
     .lab-modal-close-btn,
-    .lab-print-modal-actions { display: none !important; }
+    .lab-print-modal-actions {
+        display: none !important;
+    }
 }
 
 /* =====================================================================
@@ -2139,3 +2154,169 @@ body.lab-portal-body {
     .lab-stat-cards-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
     .lab-stat-number { font-size: 1.5rem; }
 }
+
+/* Test Progress Indicator */
+.lab-test-progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #EEF2FF, #F0FDFA);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e7ff;
+}
+.lab-test-progress-label {
+    font-size: 0.85rem;
+    color: #4361EE;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.lab-test-progress-dots {
+    display: flex;
+    gap: 6px;
+}
+.lab-test-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    transition: all 0.3s;
+}
+.lab-test-dot.active {
+    background: #4361EE;
+    transform: scale(1.2);
+}
+.lab-test-dot.completed {
+    background: #10b981;
+}
+.lab-test-progress-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* Add New Sidebar Item */
+.lab-sidebar-add-new-wrap {
+    position: relative;
+    margin-bottom: 8px;
+}
+.lab-sidebar-add-new {
+    background: rgba(16, 185, 129, 0.06);
+    color: #10b981 !important;
+    border: 1px dashed #10b981 !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+.lab-sidebar-add-new:hover {
+    background: rgba(16, 185, 129, 0.14) !important;
+    border-color: #059669 !important;
+}
+.lab-add-new-chevron {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    color: #10b981;
+}
+.lab-add-new-chevron.open {
+    transform: rotate(180deg);
+}
+.lab-add-new-dropdown {
+    display: none;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    margin-top: 6px;
+    overflow: hidden;
+    z-index: 950;
+}
+.lab-add-new-dropdown.open {
+    display: flex;
+    flex-direction: column;
+}
+.lab-add-new-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.lab-add-new-option:hover {
+    background: #f8fafc;
+    color: #4361EE;
+}
+.lab-add-new-option i {
+    font-size: 0.9rem;
+    color: #64748b;
+    width: 16px;
+    text-align: center;
+}
+.lab-add-new-option:hover i {
+    color: #4361EE;
+}
+.lab-add-new-option:first-child i {
+    color: #10b981;
+}
+
+/* Clinical FLAG Badges */
+.lab-flag-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 24px;
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+.lab-flag-badge.flag-low {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+.lab-flag-badge.flag-high {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+.lab-flag-badge.flag-normal {
+    background: transparent;
+    color: #94a3b8;
+}
+
+/* Clinical Report Table Styling matching Image 2 */
+.lab-print-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+}
+.lab-print-results-table th {
+    background: #f8fafc;
+    color: #0f172a;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.76rem;
+    letter-spacing: 0.5px;
+    padding: 10px 12px;
+    border-top: 1.5px solid #0f172a;
+    border-bottom: 1.5px solid #0f172a;
+    text-align: left;
+}
+.lab-print-results-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+}
+
+
