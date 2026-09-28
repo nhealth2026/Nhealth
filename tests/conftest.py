@@ -1,0 +1,10 @@
+"""
+Pytest configuration for Nhealth tests.
+Ensures project root is on sys.path.
+"""
+
+import sys
+import os
+
+# Add project root directory to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
