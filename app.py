@@ -15,4 +15,4 @@ if __name__ == '__main__':
     print("   Nhealth - Healthcare at Home Server Started   ")
     print(f"   Serving on: http://0.0.0.0:{port}             ")
     print("==================================================")
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)
