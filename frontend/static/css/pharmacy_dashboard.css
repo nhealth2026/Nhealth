@@ -1966,4 +1966,116 @@ body.force-mobile-mode .pharma-toolbar-search {
     max-width: 100% !important;
 }
 
+/* ==================== A4 PRINT INVOICE & WALK-IN MODAL ==================== */
+.pharma-modal-card-lg {
+    max-width: 820px !important;
+}
+
+.walkin-med-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    margin-top: 8px;
+}
+.walkin-med-table th {
+    background: #f1f5f9;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1px solid #cbd5e1;
+}
+.walkin-med-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.walkin-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1.5px solid #cbd5e1;
+    font-size: 0.84rem;
+    outline: none;
+    font-family: inherit;
+    background: #ffffff;
+}
+.walkin-input:focus {
+    border-color: #0080ff;
+}
+.btn-remove-row {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+.btn-remove-row:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* Printable A4 Paper Invoice Styles */
+.pharma-invoice-paper {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    color: #0f172a;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 12mm 15mm;
+    }
+    body.pharma-body * {
+        visibility: hidden !important;
+    }
+    #invoiceModal,
+    #invoiceModal * {
+        visibility: visible !important;
+    }
+    #invoiceModal {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: 999999 !important;
+        display: block !important;
+    }
+    #invoiceModal .pharma-modal-card {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    #invoiceModal .pharma-modal-header,
+    #invoiceModal .pharma-modal-footer,
+    #invoiceModal .pharma-modal-close {
+        display: none !important;
+    }
+    #invoiceModal .pharma-invoice-paper,
+    #invoicePrintArea {
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+
 

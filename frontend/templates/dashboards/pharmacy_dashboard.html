@@ -62,9 +62,9 @@
                 <span class="pharma-nav-badge" id="sideOrdersBadge">3</span>
             </button>
             <button class="pharma-nav-link" data-view="prescriptions" onclick="switchPharmaView('prescriptions')">
-                <i class="fa-regular fa-clipboard-check"></i>
-                <span>Prescription Verification</span>
-                <span class="pharma-nav-badge" id="sideRxBadge">2</span>
+                <i class="fa-solid fa-file-prescription"></i>
+                <span>Doctor Prescription</span>
+                <span class="pharma-nav-badge" id="sideRxBadge">3</span>
             </button>
             <button class="pharma-nav-link" data-view="inventory" onclick="switchPharmaView('inventory')">
                 <i class="fa-solid fa-boxes-stacked"></i>
@@ -90,6 +90,10 @@
                 <i class="fa-regular fa-bell"></i>
                 <span>Notifications</span>
                 <span class="pharma-nav-badge">3</span>
+            </button>
+            <button class="pharma-nav-link" data-view="history" onclick="switchPharmaView('history')">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>History</span>
             </button>
 
             <div class="pharma-sidebar-divider"></div>
@@ -366,17 +370,22 @@
                             </div>
                         </div>
 
-                        <!-- Prescription Verification Card -->
+                        <!-- Doctor Prescription Card -->
                         <div class="pharma-card" id="prescriptionSection">
                             <div class="pharma-card-header">
                                 <div class="pharma-card-title-wrap">
                                     <div class="pharma-card-icon-circle">
-                                        <i class="fa-regular fa-clipboard-check"></i>
+                                        <i class="fa-solid fa-file-prescription" style="color: #0080ff;"></i>
                                     </div>
-                                    <h2 class="pharma-card-title">Prescription Verification</h2>
-                                    <span class="pharma-card-badge" id="rxBadge">2</span>
+                                    <h2 class="pharma-card-title">Doctor Prescription</h2>
+                                    <span class="pharma-card-badge" id="rxBadge">3</span>
                                 </div>
-                                <a href="javascript:void(0)" onclick="switchPharmaView('prescriptions')" class="pharma-link-view-all">View All Prescriptions &rarr;</a>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <button class="btn-pharma-primary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;" onclick="openWalkinOrderModal()">
+                                        <i class="fa-solid fa-plus"></i> Walk-in Order
+                                    </button>
+                                    <a href="javascript:void(0)" onclick="switchPharmaView('prescriptions')" class="pharma-link-view-all">View All &rarr;</a>
+                                </div>
                             </div>
 
                             <div class="pharma-table-responsive">
@@ -384,7 +393,7 @@
                                     <thead>
                                         <tr>
                                             <th>Patient</th>
-                                            <th>Doctor</th>
+                                            <th>Reference Doctor</th>
                                             <th>Prescription</th>
                                             <th>Date</th>
                                             <th style="text-align: right;">Action</th>
@@ -392,31 +401,63 @@
                                     </thead>
                                     <tbody>
                                         <tr id="rxDashRow1">
-                                            <td class="patient-name-bold">Ravi Teja</td>
-                                            <td>Dr. S. Kumar</td>
+                                            <td class="patient-name-bold">
+                                                <div>Ravi Teja</div>
+                                                <span style="font-size: 0.72rem; color: #64748b;">Narasaraopeta</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight: 700; color: #1e293b;">Dr. S. Kumar</div>
+                                                <span style="font-size: 0.7rem; color: #64748b;">General Physician</span>
+                                            </td>
                                             <td>
                                                 <div class="rx-thumb-wrap" onclick="openRxModal('Ravi Teja', 'Dr. S. Kumar', '12 Sep 2026', 'Tab Dolo 650mg TDS x 3 days\nTab Azithromycin 500mg OD x 3 days\nSyr Ascoril D 10ml TDS')">
                                                     <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
                                                 </div>
                                             </td>
                                             <td>12 Sep 2026</td>
-                                            <td style="text-align: right;">
-                                                <button class="btn-rx-approve" onclick="approvePrescription('rxDashRow1', 'Ravi Teja')">Approve</button>
-                                                <button class="btn-rx-reject" onclick="rejectPrescription('rxDashRow1', 'Ravi Teja')">Reject</button>
+                                            <td style="text-align: right; white-space: nowrap;">
+                                                <button class="btn-pharma-primary" style="height: 30px; padding: 0 10px; font-size: 0.75rem;" onclick="connectRxToOrder('rx1')"><i class="fa-solid fa-file-invoice"></i> Connect &amp; Dispense</button>
+                                                <button class="btn-table-view" style="height: 30px; padding: 0 10px; font-size: 0.75rem;" onclick="openRxModal('Ravi Teja', 'Dr. S. Kumar', '12 Sep 2026', 'Tab Dolo 650mg TDS x 3 days\nTab Azithromycin 500mg OD x 3 days\nSyr Ascoril D 10ml TDS')">View</button>
                                             </td>
                                         </tr>
                                         <tr id="rxDashRow2">
-                                            <td class="patient-name-bold">Lakshmi Devi</td>
-                                            <td>Dr. P. Reddy</td>
+                                            <td class="patient-name-bold">
+                                                <div>Lakshmi Devi</div>
+                                                <span style="font-size: 0.72rem; color: #64748b;">Narasaraopeta</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight: 700; color: #1e293b;">Dr. P. Reddy</div>
+                                                <span style="font-size: 0.7rem; color: #64748b;">Endocrinologist</span>
+                                            </td>
                                             <td>
                                                 <div class="rx-thumb-wrap" onclick="openRxModal('Lakshmi Devi', 'Dr. P. Reddy', '12 Sep 2026', 'Tab Glycomet GP 1mg OD\nTab Telma 40mg OD\nTab Shelcal 500mg OD')">
                                                     <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
                                                 </div>
                                             </td>
                                             <td>12 Sep 2026</td>
-                                            <td style="text-align: right;">
-                                                <button class="btn-rx-approve" onclick="approvePrescription('rxDashRow2', 'Lakshmi Devi')">Approve</button>
-                                                <button class="btn-rx-reject" onclick="rejectPrescription('rxDashRow2', 'Lakshmi Devi')">Reject</button>
+                                            <td style="text-align: right; white-space: nowrap;">
+                                                <button class="btn-pharma-primary" style="height: 30px; padding: 0 10px; font-size: 0.75rem;" onclick="connectRxToOrder('rx2')"><i class="fa-solid fa-file-invoice"></i> Connect &amp; Dispense</button>
+                                                <button class="btn-table-view" style="height: 30px; padding: 0 10px; font-size: 0.75rem;" onclick="openRxModal('Lakshmi Devi', 'Dr. P. Reddy', '12 Sep 2026', 'Tab Glycomet GP 1mg OD\nTab Telma 40mg OD\nTab Shelcal 500mg OD')">View</button>
+                                            </td>
+                                        </tr>
+                                        <tr id="rxDashRow3">
+                                            <td class="patient-name-bold">
+                                                <div>Rahul Sharma</div>
+                                                <span style="font-size: 0.72rem; color: #64748b;">Guntur Dist</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight: 700; color: #1e293b;">Dr. Priya Sharma</div>
+                                                <span style="font-size: 0.7rem; color: #64748b;">MBBS, MD</span>
+                                            </td>
+                                            <td>
+                                                <div class="rx-thumb-wrap" onclick="openRxModal('Rahul Sharma', 'Dr. Priya Sharma', '12 Sep 2026', 'Tab Augmentin 625 Duo BD x 5 days\nTab Montair LC HS x 7 days\nCap Pan 40mg OD AC')">
+                                                    <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
+                                                </div>
+                                            </td>
+                                            <td>12 Sep 2026</td>
+                                            <td style="text-align: right; white-space: nowrap;">
+                                                <button class="btn-pharma-primary" style="height: 30px; padding: 0 10px; font-size: 0.75rem;" onclick="connectRxToOrder('rx3')"><i class="fa-solid fa-file-invoice"></i> Connect &amp; Dispense</button>
+                                                <button class="btn-table-view" style="height: 30px; padding: 0 10px; font-size: 0.75rem;" onclick="openRxModal('Rahul Sharma', 'Dr. Priya Sharma', '12 Sep 2026', 'Tab Augmentin 625 Duo BD x 5 days\nTab Montair LC HS x 7 days\nCap Pan 40mg OD AC')">View</button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -712,25 +753,25 @@
                         </div>
 
                         <div class="quick-actions-list">
-                            <button class="btn-quick-action primary" onclick="openAddMedicineModal()">
+                            <button class="btn-quick-action primary" onclick="openWalkinOrderModal()">
                                 <i class="fa-solid fa-plus"></i>
+                                <span>Walk-in Order</span>
+                            </button>
+                            <button class="btn-quick-action" onclick="openAddMedicineModal()">
+                                <i class="fa-solid fa-capsules"></i>
                                 <span>Add Medicine</span>
+                            </button>
+                            <button class="btn-quick-action" onclick="switchPharmaView('prescriptions')">
+                                <i class="fa-solid fa-file-prescription"></i>
+                                <span>Doctor Prescription</span>
                             </button>
                             <button class="btn-quick-action" onclick="switchPharmaView('orders')">
                                 <i class="fa-solid fa-boxes-packing"></i>
                                 <span>Process Orders</span>
                             </button>
-                            <button class="btn-quick-action" onclick="switchPharmaView('prescriptions')">
-                                <i class="fa-regular fa-file-lines"></i>
-                                <span>Verify Prescriptions</span>
-                            </button>
                             <button class="btn-quick-action" onclick="switchPharmaView('delivery')">
                                 <i class="fa-solid fa-motorcycle"></i>
                                 <span>Assign Delivery</span>
-                            </button>
-                            <button class="btn-quick-action" onclick="openGenerateReportModal()">
-                                <i class="fa-solid fa-chart-pie"></i>
-                                <span>Generate Report</span>
                             </button>
                         </div>
                     </div>
@@ -767,14 +808,6 @@
                             Medicine Orders Management
                         </h1>
                         <p>Track, verify, pack, and dispatch doorstep patient medicine orders in real-time.</p>
-                    </div>
-                    <div class="pharma-view-actions">
-                        <button class="btn-pharma-outline" onclick="exportOrdersCSV()">
-                            <i class="fa-solid fa-file-csv"></i> Export CSV
-                        </button>
-                        <button class="btn-pharma-primary" onclick="openNewManualOrderModal()">
-                            <i class="fa-solid fa-plus"></i> New Walk-In Order
-                        </button>
                     </div>
                 </div>
 
@@ -1012,21 +1045,21 @@
             </section>
 
             <!-- ============================================================== -->
-            <!-- 3. PRESCRIPTION VERIFICATION VIEW                              -->
+            <!-- 3. DOCTOR PRESCRIPTIONS VIEW                                  -->
             <!-- ============================================================== -->
             <section id="view-prescriptions" class="pharma-view-section">
                 
                 <div class="pharma-view-header">
                     <div class="pharma-view-title-group">
                         <h1>
-                            <i class="fa-regular fa-clipboard-check" style="color: #0080ff;"></i>
-                            Prescription Verification Queue
+                            <i class="fa-solid fa-file-prescription" style="color: #0080ff;"></i>
+                            Doctor Prescription
                         </h1>
-                        <p>Verify doctor signatures, prescription validity, and drug availability before dispensing.</p>
+                        <p>Review digital prescriptions received directly from consulting doctors, connect orders, and dispense medicines.</p>
                     </div>
                     <div class="pharma-view-actions">
-                        <button class="btn-pharma-outline" onclick="showPharmaToast('Prescription audit report generated', 'info')">
-                            <i class="fa-solid fa-file-shield"></i> Verification Guidelines
+                        <button class="btn-pharma-primary" onclick="openWalkinOrderModal()">
+                            <i class="fa-solid fa-plus"></i> New Walk-in Order
                         </button>
                     </div>
                 </div>
@@ -1035,23 +1068,23 @@
                 <div class="pharma-filter-tabs">
                     <button class="pharma-filter-tab active" onclick="filterRxByTab(this, 'all')">
                         <i class="fa-solid fa-clipboard-list"></i>
-                        <span>All Prescriptions</span>
+                        <span>All Doctor Prescriptions</span>
                         <span class="pharma-tab-count">128</span>
                     </button>
                     <button class="pharma-filter-tab" onclick="filterRxByTab(this, 'pending')">
                         <i class="fa-regular fa-clock"></i>
-                        <span>Pending Review</span>
-                        <span class="pharma-tab-count" style="background: #fef3c7; color: #b45309;">4</span>
+                        <span>Pending Connect</span>
+                        <span class="pharma-tab-count" style="background: #fef3c7; color: #b45309;">3</span>
                     </button>
                     <button class="pharma-filter-tab" onclick="filterRxByTab(this, 'approved')">
                         <i class="fa-solid fa-circle-check"></i>
-                        <span>Approved</span>
-                        <span class="pharma-tab-count" style="background: #dcfce7; color: #15803d;">120</span>
+                        <span>Connected &amp; Dispensed</span>
+                        <span class="pharma-tab-count" style="background: #dcfce7; color: #15803d;">124</span>
                     </button>
                     <button class="pharma-filter-tab" onclick="filterRxByTab(this, 'rejected')">
                         <i class="fa-solid fa-circle-xmark"></i>
                         <span>Rejected</span>
-                        <span class="pharma-tab-count" style="background: #fee2e2; color: #b91c1c;">4</span>
+                        <span class="pharma-tab-count" style="background: #fee2e2; color: #b91c1c;">1</span>
                     </button>
                 </div>
 
@@ -1061,11 +1094,11 @@
                         <table class="pharma-table" id="fullRxTable">
                             <thead>
                                 <tr>
-                                    <th>Patient Name</th>
+                                    <th>Patient Details &amp; Address</th>
                                     <th>Consulting Doctor</th>
                                     <th>Prescription Slip</th>
-                                    <th>Clinical Medicine Extract</th>
-                                    <th>Upload Date</th>
+                                    <th>Prescribed Medicines (Unit &amp; Qty)</th>
+                                    <th>Prescription Date</th>
                                     <th>Status</th>
                                     <th style="text-align: right;">Action</th>
                                 </tr>
@@ -1074,7 +1107,8 @@
                                 <tr id="fullRxRow1" data-status="pending">
                                     <td>
                                         <div class="patient-name-bold">Ravi Teja</div>
-                                        <span style="font-size: 0.74rem; color: #64748b;">Age 34 &bull; Male &bull; Narasaraopeta</span>
+                                        <span style="font-size: 0.74rem; color: #64748b;">Age 34 &bull; Male &bull; +91 98765 43210</span>
+                                        <div style="font-size: 0.72rem; color: #0284c7; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> Flat 204, Sri Rama Towers, Prakash Nagar, Narasaraopet - 522601</div>
                                     </td>
                                     <td>
                                         <div style="font-weight: 700; color: #1e293b;">Dr. S. Kumar</div>
@@ -1087,22 +1121,24 @@
                                         </div>
                                     </td>
                                     <td style="font-size: 0.78rem; color: #334155; line-height: 1.5;">
-                                        &bull; Tab Dolo 650mg TDS<br>
-                                        &bull; Tab Azithromycin 500mg OD<br>
-                                        &bull; Syr Ascoril D 10ml TDS
+                                        &bull; <strong>Dolo 650mg</strong> (Strip of 15) &mdash; 2 Strips (TDS)<br>
+                                        &bull; <strong>Azithromycin 500mg</strong> (Strip of 3) &mdash; 1 Strip (OD)<br>
+                                        &bull; <strong>Ascoril D Syrup</strong> (100ml Bottle) &mdash; 1 Bottle (TDS)
                                     </td>
                                     <td>12 Sep 2026, 11:20 AM</td>
-                                    <td><span class="pharma-status-tag tag-pending rx-status-tag">Pending Verification</span></td>
+                                    <td><span class="pharma-status-tag tag-pending rx-status-tag">Pending Connect</span></td>
                                     <td style="text-align: right; white-space: nowrap;">
-                                        <button class="btn-rx-approve" onclick="approvePrescription('fullRxRow1', 'Ravi Teja')">Approve &amp; Pack</button>
-                                        <button class="btn-rx-reject" onclick="rejectPrescription('fullRxRow1', 'Ravi Teja')">Reject</button>
+                                        <button class="btn-pharma-primary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;" onclick="connectRxToOrder('rx1')"><i class="fa-solid fa-link"></i> Connect &amp; Dispense</button>
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx1')"><i class="fa-solid fa-file-invoice"></i> PDF Invoice</button>
+                                        <button class="btn-table-view" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="openRxModal('Ravi Teja', 'Dr. S. Kumar', '12 Sep 2026', 'Tab Dolo 650mg TDS x 3 days\nTab Azithromycin 500mg OD x 3 days\nSyr Ascoril D 10ml TDS\nAdvice: Steam inhalation BD')">View Rx</button>
                                     </td>
                                 </tr>
 
                                 <tr id="fullRxRow2" data-status="pending">
                                     <td>
                                         <div class="patient-name-bold">Lakshmi Devi</div>
-                                        <span style="font-size: 0.74rem; color: #64748b;">Age 58 &bull; Female &bull; Narasaraopeta</span>
+                                        <span style="font-size: 0.74rem; color: #64748b;">Age 58 &bull; Female &bull; +91 98480 12345</span>
+                                        <div style="font-size: 0.72rem; color: #0284c7; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> D.No: 12-4-56, Railway Feeder Road, Narasaraopet - 522601</div>
                                     </td>
                                     <td>
                                         <div style="font-weight: 700; color: #1e293b;">Dr. P. Reddy</div>
@@ -1115,39 +1151,74 @@
                                         </div>
                                     </td>
                                     <td style="font-size: 0.78rem; color: #334155; line-height: 1.5;">
-                                        &bull; Tab Glycomet GP 1mg OD<br>
-                                        &bull; Tab Telma 40mg OD<br>
-                                        &bull; Tab Shelcal 500mg OD
+                                        &bull; <strong>Glycomet GP 1mg</strong> (Strip of 15) &mdash; 2 Strips (OD)<br>
+                                        &bull; <strong>Telma 40mg</strong> (Strip of 15) &mdash; 2 Strips (OD)<br>
+                                        &bull; <strong>Shelcal 500mg</strong> (Strip of 15) &mdash; 2 Strips (OD)
                                     </td>
                                     <td>12 Sep 2026, 10:45 AM</td>
-                                    <td><span class="pharma-status-tag tag-pending rx-status-tag">Pending Verification</span></td>
+                                    <td><span class="pharma-status-tag tag-pending rx-status-tag">Pending Connect</span></td>
                                     <td style="text-align: right; white-space: nowrap;">
-                                        <button class="btn-rx-approve" onclick="approvePrescription('fullRxRow2', 'Lakshmi Devi')">Approve &amp; Pack</button>
-                                        <button class="btn-rx-reject" onclick="rejectPrescription('fullRxRow2', 'Lakshmi Devi')">Reject</button>
+                                        <button class="btn-pharma-primary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;" onclick="connectRxToOrder('rx2')"><i class="fa-solid fa-link"></i> Connect &amp; Dispense</button>
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx2')"><i class="fa-solid fa-file-invoice"></i> PDF Invoice</button>
+                                        <button class="btn-table-view" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="openRxModal('Lakshmi Devi', 'Dr. P. Reddy', '12 Sep 2026', 'Tab Glycomet GP 1mg OD before breakfast\nTab Telma 40mg OD post lunch\nTab Shelcal 500mg OD\nCheck HbA1c in 3 months')">View Rx</button>
                                     </td>
                                 </tr>
 
-                                <tr id="fullRxRow3" data-status="approved">
+                                <tr id="fullRxRow3" data-status="pending">
+                                    <td>
+                                        <div class="patient-name-bold">Rahul Sharma</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">Age 42 &bull; Male &bull; +91 97000 88990</span>
+                                        <div style="font-size: 0.72rem; color: #0284c7; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> House #8-3-221, Court Road, Guntur District - 522002</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #1e293b;">Dr. Priya Sharma</div>
+                                        <span style="font-size: 0.72rem; color: #64748b;">Reg: TSMC/2019/5431 (MBBS, MD General Medicine)</span>
+                                    </td>
+                                    <td>
+                                        <div class="rx-thumb-wrap" onclick="openRxModal('Rahul Sharma', 'Dr. Priya Sharma', '12 Sep 2026', 'Tab Augmentin 625 Duo BD x 5 days\nTab Montair LC HS x 7 days\nCap Pan 40mg OD AC\nDrink plenty of warm fluids')">
+                                            <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
+                                            <span style="font-size: 0.7rem; color: #0080ff; font-weight: 700; margin-left: 6px;">Click to Zoom</span>
+                                        </div>
+                                    </td>
+                                    <td style="font-size: 0.78rem; color: #334155; line-height: 1.5;">
+                                        &bull; <strong>Augmentin 625 Duo</strong> (Strip of 10) &mdash; 1 Strip (BD x 5d)<br>
+                                        &bull; <strong>Montair LC</strong> (Strip of 10) &mdash; 1 Strip (HS x 7d)<br>
+                                        &bull; <strong>Pan 40mg</strong> (Strip of 15) &mdash; 1 Strip (OD AC)
+                                    </td>
+                                    <td>12 Sep 2026, 09:30 AM</td>
+                                    <td><span class="pharma-status-tag tag-pending rx-status-tag">Pending Connect</span></td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-pharma-primary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;" onclick="connectRxToOrder('rx3')"><i class="fa-solid fa-link"></i> Connect &amp; Dispense</button>
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx3')"><i class="fa-solid fa-file-invoice"></i> PDF Invoice</button>
+                                        <button class="btn-table-view" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="openRxModal('Rahul Sharma', 'Dr. Priya Sharma', '12 Sep 2026', 'Tab Augmentin 625 Duo BD x 5 days\nTab Montair LC HS x 7 days\nCap Pan 40mg OD AC\nDrink plenty of warm fluids')">View Rx</button>
+                                    </td>
+                                </tr>
+
+                                <tr id="fullRxRow4" data-status="approved">
                                     <td>
                                         <div class="patient-name-bold">Kavitha Rao</div>
-                                        <span style="font-size: 0.74rem; color: #64748b;">Age 29 &bull; Female</span>
+                                        <span style="font-size: 0.74rem; color: #64748b;">Age 29 &bull; Female &bull; +91 99887 76655</span>
+                                        <div style="font-size: 0.72rem; color: #0284c7; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> Plot 45, Vidya Nagar, Narasaraopet - 522601</div>
                                     </td>
                                     <td>
                                         <div style="font-weight: 700; color: #1e293b;">Dr. A. Mehta</div>
-                                        <span style="font-size: 0.72rem; color: #64748b;">Reg: APMC/61920</span>
+                                        <span style="font-size: 0.72rem; color: #64748b;">Reg: APMC/61920 (Gastroenterologist)</span>
                                     </td>
                                     <td>
                                         <div class="rx-thumb-wrap" onclick="openRxModal('Kavitha Rao', 'Dr. A. Mehta', '11 Sep 2026', 'Tab Pantocid DSR OD AC\nCap Becosules OD\nTab Meftal Spas SOS')">
                                             <img src="{{ url_for('static', filename='images/prescription_thumb.png') }}" alt="Prescription" class="rx-thumb-img">
                                         </div>
                                     </td>
-                                    <td style="font-size: 0.78rem; color: #334155;">
-                                        &bull; Pantocid DSR &bull; Becosules &bull; Meftal Spas
+                                    <td style="font-size: 0.78rem; color: #334155; line-height: 1.5;">
+                                        &bull; <strong>Pantocid DSR</strong> (Strip of 15) &mdash; 2 Strips<br>
+                                        &bull; <strong>Becosules Z</strong> (Strip of 20) &mdash; 1 Strip<br>
+                                        &bull; <strong>Meftal Spas</strong> (Strip of 10) &mdash; 1 Strip
                                     </td>
                                     <td>11 Sep 2026, 05:15 PM</td>
-                                    <td><span class="pharma-status-tag tag-delivered">Approved &amp; Dispensed</span></td>
-                                    <td style="text-align: right;">
-                                        <button class="btn-table-view" onclick="openRxModal('Kavitha Rao', 'Dr. A. Mehta', '11 Sep 2026', 'Tab Pantocid DSR OD AC\nCap Becosules OD\nTab Meftal Spas SOS')">View Rx</button>
+                                    <td><span class="pharma-status-tag tag-delivered">Connected &amp; Dispensed</span></td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx4')"><i class="fa-solid fa-file-invoice"></i> View Invoice / PDF</button>
+                                        <button class="btn-table-view" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="openRxModal('Kavitha Rao', 'Dr. A. Mehta', '11 Sep 2026', 'Tab Pantocid DSR OD AC\nCap Becosules OD\nTab Meftal Spas SOS')">View Rx</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -2169,6 +2240,270 @@
 
             </section>
 
+            <!-- ============================================================== -->
+            <!-- 11. ORDER & PRESCRIPTION HISTORY VIEW                          -->
+            <!-- ============================================================== -->
+            <section id="view-history" class="pharma-view-section">
+                
+                <div class="pharma-view-header">
+                    <div class="pharma-view-title-group">
+                        <h1>
+                            <i class="fa-solid fa-clock-rotate-left" style="color: #0080ff;"></i>
+                            Order &amp; Prescription History
+                        </h1>
+                        <p>Complete historical archive of all fulfilled doctor prescriptions, walk-in counter orders, invoices, and dispensed records.</p>
+                    </div>
+                    <div class="pharma-view-actions">
+                        <button class="btn-pharma-outline" onclick="exportHistoryCSV()">
+                            <i class="fa-solid fa-file-csv"></i> Export History (CSV)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- History Summary KPI Cards -->
+                <div class="pharma-kpi-grid" style="margin-bottom: 20px;">
+                    <div class="pharma-kpi-card">
+                        <div class="pharma-kpi-top">
+                            <div class="pharma-kpi-icon-wrap kpi-blue"><i class="fa-solid fa-file-invoice"></i></div>
+                            <div>
+                                <span class="pharma-kpi-title">Total Invoices</span>
+                                <div class="pharma-kpi-val" id="histTotalCount">1,248</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pharma-kpi-card">
+                        <div class="pharma-kpi-top">
+                            <div class="pharma-kpi-icon-wrap kpi-green"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                            <div>
+                                <span class="pharma-kpi-title">Total Value Dispensed</span>
+                                <div class="pharma-kpi-val" style="color: #059669;">₹3,42,850</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pharma-kpi-card">
+                        <div class="pharma-kpi-top">
+                            <div class="pharma-kpi-icon-wrap kpi-purple"><i class="fa-solid fa-file-prescription"></i></div>
+                            <div>
+                                <span class="pharma-kpi-title">Doctor Rx Dispensed</span>
+                                <div class="pharma-kpi-val" style="color: #8b5cf6;">892</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pharma-kpi-card">
+                        <div class="pharma-kpi-top">
+                            <div class="pharma-kpi-icon-wrap kpi-teal"><i class="fa-solid fa-user-check"></i></div>
+                            <div>
+                                <span class="pharma-kpi-title">Walk-In Fulfilled</span>
+                                <div class="pharma-kpi-val" style="color: #06b6d4;">356</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Filter Tabs -->
+                <div class="pharma-filter-tabs" id="historyTabNav">
+                    <button class="pharma-filter-tab active" onclick="filterHistoryByTab(this, 'all')">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>All History</span>
+                        <span class="pharma-tab-count">1,248</span>
+                    </button>
+                    <button class="pharma-filter-tab" onclick="filterHistoryByTab(this, 'rx')">
+                        <i class="fa-solid fa-file-prescription"></i>
+                        <span>Doctor Prescriptions</span>
+                        <span class="pharma-tab-count" style="background: #eff6ff; color: #1d4ed8;">892</span>
+                    </button>
+                    <button class="pharma-filter-tab" onclick="filterHistoryByTab(this, 'walkin')">
+                        <i class="fa-solid fa-person-walking"></i>
+                        <span>Walk-in Orders</span>
+                        <span class="pharma-tab-count" style="background: #ecfdf5; color: #059669;">356</span>
+                    </button>
+                    <button class="pharma-filter-tab" onclick="filterHistoryByTab(this, 'delivered')">
+                        <i class="fa-solid fa-truck-fast"></i>
+                        <span>Doorstep Delivered</span>
+                        <span class="pharma-tab-count" style="background: #f1f5f9; color: #475569;">780</span>
+                    </button>
+                </div>
+
+                <!-- History Toolbar (Search & Filters) -->
+                <div class="pharma-toolbar">
+                    <div class="pharma-toolbar-left">
+                        <div class="pharma-toolbar-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="historySearchInput" placeholder="Search patient name, invoice ID, doctor, medicine..." oninput="handleHistoryFilter()">
+                        </div>
+                        <select class="pharma-toolbar-select" id="historyPeriodFilter" onchange="handleHistoryFilter()">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month (Sep 2026)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- History Table Card -->
+                <div class="pharma-card">
+                    <div class="pharma-table-responsive">
+                        <table class="pharma-table" id="fullHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Date &amp; Time</th>
+                                    <th>Invoice / Order ID</th>
+                                    <th>Patient Details &amp; Address</th>
+                                    <th>Order Type</th>
+                                    <th>Reference Doctor</th>
+                                    <th>Dispensed Medicines</th>
+                                    <th>Bill Amount</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <tr data-type="rx" data-status="delivered" data-search="ravi teja inv-2026-0841 dr s kumar dolo azithromycin ascoril narasaraopet">
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">12 Sep 2026</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">11:45 AM</span>
+                                    </td>
+                                    <td><strong style="color: #0080ff;">INV-2026-0841</strong></td>
+                                    <td>
+                                        <div class="patient-name-bold">Ravi Teja</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">+91 98765 43210</span>
+                                        <div style="font-size: 0.72rem; color: #64748b;">Flat 204, Sri Rama Towers, Narasaraopet</div>
+                                    </td>
+                                    <td><span class="pharma-status-tag tag-delivered" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;"><i class="fa-solid fa-file-prescription"></i> Doctor Rx</span></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: #1e293b;">Dr. S. Kumar</div>
+                                        <span style="font-size: 0.72rem; color: #64748b;">APMC/88219</span>
+                                    </td>
+                                    <td style="font-size: 0.78rem; color: #334155; line-height: 1.4;">
+                                        &bull; Dolo 650mg (2 Strips)<br>
+                                        &bull; Azithromycin 500mg (1 Strip)<br>
+                                        &bull; Ascoril D Syrup (1 Btl)
+                                    </td>
+                                    <td class="amount-bold">₹221.50</td>
+                                    <td><span class="pharma-status-tag tag-delivered">Dispensed &amp; Paid</span></td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx1')"><i class="fa-solid fa-file-invoice"></i> View Invoice / PDF</button>
+                                    </td>
+                                </tr>
+
+                                <tr data-type="rx" data-status="delivered" data-search="lakshmi devi inv-2026-0842 dr p reddy glycomet telma shelcal narasaraopet">
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">12 Sep 2026</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">11:15 AM</span>
+                                    </td>
+                                    <td><strong style="color: #0080ff;">INV-2026-0842</strong></td>
+                                    <td>
+                                        <div class="patient-name-bold">Lakshmi Devi</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">+91 98480 12345</span>
+                                        <div style="font-size: 0.72rem; color: #64748b;">Railway Feeder Road, Narasaraopet</div>
+                                    </td>
+                                    <td><span class="pharma-status-tag tag-delivered" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;"><i class="fa-solid fa-file-prescription"></i> Doctor Rx</span></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: #1e293b;">Dr. P. Reddy</div>
+                                        <span style="font-size: 0.72rem; color: #64748b;">APMC/74312</span>
+                                    </td>
+                                    <td style="font-size: 0.78rem; color: #334155; line-height: 1.4;">
+                                        &bull; Glycomet GP 1mg (2 Strips)<br>
+                                        &bull; Telma 40mg (2 Strips)<br>
+                                        &bull; Shelcal 500mg (2 Strips)
+                                    </td>
+                                    <td class="amount-bold">₹754.00</td>
+                                    <td><span class="pharma-status-tag tag-delivered">Dispensed &amp; Paid</span></td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx2')"><i class="fa-solid fa-file-invoice"></i> View Invoice / PDF</button>
+                                    </td>
+                                </tr>
+
+                                <tr data-type="rx" data-status="delivered" data-search="rahul sharma inv-2026-0843 dr priya sharma augmentin montair pan guntur">
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">12 Sep 2026</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">10:05 AM</span>
+                                    </td>
+                                    <td><strong style="color: #0080ff;">INV-2026-0843</strong></td>
+                                    <td>
+                                        <div class="patient-name-bold">Rahul Sharma</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">+91 97000 88990</span>
+                                        <div style="font-size: 0.72rem; color: #64748b;">House #8-3-221, Court Road, Guntur</div>
+                                    </td>
+                                    <td><span class="pharma-status-tag tag-delivered" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;"><i class="fa-solid fa-file-prescription"></i> Doctor Rx</span></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: #1e293b;">Dr. Priya Sharma</div>
+                                        <span style="font-size: 0.72rem; color: #64748b;">TSMC/2019/5431</span>
+                                    </td>
+                                    <td style="font-size: 0.78rem; color: #334155; line-height: 1.4;">
+                                        &bull; Augmentin 625 Duo (1 Strip)<br>
+                                        &bull; Montair LC (1 Strip)<br>
+                                        &bull; Pan 40mg (1 Strip)
+                                    </td>
+                                    <td class="amount-bold">₹517.00</td>
+                                    <td><span class="pharma-status-tag tag-delivered">Dispensed &amp; Paid</span></td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx3')"><i class="fa-solid fa-file-invoice"></i> View Invoice / PDF</button>
+                                    </td>
+                                </tr>
+
+                                <tr data-type="walkin" data-status="delivered" data-search="kavitha rao inv-2026-0840 dr a mehta pantocid becosules meftal narasaraopet">
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">11 Sep 2026</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">05:30 PM</span>
+                                    </td>
+                                    <td><strong style="color: #0080ff;">INV-2026-0840</strong></td>
+                                    <td>
+                                        <div class="patient-name-bold">Kavitha Rao</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">+91 99887 76655</span>
+                                        <div style="font-size: 0.72rem; color: #64748b;">Plot 45, Vidya Nagar, Narasaraopet</div>
+                                    </td>
+                                    <td><span class="pharma-status-tag tag-delivered" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;"><i class="fa-solid fa-person-walking"></i> Walk-in Order</span></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: #1e293b;">Dr. A. Mehta</div>
+                                        <span style="font-size: 0.72rem; color: #64748b;">APMC/61920</span>
+                                    </td>
+                                    <td style="font-size: 0.78rem; color: #334155; line-height: 1.4;">
+                                        &bull; Pantocid DSR (2 Strips)<br>
+                                        &bull; Becosules Z (1 Strip)<br>
+                                        &bull; Meftal Spas (1 Strip)
+                                    </td>
+                                    <td class="amount-bold">₹470.00</td>
+                                    <td><span class="pharma-status-tag tag-delivered">Dispensed &amp; Paid</span></td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx4')"><i class="fa-solid fa-file-invoice"></i> View Invoice / PDF</button>
+                                    </td>
+                                </tr>
+
+                                <tr data-type="walkin" data-status="delivered" data-search="suresh babu inv-2026-0839 walkin augmentin montair livogen narasaraopet">
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">10 Sep 2026</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">03:15 PM</span>
+                                    </td>
+                                    <td><strong style="color: #0080ff;">INV-2026-0839</strong></td>
+                                    <td>
+                                        <div class="patient-name-bold">Suresh Babu</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">+91 98765 00005</span>
+                                        <div style="font-size: 0.72rem; color: #64748b;">Bazar Street, Near Bus Stand, Narasaraopeta</div>
+                                    </td>
+                                    <td><span class="pharma-status-tag tag-delivered" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;"><i class="fa-solid fa-person-walking"></i> Walk-in Order</span></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: #1e293b;">Walk-in Consultation</div>
+                                        <span style="font-size: 0.72rem; color: #64748b;">Sai Medicals Counter</span>
+                                    </td>
+                                    <td style="font-size: 0.78rem; color: #334155; line-height: 1.4;">
+                                        &bull; Augmentin 625 Duo (10 tabs)<br>
+                                        &bull; Montair LC (10 tabs)<br>
+                                        &bull; Livogen Iron Syrup
+                                    </td>
+                                    <td class="amount-bold">₹1,450.00</td>
+                                    <td><span class="pharma-status-tag tag-delivered">Dispensed &amp; Paid</span></td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="generateInvoiceFromRx('rx1')"><i class="fa-solid fa-file-invoice"></i> View Invoice / PDF</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
         </main>
 
     </div>
@@ -2185,9 +2520,9 @@
             <span class="pharma-bottom-nav-badge">3</span>
         </button>
         <button class="pharma-bottom-nav-item" data-view="prescriptions" onclick="switchPharmaView('prescriptions')">
-            <i class="fa-regular fa-clipboard-check"></i>
-            <span>Rx Verify</span>
-            <span class="pharma-bottom-nav-badge">2</span>
+            <i class="fa-solid fa-file-prescription"></i>
+            <span>Doctor Rx</span>
+            <span class="pharma-bottom-nav-badge">3</span>
         </button>
         <button class="pharma-bottom-nav-item" data-view="inventory" onclick="switchPharmaView('inventory')">
             <i class="fa-solid fa-boxes-stacked"></i>
@@ -2363,64 +2698,205 @@
         </div>
     </div>
 
-    <!-- Invoice / Receipt Modal -->
-    <div id="invoiceModal" class="pharma-modal-backdrop" onclick="closeInvoiceModal(event)">
-        <div class="pharma-modal-card" style="max-width: 580px;">
+    <!-- New Walk-in Order Modal -->
+    <div id="walkinOrderModal" class="pharma-modal-backdrop" onclick="closeWalkinOrderModal(event)">
+        <div class="pharma-modal-card pharma-modal-card-lg">
             <div class="pharma-modal-header">
                 <div>
-                    <h3 class="pharma-modal-title">Tax Invoice / Cash Memo</h3>
-                    <span style="font-size: 0.78rem; color: #64748b;" id="invoiceRef">Sai Medicals Retail Pharmacy</span>
+                    <h3 class="pharma-modal-title" id="walkinModalTitle"><i class="fa-solid fa-file-prescription" style="color: #0080ff; margin-right: 6px;"></i> New Walk-in Order &rarr; Generate PDF</h3>
+                    <span style="font-size: 0.78rem; color: #64748b;" id="walkinModalSub">Enter patient and doctor details or edit connected prescription to generate A4 invoice</span>
+                </div>
+                <button class="pharma-modal-close" onclick="closeWalkinOrderModal()">&times;</button>
+            </div>
+            <div class="pharma-modal-body" style="gap: 16px;">
+                <!-- Top Row: Patient Name, Phone & Address -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Patient Name *</label>
+                        <input type="text" id="walkinPatientName" class="walkin-input" placeholder="e.g. Ramesh Babu" style="margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Patient Mobile No</label>
+                        <input type="text" id="walkinPatientPhone" class="walkin-input" placeholder="e.g. +91 98765 43210" style="margin-top: 4px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Patient Address *</label>
+                        <input type="text" id="walkinPatientAddress" class="walkin-input" placeholder="e.g. D.No: 12-4-56, Prakash Nagar, Narasaraopet" style="margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Reference Doctor Name *</label>
+                        <select id="walkinDoctorSelect" class="walkin-input" style="margin-top: 4px;" onchange="handleWalkinDoctorChange(this.value)">
+                            <option value="Dr. Priya Sharma, MBBS, MD (Reg: TSMC/2019/5431)">Dr. Priya Sharma (MBBS, MD - General Medicine)</option>
+                            <option value="Dr. S. Kumar, MBBS, DNB (Reg: APMC/88219)">Dr. S. Kumar (General Physician)</option>
+                            <option value="Dr. P. Reddy, MBBS, MD (Reg: APMC/74312)">Dr. P. Reddy (Endocrinologist)</option>
+                            <option value="Dr. A. Mehta, MBBS, MS (Reg: APMC/61920)">Dr. A. Mehta (Gastroenterologist)</option>
+                            <option value="custom">-- Other Reference Doctor (Type Name) --</option>
+                        </select>
+                        <input type="text" id="walkinDoctorCustom" class="walkin-input" placeholder="Type doctor name & reg no." style="display: none; margin-top: 6px;">
+                    </div>
+                </div>
+
+                <!-- Medicines Table -->
+                <div style="margin-top: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-size: 0.82rem; font-weight: 800; color: #0f172a; text-transform: uppercase;">Prescribed Medicines &amp; Items</label>
+                        <button type="button" class="btn-pharma-outline" style="height: 30px; padding: 0 10px; font-size: 0.75rem;" onclick="addWalkinMedRow()"><i class="fa-solid fa-plus"></i> Add Item</button>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table class="walkin-med-table" id="walkinMedTable">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 180px;">Medicine Name</th>
+                                    <th style="min-width: 110px;">Unit</th>
+                                    <th style="min-width: 130px;">Quantity / Details</th>
+                                    <th style="min-width: 90px;">Unit Price (₹)</th>
+                                    <th style="min-width: 90px; text-align: right;">Amount (₹)</th>
+                                    <th style="width: 40px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="walkinMedItemsBody">
+                                <!-- Dynamic rows inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bill Totals Summary -->
+                <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                    <div style="width: 260px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #64748b; margin-bottom: 4px;">
+                            <span>Subtotal:</span>
+                            <span id="walkinSubtotal">₹0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #64748b; margin-bottom: 6px;">
+                            <span>GST (5% Included):</span>
+                            <span id="walkinGst">₹0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1rem; font-weight: 800; color: #0f172a; border-top: 1.5px dashed #cbd5e1; padding-top: 6px;">
+                            <span>Net Total:</span>
+                            <span id="walkinTotal">₹0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="pharma-modal-footer">
+                <button class="btn-table-view" onclick="closeWalkinOrderModal()">Cancel</button>
+                <button class="btn-pharma-primary" onclick="generateWalkinInvoice()"><i class="fa-solid fa-file-pdf"></i> Generate PDF Invoice &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tax Invoice / A4 PDF Modal -->
+    <div id="invoiceModal" class="pharma-modal-backdrop" onclick="closeInvoiceModal(event)">
+        <div class="pharma-modal-card pharma-modal-card-lg" style="max-width: 720px;">
+            <div class="pharma-modal-header">
+                <div>
+                    <h3 class="pharma-modal-title"><i class="fa-solid fa-file-invoice" style="color: #0080ff; margin-right: 6px;"></i> Tax Invoice / Cash Memo</h3>
+                    <span style="font-size: 0.78rem; color: #64748b;" id="invoiceRef">ABDM Connected Digital Pharmacy Invoice</span>
                 </div>
                 <button class="pharma-modal-close" onclick="closeInvoiceModal()">&times;</button>
             </div>
-            <div class="pharma-modal-body" id="invoicePrintArea" style="font-family: inherit;">
-                <div style="text-align: center; padding-bottom: 12px; border-bottom: 1px dashed #cbd5e1;">
-                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" style="height: 32px; width: auto; margin-bottom: 6px;">
-                    <div style="font-weight: 800; font-size: 1.1rem; color: #0f172a;">Sai Medicals</div>
-                    <div style="font-size: 0.76rem; color: #64748b;">Main Road, Near Gandhi Chowk, Narasaraopeta &bull; DL: PHA-000123 &bull; GSTIN: 37CCCC1234A1Z3</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; padding: 10px 0;">
-                    <div>
-                        <div><strong>Invoice ID:</strong> <span id="invPrintId">ORD-001245</span></div>
-                        <div><strong>Date:</strong> 25 Sep 2026</div>
+            <div class="pharma-modal-body" id="invoicePrintArea" style="padding: 24px; background: #ffffff;">
+                <div class="pharma-invoice-paper" style="border: 1.5px solid #cbd5e1; padding: 22px; border-radius: 8px;">
+                    
+                    <!-- Pharmacy Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #0f172a;">
+                        <div>
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" style="height: 34px; width: auto; margin-bottom: 4px;">
+                            <div style="font-weight: 800; font-size: 1.15rem; color: #07193d;">Sai Medicals</div>
+                            <div style="font-size: 0.76rem; color: #475569;">Main Road, Near Gandhi Chowk, Narasaraopeta - 522601</div>
+                            <div style="font-size: 0.72rem; color: #64748b;">Phone: +91 98765 00123 &bull; Email: saimedicals.nhealth@gmail.com</div>
+                        </div>
+                        <div style="text-align: right; font-size: 0.76rem; color: #334155; line-height: 1.5;">
+                            <div style="display: inline-block; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 0.76rem; margin-bottom: 4px;">RETAIL TAX INVOICE</div>
+                            <div><strong>Drug Lic No:</strong> DL-PHA-000123 / 20B/21B</div>
+                            <div><strong>GSTIN:</strong> 37CCCC1234A1Z3</div>
+                            <div><strong>ABDM Facility ID:</strong> IN370049281</div>
+                        </div>
                     </div>
-                    <div style="text-align: right;">
-                        <div><strong>Patient:</strong> <span id="invPatient">Rahul Sharma</span></div>
-                        <div><strong>Payment:</strong> <span style="color: #059669; font-weight: 700;">PAID ONLINE</span></div>
+
+                    <!-- Meta Details: Invoice No, Date, Patient, Address, Doctor -->
+                    <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-size: 0.82rem;">
+                        <div style="line-height: 1.6;">
+                            <div><strong style="color: #475569;">Invoice Number:</strong> <span id="invPrintId" style="font-weight: 800; color: #0080ff;">INV-2026-0841</span></div>
+                            <div><strong style="color: #475569;">Date &amp; Time:</strong> <span id="invDate">28 Sep 2026, 12:30 PM</span></div>
+                            <div><strong style="color: #475569;">Payment Status:</strong> <span id="invPayment" style="color: #059669; font-weight: 700;">PAID (Cash / UPI)</span></div>
+                            <div><strong style="color: #475569;">Prescription Ref:</strong> <span id="invRxRef" style="color: #0284c7; font-weight: 600;">Verified Digital Rx</span></div>
+                        </div>
+                        <div style="line-height: 1.6; border-left: 1px dashed #cbd5e1; padding-left: 14px;">
+                            <div><strong style="color: #475569;">Patient Name:</strong> <strong id="invPatient" style="color: #0f172a; font-size: 0.88rem;">Ravi Teja</strong></div>
+                            <div><strong style="color: #475569;">Contact:</strong> <span id="invPhone">+91 98765 43210</span></div>
+                            <div><strong style="color: #475569;">Address:</strong> <span id="invAddress" style="color: #334155;">Flat 204, Sri Rama Towers, Prakash Nagar, Narasaraopet - 522601</span></div>
+                            <div><strong style="color: #475569;">Reference Doctor Name:</strong> <span id="invDoctor" style="color: #0f172a; font-weight: 700;">Dr. S. Kumar, MBBS, DNB (Reg: APMC/88219)</span></div>
+                        </div>
                     </div>
-                </div>
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px;">
-                    <thead>
-                        <tr style="background: #f1f5f9; text-align: left;">
-                            <th style="padding: 6px 8px;">Item Description</th>
-                            <th style="padding: 6px 8px; text-align: center;">Qty</th>
-                            <th style="padding: 6px 8px; text-align: right;">Amount (₹)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invoiceItemsTbody">
-                        <tr>
-                            <td style="padding: 6px 8px;">Dolo 650mg Tab (Strip of 15)</td>
-                            <td style="padding: 6px 8px; text-align: center;">1</td>
-                            <td style="padding: 6px 8px; text-align: right;">₹32.50</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 6px 8px;">Azithromycin 500mg (Strip of 3)</td>
-                            <td style="padding: 6px 8px; text-align: center;">1</td>
-                            <td style="padding: 6px 8px; text-align: right;">₹71.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div style="border-top: 1.5px solid #0f172a; padding-top: 8px; margin-top: 12px; display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem;">
-                    <span>Total Amount Paid:</span>
-                    <span id="invoiceTotalVal">₹450.00</span>
-                </div>
-                <div style="text-align: center; font-size: 0.72rem; color: #94a3b8; margin-top: 14px;">
-                    Thank you for choosing Nhealth Healthcare at Home &bull; Computer Generated Invoice
+
+                    <!-- Items Table -->
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 10px;">
+                        <thead>
+                            <tr style="background: #f8fafc; border-top: 1px solid #cbd5e1; border-bottom: 1.5px solid #cbd5e1; text-align: left;">
+                                <th style="padding: 8px; width: 30px;">#</th>
+                                <th style="padding: 8px;">Medicine</th>
+                                <th style="padding: 8px;">Unit</th>
+                                <th style="padding: 8px;">Quantity / Details</th>
+                                <th style="padding: 8px; text-align: right;">Unit Price (₹)</th>
+                                <th style="padding: 8px; text-align: right;">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoiceItemsTbody">
+                            <!-- Dynamic items -->
+                        </tbody>
+                    </table>
+
+                    <!-- Calculation Totals -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1.5px solid #0f172a;">
+                        <div style="font-size: 0.74rem; color: #64748b; max-width: 320px; line-height: 1.4;">
+                            <div style="margin-bottom: 2px;"><strong>Terms &amp; Conditions:</strong></div>
+                            <div>&bull; Goods once sold cannot be returned without original cash bill.</div>
+                            <div>&bull; Medicines must be stored as per temperature instructions on label.</div>
+                        </div>
+                        <div style="width: 240px; font-size: 0.82rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px; color: #475569;">
+                                <span>Taxable Amount:</span>
+                                <span id="invSubtotal">₹428.57</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px; color: #475569;">
+                                <span>CGST (2.5%):</span>
+                                <span id="invCgst">₹10.71</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #475569;">
+                                <span>SGST (2.5%):</span>
+                                <span id="invSgst">₹10.71</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 800; color: #0f172a; border-top: 1.5px solid #0f172a; padding-top: 4px;">
+                                <span>Total Amount:</span>
+                                <span id="invoiceTotalVal">₹450.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signature & ABDM QR Seal -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
+                        <div style="font-size: 0.72rem; color: #94a3b8;">
+                            <div>Computer Generated Invoice &bull; Nhealth Healthcare Ecosystem</div>
+                            <div style="color: #059669; font-weight: 700; margin-top: 2px;"><i class="fa-solid fa-shield-halved"></i> Connected to Patient Prescription under ABDM</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.74rem; font-weight: 700; color: #0f172a; margin-bottom: 2px;">Sai Medicals</div>
+                            <div style="font-size: 0.7rem; color: #64748b; border-top: 1px solid #94a3b8; padding-top: 2px; width: 140px;">Registered Pharmacist Signature</div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="pharma-modal-footer">
                 <button class="btn-table-view" onclick="closeInvoiceModal()">Close</button>
-                <button class="btn-pharma-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
+                <button class="btn-pharma-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save A4 PDF</button>
             </div>
         </div>
     </div>
@@ -2482,8 +2958,9 @@
             const titles = {
                 'dashboard': 'Dashboard Overview',
                 'orders': 'Medicine Orders Management',
-                'prescriptions': 'Prescription Verification Queue',
+                'prescriptions': 'Doctor Prescription',
                 'inventory': 'Pharmacy Inventory & Stock',
+                'history': 'Order & Prescription History',
                 'delivery': 'Medicine Delivery Fleet & Live Tracking',
                 'customers': 'Registered Patients & Customers',
                 'revenue': 'Revenue & Financial Settlements',
@@ -2582,6 +3059,45 @@
                 }
                 showPharmaToast(`Order ${orderId} marked as ${nextStatus}!`);
             }
+        }
+
+        // ---------------- History View Filters & Handlers ----------------
+        let currentHistoryTab = 'all';
+        function filterHistoryByTab(btn, tab) {
+            document.querySelectorAll('#historyTabNav .pharma-filter-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            currentHistoryTab = tab;
+            handleHistoryFilter();
+        }
+
+        function handleHistoryFilter() {
+            const q = (document.getElementById('historySearchInput')?.value || '').toLowerCase().trim();
+            const period = document.getElementById('historyPeriodFilter')?.value || 'all';
+            const rows = document.querySelectorAll('#historyTableBody tr');
+            let visible = 0;
+
+            rows.forEach(r => {
+                const rType = r.getAttribute('data-type');
+                const rStatus = r.getAttribute('data-status');
+                const rSearch = (r.getAttribute('data-search') || '').toLowerCase();
+
+                const matchTab = (currentHistoryTab === 'all' || rType === currentHistoryTab || (currentHistoryTab === 'delivered' && rStatus === 'delivered'));
+                const matchQuery = (!q || rSearch.includes(q));
+
+                if (matchTab && matchQuery) {
+                    r.style.display = '';
+                    visible++;
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+
+            const countEl = document.getElementById('historyVisibleCount');
+            if (countEl) countEl.textContent = visible;
+        }
+
+        function exportHistoryCSV() {
+            showPharmaToast('Exported Pharmacy Fulfillment History (CSV): Nhealth_History_SaiMedicals.csv');
         }
 
         // ---------------- Online Status Toggle ----------------
@@ -2852,10 +3368,300 @@
             showPharmaToast(`Dialing Delivery Partner ${name} at +91 ${phone}...`, 'info');
         }
 
+        // ---------------- Doctor Prescriptions & Walk-in Orders ----------------
+        const DOCTOR_PRESCRIPTIONS = {
+            'rx1': {
+                id: 'RX-2026-0841',
+                invoiceNo: 'INV-2026-0841',
+                patient: 'Ravi Teja',
+                phone: '+91 98765 43210',
+                address: 'Flat 204, Sri Rama Towers, Prakash Nagar, Narasaraopet - 522601',
+                doctor: 'Dr. S. Kumar, MBBS, DNB (Reg: APMC/88219 - General Physician)',
+                medicines: [
+                    { name: 'Dolo 650mg Tab', unit: 'Strip of 15', qty: '2 Strips (TDS x 3 days)', price: 32.50 },
+                    { name: 'Azithromycin 500mg', unit: 'Strip of 3', qty: '1 Strip (OD x 3 days)', price: 71.00 },
+                    { name: 'Ascoril D Cough Syrup', unit: '100ml Bottle', qty: '1 Bottle (10ml TDS)', price: 118.00 }
+                ]
+            },
+            'rx2': {
+                id: 'RX-2026-0842',
+                invoiceNo: 'INV-2026-0842',
+                patient: 'Lakshmi Devi',
+                phone: '+91 98480 12345',
+                address: 'D.No: 12-4-56, Railway Feeder Road, Narasaraopet - 522601',
+                doctor: 'Dr. P. Reddy, MBBS, MD (Reg: APMC/74312 - Endocrinologist)',
+                medicines: [
+                    { name: 'Glycomet GP 1mg', unit: 'Strip of 15', qty: '2 Strips (OD before breakfast)', price: 125.00 },
+                    { name: 'Telma 40mg', unit: 'Strip of 15', qty: '2 Strips (OD post lunch)', price: 142.00 },
+                    { name: 'Shelcal 500mg', unit: 'Strip of 15', qty: '2 Strips (OD)', price: 110.00 }
+                ]
+            },
+            'rx3': {
+                id: 'RX-2026-0843',
+                invoiceNo: 'INV-2026-0843',
+                patient: 'Rahul Sharma',
+                phone: '+91 97000 88990',
+                address: 'House #8-3-221, Court Road, Guntur District - 522002',
+                doctor: 'Dr. Priya Sharma, MBBS, MD (Reg: TSMC/2019/5431 - General Medicine)',
+                medicines: [
+                    { name: 'Augmentin 625 Duo', unit: 'Strip of 10', qty: '1 Strip (BD x 5 days)', price: 204.00 },
+                    { name: 'Montair LC', unit: 'Strip of 10', qty: '1 Strip (HS x 7 days)', price: 168.00 },
+                    { name: 'Pan 40mg', unit: 'Strip of 15', qty: '1 Strip (OD Before Food)', price: 145.00 }
+                ]
+            },
+            'rx4': {
+                id: 'RX-2026-0840',
+                invoiceNo: 'INV-2026-0840',
+                patient: 'Kavitha Rao',
+                phone: '+91 99887 76655',
+                address: 'Plot 45, Vidya Nagar, Narasaraopet - 522601',
+                doctor: 'Dr. A. Mehta, MBBS, MS (Reg: APMC/61920 - Gastroenterologist)',
+                medicines: [
+                    { name: 'Pantocid DSR', unit: 'Strip of 15', qty: '2 Strips (OD AC)', price: 185.00 },
+                    { name: 'Becosules Z', unit: 'Strip of 20', qty: '1 Strip (OD)', price: 52.00 },
+                    { name: 'Meftal Spas', unit: 'Strip of 10', qty: '1 Strip (SOS for pain)', price: 48.00 }
+                ]
+            }
+        };
+
+        function handleWalkinDoctorChange(val) {
+            const customInput = document.getElementById('walkinDoctorCustom');
+            if (val === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+        }
+
+        function openWalkinOrderModal(prefill) {
+            const modal = document.getElementById('walkinOrderModal');
+            const tbody = document.getElementById('walkinMedItemsBody');
+            tbody.innerHTML = '';
+
+            if (prefill) {
+                document.getElementById('walkinModalTitle').innerHTML = '<i class="fa-solid fa-link" style="color: #0080ff; margin-right: 6px;"></i> Connected Doctor Prescription Order';
+                document.getElementById('walkinModalSub').textContent = `Connected with Patient's Digital Prescription (${prefill.id || 'Rx'})`;
+                document.getElementById('walkinPatientName').value = prefill.patient || '';
+                document.getElementById('walkinPatientPhone').value = prefill.phone || '';
+                document.getElementById('walkinPatientAddress').value = prefill.address || '';
+
+                const docSelect = document.getElementById('walkinDoctorSelect');
+                let found = false;
+                for (let i = 0; i < docSelect.options.length; i++) {
+                    if (docSelect.options[i].value.includes(prefill.doctor) || prefill.doctor.includes(docSelect.options[i].value.split(',')[0])) {
+                        docSelect.selectedIndex = i;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    docSelect.value = 'custom';
+                    document.getElementById('walkinDoctorCustom').style.display = 'block';
+                    document.getElementById('walkinDoctorCustom').value = prefill.doctor || '';
+                } else {
+                    document.getElementById('walkinDoctorCustom').style.display = 'none';
+                }
+
+                if (prefill.medicines && prefill.medicines.length > 0) {
+                    prefill.medicines.forEach(m => {
+                        addWalkinMedRow(m.name, m.unit, m.qty, m.price);
+                    });
+                } else {
+                    addWalkinMedRow();
+                }
+            } else {
+                document.getElementById('walkinModalTitle').innerHTML = '<i class="fa-solid fa-file-prescription" style="color: #0080ff; margin-right: 6px;"></i> New Walk-in Order &rarr; Generate PDF';
+                document.getElementById('walkinModalSub').textContent = 'Enter patient and doctor details or add medicines to generate A4 invoice';
+                document.getElementById('walkinPatientName').value = '';
+                document.getElementById('walkinPatientPhone').value = '';
+                document.getElementById('walkinPatientAddress').value = '';
+                document.getElementById('walkinDoctorSelect').selectedIndex = 0;
+                document.getElementById('walkinDoctorCustom').style.display = 'none';
+                document.getElementById('walkinDoctorCustom').value = '';
+                addWalkinMedRow('Paracetamol 650mg', 'Strip of 15', '2 Strips (TDS)', 35.00);
+                addWalkinMedRow('Pantocid 40mg', 'Strip of 15', '1 Strip (OD AC)', 140.00);
+            }
+
+            calcWalkinTotals();
+            modal.classList.add('active');
+        }
+
+        function closeWalkinOrderModal(e) {
+            if (!e || e.target.id === 'walkinOrderModal') {
+                document.getElementById('walkinOrderModal').classList.remove('active');
+            }
+        }
+
+        function addWalkinMedRow(name = '', unit = 'Strip of 10', qty = '1 Strip', price = 50.00) {
+            const tbody = document.getElementById('walkinMedItemsBody');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="walkin-input row-name" value="${name}" placeholder="Medicine Name" required></td>
+                <td><input type="text" class="walkin-input row-unit" value="${unit}" placeholder="e.g. Strip of 10"></td>
+                <td><input type="text" class="walkin-input row-qty" value="${qty}" placeholder="e.g. 2 Strips (TDS)"></td>
+                <td><input type="number" step="0.5" class="walkin-input row-price" value="${price}" oninput="calcWalkinTotals()" style="text-align: right;"></td>
+                <td style="text-align: right; font-weight: 700; color: #0f172a;" class="row-total">₹${parseFloat(price).toFixed(2)}</td>
+                <td style="text-align: center;"><button type="button" class="btn-remove-row" onclick="removeWalkinMedRow(this)" title="Remove item">&times;</button></td>
+            `;
+            tbody.appendChild(tr);
+            calcWalkinTotals();
+        }
+
+        function removeWalkinMedRow(btn) {
+            const row = btn.closest('tr');
+            if (row) {
+                row.remove();
+                calcWalkinTotals();
+            }
+        }
+
+        function calcWalkinTotals() {
+            const rows = document.querySelectorAll('#walkinMedItemsBody tr');
+            let total = 0;
+            rows.forEach(r => {
+                const price = parseFloat(r.querySelector('.row-price')?.value) || 0;
+                total += price;
+                const totalCell = r.querySelector('.row-total');
+                if (totalCell) totalCell.textContent = `₹${price.toFixed(2)}`;
+            });
+
+            const gst = total * 0.05;
+            const subtotal = total - gst;
+
+            document.getElementById('walkinSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
+            document.getElementById('walkinGst').textContent = `₹${gst.toFixed(2)}`;
+            document.getElementById('walkinTotal').textContent = `₹${total.toFixed(2)}`;
+        }
+
+        function generateWalkinInvoice() {
+            const patientName = document.getElementById('walkinPatientName').value.trim();
+            const patientPhone = document.getElementById('walkinPatientPhone').value.trim() || '+91 98765 43210';
+            const patientAddress = document.getElementById('walkinPatientAddress').value.trim() || 'Narasaraopet, Guntur Dist';
+            
+            if (!patientName) {
+                showPharmaToast('Please enter patient name', 'error');
+                document.getElementById('walkinPatientName').focus();
+                return;
+            }
+
+            const docSelect = document.getElementById('walkinDoctorSelect').value;
+            const docCustom = document.getElementById('walkinDoctorCustom').value.trim();
+            const doctorName = (docSelect === 'custom' && docCustom) ? docCustom : docSelect;
+
+            const items = [];
+            const rows = document.querySelectorAll('#walkinMedItemsBody tr');
+            rows.forEach(r => {
+                const name = r.querySelector('.row-name')?.value.trim();
+                const unit = r.querySelector('.row-unit')?.value.trim() || '1 Unit';
+                const qty = r.querySelector('.row-qty')?.value.trim() || '1';
+                const price = parseFloat(r.querySelector('.row-price')?.value) || 0;
+                if (name) {
+                    items.push({ name, unit, qty, price });
+                }
+            });
+
+            if (items.length === 0) {
+                showPharmaToast('Please add at least one medicine item', 'error');
+                return;
+            }
+
+            const invoiceNo = `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+            const invoiceData = {
+                invoiceNo: invoiceNo,
+                date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                patient: patientName,
+                phone: patientPhone,
+                address: patientAddress,
+                doctor: doctorName,
+                medicines: items
+            };
+
+            closeWalkinOrderModal();
+            renderInvoiceModal(invoiceData);
+            showPharmaToast(`Invoice ${invoiceNo} generated for ${patientName}! Ready to Print.`, 'success');
+        }
+
+        function connectRxToOrder(rxKey) {
+            const rxData = DOCTOR_PRESCRIPTIONS[rxKey];
+            if (rxData) {
+                openWalkinOrderModal(rxData);
+                showPharmaToast(`Connected Doctor Prescription for ${rxData.patient}!`);
+            }
+        }
+
+        function generateInvoiceFromRx(rxKey) {
+            const rxData = DOCTOR_PRESCRIPTIONS[rxKey];
+            if (rxData) {
+                renderInvoiceModal({
+                    invoiceNo: rxData.invoiceNo,
+                    date: '28 Sep 2026, 12:30 PM',
+                    patient: rxData.patient,
+                    phone: rxData.phone,
+                    address: rxData.address,
+                    doctor: rxData.doctor,
+                    medicines: rxData.medicines
+                });
+                showPharmaToast(`Loaded A4 PDF Invoice for ${rxData.patient}`);
+            }
+        }
+
+        function renderInvoiceModal(inv) {
+            document.getElementById('invPrintId').textContent = inv.invoiceNo || 'INV-2026-0841';
+            if (document.getElementById('invDate')) {
+                document.getElementById('invDate').textContent = inv.date || new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            }
+            document.getElementById('invPatient').textContent = inv.patient || 'Patient Name';
+            if (document.getElementById('invPhone')) {
+                document.getElementById('invPhone').textContent = inv.phone || '+91 98765 43210';
+            }
+            if (document.getElementById('invAddress')) {
+                document.getElementById('invAddress').textContent = inv.address || 'Address Not Provided';
+            }
+            if (document.getElementById('invDoctor')) {
+                document.getElementById('invDoctor').textContent = inv.doctor || 'Dr. S. Kumar (APMC/88219)';
+            }
+
+            const tbody = document.getElementById('invoiceItemsTbody');
+            tbody.innerHTML = '';
+
+            let total = 0;
+            (inv.medicines || []).forEach((m, idx) => {
+                total += parseFloat(m.price) || 0;
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid #f1f5f9';
+                tr.innerHTML = `
+                    <td style="padding: 8px; color: #64748b;">${idx + 1}</td>
+                    <td style="padding: 8px; font-weight: 700; color: #0f172a;">${m.name}</td>
+                    <td style="padding: 8px; color: #475569;">${m.unit || 'Strip'}</td>
+                    <td style="padding: 8px; color: #334155;">${m.qty || '1'}</td>
+                    <td style="padding: 8px; text-align: right; color: #475569;">₹${parseFloat(m.price).toFixed(2)}</td>
+                    <td style="padding: 8px; text-align: right; font-weight: 800; color: #0f172a;">₹${parseFloat(m.price).toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const gst = total * 0.05;
+            const subtotal = total - gst;
+
+            if (document.getElementById('invSubtotal')) document.getElementById('invSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
+            if (document.getElementById('invCgst')) document.getElementById('invCgst').textContent = `₹${(gst / 2).toFixed(2)}`;
+            if (document.getElementById('invSgst')) document.getElementById('invSgst').textContent = `₹${(gst / 2).toFixed(2)}`;
+            document.getElementById('invoiceTotalVal').textContent = `₹${total.toFixed(2)}`;
+
+            document.getElementById('invoiceModal').classList.add('active');
+        }
+
         // ---------------- Invoice Modal ----------------
         function printOrderInvoice(orderId) {
-            document.getElementById('invPrintId').textContent = orderId || 'ORD-001245';
-            document.getElementById('invoiceModal').classList.add('active');
+            if (DOCTOR_PRESCRIPTIONS['rx3'] && orderId === 'ORD-001245') {
+                generateInvoiceFromRx('rx3');
+            } else if (DOCTOR_PRESCRIPTIONS['rx1']) {
+                generateInvoiceFromRx('rx1');
+            } else {
+                document.getElementById('invPrintId').textContent = orderId || 'INV-2026-0841';
+                document.getElementById('invoiceModal').classList.add('active');
+            }
         }
 
         function closeInvoiceModal(e) {
@@ -2901,7 +3707,7 @@
         }
 
         function openNewManualOrderModal() {
-            showPharmaToast('Walk-In Order Terminal opened. Add prescription medicines.', 'info');
+            openWalkinOrderModal();
         }
 
         function openGenerateReportModal() {

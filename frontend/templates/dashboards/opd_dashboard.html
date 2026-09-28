@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Nhealth - Premium OPD Membership Dashboard</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Dedicated OPD Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/opd_dashboard.css') }}?v=4.0">
+</head>
+<body class="opd-body">
+
+    <!-- Mobile Sidebar Dark Backdrop -->
+    <div class="opd-sidebar-backdrop" id="opdSidebarBackdrop" onclick="toggleOpdMobileSidebar(false)"></div>
+
+    <!-- ==================== 1. FIXED LEFT SIDEBAR ==================== -->
+    <aside class="opd-sidebar" id="opdSidebar">
+        
+        <!-- Brand Logo with Nhealth Trademark -->
+        <div class="opd-sidebar-brand">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <a href="javascript:void(0)" onclick="switchOpdView('dashboard')" style="display: flex; align-items: center; text-decoration: none;">
+                    <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal_light.png') }}" 
+                         alt="Nhealth" 
+                         class="opd-brand-logo-img"
+                         onerror="this.src='{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}'; this.style.filter='brightness(0) invert(1)';">
+                </a>
+                <span class="opd-brand-tagline">Care. Anytime. Anywhere.</span>
+            </div>
+            <button class="opd-sidebar-close-btn" id="opdSidebarCloseBtn" onclick="toggleOpdMobileSidebar(false)" aria-label="Close sidebar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Menu -->
+        <ul class="opd-nav-menu">
+            <li class="opd-nav-item">
+                <a class="opd-nav-link active" id="nav-dashboard" onclick="switchOpdView('dashboard')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-house opd-nav-icon"></i>
+                        <span>Dashboard</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-appointments" onclick="switchOpdView('appointments')">
+                    <div class="opd-nav-left">
+                        <i class="fa-regular fa-calendar-check opd-nav-icon"></i>
+                        <span>Book Appointment</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-consultations" onclick="switchOpdView('consultations')">
+                    <div class="opd-nav-left">
+                        <i class="fa-regular fa-comments opd-nav-icon"></i>
+                        <span>Consultations</span>
+                    </div>
+                    <span class="opd-badge-green">Upcoming</span>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-prescriptions" onclick="switchOpdView('prescriptions')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-file-prescription opd-nav-icon"></i>
+                        <span>Prescriptions</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-labtests" onclick="switchOpdView('labtests')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-flask opd-nav-icon"></i>
+                        <span>Lab Tests</span>
+                    </div>
+                    <span class="opd-badge-gold">20% OFF</span>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-pharmacy" onclick="switchOpdView('pharmacy')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-pills opd-nav-icon"></i>
+                        <span>Medicines &amp; Pharmacy</span>
+                    </div>
+                    <span class="opd-badge-gold">10% OFF</span>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-records" onclick="switchOpdView('records')">
+                    <div class="opd-nav-left">
+                        <i class="fa-regular fa-folder-open opd-nav-icon"></i>
+                        <span>Health Records</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-history" onclick="switchOpdView('history')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-clock-rotate-left opd-nav-icon"></i>
+                        <span>History</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-membership" onclick="switchOpdView('membership')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-crown opd-nav-icon" style="color: #f59e0b;"></i>
+                        <span style="color: #f59e0b; font-weight: 700;">Membership</span>
+                    </div>
+                    <span class="opd-badge-gold">Premium</span>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-wallet" onclick="switchOpdView('wallet')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-wallet opd-nav-icon"></i>
+                        <span>Wallet &amp; Payments</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-notifications" onclick="switchOpdView('notifications')">
+                    <div class="opd-nav-left">
+                        <i class="fa-regular fa-bell opd-nav-icon"></i>
+                        <span>Notifications</span>
+                    </div>
+                    <span class="opd-badge-red">3</span>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-support" onclick="switchOpdView('support')">
+                    <div class="opd-nav-left">
+                        <i class="fa-regular fa-circle-question opd-nav-icon"></i>
+                        <span>Help &amp; Support</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item">
+                <a class="opd-nav-link" id="nav-settings" onclick="switchOpdView('settings')">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-gear opd-nav-icon"></i>
+                        <span>Settings</span>
+                    </div>
+                </a>
+            </li>
+
+            <li class="opd-nav-item" style="margin-top: 6px;">
+                <a class="opd-nav-link" onclick="handlePatientLogout()" style="color: #ef4444; cursor: pointer;">
+                    <div class="opd-nav-left">
+                        <i class="fa-solid fa-arrow-right-from-bracket opd-nav-icon" style="color: #ef4444;"></i>
+                        <span>Logout</span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Bottom 24/7 Health Support Widget -->
+        <div class="opd-sidebar-support" onclick="switchOpdView('support')" style="cursor: pointer;">
+            <div class="opd-support-icon-wrap">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            <div class="opd-support-info">
+                <div class="opd-support-title">24/7 Health Support</div>
+                <div class="opd-support-sub">Talk to our care team anytime</div>
+                <a href="tel:18001234567" class="opd-support-phone" onclick="event.stopPropagation();">1800 123 4567</a>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- ==================== 2. MAIN WORKSPACE AREA ==================== -->
+    <main class="opd-main-wrapper">
+        
+        <!-- Mobile Sticky Topbar (Shown on Mobile screens) -->
+        <div class="opd-mobile-topbar">
+            <button class="opd-mob-toggle-btn" onclick="toggleOpdMobileSidebar(true)" aria-label="Open navigation drawer">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="opd-mob-brand" onclick="switchOpdView('dashboard')">
+                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" class="opd-mob-logo">
+            </div>
+            <div class="opd-mob-actions">
+                <button class="opd-mob-notif-btn" onclick="switchOpdView('notifications')" aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="opd-mob-badge">3</span>
+                </button>
+                <button class="opd-mob-avatar-btn" onclick="switchOpdView('membership')" aria-label="Profile">
+                    <img src="{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}" alt="Profile" class="opd-mob-avatar" onerror="this.src='{{ url_for('static', filename='images/auth/doctor_team.jpg') }}';">
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop Topbar Header (Hidden on Mobile) -->
+        <header class="opd-topbar">
+            <div class="opd-topbar-left">
+                <div class="opd-welcome-small">Welcome back,</div>
+                <h1 class="opd-welcome-title">{{ user.name if user and user.name else 'Shiva Pendala' }} &#128075;</h1>
+                <p class="opd-welcome-sub">Take charge of your health with Nhealth</p>
+            </div>
+
+            <div class="opd-topbar-right">
+                <!-- Notifications Bell -->
+                <button class="opd-notif-btn" aria-label="Notifications" onclick="switchOpdView('notifications')">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="opd-notif-badge">3</span>
+                </button>
+
+                <!-- Profile Dropdown Button -->
+                <div class="opd-user-profile-btn" onclick="switchOpdView('membership')" title="View Membership Profile">
+                    <img src="{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}" 
+                         alt="{{ user.name if user and user.name else 'Shiva Pendala' }}" 
+                         class="opd-user-avatar"
+                         onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80';">
+                    <div class="opd-user-meta">
+                        <div class="opd-user-name">{{ user.name if user and user.name else 'Shiva Pendala' }}</div>
+                        <div class="opd-user-role">{{ user.membership_plan if user and user.membership_plan else 'Premium OPD Member' }}</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down opd-user-chevron"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== SCREEN 1: DASHBOARD VIEW (DEFAULT) ==================== -->
+        <div id="view-dashboard" class="opd-view-panel active">
+            
+            <!-- ROW 1: HERO MEMBERSHIP CARD & QUICK ACTIONS -->
+            <section class="opd-hero-grid">
+                
+                <!-- Left: Premium OPD Membership Card -->
+                <div class="opd-membership-card">
+                    
+                    <div class="opd-card-left-section">
+                        <!-- Golden Metallic Shield Badge -->
+                        <div class="opd-gold-shield" onclick="switchOpdView('membership')" style="cursor: pointer;" title="Digital OPD Member Card">
+                            <i class="fa-solid fa-crown opd-shield-crown"></i>
+                            <span class="opd-shield-text-1">PREMIUM</span>
+                            <span class="opd-shield-text-2">OPD</span>
+                            <span class="opd-shield-text-3">MEMBER</span>
+                            <div class="opd-shield-stars">&#9733; &#9733; &#9733;</div>
+                        </div>
+
+                        <!-- Membership Meta Details -->
+                        <div class="opd-membership-details">
+                            <div class="opd-card-header-badge">
+                                <h2>NHEALTH PREMIUM OPD MEMBERSHIP</h2>
+                                <span class="opd-status-pill-active">Active</span>
+                            </div>
+
+                            <div class="opd-member-grid-2x2">
+                                <div>
+                                    <span class="opd-meta-item-label">Membership ID</span>
+                                    <div class="opd-meta-item-value" id="opdMemberIdVal">{{ user.membership_id if user and user.membership_id else 'NH-OPD-2026-4587' }}</div>
+                                </div>
+                                <div>
+                                    <span class="opd-meta-item-label">Plan</span>
+                                    <div class="opd-meta-item-value">{{ user.membership_plan if user and user.membership_plan else 'Premium OPD Individual' }}</div>
+                                </div>
+                                <div>
+                                    <span class="opd-meta-item-label">Member Since</span>
+                                    <div class="opd-meta-item-value">28 Sep 2024</div>
+                                </div>
+                                <div>
+                                    <span class="opd-meta-item-label">Valid Until</span>
+                                    <div class="opd-meta-item-value">28 Sep 2025</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: QR Code Box -->
+                    <div class="opd-card-qr-box" onclick="switchOpdView('membership')" style="cursor: pointer;">
+                        <span class="opd-qr-label">Scan to show your Membership Card</span>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NHEALTH-MEMBER-{{ user.membership_id if user and user.membership_id else 'NH-OPD-2026-4587' }}" 
+                             alt="Membership QR Code" 
+                             class="opd-qr-img">
+                        <a class="opd-qr-link" onclick="event.stopPropagation(); switchOpdView('membership');">
+                            <span>View Card</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem;"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Right: Quick Actions Card -->
+                <div class="opd-quick-actions-card">
+                    <h3 class="opd-card-section-title">Quick Actions</h3>
+                    
+                    <div class="opd-quick-actions-grid">
+                        <div class="opd-action-tile opd-tile-blue" onclick="switchOpdView('appointments')">
+                            <i class="fa-solid fa-user-doctor opd-tile-icon"></i>
+                            <span class="opd-tile-label">Book Doctor</span>
+                        </div>
+
+                        <div class="opd-action-tile opd-tile-green" onclick="switchOpdView('labtests')">
+                            <i class="fa-solid fa-flask opd-tile-icon"></i>
+                            <span class="opd-tile-label">Book Lab Test</span>
+                        </div>
+
+                        <div class="opd-action-tile opd-tile-purple" onclick="switchOpdView('pharmacy')">
+                            <i class="fa-solid fa-pills opd-tile-icon"></i>
+                            <span class="opd-tile-label">Order Medicines</span>
+                        </div>
+
+                        <div class="opd-action-tile opd-tile-orange" onclick="openCheckupModal()">
+                            <i class="fa-solid fa-heart-pulse opd-tile-icon"></i>
+                            <span class="opd-tile-label">Health Check-up</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ROW 2: YOUR PREMIUM BENEFITS -->
+            <section class="opd-benefits-section">
+                <div class="opd-section-header-flex">
+                    <h3 class="opd-section-title-large">Your Premium Benefits</h3>
+                    <a class="opd-view-all-link" onclick="switchOpdView('membership')" style="cursor: pointer;">View All Benefits</a>
+                </div>
+
+                <div class="opd-benefits-5col-grid">
+                    
+                    <!-- Benefit 1: Doctor Consultations -->
+                    <div class="opd-benefit-card" onclick="switchOpdView('appointments')" style="cursor: pointer;" title="Click to book doctor">
+                        <div>
+                            <div class="opd-benefit-top">
+                                <div class="opd-benefit-icon-circle icon-blue">
+                                    <i class="fa-solid fa-stethoscope"></i>
+                                </div>
+                                <div class="opd-benefit-info">
+                                    <span class="opd-benefit-title">Doctor Consultations</span>
+                                    <div class="opd-benefit-stat">6 / 10 <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Used</span></div>
+                                </div>
+                            </div>
+                            <div class="opd-progress-track">
+                                <div class="opd-progress-fill fill-blue"></div>
+                            </div>
+                        </div>
+                        <div class="opd-benefit-footer">
+                            <span>4 Left</span>
+                            <span>Yearly Limit: 10</span>
+                        </div>
+                    </div>
+
+                    <!-- Benefit 2: Teleconsultations -->
+                    <div class="opd-benefit-card" onclick="switchOpdView('appointments')" style="cursor: pointer;" title="Click for video consult">
+                        <div>
+                            <div class="opd-benefit-top">
+                                <div class="opd-benefit-icon-circle icon-green">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div class="opd-benefit-info">
+                                    <span class="opd-benefit-title">Teleconsultations</span>
+                                    <div class="opd-benefit-stat">8 / 15 <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Used</span></div>
+                                </div>
+                            </div>
+                            <div class="opd-progress-track">
+                                <div class="opd-progress-fill fill-green"></div>
+                            </div>
+                        </div>
+                        <div class="opd-benefit-footer">
+                            <span>7 Left</span>
+                            <span>Yearly Limit: 15</span>
+                        </div>
+                    </div>
+
+                    <!-- Benefit 3: Lab Tests -->
+                    <div class="opd-benefit-card" onclick="switchOpdView('labtests')" style="cursor: pointer;" title="Click to book lab test">
+                        <div>
+                            <div class="opd-benefit-top">
+                                <div class="opd-benefit-icon-circle icon-purple">
+                                    <i class="fa-solid fa-flask"></i>
+                                </div>
+                                <div class="opd-benefit-info">
+                                    <span class="opd-benefit-title">Lab Tests</span>
+                                    <div class="opd-benefit-stat">20% <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Discount</span></div>
+                                </div>
+                            </div>
+                            <div class="opd-progress-track">
+                                <div class="opd-progress-fill fill-purple"></div>
+                            </div>
+                        </div>
+                        <div class="opd-benefit-footer">
+                            <span>Unlimited</span>
+                            <span>Yearly</span>
+                        </div>
+                    </div>
+
+                    <!-- Benefit 4: Pharmacy -->
+                    <div class="opd-benefit-card" onclick="switchOpdView('pharmacy')" style="cursor: pointer;" title="Click to order pharmacy">
+                        <div>
+                            <div class="opd-benefit-top">
+                                <div class="opd-benefit-icon-circle icon-orange">
+                                    <i class="fa-solid fa-capsules"></i>
+                                </div>
+                                <div class="opd-benefit-info">
+                                    <span class="opd-benefit-title">Pharmacy</span>
+                                    <div class="opd-benefit-stat">10% <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Discount</span></div>
+                                </div>
+                            </div>
+                            <div class="opd-progress-track">
+                                <div class="opd-progress-fill fill-orange"></div>
+                            </div>
+                        </div>
+                        <div class="opd-benefit-footer">
+                            <span>Unlimited</span>
+                            <span>Yearly</span>
+                        </div>
+                    </div>
+
+                    <!-- Benefit 5: Health Check-up -->
+                    <div class="opd-benefit-card" onclick="openCheckupModal()" style="cursor: pointer;" title="Click for health checkup details">
+                        <div>
+                            <div class="opd-benefit-top">
+                                <div class="opd-benefit-icon-circle icon-pink">
+                                    <i class="fa-solid fa-heart-pulse"></i>
+                                </div>
+                                <div class="opd-benefit-info">
+                                    <span class="opd-benefit-title">Health Check-up</span>
+                                    <div class="opd-benefit-stat">1 / 1 <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Used</span></div>
+                                </div>
+                            </div>
+                            <div class="opd-progress-track">
+                                <div class="opd-progress-fill fill-pink"></div>
+                            </div>
+                        </div>
+                        <div class="opd-benefit-footer">
+                            <span class="status-completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
+                            <span>Yearly Limit: 1</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ROW 3: 3-COLUMN WORKSPACE GRID -->
+            <section class="opd-workspace-3col">
+                
+                <!-- Column 1: Upcoming Appointments -->
+                <div class="opd-col-card">
+                    <div class="opd-section-header-flex" style="margin-bottom: 12px;">
+                        <h3 class="opd-card-section-title" style="margin-bottom: 0;">Upcoming Appointments</h3>
+                        <a class="opd-view-all-link" onclick="switchOpdView('consultations')" style="cursor: pointer;">View All</a>
+                    </div>
+
+                    <div class="opd-appointments-list">
+                        
+                        <!-- Appointment 1: Dr. Rajesh Kumar -->
+                        <div class="opd-appt-card">
+                            <div class="opd-appt-top">
+                                <div class="opd-doc-info-flex">
+                                    <img src="{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}" 
+                                         alt="Dr. Rajesh Kumar" 
+                                         class="opd-doc-avatar"
+                                         onerror="this.src='https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=120&h=120&q=80';">
+                                    <div>
+                                        <div class="opd-doc-name">Dr. Rajesh Kumar</div>
+                                        <div class="opd-doc-spec">General Physician</div>
+                                    </div>
+                                </div>
+                                <span class="opd-tag-confirmed">Confirmed</span>
+                            </div>
+
+                            <div class="opd-appt-bottom">
+                                <div class="opd-appt-datetime">
+                                    <span><i class="fa-regular fa-calendar" style="color: #64748b;"></i> 26 Sep 2024</span>
+                                    <span><i class="fa-regular fa-clock" style="color: #64748b;"></i> 10:30 AM</span>
+                                </div>
+                                <button class="btn-appt-view" onclick="switchOpdView('consultations')">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Appointment 2: Dr. Anitha Reddy -->
+                        <div class="opd-appt-card">
+                            <div class="opd-appt-top">
+                                <div class="opd-doc-info-flex">
+                                    <img src="{{ url_for('static', filename='images/consultation/dr_anitha_reddy.png') }}" 
+                                         alt="Dr. Anitha Reddy" 
+                                         class="opd-doc-avatar"
+                                         onerror="this.src='https://images.unsplash.com/photo-1594824813590-482a0d843818?auto=format&fit=crop&w=120&h=120&q=80';">
+                                    <div>
+                                        <div class="opd-doc-name">Dr. Anitha Reddy</div>
+                                        <div class="opd-doc-spec">Dermatologist</div>
+                                    </div>
+                                </div>
+                                <span class="opd-tag-confirmed">Confirmed</span>
+                            </div>
+
+                            <div class="opd-appt-bottom">
+                                <div class="opd-appt-datetime">
+                                    <span><i class="fa-regular fa-calendar" style="color: #64748b;"></i> 28 Sep 2024</span>
+                                    <span><i class="fa-regular fa-clock" style="color: #64748b;"></i> 04:00 PM</span>
+                                </div>
+                                <button class="btn-appt-view" onclick="switchOpdView('consultations')">View Details</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Column 2: Usage Summary (Donut Chart) -->
+                <div class="opd-col-card" onclick="openUsageModal()" style="cursor: pointer;" title="Click to view detailed usage breakdown">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 6px;">Usage Summary</h3>
+                    
+                    <div class="opd-usage-donut-wrap">
+                        <div class="opd-donut-chart">
+                            <div class="opd-donut-center-text">
+                                <div class="opd-donut-pct">60%</div>
+                                <span class="opd-donut-label">Benefits Used</span>
+                            </div>
+                        </div>
+
+                        <div class="opd-usage-legend">
+                            <div class="opd-legend-row">
+                                <div class="opd-legend-label-flex">
+                                    <span class="opd-dot dot-blue"></span>
+                                    <span>Doctor Consultations</span>
+                                </div>
+                                <span class="opd-legend-val">60%</span>
+                            </div>
+
+                            <div class="opd-legend-row">
+                                <div class="opd-legend-label-flex">
+                                    <span class="opd-dot dot-green"></span>
+                                    <span>Teleconsultations</span>
+                                </div>
+                                <span class="opd-legend-val">53%</span>
+                            </div>
+
+                            <div class="opd-legend-row">
+                                <div class="opd-legend-label-flex">
+                                    <span class="opd-dot dot-purple"></span>
+                                    <span>Lab Tests</span>
+                                </div>
+                                <span class="opd-legend-val">Unlimited</span>
+                            </div>
+
+                            <div class="opd-legend-row">
+                                <div class="opd-legend-label-flex">
+                                    <span class="opd-dot dot-orange"></span>
+                                    <span>Pharmacy</span>
+                                </div>
+                                <span class="opd-legend-val">Unlimited</span>
+                            </div>
+
+                            <div class="opd-legend-row">
+                                <div class="opd-legend-label-flex">
+                                    <span class="opd-dot dot-pink"></span>
+                                    <span>Health Check-up</span>
+                                </div>
+                                <span class="opd-legend-val">100%</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="opd-usage-info-pill">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>You are making great use of your membership!</span>
+                    </div>
+                </div>
+
+                <!-- Column 3: Recent Transactions -->
+                <div class="opd-col-card">
+                    <div class="opd-section-header-flex" style="margin-bottom: 12px;">
+                        <h3 class="opd-card-section-title" style="margin-bottom: 0;">Recent Transactions</h3>
+                        <a class="opd-view-all-link" onclick="switchOpdView('wallet')" style="cursor: pointer;">View All</a>
+                    </div>
+
+                    <div class="opd-transactions-list">
+                        
+                        <div class="opd-tx-item" onclick="openReceiptModal('Membership Renewal', 'Premium OPD Individual - 1 Year', '₹1,999', '28 Sep 2024', 'NH-TX-99018', 'UPI / NetBanking', 'Paid')" style="cursor: pointer;">
+                            <div class="opd-tx-left">
+                                <div class="opd-tx-icon-circle icon-green">
+                                    <i class="fa-regular fa-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <div class="opd-tx-title">Membership Renewal</div>
+                                    <div class="opd-tx-sub">Premium OPD Individual</div>
+                                </div>
+                            </div>
+                            <div class="opd-tx-right">
+                                <div class="opd-tx-amount">&#8377;1,999</div>
+                                <div class="opd-tx-status-green">28 Sep 2024 &bull; Paid</div>
+                            </div>
+                        </div>
+
+                        <div class="opd-tx-item" onclick="openReceiptModal('Doctor OPD Consultation', 'Dr. Rajesh Kumar (General Physician)', '₹0', '24 Sep 2024', 'NH-TX-88219', 'Nhealth OPD Benefit Voucher', 'Member Benefit')" style="cursor: pointer;">
+                            <div class="opd-tx-left">
+                                <div class="opd-tx-icon-circle icon-purple">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                </div>
+                                <div>
+                                    <div class="opd-tx-title">Consultation</div>
+                                    <div class="opd-tx-sub">Dr. Rajesh Kumar</div>
+                                </div>
+                            </div>
+                            <div class="opd-tx-right">
+                                <div class="opd-tx-amount">&#8377;0</div>
+                                <div class="opd-tx-status-green">24 Sep 2024 &bull; Member Benefit</div>
+                            </div>
+                        </div>
+
+                        <div class="opd-tx-item" onclick="openReceiptModal('Lab Test - CBC', 'Complete Blood Count with ESR (20% Discount)', '₹320', '22 Sep 2024', 'NH-TX-77102', 'Nhealth Wallet', 'Discount Applied')" style="cursor: pointer;">
+                            <div class="opd-tx-left">
+                                <div class="opd-tx-icon-circle icon-orange">
+                                    <i class="fa-solid fa-flask"></i>
+                                </div>
+                                <div>
+                                    <div class="opd-tx-title">Lab Test</div>
+                                    <div class="opd-tx-sub">Complete Blood Count</div>
+                                </div>
+                            </div>
+                            <div class="opd-tx-right">
+                                <div class="opd-tx-amount">&#8377;320</div>
+                                <div class="opd-tx-status-green">22 Sep 2024 &bull; Discount Applied</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <a class="opd-view-all-tx-link" onclick="switchOpdView('wallet')" style="cursor: pointer;">View All Transactions</a>
+                </div>
+
+            </section>
+
+            <!-- ROW 4: BOTTOM GRATITUDE BANNER -->
+            <section class="opd-gratitude-banner">
+                <div class="opd-banner-left">
+                    <span class="opd-trophy-icon">&#127942;</span>
+                    <div>
+                        <h4 class="opd-banner-title">Thank you for choosing Nhealth Premium!</h4>
+                        <p class="opd-banner-sub">Stay healthy and enjoy exclusive benefits all year round.</p>
+                    </div>
+                </div>
+
+                <button class="btn-share-family" onclick="openShareModal()">
+                    <i class="fa-solid fa-user-group"></i>
+                    <span>Share with Family &amp; Save More</span>
+                </button>
+            </section>
+
+        </div>
+
+        <!-- ==================== SCREEN 2: BOOK APPOINTMENT VIEW ==================== -->
+        <div id="view-appointments" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-regular fa-calendar-check" style="color: var(--opd-blue);"></i>
+                        <span>Book Doctor Appointment</span>
+                    </div>
+                    <p class="opd-page-sub">Select verified specialists across Andhra Pradesh with instant 100% cashless OPD coverage</p>
+                </div>
+                <button class="btn-appt-view" onclick="switchOpdView('dashboard')"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+            </div>
+
+            <!-- Benefit Banner -->
+            <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fa-solid fa-crown" style="color: #f59e0b; font-size: 1.4rem;"></i>
+                    <div>
+                        <div style="font-weight: 800; color: #166534; font-size: 0.95rem;">Premium OPD Benefit Active</div>
+                        <div style="font-size: 0.82rem; color: #15803d;">You have <strong>4 Free Consultations</strong> remaining this year. Fee is automatically waived at checkout.</div>
+                    </div>
+                </div>
+                <span class="opd-status-pill-active" style="background: #10b981; color: #fff;">100% Free OPD</span>
+            </div>
+
+            <!-- Specialty Filters -->
+            <div class="opd-filter-tabs">
+                <button class="opd-tab-btn active" onclick="filterDoctors(this, 'all')">All Specialties</button>
+                <button class="opd-tab-btn" onclick="filterDoctors(this, 'general')">General Medicine</button>
+                <button class="opd-tab-btn" onclick="filterDoctors(this, 'dermatology')">Dermatology</button>
+                <button class="opd-tab-btn" onclick="filterDoctors(this, 'cardiology')">Cardiology</button>
+                <button class="opd-tab-btn" onclick="filterDoctors(this, 'pediatrics')">Pediatrics</button>
+            </div>
+
+            <!-- Doctor Cards Grid -->
+            <div class="opd-grid-3col" id="doctorsCatalogGrid">
+                
+                <!-- Doctor 1: Dr. Priya Sharma -->
+                <div class="opd-doctor-card" data-specialty="general">
+                    <div>
+                        <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <img src="{{ url_for('static', filename='images/consultation/dr_priya_face.png') }}" 
+                                 alt="Dr. Priya Sharma" 
+                                 style="width: 64px; height: 64px; border-radius: 14px; object-fit: cover; border: 2px solid #2563eb;"
+                                 onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=140&h=140&q=80';">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a;">Dr. Priya Sharma</div>
+                                <div style="font-size: 0.8rem; color: #2563eb; font-weight: 700;">MBBS, MD (General Medicine)</div>
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">⭐ 4.9 (420+ Reviews) &bull; 9+ Yrs Exp</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 14px; line-height: 1.4;">
+                            Specialist in internal medicine, viral fever, hypertension, diabetes &amp; lifestyle care.
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-size: 0.72rem; color: #64748b; text-transform: uppercase;">Consult Fee</span>
+                                <div style="font-weight: 800; color: #10b981; font-size: 1.05rem;">FREE <span style="font-size:0.75rem; text-decoration:line-through; color:#94a3b8;">₹500</span></div>
+                            </div>
+                            <span style="font-size: 0.78rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle-dot" style="font-size:0.6rem;"></i> Available Today</span>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="openBookingDrawer('Dr. Priya Sharma', 'General Medicine')"><i class="fa-solid fa-calendar-check"></i> Book Consultation</button>
+                    </div>
+                </div>
+
+                <!-- Doctor 2: Dr. Rajesh Kumar -->
+                <div class="opd-doctor-card" data-specialty="general">
+                    <div>
+                        <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=140&h=140&q=80" 
+                                 alt="Dr. Rajesh Kumar" 
+                                 style="width: 64px; height: 64px; border-radius: 14px; object-fit: cover; border: 2px solid #2563eb;">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a;">Dr. Rajesh Kumar</div>
+                                <div style="font-size: 0.8rem; color: #2563eb; font-weight: 700;">MBBS, DNB (Family Medicine)</div>
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">⭐ 4.8 (380+ Reviews) &bull; 12+ Yrs Exp</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 14px; line-height: 1.4;">
+                            Expert physician for chronic health conditions, preventative medicine &amp; senior citizen care.
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-size: 0.72rem; color: #64748b; text-transform: uppercase;">Consult Fee</span>
+                                <div style="font-weight: 800; color: #10b981; font-size: 1.05rem;">FREE <span style="font-size:0.75rem; text-decoration:line-through; color:#94a3b8;">₹600</span></div>
+                            </div>
+                            <span style="font-size: 0.78rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle-dot" style="font-size:0.6rem;"></i> Available Today</span>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="openBookingDrawer('Dr. Rajesh Kumar', 'General Medicine')"><i class="fa-solid fa-calendar-check"></i> Book Consultation</button>
+                    </div>
+                </div>
+
+                <!-- Doctor 3: Dr. Anitha Reddy -->
+                <div class="opd-doctor-card" data-specialty="dermatology">
+                    <div>
+                        <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <img src="{{ url_for('static', filename='images/consultation/dr_anitha_reddy.png') }}" 
+                                 alt="Dr. Anitha Reddy" 
+                                 style="width: 64px; height: 64px; border-radius: 14px; object-fit: cover; border: 2px solid #8b5cf6;"
+                                 onerror="this.src='https://images.unsplash.com/photo-1594824813590-482a0d843818?auto=format&fit=crop&w=140&h=140&q=80';">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a;">Dr. Anitha Reddy</div>
+                                <div style="font-size: 0.8rem; color: #8b5cf6; font-weight: 700;">MD (Dermatology, Venereology)</div>
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">⭐ 4.9 (510+ Reviews) &bull; 8+ Yrs Exp</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 14px; line-height: 1.4;">
+                            Clinical dermatology, hair &amp; scalp treatments, allergies, and cosmetic dermatology.
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-size: 0.72rem; color: #64748b; text-transform: uppercase;">Consult Fee</span>
+                                <div style="font-weight: 800; color: #10b981; font-size: 1.05rem;">FREE <span style="font-size:0.75rem; text-decoration:line-through; color:#94a3b8;">₹700</span></div>
+                            </div>
+                            <span style="font-size: 0.78rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle-dot" style="font-size:0.6rem;"></i> Available Today</span>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="openBookingDrawer('Dr. Anitha Reddy', 'Dermatology')"><i class="fa-solid fa-calendar-check"></i> Book Consultation</button>
+                    </div>
+                </div>
+
+                <!-- Doctor 4: Dr. K. Srinivas Rao -->
+                <div class="opd-doctor-card" data-specialty="cardiology">
+                    <div>
+                        <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=140&h=140&q=80" 
+                                 alt="Dr. K. Srinivas Rao" 
+                                 style="width: 64px; height: 64px; border-radius: 14px; object-fit: cover; border: 2px solid #ef4444;">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a;">Dr. K. Srinivas Rao</div>
+                                <div style="font-size: 0.8rem; color: #ef4444; font-weight: 700;">DM (Cardiology), MD (Medicine)</div>
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">⭐ 5.0 (650+ Reviews) &bull; 15+ Yrs Exp</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 14px; line-height: 1.4;">
+                            Consultant Interventional Cardiologist, ECG interpretation, hypertension &amp; heart care.
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-size: 0.72rem; color: #64748b; text-transform: uppercase;">Consult Fee</span>
+                                <div style="font-weight: 800; color: #10b981; font-size: 1.05rem;">FREE <span style="font-size:0.75rem; text-decoration:line-through; color:#94a3b8;">₹900</span></div>
+                            </div>
+                            <span style="font-size: 0.78rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle-dot" style="font-size:0.6rem;"></i> Available Today</span>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="openBookingDrawer('Dr. K. Srinivas Rao', 'Cardiology')"><i class="fa-solid fa-calendar-check"></i> Book Consultation</button>
+                    </div>
+                </div>
+
+                <!-- Doctor 5: Dr. Lakshmi Prasanna -->
+                <div class="opd-doctor-card" data-specialty="pediatrics">
+                    <div>
+                        <div style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=140&h=140&q=80" 
+                                 alt="Dr. Lakshmi Prasanna" 
+                                 style="width: 64px; height: 64px; border-radius: 14px; object-fit: cover; border: 2px solid #06b6d4;">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a;">Dr. Lakshmi Prasanna</div>
+                                <div style="font-size: 0.8rem; color: #06b6d4; font-weight: 700;">MD (Pediatrics), DCH</div>
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">⭐ 4.9 (310+ Reviews) &bull; 10+ Yrs Exp</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.82rem; color: #475569; margin-bottom: 14px; line-height: 1.4;">
+                            Child health specialist, infant growth monitoring, vaccination &amp; pediatric nutrition.
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-size: 0.72rem; color: #64748b; text-transform: uppercase;">Consult Fee</span>
+                                <div style="font-weight: 800; color: #10b981; font-size: 1.05rem;">FREE <span style="font-size:0.75rem; text-decoration:line-through; color:#94a3b8;">₹550</span></div>
+                            </div>
+                            <span style="font-size: 0.78rem; color: #16a34a; font-weight: 700;"><i class="fa-solid fa-circle-dot" style="font-size:0.6rem;"></i> Available Today</span>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="openBookingDrawer('Dr. Lakshmi Prasanna', 'Pediatrics')"><i class="fa-solid fa-calendar-check"></i> Book Consultation</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 3: CONSULTATIONS VIEW ==================== -->
+        <div id="view-consultations" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-regular fa-comments" style="color: var(--opd-blue);"></i>
+                        <span>Consultations &amp; Video Visits</span>
+                    </div>
+                    <p class="opd-page-sub">View active telemedicine sessions, in-clinic schedules, and doctor follow-up notes</p>
+                </div>
+                <button class="btn-share-family" onclick="switchOpdView('appointments')"><i class="fa-solid fa-plus"></i> New Appointment</button>
+            </div>
+
+            <div class="opd-page-card">
+                <h3 class="opd-card-section-title" style="margin-bottom: 16px;">Scheduled Upcoming Visits</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <!-- Visit 1 -->
+                    <div style="border: 1.5px solid #bfdbfe; background: #eff6ff; border-radius: 14px; padding: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=120&h=120&q=80" 
+                                 alt="Dr. Rajesh Kumar" 
+                                 style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover;">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1rem; color: #0f172a;">Dr. Rajesh Kumar</div>
+                                <div style="font-size: 0.82rem; color: #2563eb; font-weight: 600;">General Physician &bull; HD Video Call</div>
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;"><i class="fa-regular fa-calendar"></i> 26 Sep 2024 at 10:30 AM &bull; Ref: NH-APT-88219</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-share-family" onclick="showOpdToast('Connecting to Secure Video Room with Dr. Rajesh Kumar...')"><i class="fa-solid fa-video"></i> Join HD Video Call</button>
+                            <button class="btn-appt-view" onclick="showOpdToast('Reschedule link dispatched to your WhatsApp.')">Reschedule</button>
+                        </div>
+                    </div>
+
+                    <!-- Visit 2 -->
+                    <div style="border: 1.5px solid #e2e8f0; background: #ffffff; border-radius: 14px; padding: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <img src="{{ url_for('static', filename='images/consultation/dr_anitha_reddy.png') }}" 
+                                 alt="Dr. Anitha Reddy" 
+                                 style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover;"
+                                 onerror="this.src='https://images.unsplash.com/photo-1594824813590-482a0d843818?auto=format&fit=crop&w=120&h=120&q=80';">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1rem; color: #0f172a;">Dr. Anitha Reddy</div>
+                                <div style="font-size: 0.82rem; color: #8b5cf6; font-weight: 600;">Dermatologist &bull; In-Clinic Cashless Visit</div>
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;"><i class="fa-regular fa-calendar"></i> 28 Sep 2024 at 04:00 PM &bull; Nhealth Prime Clinic, Benz Circle</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-appt-view" onclick="showOpdToast('Navigating to clinic location on Google Maps...')"><i class="fa-solid fa-location-dot"></i> Get Directions</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Past Consultations -->
+            <div class="opd-page-card">
+                <h3 class="opd-card-section-title" style="margin-bottom: 16px;">Past Completed Consultations</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div>
+                            <div style="font-weight: 700; color: #0f172a; font-size: 0.9rem;">Dr. Priya Sharma (General Physician)</div>
+                            <div style="font-size: 0.78rem; color: #64748b;">15 Sep 2024 &bull; Viral fever consultation &bull; Rx Issued</div>
+                        </div>
+                        <button class="btn-appt-view" style="padding: 6px 12px; font-size: 0.8rem;" onclick="switchOpdView('prescriptions')"><i class="fa-solid fa-file-prescription"></i> View Rx</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div>
+                            <div style="font-weight: 700; color: #0f172a; font-size: 0.9rem;">Dr. K. Srinivas Rao (Cardiologist)</div>
+                            <div style="font-size: 0.78rem; color: #64748b;">10 Aug 2024 &bull; Annual cardiac routine screening &bull; ECG Verified</div>
+                        </div>
+                        <button class="btn-appt-view" style="padding: 6px 12px; font-size: 0.8rem;" onclick="switchOpdView('records')"><i class="fa-solid fa-file-pdf"></i> View ECG Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 4: PRESCRIPTIONS VIEW ==================== -->
+        <div id="view-prescriptions" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-file-prescription" style="color: var(--opd-blue);"></i>
+                        <span>Digital Doctor Prescriptions</span>
+                    </div>
+                    <p class="opd-page-sub">Access your verified doctor e-prescriptions with 10% discount on medicine ordering</p>
+                </div>
+                <button class="btn-share-family" onclick="switchOpdView('pharmacy')"><i class="fa-solid fa-cart-shopping"></i> Order Medicines (10% OFF)</button>
+            </div>
+
+            <div class="opd-grid-2col">
+                <!-- Rx 1 -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div>
+                            <span class="opd-tag-confirmed">Active Prescription</span>
+                            <div style="font-weight: 800; font-size: 1.1rem; color: #0f172a; margin-top: 6px;">Dr. Rajesh Kumar (MD)</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">Rx ID: RX-2026-88192 &bull; Issued on 24 Sep 2024</div>
+                        </div>
+                        <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" style="height: 24px; opacity: 0.8;" alt="Nhealth">
+                    </div>
+
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 14px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.6; color: #334155;">
+                        <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px;">Prescribed Medications:</div>
+                        <div>&bull; <strong>Tab Paracetamol 650mg</strong> &bull; 1 tablet thrice a day (After Food) &bull; 3 Days</div>
+                        <div>&bull; <strong>Tab Cetirizine 10mg</strong> &bull; 1 tablet at night &bull; 5 Days</div>
+                        <div>&bull; <strong>Vitamin C + Zinc Chewable</strong> &bull; 1 tablet daily &bull; 15 Days</div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-share-family" style="flex: 1; justify-content: center;" onclick="showOpdToast('Downloaded Digital Rx PDF (RX-2026-88192).')"><i class="fa-solid fa-download"></i> Download PDF</button>
+                        <button class="btn-appt-view" style="flex: 1; justify-content: center;" onclick="switchOpdView('pharmacy')"><i class="fa-solid fa-pills"></i> Refill with 10% OFF</button>
+                    </div>
+                </div>
+
+                <!-- Rx 2 -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div>
+                            <span style="background: #e2e8f0; color: #475569; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 12px;">Past Prescription</span>
+                            <div style="font-weight: 800; font-size: 1.1rem; color: #0f172a; margin-top: 6px;">Dr. Priya Sharma (MD)</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">Rx ID: RX-2026-67120 &bull; Issued on 10 Aug 2024</div>
+                        </div>
+                        <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" style="height: 24px; opacity: 0.8;" alt="Nhealth">
+                    </div>
+
+                    <div style="background: #f8fafc; border-radius: 10px; padding: 14px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.6; color: #334155;">
+                        <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px;">Prescribed Medications:</div>
+                        <div>&bull; <strong>Tab Pantoprazole 40mg</strong> &bull; 1 tablet before breakfast &bull; 14 Days</div>
+                        <div>&bull; <strong>Syrup Gelusil</strong> &bull; 2 teaspoons after meals &bull; 7 Days</div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-share-family" style="flex: 1; justify-content: center;" onclick="showOpdToast('Downloaded Digital Rx PDF (RX-2026-67120).')"><i class="fa-solid fa-download"></i> Download PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 5: LAB TESTS VIEW ==================== -->
+        <div id="view-labtests" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-flask" style="color: #7c3aed;"></i>
+                        <span>Diagnostics &amp; Lab Tests</span>
+                    </div>
+                    <p class="opd-page-sub">Flat 20% discount on 2,000+ pathology tests with home sample collection</p>
+                </div>
+                <button class="btn-appt-view" onclick="switchOpdView('records')"><i class="fa-solid fa-file-lines"></i> View Lab Reports</button>
+            </div>
+
+            <div class="opd-grid-3col">
+                <!-- Test 1 -->
+                <div class="opd-page-card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <span class="opd-badge-gold">20% Discount</span>
+                        <h4 style="font-weight: 800; font-size: 1.05rem; color: #0f172a; margin: 8px 0 4px 0;">Complete Blood Count (CBC) + ESR</h4>
+                        <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">24 Parameters &bull; Hemoglobin, WBC, Platelets</div>
+                        <p style="font-size: 0.82rem; color: #475569; line-height: 1.4;">Screening for infection, anemia, and general immunological health.</p>
+                    </div>
+                    <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 0.8rem; color: #64748b;">Member Price</span>
+                            <div style="font-weight: 800; color: #7c3aed; font-size: 1.1rem;">₹320 <span style="font-size: 0.75rem; text-decoration: line-through; color: #94a3b8;">₹400</span></div>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="handleBookTest('Complete Blood Count (CBC)', '₹320')"><i class="fa-solid fa-house-medical"></i> Book Home Collection</button>
+                    </div>
+                </div>
+
+                <!-- Test 2 -->
+                <div class="opd-page-card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <span class="opd-badge-gold">20% Discount</span>
+                        <h4 style="font-weight: 800; font-size: 1.05rem; color: #0f172a; margin: 8px 0 4px 0;">Thyroid Profile (T3, T4, TSH)</h4>
+                        <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">CLIA Technology &bull; Same-day verified reports</div>
+                        <p style="font-size: 0.82rem; color: #475569; line-height: 1.4;">Hormone screening for thyroid gland function, metabolism, and energy.</p>
+                    </div>
+                    <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 0.8rem; color: #64748b;">Member Price</span>
+                            <div style="font-weight: 800; color: #7c3aed; font-size: 1.1rem;">₹440 <span style="font-size: 0.75rem; text-decoration: line-through; color: #94a3b8;">₹550</span></div>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="handleBookTest('Thyroid Profile', '₹440')"><i class="fa-solid fa-house-medical"></i> Book Home Collection</button>
+                    </div>
+                </div>
+
+                <!-- Test 3 -->
+                <div class="opd-page-card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <span class="opd-badge-gold">20% Discount</span>
+                        <h4 style="font-weight: 800; font-size: 1.05rem; color: #0f172a; margin: 8px 0 4px 0;">Lipid Profile (Cholesterol Panel)</h4>
+                        <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">8 Parameters &bull; HDL, LDL, VLDL, Triglycerides</div>
+                        <p style="font-size: 0.82rem; color: #475569; line-height: 1.4;">Cardiac risk assessment and lipid balance screening.</p>
+                    </div>
+                    <div style="border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 0.8rem; color: #64748b;">Member Price</span>
+                            <div style="font-weight: 800; color: #7c3aed; font-size: 1.1rem;">₹520 <span style="font-size: 0.75rem; text-decoration: line-through; color: #94a3b8;">₹650</span></div>
+                        </div>
+                        <button class="btn-share-family" style="width: 100%; justify-content: center;" onclick="handleBookTest('Lipid Profile', '₹520')"><i class="fa-solid fa-house-medical"></i> Book Home Collection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 6: PHARMACY VIEW ==================== -->
+        <div id="view-pharmacy" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-pills" style="color: #f59e0b;"></i>
+                        <span>Medicines &amp; Doorstep Pharmacy</span>
+                    </div>
+                    <p class="opd-page-sub">Exclusive 10% discount on all prescription medicines &amp; healthcare supplies</p>
+                </div>
+                <button class="btn-appt-view" onclick="switchOpdView('prescriptions')"><i class="fa-solid fa-file-prescription"></i> Use My Prescriptions</button>
+            </div>
+
+            <div class="opd-grid-2col">
+                <!-- Search & Quick Order -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 14px;">Search Medicine &amp; Add to Cart</h3>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                        <input type="text" id="viewPharmaSearch" placeholder="Search medicines (e.g., Paracetamol, Dolo, Telma)..." style="flex: 1; height: 42px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 14px; font-size: 0.88rem;">
+                        <button class="btn-share-family" onclick="showOpdToast('Searched catalog: 12 matching brands available with 10% discount.')"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                    </div>
+
+                    <div style="font-size: 0.84rem; font-weight: 700; color: #0f172a; margin-bottom: 10px;">Popular Monthly Refills</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.88rem;">Dolo 650mg (Strip of 15)</div>
+                                <div style="font-size: 0.76rem; color: #64748b;">Micro Labs Ltd</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <strong style="color: #059669;">₹28.80 <span style="font-size:0.72rem; color:#94a3b8; text-decoration:line-through;">₹32</span></strong>
+                                <button class="btn-appt-view" style="padding: 4px 10px; font-size: 0.78rem;" onclick="showOpdToast('Added Dolo 650mg to order cart!')"><i class="fa-solid fa-plus"></i> Add</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.88rem;">Telma 40mg (Strip of 15)</div>
+                                <div style="font-size: 0.76rem; color: #64748b;">Glenmark Pharmaceuticals</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <strong style="color: #059669;">₹198.00 <span style="font-size:0.72rem; color:#94a3b8; text-decoration:line-through;">₹220</span></strong>
+                                <button class="btn-appt-view" style="padding: 4px 10px; font-size: 0.78rem;" onclick="showOpdToast('Added Telma 40mg to order cart!')"><i class="fa-solid fa-plus"></i> Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription Upload Card -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 14px;">Instant Rx Upload &amp; Dispatch</h3>
+                    
+                    <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 24px; text-align: center; background: #f8fafc; cursor: pointer; margin-bottom: 16px;" onclick="document.getElementById('viewPharmaRxUpload').click()">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.2rem; color: #2563eb; margin-bottom: 10px;"></i>
+                        <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">Upload Doctor Prescription Slip</div>
+                        <div style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">PNG, JPG, or PDF (Max 10MB)</div>
+                        <input type="file" id="viewPharmaRxUpload" style="display: none;" onchange="showOpdToast('Prescription uploaded! Certified pharmacist is preparing your 10% discount bill.')">
+                    </div>
+
+                    <div style="background: #eff6ff; border-radius: 10px; padding: 12px; font-size: 0.82rem; color: #1e40af; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-truck-fast"></i>
+                        <span>Free doorstep delivery within 2 hours across Andhra Pradesh.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 7: HEALTH RECORDS VIEW ==================== -->
+        <div id="view-records" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-regular fa-folder-open" style="color: var(--opd-blue);"></i>
+                        <span>ABDM Synced Health Records &amp; EHR Locker</span>
+                    </div>
+                    <p class="opd-page-sub">Secure digital health repository linked to your Ayushman Bharat Health Account (ABHA)</p>
+                </div>
+                <button class="btn-share-family" onclick="showOpdToast('Record uploaded and linked to ABHA ID.')"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</button>
+            </div>
+
+            <div class="opd-page-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-weight: 800; font-size: 1rem; color: #0f172a;">Linked ABHA ID: 91-4587-8819-2045@abdm</div>
+                        <div style="font-size: 0.8rem; color: #059669;"><i class="fa-solid fa-shield-check"></i> Government Certified Health Locker &bull; Fully Encrypted</div>
+                    </div>
+                    <span class="opd-tag-confirmed">Synced</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <i class="fa-solid fa-file-pdf" style="font-size: 1.8rem; color: #ef4444;"></i>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">Annual Comprehensive Wellness Screening Report 2024</div>
+                                <div style="font-size: 0.78rem; color: #64748b;">Complete Lipid, ECG, LFT, KFT &amp; Physician Summary &bull; 20 Sep 2024</div>
+                            </div>
+                        </div>
+                        <button class="btn-share-family" style="padding: 6px 14px; font-size: 0.8rem;" onclick="showOpdToast('Downloaded Annual Health Screening Report PDF.')"><i class="fa-solid fa-download"></i> Download PDF</button>
+                    </div>
+
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <i class="fa-solid fa-file-pdf" style="font-size: 1.8rem; color: #3b82f6;"></i>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">Complete Blood Count (CBC) Pathology Report</div>
+                                <div style="font-size: 0.78rem; color: #64748b;">Sri Venkateswara Diagnostics, Vijayawada &bull; 22 Sep 2024</div>
+                            </div>
+                        </div>
+                        <button class="btn-share-family" style="padding: 6px 14px; font-size: 0.8rem;" onclick="showOpdToast('Downloaded CBC Lab Report PDF.')"><i class="fa-solid fa-download"></i> Download PDF</button>
+                    </div>
+
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <i class="fa-solid fa-shield-virus" style="font-size: 1.8rem; color: #10b981;"></i>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">Universal Immunization &amp; Covid-19 Booster Certificate</div>
+                                <div style="font-size: 0.78rem; color: #64748b;">CoWIN Verified Digital Certificate &bull; ABHA Synced</div>
+                            </div>
+                        </div>
+                        <button class="btn-share-family" style="padding: 6px 14px; font-size: 0.8rem;" onclick="showOpdToast('Downloaded Vaccination Certificate.')"><i class="fa-solid fa-download"></i> Download PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 8: MEMBERSHIP VIEW ==================== -->
+        <div id="view-membership" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+                        <span>Nhealth Premium OPD Membership</span>
+                    </div>
+                    <p class="opd-page-sub">Manage your active subscription, digital membership card, and family benefits</p>
+                </div>
+                <button class="btn-share-family" onclick="openShareModal()"><i class="fa-solid fa-user-group"></i> Add Family Member</button>
+            </div>
+
+            <div class="opd-grid-2col">
+                <!-- Digital Card Preview -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 14px;">Digital Membership Card</h3>
+                    
+                    <div class="opd-digital-card-preview" style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px;">
+                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal_light.png') }}" 
+                                 alt="Nhealth" 
+                                 style="height: 32px;"
+                                 onerror="this.src='{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}'; this.style.filter='brightness(0) invert(1)';">
+                            <span style="background: #f59e0b; color: #000; font-weight: 800; font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; text-transform: uppercase;">PREMIUM OPD</span>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Cardholder Name</div>
+                            <div style="font-size: 1.3rem; font-weight: 800; color: #ffffff;">{{ user.name if user and user.name else 'Shiva Pendala' }}</div>
+                            <div style="font-size: 0.85rem; color: #38bdf8; font-weight: 700; margin-top: 2px;">{{ user.membership_id if user and user.membership_id else 'NH-OPD-2026-4587' }}</div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 14px;">
+                            <div style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.4;">
+                                <div><strong>Valid Thru:</strong> 28 Sep 2025</div>
+                                <div><strong>Plan:</strong> {{ user.membership_plan if user and user.membership_plan else 'Premium OPD Individual' }}</div>
+                                <div><strong>Coverage:</strong> 10 Free Consults &bull; 20% Lab &bull; 10% Rx</div>
+                            </div>
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=NHEALTH-MEMBER-{{ user.membership_id if user and user.membership_id else 'NH-OPD-2026-4587' }}" 
+                                 alt="QR" 
+                                 style="width: 58px; height: 58px; background: #fff; padding: 3px; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-appt-view" style="flex: 1; justify-content: center;" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Card</button>
+                        <button class="btn-share-family" style="flex: 1; justify-content: center;" onclick="showOpdToast('Downloaded Digital Membership Card PDF.')"><i class="fa-solid fa-download"></i> Download PDF</button>
+                    </div>
+                </div>
+
+                <!-- Plan Benefits Summary -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 14px;">Annual Coverage &amp; Benefits</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                            <span><i class="fa-solid fa-user-doctor" style="color: #2563eb; width: 20px;"></i> Doctor OPD Consultations</span>
+                            <strong>6 / 10 Used (4 Remaining)</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                            <span><i class="fa-solid fa-video" style="color: #10b981; width: 20px;"></i> 24/7 Teleconsultations</span>
+                            <strong>8 / 15 Used (7 Remaining)</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                            <span><i class="fa-solid fa-flask" style="color: #8b5cf6; width: 20px;"></i> Diagnostic Pathology Tests</span>
+                            <strong style="color: #059669;">Flat 20% OFF (Unlimited)</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                            <span><i class="fa-solid fa-pills" style="color: #f59e0b; width: 20px;"></i> Doorstep Pharmacy Orders</span>
+                            <strong style="color: #059669;">Flat 10% OFF (Unlimited)</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                            <span><i class="fa-solid fa-heart-pulse" style="color: #ec4899; width: 20px;"></i> Full Body Check-up</span>
+                            <strong style="color: #059669;"><i class="fa-solid fa-circle-check"></i> Completed (1/1)</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 9: WALLET VIEW ==================== -->
+        <div id="view-wallet" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-wallet" style="color: var(--opd-blue);"></i>
+                        <span>Nhealth Wallet &amp; Billing Passbook</span>
+                    </div>
+                    <p class="opd-page-sub">Manage your digital balance, cashback rewards, and download tax invoices</p>
+                </div>
+                <button class="btn-share-family" onclick="showOpdToast('Added ₹500 via UPI successfully!')"><i class="fa-solid fa-plus"></i> Add Money</button>
+            </div>
+
+            <div class="opd-grid-2col">
+                <!-- Balance Box -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; border-radius: 14px; padding: 22px; margin-bottom: 16px;">
+                        <div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Current Wallet Balance</div>
+                        <div style="font-size: 2.2rem; font-weight: 800; color: #38bdf8; margin: 6px 0;">₹2,450.00</div>
+                        <div style="font-size: 0.82rem; color: #cbd5e1;">Includes ₹200 joining cashback reward</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="btn-share-family" style="justify-content: center;" onclick="showOpdToast('Added ₹500 via UPI instantly!')"><i class="fa-solid fa-plus"></i> Add ₹500</button>
+                        <button class="btn-share-family" style="justify-content: center;" onclick="showOpdToast('Added ₹1000 via UPI instantly!')"><i class="fa-solid fa-plus"></i> Add ₹1,000</button>
+                    </div>
+                </div>
+
+                <!-- Transaction Statement -->
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 14px;">Recent Passbook Transactions</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 700;">Membership Renewal - 1 Year</div>
+                                <div style="font-size: 0.76rem; color: #64748b;">28 Sep 2024 &bull; Ref: NH-TX-99018</div>
+                            </div>
+                            <strong style="color: #059669;">- ₹1,999.00</strong>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 700;">Lab Test Payment (CBC 20% OFF)</div>
+                                <div style="font-size: 0.76rem; color: #64748b;">22 Sep 2024 &bull; Ref: NH-TX-77102</div>
+                            </div>
+                            <strong style="color: #ef4444;">- ₹320.00</strong>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <div>
+                                <div style="font-weight: 700;">Premium Welcome Cashback</div>
+                                <div style="font-size: 0.76rem; color: #64748b;">28 Sep 2024 &bull; Credited to Wallet</div>
+                            </div>
+                            <strong style="color: #10b981;">+ ₹200.00</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 10: NOTIFICATIONS VIEW ==================== -->
+        <div id="view-notifications" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-regular fa-bell" style="color: #ef4444;"></i>
+                        <span>Notification Center</span>
+                    </div>
+                    <p class="opd-page-sub">Alerts regarding upcoming appointments, lab reports, and member privileges</p>
+                </div>
+                <button class="btn-share-family" onclick="showOpdToast('All notifications marked as read.')"><i class="fa-solid fa-check-double"></i> Mark All as Read</button>
+            </div>
+
+            <div class="opd-page-card">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <i class="fa-solid fa-video" style="font-size: 1.6rem; color: #2563eb;"></i>
+                            <div>
+                                <div style="font-weight: 800; color: #1e40af; font-size: 0.95rem;">Upcoming Teleconsultation Tomorrow</div>
+                                <div style="font-size: 0.82rem; color: #334155; margin-top: 2px;">Your video visit with Dr. Rajesh Kumar is scheduled for 10:30 AM.</div>
+                                <div style="font-size: 0.74rem; color: #64748b; margin-top: 4px;">1 hour ago</div>
+                            </div>
+                        </div>
+                        <button class="btn-appt-view" onclick="switchOpdView('consultations')">View Appointment</button>
+                    </div>
+
+                    <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <i class="fa-solid fa-tags" style="font-size: 1.6rem; color: #16a34a;"></i>
+                            <div>
+                                <div style="font-weight: 800; color: #166534; font-size: 0.95rem;">20% Lab Discount Active on Diagnostics</div>
+                                <div style="font-size: 0.82rem; color: #334155; margin-top: 2px;">Book home sample collection for CBC, Thyroid &amp; Lipid panels at discounted rates.</div>
+                                <div style="font-size: 0.74rem; color: #64748b; margin-top: 4px;">Yesterday</div>
+                            </div>
+                        </div>
+                        <button class="btn-appt-view" onclick="switchOpdView('labtests')">Book Lab Test</button>
+                    </div>
+
+                    <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <i class="fa-solid fa-crown" style="font-size: 1.6rem; color: #f59e0b;"></i>
+                            <div>
+                                <div style="font-weight: 800; color: #92400e; font-size: 0.95rem;">Membership Active &bull; All Privileges Unlocked</div>
+                                <div style="font-size: 0.82rem; color: #334155; margin-top: 2px;">Your plan NH-OPD-2026-4587 is valid until 28 Sep 2025.</div>
+                                <div style="font-size: 0.74rem; color: #64748b; margin-top: 4px;">3 days ago</div>
+                            </div>
+                        </div>
+                        <button class="btn-appt-view" onclick="switchOpdView('membership')">View Plan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 11: SUPPORT VIEW ==================== -->
+        <div id="view-support" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-headset" style="color: var(--opd-blue);"></i>
+                        <span>24/7 Health Care Helpline &amp; Support</span>
+                    </div>
+                    <p class="opd-page-sub">Direct priority assistance from our registered care coordinators</p>
+                </div>
+                <a href="tel:18001234567" class="btn-share-family" style="text-decoration: none;"><i class="fa-solid fa-phone"></i> Call 1800 123 4567</a>
+            </div>
+
+            <div class="opd-grid-2col">
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 14px;">Instant Connect Channels</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="tel:18001234567" style="text-decoration: none; background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px;">
+                            <i class="fa-solid fa-phone-volume" style="font-size: 1.8rem; color: #16a34a;"></i>
+                            <div>
+                                <div style="font-weight: 800; color: #166534; font-size: 1rem;">Toll-Free Priority Line: 1800 123 4567</div>
+                                <div style="font-size: 0.8rem; color: #64748b;">Available 24x7 in Telugu &amp; English</div>
+                            </div>
+                        </a>
+
+                        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <i class="fa-brands fa-whatsapp" style="font-size: 2rem; color: #25d366;"></i>
+                                <div>
+                                    <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">WhatsApp Medical Care Desk</div>
+                                    <div style="font-size: 0.8rem; color: #64748b;">Instant response from Care Team</div>
+                                </div>
+                            </div>
+                            <button class="btn-share-family" onclick="showOpdToast('Connected with Nhealth WhatsApp Care Team!')">Chat Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opd-page-card" style="margin-bottom: 0;">
+                    <h3 class="opd-card-section-title" style="margin-bottom: 14px;">Create Support Request</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <input type="text" placeholder="Subject / Query topic..." style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.85rem;">
+                        <textarea placeholder="Describe your request in detail..." style="width: 100%; height: 90px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 10px 12px; font-size: 0.85rem; resize: none;"></textarea>
+                        <button class="btn-share-family" style="justify-content: center;" onclick="showOpdToast('Support ticket #NH-TICK-9942 created! Our coordinator will contact you in 5 mins.')"><i class="fa-solid fa-paper-plane"></i> Submit Ticket</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 12: SETTINGS VIEW ==================== -->
+        <div id="view-settings" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-gear" style="color: #64748b;"></i>
+                        <span>Profile &amp; Account Settings</span>
+                    </div>
+                    <p class="opd-page-sub">Manage personal details, Ayushman Bharat ABHA linking, and preferences</p>
+                </div>
+                <button class="btn-share-family" onclick="showOpdToast('Profile settings saved successfully!')"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+            </div>
+
+            <div class="opd-page-card" style="max-width: 680px;">
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div>
+                        <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Full Name</label>
+                        <input type="text" value="{{ user.name if user and user.name else 'Shiva Pendala' }}" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.88rem;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Mobile Number</label>
+                            <input type="tel" value="{{ user.phone if user and user.phone else '9848099887' }}" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.88rem;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">City / State</label>
+                            <input type="text" value="{{ user.city if user and user.city else 'Hyderabad' }}, Andhra Pradesh" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.88rem;">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Ayushman Bharat ABHA Address</label>
+                        <input type="text" value="91-4587-8819-2045@abdm" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.88rem;" readonly>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Preferred Language</label>
+                        <select style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.88rem;">
+                            <option value="en">English</option>
+                            <option value="te">తెలుగు (Telugu)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 13: HISTORY VIEW ==================== -->
+        <div id="view-history" class="opd-view-panel">
+            <div class="opd-page-header">
+                <div>
+                    <div class="opd-page-title">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: var(--opd-blue);"></i>
+                        <span>OPD &amp; Medical Visit History</span>
+                    </div>
+                    <p class="opd-page-sub">Complete chronological timeline of your clinic visits, teleconsultations, tests, and prescriptions</p>
+                </div>
+                <button class="btn-share-family" onclick="showOpdToast('Downloaded Complete OPD Visit History Statement PDF.')"><i class="fa-solid fa-download"></i> Download History PDF</button>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="opd-filter-tabs">
+                <button class="opd-tab-btn active" onclick="filterHistory(this, 'all')">All History</button>
+                <button class="opd-tab-btn" onclick="filterHistory(this, 'doctor')">Doctor OPD Visits</button>
+                <button class="opd-tab-btn" onclick="filterHistory(this, 'tele')">Teleconsultations</button>
+                <button class="opd-tab-btn" onclick="filterHistory(this, 'lab')">Lab Tests</button>
+                <button class="opd-tab-btn" onclick="filterHistory(this, 'pharma')">Pharmacy Orders</button>
+                <button class="opd-tab-btn" onclick="filterHistory(this, 'billing')">Billing &amp; Payments</button>
+            </div>
+
+            <!-- History Timeline List -->
+            <div class="opd-page-card" style="padding: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 14px;" id="historyItemsContainer">
+                    
+                    <!-- Item 1: Doctor Consult -->
+                    <div class="opd-history-row" data-hcategory="doctor" style="border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <div class="opd-tx-icon-circle icon-blue" style="width: 46px; height: 46px; font-size: 1.2rem;">
+                                <i class="fa-solid fa-user-doctor"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">In-Clinic OPD Consultation - Dr. Rajesh Kumar</div>
+                                <div style="font-size: 0.82rem; color: #64748b;">General Physician &bull; Nhealth Prime Care Clinic, Vijayawada</div>
+                                <div style="font-size: 0.78rem; color: #2563eb; margin-top: 2px;">24 Sep 2024 &bull; Ref: NH-APT-88219 &bull; <strong style="color: #059669;">Free OPD Benefit Applied (₹0)</strong></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-appt-view" style="padding: 6px 12px; font-size: 0.8rem;" onclick="switchOpdView('prescriptions')"><i class="fa-solid fa-file-prescription"></i> View Rx</button>
+                            <button class="btn-share-family" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openReceiptModal('Doctor Consultation', 'Dr. Rajesh Kumar (General Physician)', '₹0', '24 Sep 2024', 'NH-APT-88219', 'Member Benefit Voucher', 'Completed')">Receipt</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Lab Test -->
+                    <div class="opd-history-row" data-hcategory="lab" style="border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <div class="opd-tx-icon-circle icon-purple" style="width: 46px; height: 46px; font-size: 1.2rem;">
+                                <i class="fa-solid fa-flask"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">Diagnostic Pathology - Complete Blood Count (CBC + ESR)</div>
+                                <div style="font-size: 0.82rem; color: #64748b;">Sri Venkateswara Diagnostics &bull; Home Sample Collected</div>
+                                <div style="font-size: 0.78rem; color: #7c3aed; margin-top: 2px;">22 Sep 2024 &bull; Ref: NH-TX-77102 &bull; <strong style="color: #059669;">₹320 Paid (20% Discount)</strong></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-appt-view" style="padding: 6px 12px; font-size: 0.8rem;" onclick="switchOpdView('records')"><i class="fa-solid fa-file-pdf"></i> Download Report</button>
+                            <button class="btn-share-family" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openReceiptModal('Lab Test - CBC', 'Complete Blood Count with ESR (20% Discount)', '₹320', '22 Sep 2024', 'NH-TX-77102', 'Nhealth Wallet', 'Completed')">Receipt</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: Teleconsultation -->
+                    <div class="opd-history-row" data-hcategory="tele" style="border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <div class="opd-tx-icon-circle icon-green" style="width: 46px; height: 46px; font-size: 1.2rem;">
+                                <i class="fa-solid fa-video"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">24/7 HD Teleconsultation - Dr. Priya Sharma</div>
+                                <div style="font-size: 0.82rem; color: #64748b;">General Physician &bull; 14-min Video Consultation</div>
+                                <div style="font-size: 0.78rem; color: #16a34a; margin-top: 2px;">15 Sep 2024 &bull; Ref: NH-APT-67120 &bull; <strong style="color: #059669;">Free Teleconsult Voucher (₹0)</strong></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-appt-view" style="padding: 6px 12px; font-size: 0.8rem;" onclick="switchOpdView('prescriptions')"><i class="fa-solid fa-file-prescription"></i> View Rx</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 4: Pharmacy -->
+                    <div class="opd-history-row" data-hcategory="pharma" style="border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <div class="opd-tx-icon-circle icon-orange" style="width: 46px; height: 46px; font-size: 1.2rem;">
+                                <i class="fa-solid fa-pills"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">Doorstep Pharmacy Order - Monthly Refill (Dolo 650 &amp; Telma 40)</div>
+                                <div style="font-size: 0.82rem; color: #64748b;">Delivered by Nhealth Express &bull; Sai Medicals &amp; Pharmacy</div>
+                                <div style="font-size: 0.78rem; color: #ea580c; margin-top: 2px;">10 Sep 2024 &bull; Ref: NH-ORD-55412 &bull; <strong style="color: #059669;">₹226.80 Paid (10% Discount)</strong></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-appt-view" style="padding: 6px 12px; font-size: 0.8rem;" onclick="showOpdToast('Delivered on 10 Sep 2024 to Madhapur address.')"><i class="fa-solid fa-truck-fast"></i> Delivered</button>
+                            <button class="btn-share-family" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openReceiptModal('Pharmacy Order', 'Dolo 650 & Telma 40 Monthly Refill (10% OFF)', '₹226.80', '10 Sep 2024', 'NH-ORD-55412', 'UPI Payment', 'Delivered')">Receipt</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 5: Annual Checkup -->
+                    <div class="opd-history-row" data-hcategory="doctor" style="border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <div class="opd-tx-icon-circle icon-pink" style="width: 46px; height: 46px; font-size: 1.2rem;">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">Annual Preventive Full Body Health Check-up</div>
+                                <div style="font-size: 0.82rem; color: #64748b;">60+ Parameters &bull; ECG, Hemogram, Lipid &amp; Physician Physical Exam</div>
+                                <div style="font-size: 0.78rem; color: #ec4899; margin-top: 2px;">10 Aug 2024 &bull; Ref: NH-CHK-2024-01 &bull; <strong style="color: #059669;">100% Free Plan Benefit (₹0)</strong></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-appt-view" style="padding: 6px 12px; font-size: 0.8rem;" onclick="switchOpdView('records')"><i class="fa-solid fa-file-lines"></i> View Full Report</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 6: Membership Billing -->
+                    <div class="opd-history-row" data-hcategory="billing" style="border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <div class="opd-tx-icon-circle icon-green" style="width: 46px; height: 46px; font-size: 1.2rem;">
+                                <i class="fa-solid fa-crown"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">Premium OPD Individual Membership - Annual Subscription</div>
+                                <div style="font-size: 0.82rem; color: #64748b;">Valid for 1 Year (28 Sep 2024 to 28 Sep 2025) &bull; ID: NH-OPD-2026-4587</div>
+                                <div style="font-size: 0.78rem; color: #166534; margin-top: 2px;">28 Sep 2024 &bull; Ref: NH-TX-99018 &bull; <strong style="color: #059669;">₹1,999 Paid</strong></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-share-family" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openReceiptModal('Membership Renewal', 'Premium OPD Individual - 1 Year', '₹1,999', '28 Sep 2024', 'NH-TX-99018', 'UPI / NetBanking', 'Paid')"><i class="fa-solid fa-download"></i> Tax Invoice</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== INTERACTIVE MODALS ==================== -->
+
+    <!-- Quick Booking Drawer/Modal -->
+    <div id="bookingDrawerModal" class="opd-modal-backdrop" onclick="closeModalOnBackdrop(event, 'bookingDrawerModal')">
+        <div class="opd-modal-card" style="max-width: 520px;">
+            <div class="opd-modal-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-calendar-check" style="color: var(--opd-blue); font-size: 1.2rem;"></i>
+                    <h3 class="opd-modal-title" id="drawerDocTitle">Book Appointment</h3>
+                </div>
+                <button class="opd-modal-close" onclick="closeModal('bookingDrawerModal')">&times;</button>
+            </div>
+            <div class="opd-modal-body">
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 0.84rem; color: #166534;">
+                    <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+                    <span><strong>100% Free OPD Benefit Applied:</strong> ₹0 consultation fee.</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Consultation Mode</label>
+                        <select id="drawerModeSelect" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.85rem;">
+                            <option value="HD Video Call">Instant HD Video Call</option>
+                            <option value="In-Clinic Visit">In-Clinic Visit (Cashless)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Date &amp; Time Slot</label>
+                        <input type="datetime-local" id="drawerDateTime" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.85rem;" value="2026-09-29T11:00">
+                    </div>
+
+                    <div>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Chief Complaint / Symptoms (Optional)</label>
+                        <input type="text" placeholder="e.g. Fever, cough, skin allergy, follow-up" style="width: 100%; height: 38px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.84rem;">
+                    </div>
+                </div>
+            </div>
+            <div class="opd-modal-footer">
+                <button class="btn-appt-view" onclick="closeModal('bookingDrawerModal')">Cancel</button>
+                <button class="btn-share-family" onclick="confirmDrawerBooking()"><i class="fa-solid fa-check"></i> Confirm Appointment (₹0)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Health Check-up Modal -->
+    <div id="checkupModal" class="opd-modal-backdrop" onclick="closeModalOnBackdrop(event, 'checkupModal')">
+        <div class="opd-modal-card" style="max-width: 520px;">
+            <div class="opd-modal-header">
+                <h3 class="opd-modal-title"><i class="fa-solid fa-heart-pulse" style="color: #ec4899; margin-right: 6px;"></i> Annual Health Check-up Package</h3>
+                <button class="opd-modal-close" onclick="closeModal('checkupModal')">&times;</button>
+            </div>
+            <div class="opd-modal-body">
+                <div style="background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 10px; padding: 12px; margin-bottom: 14px; font-size: 0.84rem; color: #9d174d;">
+                    <strong>Included Free in Your Plan:</strong> 60+ Vital Health Parameters including Complete Hemogram, Kidney Function, Liver Profile, Fasting Blood Sugar, ECG &amp; Doctor Physical Examination.
+                </div>
+
+                <div style="font-size: 0.85rem; color: #334155; line-height: 1.6; margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Status: <strong>1 / 1 Completed this year</strong></div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-calendar-day" style="color: #64748b;"></i> Next Complimentary Checkup opens: <strong>28 Sep 2025</strong></div>
+                </div>
+            </div>
+            <div class="opd-modal-footer">
+                <button class="btn-appt-view" onclick="closeModal('checkupModal')">Close</button>
+                <button class="btn-share-family" onclick="closeModal('checkupModal'); switchOpdView('records');"><i class="fa-solid fa-file-lines"></i> View Completed Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share with Family Modal -->
+    <div id="shareModal" class="opd-modal-backdrop" onclick="closeModalOnBackdrop(event, 'shareModal')">
+        <div class="opd-modal-card" style="max-width: 480px;">
+            <div class="opd-modal-header">
+                <h3 class="opd-modal-title"><i class="fa-solid fa-user-group" style="color: #f59e0b; margin-right: 6px;"></i> Share Premium with Family</h3>
+                <button class="opd-modal-close" onclick="closeModal('shareModal')">&times;</button>
+            </div>
+            <div class="opd-modal-body">
+                <p style="font-size: 0.86rem; color: #475569; margin-bottom: 14px;">Add up to 4 family members to your Nhealth Premium OPD Plan and get flat <strong>40% OFF</strong> on family upgrades.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                    <input type="text" placeholder="Family Member Full Name" style="width: 100%; height: 38px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.84rem;">
+                    <input type="tel" placeholder="Mobile Number (+91)" style="width: 100%; height: 38px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.84rem;">
+                </div>
+            </div>
+            <div class="opd-modal-footer">
+                <button class="btn-appt-view" onclick="closeModal('shareModal')">Close</button>
+                <button class="btn-share-family" onclick="closeModal('shareModal'); showOpdToast('Family invite link sent via WhatsApp &amp; SMS!');"><i class="fa-solid fa-paper-plane"></i> Send Invite Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="opd-modal-backdrop" onclick="closeModalOnBackdrop(event, 'receiptModal')">
+        <div class="opd-modal-card" style="max-width: 480px;">
+            <div class="opd-modal-header">
+                <h3 class="opd-modal-title"><i class="fa-solid fa-receipt" style="color: #10b981; margin-right: 6px;"></i> Transaction Receipt</h3>
+                <button class="opd-modal-close" onclick="closeModal('receiptModal')">&times;</button>
+            </div>
+            <div class="opd-modal-body">
+                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; font-size: 0.85rem;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px;">
+                        <span style="color: #64748b;">Transaction Ref:</span>
+                        <strong id="receiptTxRef">NH-TX-99018</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #64748b;">Service:</span>
+                        <strong id="receiptService">Membership Renewal</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #64748b;">Details:</span>
+                        <span id="receiptDetails">Premium OPD Individual</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #64748b;">Date:</span>
+                        <span id="receiptDate">28 Sep 2024</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 10px; font-size: 1.05rem;">
+                        <span style="font-weight: 800; color: #0f172a;">Total Amount:</span>
+                        <strong style="color: #059669;" id="receiptAmount">₹1,999</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="opd-modal-footer">
+                <button class="btn-appt-view" onclick="closeModal('receiptModal')">Close</button>
+                <button class="btn-share-family" onclick="showOpdToast('Downloaded Official Tax Invoice PDF.')"><i class="fa-solid fa-download"></i> Download Invoice PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Modal -->
+    <div id="usageModal" class="opd-modal-backdrop" onclick="closeModalOnBackdrop(event, 'usageModal')">
+        <div class="opd-modal-card" style="max-width: 520px;">
+            <div class="opd-modal-header">
+                <h3 class="opd-modal-title"><i class="fa-solid fa-chart-pie" style="color: var(--opd-blue); margin-right: 6px;"></i> Benefit Utilization</h3>
+                <button class="opd-modal-close" onclick="closeModal('usageModal')">&times;</button>
+            </div>
+            <div class="opd-modal-body">
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                        <span>Doctor Consultations</span>
+                        <strong style="color: #2563eb;">6 / 10 (60% Used)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                        <span>Teleconsultations</span>
+                        <strong style="color: #10b981;">8 / 15 (53% Used)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                        <span>Lab Tests</span>
+                        <strong style="color: #8b5cf6;">20% OFF (Unlimited)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                        <span>Pharmacy</span>
+                        <strong style="color: #f59e0b;">10% OFF (Unlimited)</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                        <span>Annual Health Check-up</span>
+                        <strong style="color: #ec4899;">1 / 1 (100% Completed)</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="opd-modal-footer">
+                <button class="btn-appt-view" onclick="closeModal('usageModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar (Fixed at bottom on Mobile screens) -->
+    <nav class="opd-mobile-bottom-nav" id="opdMobileBottomNav">
+        <button class="opd-mob-nav-item active" id="mob-nav-dashboard" onclick="switchOpdView('dashboard')">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </button>
+        <button class="opd-mob-nav-item" id="mob-nav-appointments" onclick="switchOpdView('appointments')">
+            <i class="fa-regular fa-calendar-check"></i>
+            <span>Book</span>
+        </button>
+        <button class="opd-mob-nav-item" id="mob-nav-consultations" onclick="switchOpdView('consultations')">
+            <i class="fa-regular fa-comments"></i>
+            <span>Consults</span>
+        </button>
+        <button class="opd-mob-nav-item" id="mob-nav-history" onclick="switchOpdView('history')">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>History</span>
+        </button>
+        <button class="opd-mob-nav-item" id="mob-nav-menu" onclick="toggleOpdMobileSidebar(true)">
+            <i class="fa-solid fa-bars"></i>
+            <span>Menu</span>
+        </button>
+    </nav>
+
+    <!-- Toast Notification -->
+    <div id="opdToast" style="display: none; position: fixed; bottom: 80px; right: 24px; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 12px; font-size: 0.86rem; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 3000;"></div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        let currentBookingDoctor = 'Dr. Priya Sharma';
+
+        function showOpdToast(msg) {
+            const t = document.getElementById('opdToast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3200);
+        }
+
+        function toggleOpdMobileSidebar(open) {
+            const sidebar = document.getElementById('opdSidebar');
+            const backdrop = document.getElementById('opdSidebarBackdrop');
+            if (open) {
+                sidebar.classList.add('mobile-open');
+                backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                sidebar.classList.remove('mobile-open');
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function switchOpdView(viewName) {
+            // Close mobile sidebar if open
+            toggleOpdMobileSidebar(false);
+
+            // 1. Hide all view panels
+            document.querySelectorAll('.opd-view-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // 2. Show the targeted panel
+            const targetPanel = document.getElementById(`view-${viewName}`);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            } else {
+                const defaultPanel = document.getElementById('view-dashboard');
+                if (defaultPanel) defaultPanel.classList.add('active');
+            }
+
+            // 3. Update sidebar active links
+            document.querySelectorAll('.opd-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeNav = document.getElementById(`nav-${viewName}`);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+
+            // 4. Update mobile bottom nav active state
+            document.querySelectorAll('.opd-mob-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const mobActive = document.getElementById(`mob-nav-${viewName}`);
+            if (mobActive) {
+                mobActive.classList.add('active');
+            }
+
+            // 5. Smooth scroll to top of workspace
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterDoctors(btn, category) {
+            document.querySelectorAll('.opd-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('#doctorsCatalogGrid .opd-doctor-card').forEach(card => {
+                const spec = card.getAttribute('data-specialty');
+                if (category === 'all' || spec === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openBookingDrawer(docName, spec) {
+            currentBookingDoctor = docName;
+            document.getElementById('drawerDocTitle').textContent = `Book ${docName}`;
+            document.getElementById('bookingDrawerModal').classList.add('active');
+        }
+
+        function confirmDrawerBooking() {
+            const mode = document.getElementById('drawerModeSelect').value;
+            closeModal('bookingDrawerModal');
+            showOpdToast(`Appointment confirmed with ${currentBookingDoctor} (${mode})! Free OPD benefit applied.`);
+        }
+
+        function handleBookTest(testName, price) {
+            showOpdToast(`Booked ${testName} for ${price} (20% member discount applied)! Phlebotomist assigned.`);
+        }
+
+        function filterHistory(btn, category) {
+            document.querySelectorAll('#view-history .opd-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('#historyItemsContainer .opd-history-row').forEach(row => {
+                const cat = row.getAttribute('data-hcategory');
+                if (category === 'all' || cat === category) {
+                    row.style.display = 'flex';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function openShareModal() {
+            document.getElementById('shareModal').classList.add('active');
+        }
+
+        function openCheckupModal() {
+            document.getElementById('checkupModal').classList.add('active');
+        }
+
+        function openUsageModal() {
+            document.getElementById('usageModal').classList.add('active');
+        }
+
+        function openReceiptModal(service, details, amount, date, ref, method, status) {
+            document.getElementById('receiptService').textContent = service;
+            document.getElementById('receiptDetails').textContent = details;
+            document.getElementById('receiptAmount').textContent = amount;
+            document.getElementById('receiptDate').textContent = date;
+            document.getElementById('receiptTxRef').textContent = ref;
+            document.getElementById('receiptModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) m.classList.remove('active');
+        }
+
+        function closeModalOnBackdrop(e, modalId) {
+            if (e.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
+
+        function handlePatientLogout() {
+            if (confirm('Are you sure you want to log out from Nhealth Premium?')) {
+                window.location.href = '/logout';
+            }
+        }
+    </script>
+</body>
+</html>
