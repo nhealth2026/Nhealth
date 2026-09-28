@@ -638,14 +638,24 @@
                             <tr>
                                 <th>Parameter</th>
                                 <th>Result Value</th>
-                                <th>Unit</th>
+                                <th style="text-align: center; width: 70px;">Flag</th>
                                 <th>Reference Range</th>
+                                <th>Unit</th>
+                                <th style="width: 40px; text-align: center;"></th>
                             </tr>
                         </thead>
                         <tbody id="resultsTableBody">
                             <!-- Populated dynamically based on chosen test -->
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Add New Parameter Button & Row below table (under MCHC / parameters) -->
+                <div style="margin-top: 14px; display: flex; justify-content: flex-start;">
+                    <button type="button" class="lab-btn-secondary" onclick="addNewCustomParameterRow()" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; color: #4361EE; border: 1.5px dashed #818cf8; background: #eef2ff;">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Parameter</span>
+                    </button>
                 </div>
 
                 <!-- Navigation Action Buttons -->
@@ -1843,7 +1853,9 @@
 
         function calculateFlag(valStr, refRange) {
             if (!valStr || !refRange) return '';
-            const num = parseFloat(String(valStr).replace(/[^0-9.-]/g, ''));
+            const cleanStr = String(valStr).trim();
+            if (!cleanStr || cleanStr.toLowerCase() === 'nil' || cleanStr.toLowerCase() === 'negative') return '';
+            const num = parseFloat(cleanStr.replace(/[^0-9.-]/g, ''));
             if (isNaN(num)) return '';
 
             // Handle '< 200' or '<= 150'
@@ -1883,6 +1895,13 @@
             const flag = calculateFlag(input.value, refRange);
             badge.textContent = flag || '-';
             badge.className = `lab-flag-badge ${flag === 'L' ? 'flag-low' : flag === 'H' ? 'flag-high' : 'flag-normal'}`;
+            if (flag === 'L' || flag === 'H') {
+                input.style.fontWeight = '800';
+                input.style.color = '#000000';
+            } else {
+                input.style.fontWeight = '600';
+                input.style.color = '#0f172a';
+            }
         }
 
         // Dynamically load test parameter rows into Step 3 table
@@ -1892,24 +1911,89 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            testInfo.parameters.forEach(param => {
+            testInfo.parameters.forEach((param, idx) => {
+                const rowKey = param.key || `p_${idx}`;
                 const initFlag = calculateFlag(param.defaultVal, param.ref);
                 const flagClass = initFlag === 'L' ? 'flag-low' : initFlag === 'H' ? 'flag-high' : 'flag-normal';
+                const isBold = (initFlag === 'L' || initFlag === 'H');
 
                 const tr = document.createElement('tr');
+                tr.className = 'lab-param-row';
+                tr.dataset.paramKey = rowKey;
                 tr.innerHTML = `
-                    <td><strong>${param.name}</strong></td>
+                    <td><strong class="param-name-label">${param.name}</strong></td>
                     <td>
-                        <input type="text" class="lab-result-input" id="param_${param.key}" value="${param.defaultVal}" oninput="updateRowFlag('${param.key}', '${param.ref}')">
+                        <input type="text" class="lab-result-input" id="param_${rowKey}" value="${param.defaultVal}" style="font-weight: ${isBold ? '800' : '600'}; color: ${isBold ? '#000000' : '#0f172a'};" oninput="updateRowFlag('${rowKey}', '${param.ref}')">
                     </td>
                     <td style="text-align: center;">
-                        <span id="flagBadge_${param.key}" class="lab-flag-badge ${flagClass}">${initFlag || '-'}</span>
+                        <span id="flagBadge_${rowKey}" class="lab-flag-badge ${flagClass}">${initFlag || '-'}</span>
                     </td>
-                    <td>${param.ref}</td>
-                    <td>${param.unit || '-'}</td>
+                    <td class="param-ref-label">${param.ref}</td>
+                    <td class="param-unit-label">${param.unit || '-'}</td>
+                    <td style="text-align: center;"></td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        let customParamCounter = 1;
+        function addNewCustomParameterRow() {
+            const tbody = document.getElementById('resultsTableBody');
+            if (!tbody) return;
+            const rowKey = `custom_${customParamCounter++}`;
+
+            const tr = document.createElement('tr');
+            tr.className = 'lab-param-row is-custom-row';
+            tr.id = `row_${rowKey}`;
+            tr.dataset.paramKey = rowKey;
+            tr.innerHTML = `
+                <td>
+                    <input type="text" class="lab-result-input" id="paramName_${rowKey}" placeholder="Parameter (e.g. ESR, Granulocytes)" style="width: 100%; font-weight: 700;">
+                </td>
+                <td>
+                    <input type="text" class="lab-result-input" id="param_${rowKey}" placeholder="Value" oninput="updateCustomRowFlag('${rowKey}')">
+                </td>
+                <td style="text-align: center;">
+                    <span id="flagBadge_${rowKey}" class="lab-flag-badge flag-normal">-</span>
+                </td>
+                <td>
+                    <input type="text" class="lab-result-input" id="paramRef_${rowKey}" placeholder="Ref (e.g. 0 - 20)" style="width: 110px;" oninput="updateCustomRowFlag('${rowKey}')">
+                </td>
+                <td>
+                    <input type="text" class="lab-result-input" id="paramUnit_${rowKey}" placeholder="Unit (e.g. mm/hr)" style="width: 90px;">
+                </td>
+                <td style="text-align: center;">
+                    <button type="button" onclick="removeCustomParameterRow('${rowKey}')" title="Remove Parameter" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1rem; padding: 4px 6px;">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            const input = document.getElementById(`paramName_${rowKey}`);
+            if (input) input.focus();
+        }
+
+        function removeCustomParameterRow(rowKey) {
+            const row = document.getElementById(`row_${rowKey}`);
+            if (row) row.remove();
+        }
+
+        function updateCustomRowFlag(rowKey) {
+            const valInput = document.getElementById(`param_${rowKey}`);
+            const refInput = document.getElementById(`paramRef_${rowKey}`);
+            const badge = document.getElementById(`flagBadge_${rowKey}`);
+            if (!valInput || !badge) return;
+            const refRange = refInput ? refInput.value.trim() : '';
+            const flag = calculateFlag(valInput.value, refRange);
+            badge.textContent = flag || '-';
+            badge.className = `lab-flag-badge ${flag === 'L' ? 'flag-low' : flag === 'H' ? 'flag-high' : 'flag-normal'}`;
+            if (flag === 'L' || flag === 'H') {
+                valInput.style.fontWeight = '800';
+                valInput.style.color = '#000000';
+            } else {
+                valInput.style.fontWeight = '600';
+                valInput.style.color = '#0f172a';
+            }
         }
 
         function proceedToEnterResults() {
@@ -2086,18 +2170,44 @@
             const testInfo = TEST_CATALOG[testCode] || TEST_CATALOG['CBC'];
             
             const currentResults = [];
-            testInfo.parameters.forEach(param => {
-                const input = document.getElementById(`param_${param.key}`);
-                const val = input ? input.value.trim() : param.defaultVal;
-                const flag = calculateFlag(val, param.ref);
-                currentResults.push({
-                    name: param.name,
-                    val: val,
-                    flag: flag,
-                    unit: param.unit,
-                    ref: param.ref
-                });
+            const rows = document.querySelectorAll('#resultsTableBody tr.lab-param-row');
+            
+            rows.forEach(row => {
+                const rowKey = row.dataset.paramKey;
+                let pName = '';
+                let pRef = '';
+                let pUnit = '';
+                
+                const nameInput = row.querySelector(`#paramName_${rowKey}`);
+                const nameLbl = row.querySelector('.param-name-label');
+                if (nameInput) pName = nameInput.value.trim() || 'Custom Parameter';
+                else if (nameLbl) pName = nameLbl.textContent.trim();
+                
+                const refInput = row.querySelector(`#paramRef_${rowKey}`);
+                const refLbl = row.querySelector('.param-ref-label');
+                if (refInput) pRef = refInput.value.trim();
+                else if (refLbl) pRef = refLbl.textContent.trim();
+                
+                const unitInput = row.querySelector(`#paramUnit_${rowKey}`);
+                const unitLbl = row.querySelector('.param-unit-label');
+                if (unitInput) pUnit = unitInput.value.trim();
+                else if (unitLbl) pUnit = unitLbl.textContent.trim();
+                
+                const valInput = row.querySelector(`#param_${rowKey}`);
+                const val = valInput ? valInput.value.trim() : '';
+                const flag = calculateFlag(val, pRef);
+                
+                if (pName && val) {
+                    currentResults.push({
+                        name: pName,
+                        val: val,
+                        flag: flag,
+                        unit: (pUnit === '-' ? '' : pUnit),
+                        ref: pRef
+                    });
+                }
             });
+
             allTestResults[testCode] = {
                 title: testInfo.name,
                 results: currentResults
@@ -2141,23 +2251,26 @@
                 table.innerHTML = `
                     <thead>
                         <tr>
-                            <th>TEST DESCRIPTION</th>
-                            <th>RESULT</th>
-                            <th style="text-align: center; width: 70px;">FLAG</th>
-                            <th>BIO. REF. RANGE</th>
-                            <th>UNIT</th>
+                            <th style="width: 36%;">TEST DESCRIPTION</th>
+                            <th style="width: 16%;">RESULT</th>
+                            <th style="text-align: center; width: 10%;">FLAG</th>
+                            <th style="width: 24%;">BIO. REF. RANGE</th>
+                            <th style="width: 14%;">UNIT</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${testData.results.map(r => `
+                        ${testData.results.map(r => {
+                            const isFlagged = (r.flag === 'L' || r.flag === 'H');
+                            return `
                             <tr>
-                                <td><strong>${r.name}</strong></td>
-                                <td style="font-weight: 700;">${r.val}</td>
-                                <td style="text-align: center; font-weight: 800; color: ${r.flag === 'L' ? '#2563eb' : r.flag === 'H' ? '#dc2626' : '#64748b'};">${r.flag || '-'}</td>
-                                <td>${r.ref}</td>
-                                <td>${r.unit || '-'}</td>
+                                <td><strong style="color: #0f172a;">${r.name}</strong></td>
+                                <td>${isFlagged ? `<strong style="font-weight: 800; color: #000000; font-size: 0.95rem;">${r.val}</strong>` : `<span style="font-weight: 500; color: #334155;">${r.val}</span>`}</td>
+                                <td style="text-align: center;">${isFlagged ? `<strong style="font-weight: 800; color: #000000; font-size: 0.95rem;">${r.flag}</strong>` : ''}</td>
+                                <td style="${isFlagged ? 'font-weight: 700; color: #0f172a;' : 'color: #334155;'}">${r.ref}</td>
+                                <td style="color: #334155;">${r.unit || '-'}</td>
                             </tr>
-                        `).join('')}
+                            `;
+                        }).join('')}
                     </tbody>
                 `;
                 container.appendChild(table);
