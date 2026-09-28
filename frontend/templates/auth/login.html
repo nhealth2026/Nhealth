@@ -79,6 +79,9 @@
                             <i class="fa-solid fa-user-doctor auth-service-icon" id="serviceSelectorIcon"></i>
                             <select id="authServiceSelector" class="auth-service-select" onchange="onLoginServiceChange(this)">
                                 <optgroup label="🩺 Doctor &amp; Specialist Services">
+                                    <option value="premium-opd" data-role="premium-opd" data-badge="Premium OPD Doctor &amp; Clinic Portal" data-icon="fa-solid fa-crown" data-title="Premium OPD &amp; Clinic Portal" data-sub="Sign in to manage OPD membership queues, VIP patient visits and consultations" data-placeholder="Doctor / Member Mobile or Email" data-signup="/signup/partner?service=premium-opd">
+                                        👑 Premium OPD Membership &amp; Clinic Partner
+                                    </option>
                                     <option value="doctor-consult" data-role="doctor" data-badge="Online Doctor Consultation" data-icon="fa-solid fa-user-doctor" data-title="Doctor &amp; Specialist Portal" data-sub="Sign in to manage appointments, patients, and teleconsultations" data-placeholder="Doctor Mobile Number, Email or ID" data-signup="/signup/partner?service=doctor-consult" {% if role == 'doctor' or not role %}selected{% endif %}>
                                         🩺 Online Doctor Consultation
                                     </option>
@@ -544,10 +547,11 @@
                     setTimeout(() => {
                         const uRole = (data.user && data.user.role) || role || 'patient';
                         const targetUrl = data.redirect || (
-                            (uRole === 'pharmacy' || uRole === 'pharma') ? '/pharmacy/dashboard' :
-                            (uRole === 'lab') ? '/lab/dashboard' :
-                            (uRole === 'doctor') ? '/doctor/dashboard' :
-                            (uRole === 'rider') ? '/rider/dashboard' :
+                            (uRole === 'premium-opd' || role === 'premium-opd') ? '/opd-dashboard' :
+                            (uRole === 'pharmacy' || uRole === 'pharma' || role === 'pharmacy') ? '/pharmacy/dashboard' :
+                            (uRole === 'lab' || role === 'lab') ? '/lab/dashboard' :
+                            (uRole === 'doctor' || role === 'doctor') ? '/doctor/dashboard' :
+                            (uRole === 'rider' || role === 'rider') ? '/rider/dashboard' :
                             '/patient/dashboard'
                         );
                         window.location.href = targetUrl;
