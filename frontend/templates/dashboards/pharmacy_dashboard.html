@@ -125,10 +125,14 @@
 
         <!-- Top Header Bar (Desktop View) -->
         <header class="pharma-topbar">
-            <!-- Global Search Box -->
-            <div class="pharma-search-box">
+            <!-- Global Search Box with Live Results Popup -->
+            <div class="pharma-search-box" style="position: relative;">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="pharmaSearchInput" class="pharma-search-input" placeholder="Search orders, medicine, patient..." oninput="handleGlobalSearch(this.value)">
+                <input type="text" id="pharmaSearchInput" class="pharma-search-input" placeholder="Search by phone number, patient name, order ID..." oninput="handleGlobalSearch(this.value)" onfocus="handleGlobalSearch(this.value)" autocomplete="off">
+                <!-- Live Patient Search Dropdown Card -->
+                <div id="pharmaLiveSearchResults" class="pharma-search-dropdown-card" style="display: none;">
+                    <!-- Populated dynamically by JS -->
+                </div>
             </div>
 
             <!-- Right Profile & Actions -->
@@ -1686,6 +1690,14 @@
 
                 <!-- Customers Table Card -->
                 <div class="pharma-card">
+                    <div class="pharma-toolbar" style="margin-bottom: 14px;">
+                        <div class="pharma-toolbar-left">
+                            <div class="pharma-toolbar-search" style="width: 380px;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="customerSearchInput" placeholder="Search by phone number, patient name, address..." oninput="handleCustomerFilter(this.value)">
+                            </div>
+                        </div>
+                    </div>
                     <div class="pharma-table-responsive">
                         <table class="pharma-table" id="customersTable">
                             <thead>
@@ -1700,13 +1712,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr data-search="rahul sharma 9876500001 98765 00001 door no 14-2 gandhi nagar narasaraopeta dolo azithromycin">
                                     <td>
                                         <div class="patient-name-bold">Rahul Sharma</div>
                                         <span style="font-size: 0.74rem; color: #64748b;">Member since Jan 2026</span>
                                     </td>
                                     <td>
-                                        <div style="font-weight: 700; color: #0f172a;">+91 98765 00001</div>
+                                        <div style="font-weight: 700; color: #0080ff;">+91 98765 00001</div>
                                         <span style="font-size: 0.72rem; color: #059669;"><i class="fa-brands fa-whatsapp"></i> Verified</span>
                                     </td>
                                     <td>Door No 14-2, Gandhi Nagar, Narasaraopeta</td>
@@ -1715,17 +1727,17 @@
                                     <td>Dolo 650, Azithromycin</td>
                                     <td style="text-align: right; white-space: nowrap;">
                                         <button class="btn-table-view" onclick="openCustomerHistoryModal('Rahul Sharma', 'Door No 14-2, Gandhi Nagar', '14', '₹6,850')">History</button>
-                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="sendWhatsAppMsg('Rahul Sharma', '9876500001')"><i class="fa-brands fa-whatsapp"></i> Message</button>
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="openPatientInvoiceFromSearch('9876500001')"><i class="fa-solid fa-file-invoice"></i> Bill</button>
                                     </td>
                                 </tr>
 
-                                <tr>
+                                <tr data-search="priya reddy 9876500002 98765 00002 plot 45 rtc colony narasaraopeta telma pantocid becosules">
                                     <td>
                                         <div class="patient-name-bold">Priya Reddy</div>
                                         <span style="font-size: 0.74rem; color: #64748b;">Chronic Patient (Hypertension)</span>
                                     </td>
                                     <td>
-                                        <div style="font-weight: 700; color: #0f172a;">+91 98765 00002</div>
+                                        <div style="font-weight: 700; color: #0080ff;">+91 98765 00002</div>
                                         <span style="font-size: 0.72rem; color: #059669;"><i class="fa-brands fa-whatsapp"></i> Verified</span>
                                     </td>
                                     <td>Plot 45, RTC Colony, Narasaraopeta</td>
@@ -1734,17 +1746,17 @@
                                     <td>Telma 40, Pantocid 40</td>
                                     <td style="text-align: right; white-space: nowrap;">
                                         <button class="btn-table-view" onclick="openCustomerHistoryModal('Priya Reddy', 'Plot 45, RTC Colony', '22', '₹18,400')">History</button>
-                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="sendWhatsAppMsg('Priya Reddy', '9876500002')"><i class="fa-brands fa-whatsapp"></i> Message</button>
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="openPatientInvoiceFromSearch('9876500002')"><i class="fa-solid fa-file-invoice"></i> Bill</button>
                                     </td>
                                 </tr>
 
-                                <tr>
+                                <tr data-search="kiran kumar 9876500003 98765 00003 near clock tower narasaraopeta lantus insulin syringes">
                                     <td>
                                         <div class="patient-name-bold">Kiran Kumar</div>
                                         <span style="font-size: 0.74rem; color: #64748b;">Chronic Patient (Diabetes)</span>
                                     </td>
                                     <td>
-                                        <div style="font-weight: 700; color: #0f172a;">+91 98765 00003</div>
+                                        <div style="font-weight: 700; color: #0080ff;">+91 98765 00003</div>
                                         <span style="font-size: 0.72rem; color: #059669;"><i class="fa-brands fa-whatsapp"></i> Verified</span>
                                     </td>
                                     <td>Near Clock Tower, Narasaraopeta</td>
@@ -1753,7 +1765,45 @@
                                     <td>Lantus Insulin, Syringes</td>
                                     <td style="text-align: right; white-space: nowrap;">
                                         <button class="btn-table-view" onclick="openCustomerHistoryModal('Kiran Kumar', 'Near Clock Tower', '9', '₹11,250')">History</button>
-                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="sendWhatsAppMsg('Kiran Kumar', '9876500003')"><i class="fa-brands fa-whatsapp"></i> Message</button>
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="openPatientInvoiceFromSearch('9876500003')"><i class="fa-solid fa-file-invoice"></i> Bill</button>
+                                    </td>
+                                </tr>
+
+                                <tr data-search="sikhakolli purushothama rao 8297548660 82975 48660 nrt andhra pradesh tapaswi metro reclame pantodex cremafine chymorel">
+                                    <td>
+                                        <div class="patient-name-bold">Sikhakolli Purushothama Rao</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">Special Customer • Invoice #294</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #0080ff;">8297548660</div>
+                                        <span style="font-size: 0.72rem; color: #059669;"><i class="fa-brands fa-whatsapp"></i> Verified</span>
+                                    </td>
+                                    <td>NRT, Andhra Pradesh</td>
+                                    <td><strong>18 Orders</strong></td>
+                                    <td class="amount-bold">₹14,500</td>
+                                    <td>Metro 400, Reclame 625, Pantodex</td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-table-view" onclick="openCustomerHistoryModal('Sikhakolli Purushothama Rao', 'NRT, Andhra Pradesh', '18', '₹14,500')">History</button>
+                                        <button class="btn-pharma-primary" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="openPatientInvoiceFromSearch('8297548660')"><i class="fa-solid fa-file-invoice"></i> Tax Invoice</button>
+                                    </td>
+                                </tr>
+
+                                <tr data-search="ravi teja 9876543210 98765 43210 flat 204 sri rama towers prakash nagar narasaraopet dolo azithromycin">
+                                    <td>
+                                        <div class="patient-name-bold">Ravi Teja</div>
+                                        <span style="font-size: 0.74rem; color: #64748b;">Prescription Patient • Dr. S. Kumar</span>
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #0080ff;">+91 98765 43210</div>
+                                        <span style="font-size: 0.72rem; color: #059669;"><i class="fa-brands fa-whatsapp"></i> Verified</span>
+                                    </td>
+                                    <td>Flat 204, Sri Rama Towers, Prakash Nagar</td>
+                                    <td><strong>8 Orders</strong></td>
+                                    <td class="amount-bold">₹5,200</td>
+                                    <td>Dolo 650, Azithromycin</td>
+                                    <td style="text-align: right; white-space: nowrap;">
+                                        <button class="btn-table-view" onclick="openCustomerHistoryModal('Ravi Teja', 'Flat 204, Sri Rama Towers', '8', '₹5,200')">History</button>
+                                        <button class="btn-pharma-outline" style="height: 32px; padding: 0 10px; font-size: 0.76rem;" onclick="openPatientInvoiceFromSearch('9876543210')"><i class="fa-solid fa-file-invoice"></i> Bill</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -2792,109 +2842,218 @@
     </div>
 
     <!-- Tax Invoice / A4 PDF Modal -->
+    <!-- ==================== TAX INVOICE A4 MODAL (Matching Image 3) ==================== -->
     <div id="invoiceModal" class="pharma-modal-backdrop" onclick="closeInvoiceModal(event)">
-        <div class="pharma-modal-card pharma-modal-card-lg" style="max-width: 720px;">
-            <div class="pharma-modal-header">
+        <div class="pharma-modal-card pharma-modal-card-lg" style="max-width: 860px;">
+            <div class="pharma-modal-header" style="padding: 12px 20px;">
                 <div>
-                    <h3 class="pharma-modal-title"><i class="fa-solid fa-file-invoice" style="color: #0080ff; margin-right: 6px;"></i> Tax Invoice / Cash Memo</h3>
-                    <span style="font-size: 0.78rem; color: #64748b;" id="invoiceRef">ABDM Connected Digital Pharmacy Invoice</span>
+                    <h3 class="pharma-modal-title"><i class="fa-solid fa-file-invoice" style="color: #0080ff; margin-right: 6px;"></i> Tax Invoice / Bill Preview</h3>
+                    <span style="font-size: 0.78rem; color: #64748b;" id="invoiceRef">GST Compliant Official Retail Invoice</span>
                 </div>
                 <button class="pharma-modal-close" onclick="closeInvoiceModal()">&times;</button>
             </div>
-            <div class="pharma-modal-body" id="invoicePrintArea" style="padding: 24px; background: #ffffff;">
-                <div class="pharma-invoice-paper" style="border: 1.5px solid #cbd5e1; padding: 22px; border-radius: 8px;">
+            <div class="pharma-modal-body" id="invoicePrintArea" style="padding: 16px; background: #ffffff;">
+                <div class="pharma-invoice-paper" style="border: 1.5px solid #0284c7; padding: 14px 18px; border-radius: 4px;">
                     
-                    <!-- Pharmacy Header -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #0f172a;">
-                        <div>
-                            <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth" style="height: 34px; width: auto; margin-bottom: 4px;">
-                            <div style="font-weight: 800; font-size: 1.15rem; color: #07193d;">Sai Medicals</div>
-                            <div style="font-size: 0.76rem; color: #475569;">Main Road, Near Gandhi Chowk, Narasaraopeta - 522601</div>
-                            <div style="font-size: 0.72rem; color: #64748b;">Phone: +91 98765 00123 &bull; Email: saimedicals.nhealth@gmail.com</div>
+                    <!-- 1. Header: Store Name & Details + In association with Nhealth (Matching uploaded image) -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px;">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <div style="width: 44px; height: 44px; background: #e0f2fe; border: 1.5px solid #0284c7; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #0284c7; font-size: 1.5rem; font-weight: 900;">
+                                <i class="fa-solid fa-mortar-pestle"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 900; font-size: 1.28rem; letter-spacing: 0.5px; color: #000000; text-transform: uppercase;" id="invPharmacyTitle">TAPASWI MEDICALS</div>
+                                <div style="font-size: 0.72rem; font-weight: 700; color: #000000; text-transform: uppercase;" id="invPharmacyAddr1">SATTENAPALLI ROAD</div>
+                                <div style="font-size: 0.72rem; font-weight: 700; color: #000000; text-transform: uppercase;" id="invPharmacyAddr2">NARASARAOPET</div>
+                                <div style="font-size: 0.72rem; font-weight: 700; color: #000000; text-transform: uppercase;" id="invPharmacyAddr3">NARASARAOPET, Andhra Pradesh - 522601</div>
+                                <div style="font-size: 0.72rem; font-weight: 800; color: #000000;" id="invPharmacyLic">AP/07/03/2022-29960 AP/07/03/2022-29961</div>
+                            </div>
                         </div>
-                        <div style="text-align: right; font-size: 0.76rem; color: #334155; line-height: 1.5;">
-                            <div style="display: inline-block; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 0.76rem; margin-bottom: 4px;">RETAIL TAX INVOICE</div>
-                            <div><strong>Drug Lic No:</strong> DL-PHA-000123 / 20B/21B</div>
-                            <div><strong>GSTIN:</strong> 37CCCC1234A1Z3</div>
-                            <div><strong>ABDM Facility ID:</strong> IN370049281</div>
-                        </div>
-                    </div>
-
-                    <!-- Meta Details: Invoice No, Date, Patient, Address, Doctor -->
-                    <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-size: 0.82rem;">
-                        <div style="line-height: 1.6;">
-                            <div><strong style="color: #475569;">Invoice Number:</strong> <span id="invPrintId" style="font-weight: 800; color: #0080ff;">INV-2026-0841</span></div>
-                            <div><strong style="color: #475569;">Date &amp; Time:</strong> <span id="invDate">28 Sep 2026, 12:30 PM</span></div>
-                            <div><strong style="color: #475569;">Payment Status:</strong> <span id="invPayment" style="color: #059669; font-weight: 700;">PAID (Cash / UPI)</span></div>
-                            <div><strong style="color: #475569;">Prescription Ref:</strong> <span id="invRxRef" style="color: #0284c7; font-weight: 600;">Verified Digital Rx</span></div>
-                        </div>
-                        <div style="line-height: 1.6; border-left: 1px dashed #cbd5e1; padding-left: 14px;">
-                            <div><strong style="color: #475569;">Patient Name:</strong> <strong id="invPatient" style="color: #0f172a; font-size: 0.88rem;">Ravi Teja</strong></div>
-                            <div><strong style="color: #475569;">Contact:</strong> <span id="invPhone">+91 98765 43210</span></div>
-                            <div><strong style="color: #475569;">Address:</strong> <span id="invAddress" style="color: #334155;">Flat 204, Sri Rama Towers, Prakash Nagar, Narasaraopet - 522601</span></div>
-                            <div><strong style="color: #475569;">Reference Doctor Name:</strong> <span id="invDoctor" style="color: #0f172a; font-weight: 700;">Dr. S. Kumar, MBBS, DNB (Reg: APMC/88219)</span></div>
+                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <!-- In association with Nhealth -->
+                            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                                <span style="font-size: 0.72rem; color: #64748b; font-style: italic; font-weight: 600;">In association with</span>
+                                <img src="{{ url_for('static', filename='images/nhealth_trademark_horizontal.png') }}" alt="Nhealth — Healthcare at Home" style="height: 32px; width: auto; max-width: 140px; object-fit: contain; margin-top: 1px;">
+                            </div>
+                            <div style="font-size: 0.76rem; font-weight: 700; color: #000000; line-height: 1.35; margin-top: 2px;">
+                                <div>Name : <span id="invOwnerName">IMMADISETTY AMARENDRA</span></div>
+                                <div>Phone : <span id="invOwnerPhone">9581582220</span></div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Items Table -->
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 10px;">
+                    <!-- 2. Blue Title Bar -->
+                    <div style="border: 1.5px solid #0284c7; display: flex; justify-content: space-between; align-items: center; padding: 4px 10px; background: #ffffff; margin-top: 4px; font-size: 0.78rem;">
+                        <div><strong>GSTIN :</strong> <strong id="invGstin">37FNCPS5800L1ZL</strong></div>
+                        <div style="font-size: 1.05rem; font-weight: 900; color: #0284c7; letter-spacing: 1px;">TAX INVOICE</div>
+                        <div style="font-weight: 800; text-transform: uppercase; font-size: 0.74rem;">ORIGINAL FOR RECIPIENT</div>
+                    </div>
+
+                    <!-- 3. Customer & Invoice Meta Table -->
+                    <div style="display: grid; grid-template-columns: 1.25fr 1fr; border-left: 1.5px solid #0284c7; border-right: 1.5px solid #0284c7; border-bottom: 1.5px solid #0284c7; font-size: 0.76rem;">
+                        <!-- Left: Customer Details -->
+                        <div style="border-right: 1.5px solid #0284c7; padding: 6px 10px; line-height: 1.45;">
+                            <div style="font-weight: 800; text-decoration: underline; margin-bottom: 2px;">Customer Detail</div>
+                            <div style="display: grid; grid-template-columns: 100px 1fr; gap: 4px;">
+                                <strong>Name</strong>
+                                <span>: <strong id="invPatient" style="color: #000;">Sikhakolli Purushothama Rao</strong></span>
+                                <strong>Address</strong>
+                                <span>: <span id="invAddress">NRT, Andhra Pradesh</span></span>
+                                <strong>Phone</strong>
+                                <span>: <span id="invPhone">8297548660</span></span>
+                                <strong>GSTIN</strong>
+                                <span>: <span id="invCustGstin">-</span></span>
+                                <strong>Place of Supply</strong>
+                                <span>: <span id="invSupplyPlace">Andhra Pradesh ( 37 )</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Right: Invoice Details -->
+                        <div style="padding: 6px 10px; line-height: 1.45;">
+                            <div style="display: grid; grid-template-columns: 100px 1fr; gap: 4px;">
+                                <strong>Invoice No.</strong>
+                                <span>: <strong id="invPrintId" style="color: #000;">294</strong></span>
+                                <strong>Invoice Date</strong>
+                                <span>: <span id="invDate">06-SEP-2026</span></span>
+                                <strong>Ref. Doctor</strong>
+                                <span>: <span id="invDoctor">Self / Dr. Consultation</span></span>
+                                <strong>Payment Mode</strong>
+                                <span>: <span id="invPayment">PAID (UPI / Cash)</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Products Table (NO CGST / SGST -> ONLY UNIFIED GST!) -->
+                    <table class="inv-tax-table" style="margin-top: 6px; width: 100%;">
                         <thead>
-                            <tr style="background: #f8fafc; border-top: 1px solid #cbd5e1; border-bottom: 1.5px solid #cbd5e1; text-align: left;">
-                                <th style="padding: 8px; width: 30px;">#</th>
-                                <th style="padding: 8px;">Medicine</th>
-                                <th style="padding: 8px;">Unit</th>
-                                <th style="padding: 8px;">Quantity / Details</th>
-                                <th style="padding: 8px; text-align: right;">Unit Price (₹)</th>
-                                <th style="padding: 8px; text-align: right;">Amount (₹)</th>
+                            <tr>
+                                <th style="width: 32px;">Sr.<br>No.</th>
+                                <th style="text-align: left; padding-left: 6px;">Name of Product / Service</th>
+                                <th style="width: 65px;">EXPIRY<br>DATE</th>
+                                <th style="width: 60px;">HSN / SAC</th>
+                                <th style="width: 55px;">Qty</th>
+                                <th style="width: 55px;">MRP</th>
+                                <th style="width: 55px;">Rate</th>
+                                <th style="width: 75px;">Taxable<br>Value</th>
+                                <th style="width: 48px;">GST<br>%</th>
+                                <th style="width: 65px;">GST<br>Amount</th>
+                                <th style="width: 75px;">Total</th>
                             </tr>
                         </thead>
                         <tbody id="invoiceItemsTbody">
-                            <!-- Dynamic items -->
+                            <!-- Dynamic Rows -->
                         </tbody>
+                        <tfoot>
+                            <tr style="font-weight: 800; background: #ffffff;">
+                                <td colspan="4" style="text-align: right; padding-right: 12px; font-weight: 900;">Total</td>
+                                <td style="text-align: center; font-weight: 800;" id="invTableQtyTotal">16.00</td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align: right; font-weight: 800;" id="invTableTaxableTotal">7,964.12</td>
+                                <td></td>
+                                <td style="text-align: right; font-weight: 800;" id="invTableGstTotal">638.38</td>
+                                <td style="text-align: right; font-weight: 900;" id="invTableGrandTotal">8,602.50</td>
+                            </tr>
+                        </tfoot>
                     </table>
 
-                    <!-- Calculation Totals -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1.5px solid #0f172a;">
-                        <div style="font-size: 0.74rem; color: #64748b; max-width: 320px; line-height: 1.4;">
-                            <div style="margin-bottom: 2px;"><strong>Terms &amp; Conditions:</strong></div>
-                            <div>&bull; Goods once sold cannot be returned without original cash bill.</div>
-                            <div>&bull; Medicines must be stored as per temperature instructions on label.</div>
-                        </div>
-                        <div style="width: 240px; font-size: 0.82rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px; color: #475569;">
-                                <span>Taxable Amount:</span>
-                                <span id="invSubtotal">₹428.57</span>
+                    <!-- 5. Bottom Split Section -->
+                    <div style="display: grid; grid-template-columns: 1.25fr 1fr; border: 1.5px solid #0284c7; border-top: none; font-size: 0.74rem;">
+                        
+                        <!-- Left Column: Total in Words, Bank Details, Terms -->
+                        <div style="border-right: 1.5px solid #0284c7;">
+                            
+                            <!-- Total in Words -->
+                            <div style="border-bottom: 1px solid #0284c7; padding: 5px 8px;">
+                                <div style="font-weight: 800; text-decoration: underline; margin-bottom: 2px;">Total in words</div>
+                                <div id="invTotalInWords" style="font-weight: 800; text-transform: uppercase; color: #000; font-size: 0.72rem; line-height: 1.3;">
+                                    EIGHT THOUSAND SIX HUNDRED AND THREE RUPEES ONLY
+                                </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px; color: #475569;">
-                                <span>CGST (2.5%):</span>
-                                <span id="invCgst">₹10.71</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #475569;">
-                                <span>SGST (2.5%):</span>
-                                <span id="invSgst">₹10.71</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 800; color: #0f172a; border-top: 1.5px solid #0f172a; padding-top: 4px;">
-                                <span>Total Amount:</span>
-                                <span id="invoiceTotalVal">₹450.00</span>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Signature & ABDM QR Seal -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
-                        <div style="font-size: 0.72rem; color: #94a3b8;">
-                            <div>Computer Generated Invoice &bull; Nhealth Healthcare Ecosystem</div>
-                            <div style="color: #059669; font-weight: 700; margin-top: 2px;"><i class="fa-solid fa-shield-halved"></i> Connected to Patient Prescription under ABDM</div>
+                            <!-- Bank Details -->
+                            <div style="border-bottom: 1px solid #0284c7; padding: 5px 8px; line-height: 1.4;">
+                                <div style="font-weight: 800; text-decoration: underline; margin-bottom: 2px;">Bank Details</div>
+                                <div style="display: grid; grid-template-columns: 90px 1fr; gap: 2px;">
+                                    <span>Name</span>
+                                    <span>: <strong id="invBankName">HDFC Bank</strong></span>
+                                    <span>Branch</span>
+                                    <span>: <span id="invBankBranch">NARASARAOPET MAIN BRANCH</span></span>
+                                    <span>Acc. Name</span>
+                                    <span>: <span id="invBankAccName">TAPASWI MEDICALS</span></span>
+                                    <span>Acc. Number</span>
+                                    <span>: <strong id="invBankAccNum">50200068101982</strong></span>
+                                    <span>IFSC</span>
+                                    <span>: <span id="invBankIfsc">HDFC0001034</span></span>
+                                    <span>MICR Code</span>
+                                    <span>: <span id="invBankMicr">520240602</span></span>
+                                </div>
+                            </div>
+
+                            <!-- Terms & Conditions -->
+                            <div style="padding: 5px 8px; line-height: 1.35; font-size: 0.7rem; color: #000;">
+                                <div style="font-weight: 800; text-decoration: underline; margin-bottom: 2px;">Terms and Conditions</div>
+                                <div>Phonepay Number : <strong id="invPhonePay">9581582220</strong></div>
+                                <div>Name : <strong id="invTermsName">IMRADISETTY VLNPR AMARENDRA</strong></div>
+                                <div>Subject to our home Jurisdiction.</div>
+                                <div>Our Responsibility Ceases as soon as goods leaves our Premises.</div>
+                                <div>Goods once sold will not taken back.</div>
+                                <div>Delivery Ex-Premises.</div>
+                            </div>
+
                         </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.74rem; font-weight: 700; color: #0f172a; margin-bottom: 2px;">Sai Medicals</div>
-                            <div style="font-size: 0.7rem; color: #64748b; border-top: 1px solid #94a3b8; padding-top: 2px; width: 140px;">Registered Pharmacist Signature</div>
+
+                        <!-- Right Column: Tax Summary, Authorized Signatory -->
+                        <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                            
+                            <!-- Calculations Box (Unified GST Only) -->
+                            <div style="padding: 6px 10px; border-bottom: 1px solid #0284c7; font-size: 0.78rem;">
+                                <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                                    <strong>Taxable Amount</strong>
+                                    <strong id="invTaxableAmount">7,964.12</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 3px 0; border-top: 1px solid #e2e8f0;">
+                                    <strong>Add : GST</strong>
+                                    <strong id="invAddGst">638.38</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 3px 0; border-top: 1px solid #e2e8f0;">
+                                    <strong>Total Tax</strong>
+                                    <strong id="invTotalTax">638.38</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 4px 0; border-top: 1.5px solid #000; font-size: 0.92rem; color: #000;">
+                                    <strong style="font-size: 0.88rem;">Total Amount After Tax</strong>
+                                    <strong style="font-size: 1.05rem; font-weight: 900;" id="invoiceTotalVal">₹8,603.00</strong>
+                                </div>
+                                <div style="text-align: right; font-size: 0.68rem; color: #475569; margin-top: 2px;">
+                                    (E &amp; O.E.)
+                                </div>
+                            </div>
+
+                            <!-- Signatory Block -->
+                            <div style="padding: 6px 10px; text-align: center;">
+                                <div style="font-size: 0.65rem; color: #334155; margin-bottom: 4px;">
+                                    Certified that the particulars given above are true and correct.
+                                </div>
+                                <div style="font-weight: 800; font-size: 0.82rem; color: #000000;" id="invSignLabName">
+                                    For TAPASWI MEDICALS
+                                </div>
+                                <div style="height: 48px; display: flex; align-items: center; justify-content: center; margin: 4px 0;">
+                                    <div style="font-family: 'Caveat', cursive, sans-serif; font-size: 1.6rem; color: #1e3a8a; transform: rotate(-3deg); font-weight: 700;">
+                                        J. Amarendra
+                                    </div>
+                                </div>
+                                <div style="border-top: 1px solid #0284c7; padding-top: 3px; font-size: 0.72rem; font-weight: 800; color: #000000;">
+                                    Authorised Signatory
+                                </div>
+                            </div>
+
                         </div>
+
                     </div>
 
                 </div>
             </div>
-            <div class="pharma-modal-footer">
+            <div class="pharma-modal-footer" style="padding: 10px 20px;">
                 <button class="btn-table-view" onclick="closeInvoiceModal()">Close</button>
                 <button class="btn-pharma-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save A4 PDF</button>
             </div>
@@ -2985,23 +3144,271 @@
             }
         }
 
-        // ---------------- Global Search ----------------
+        // ---------------- Patients & Prescriptions Database for Live Phone Search ----------------
+        const PHARMACY_PATIENTS_DATABASE = [
+            {
+                name: "Sikhakolli Purushothama Rao",
+                phone: "8297548660",
+                cleanPhone: "8297548660",
+                address: "NRT, Andhra Pradesh",
+                tag: "Special Customer • Invoice #294",
+                orderId: "ORD-001248",
+                status: "Delivered",
+                totalOrders: 18,
+                spend: "₹14,500",
+                medicines: "Metro 400, Reclame 625, Pantodex, Cremafine, Chymorel fortw, Beta-din lotuin, Vitc disp tab, Caldura d3, Renerve cap, Emisure powder, Ryzodeg",
+                invoiceNo: "294",
+                isDefaultTapaswi: true
+            },
+            {
+                name: "Rahul Sharma",
+                phone: "+91 98765 00001",
+                cleanPhone: "9876500001",
+                address: "Door No 14-2, Gandhi Nagar, Narasaraopeta",
+                tag: "Member since Jan 2026",
+                orderId: "ORD-001245",
+                status: "Processing",
+                totalOrders: 14,
+                spend: "₹6,850",
+                medicines: "Dolo 650mg, Azithromycin 500mg, Pantocid 40mg",
+                invoiceNo: "INV-2026-1045",
+                doctor: "Dr. S. Kumar (MD Gen Med)",
+                items: [
+                    { name: "Dolo 650mg (Micro Labs)", exp: "05/27", hsn: "3004", qty: "2.00 SHT", mrp: 34.00, rate: 30.50, taxable: 61.00, gstPct: 5.0, gstAmt: 3.05, total: 64.05 },
+                    { name: "Azithromycin 500mg (Cipla)", exp: "08/27", hsn: "3004", qty: "1.00 SHT", mrp: 120.00, rate: 108.00, taxable: 108.00, gstPct: 5.0, gstAmt: 5.40, total: 113.40 },
+                    { name: "Pantocid 40mg (Sun Pharma)", exp: "11/26", hsn: "3004", qty: "1.00 SHT", mrp: 165.00, rate: 148.50, taxable: 148.50, gstPct: 5.0, gstAmt: 7.42, total: 155.92 }
+                ]
+            },
+            {
+                name: "Priya Reddy",
+                phone: "+91 98765 00002",
+                cleanPhone: "9876500002",
+                address: "Plot 45, RTC Colony, Narasaraopeta",
+                tag: "Chronic Patient (Hypertension)",
+                orderId: "ORD-001246",
+                status: "Out for Delivery",
+                totalOrders: 22,
+                spend: "₹18,400",
+                medicines: "Telma 40mg, Pantocid 40mg, Becosules Z",
+                invoiceNo: "INV-2026-1046",
+                doctor: "Dr. K. Srinivas (Cardiologist)",
+                items: [
+                    { name: "Telma 40mg (Glenmark)", exp: "09/27", hsn: "3004", qty: "3.00 SHT", mrp: 240.00, rate: 216.00, taxable: 648.00, gstPct: 5.0, gstAmt: 32.40, total: 680.40 },
+                    { name: "Pantocid 40mg (Sun Pharma)", exp: "11/26", hsn: "3004", qty: "1.00 SHT", mrp: 165.00, rate: 148.50, taxable: 148.50, gstPct: 5.0, gstAmt: 7.42, total: 155.92 },
+                    { name: "Becosules Z Capsules", exp: "03/28", hsn: "3004", qty: "1.00 BTL", mrp: 48.00, rate: 43.20, taxable: 43.20, gstPct: 5.0, gstAmt: 2.16, total: 45.36 }
+                ]
+            },
+            {
+                name: "Kiran Kumar",
+                phone: "+91 98765 00003",
+                cleanPhone: "9876500003",
+                address: "Near Clock Tower, Narasaraopeta",
+                tag: "Chronic Patient (Diabetes)",
+                orderId: "ORD-001247",
+                status: "Ready for Pickup",
+                totalOrders: 9,
+                spend: "₹11,250",
+                medicines: "Lantus Insulin, BD Insulin Syringes",
+                invoiceNo: "INV-2026-1047",
+                doctor: "Dr. Ananya Ray (Diabetologist)",
+                items: [
+                    { name: "Lantus SoloStar Pen (Sanofi)", exp: "06/27", hsn: "3004", qty: "1.00 PEN", mrp: 890.00, rate: 801.00, taxable: 801.00, gstPct: 5.0, gstAmt: 40.05, total: 841.05 },
+                    { name: "BD Micro-Fine 4mm Syringes (Pack of 10)", exp: "12/28", hsn: "9018", qty: "2.00 BOX", mrp: 220.00, rate: 198.00, taxable: 396.00, gstPct: 12.0, gstAmt: 47.52, total: 443.52 }
+                ]
+            },
+            {
+                name: "Ravi Teja",
+                phone: "+91 98765 43210",
+                cleanPhone: "9876543210",
+                address: "Flat 204, Sri Rama Towers, Prakash Nagar, Narasaraopet",
+                tag: "Prescription Patient • Dr. S. Kumar",
+                orderId: "ORD-001249",
+                status: "Delivered",
+                totalOrders: 8,
+                spend: "₹5,200",
+                medicines: "Dolo 650mg, Augmentin 625, Pan-D",
+                invoiceNo: "INV-2026-1049",
+                doctor: "Dr. S. Kumar (MD Gen Med)",
+                items: [
+                    { name: "Dolo 650mg (Micro Labs)", exp: "05/27", hsn: "3004", qty: "2.00 SHT", mrp: 34.00, rate: 30.50, taxable: 61.00, gstPct: 5.0, gstAmt: 3.05, total: 64.05 },
+                    { name: "Augmentin 625 Duo (GSK)", exp: "02/27", hsn: "3004", qty: "1.00 SHT", mrp: 204.00, rate: 183.60, taxable: 183.60, gstPct: 5.0, gstAmt: 9.18, total: 192.78 },
+                    { name: "Pan-D Capsule (Alkem)", exp: "07/27", hsn: "3004", qty: "1.00 SHT", mrp: 195.00, rate: 175.50, taxable: 175.50, gstPct: 5.0, gstAmt: 8.78, total: 184.28 }
+                ]
+            }
+        ];
+
+        function escapePharmaHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+        }
+
+        // ---------------- Global Search with Live Patient Number Search ----------------
         function handleGlobalSearch(query) {
-            const q = query.toLowerCase().trim();
+            const q = (query || '').toLowerCase().trim();
+            const cleanDigits = (query || '').replace(/[^0-9]/g, '');
+            const resultsContainer = document.getElementById('pharmaLiveSearchResults');
+
             // Filter orders table if on orders view or dashboard
             const orderRows = document.querySelectorAll('#fullOrdersTableBody tr');
             orderRows.forEach(r => {
-                const text = (r.getAttribute('data-search') || '').toLowerCase();
-                r.style.display = text.includes(q) ? '' : 'none';
+                const text = (r.getAttribute('data-search') || r.textContent || '').toLowerCase();
+                r.style.display = (!q || text.includes(q) || (cleanDigits.length >= 3 && text.includes(cleanDigits))) ? '' : 'none';
+            });
+
+            // Filter customers table
+            const custRows = document.querySelectorAll('#customersTable tbody tr');
+            custRows.forEach(r => {
+                const text = (r.getAttribute('data-search') || r.textContent || '').toLowerCase();
+                r.style.display = (!q || text.includes(q) || (cleanDigits.length >= 3 && text.includes(cleanDigits))) ? '' : 'none';
             });
 
             // Filter inventory if on inventory view
             const invRows = document.querySelectorAll('#inventoryTableBody tr');
             invRows.forEach(r => {
-                const text = (r.getAttribute('data-search') || '').toLowerCase();
-                r.style.display = text.includes(q) ? '' : 'none';
+                const text = (r.getAttribute('data-search') || r.textContent || '').toLowerCase();
+                r.style.display = (!q || text.includes(q)) ? '' : 'none';
             });
+
+            // Filter history table
+            const histRows = document.querySelectorAll('#historyTableBody tr');
+            histRows.forEach(r => {
+                const text = (r.getAttribute('data-search') || r.textContent || '').toLowerCase();
+                r.style.display = (!q || text.includes(q) || (cleanDigits.length >= 3 && text.includes(cleanDigits))) ? '' : 'none';
+            });
+
+            if (!resultsContainer) return;
+
+            if (!q) {
+                resultsContainer.style.display = 'none';
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            // Match patients in database
+            const matched = PHARMACY_PATIENTS_DATABASE.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(q);
+                const phoneMatch = p.phone.toLowerCase().includes(q) || (cleanDigits.length >= 2 && p.cleanPhone.includes(cleanDigits));
+                const addrMatch = p.address.toLowerCase().includes(q);
+                const orderMatch = p.orderId.toLowerCase().includes(q);
+                const medMatch = p.medicines.toLowerCase().includes(q);
+                return nameMatch || phoneMatch || addrMatch || orderMatch || medMatch;
+            });
+
+            if (matched.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div style="padding: 18px 16px; text-align: center; color: #64748b; font-size: 0.85rem;">
+                        <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px; color: #f59e0b; font-size: 1rem;"></i>
+                        No matching patient found for "<strong>${escapePharmaHtml(query)}</strong>".
+                        <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 4px;">Search by mobile number (e.g. 8297548660, 9876500001) or patient name.</div>
+                    </div>
+                `;
+                resultsContainer.style.display = 'block';
+                return;
+            }
+
+            let html = `
+                <div style="padding: 8px 14px 6px 14px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.75rem; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <i class="fa-solid fa-users" style="color: #0080ff; margin-right: 5px;"></i> Matching Patients (${matched.length})
+                    </span>
+                    <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">Live Search Active</span>
+                </div>
+                <div style="max-height: 380px; overflow-y: auto;">
+            `;
+
+            matched.forEach(p => {
+                html += `
+                    <div class="pharma-live-patient-card" style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: background 0.15s ease;" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='#ffffff'">
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <span style="font-weight: 800; font-size: 0.92rem; color: #0f172a;">${p.name}</span>
+                                <span style="background: #e0f2fe; color: #0284c7; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;">${p.tag}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px; font-size: 0.8rem; color: #475569; flex-wrap: wrap;">
+                                <span style="font-weight: 700; color: #0080ff;"><i class="fa-solid fa-phone" style="font-size: 0.72rem; margin-right: 4px;"></i>${p.phone}</span>
+                                <span><i class="fa-solid fa-location-dot" style="font-size: 0.72rem; color: #94a3b8; margin-right: 4px;"></i>${p.address}</span>
+                            </div>
+                            <div style="font-size: 0.74rem; color: #64748b; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                <strong style="color: #334155;">Meds:</strong> ${p.medicines}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-shrink: 0; align-items: center;">
+                            <button class="btn-pharma-primary" style="height: 32px; padding: 0 12px; font-size: 0.78rem; white-space: nowrap;" onclick="openPatientInvoiceFromSearch('${p.cleanPhone}')">
+                                <i class="fa-solid fa-file-invoice" style="margin-right: 4px;"></i> Tax Invoice
+                            </button>
+                            <button class="btn-table-view" style="height: 32px; padding: 0 10px; font-size: 0.78rem;" onclick="switchPharmaView('customers'); handleCustomerFilter('${p.cleanPhone}'); document.getElementById('pharmaLiveSearchResults').style.display='none';">
+                                <i class="fa-solid fa-eye"></i> View
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            resultsContainer.innerHTML = html;
+            resultsContainer.style.display = 'block';
         }
+
+        // ---------------- Customer Table Filter ----------------
+        function handleCustomerFilter(query) {
+            const q = (query || '').toLowerCase().trim();
+            const cleanDigits = (query || '').replace(/[^0-9]/g, '');
+            const rows = document.querySelectorAll('#customersTable tbody tr');
+            rows.forEach(r => {
+                const text = (r.getAttribute('data-search') || r.textContent || '').toLowerCase();
+                const match = !q || text.includes(q) || (cleanDigits.length >= 3 && text.includes(cleanDigits));
+                r.style.display = match ? '' : 'none';
+            });
+            const input = document.getElementById('customerSearchInput');
+            if (input && input.value !== query) {
+                input.value = query;
+            }
+        }
+
+        // ---------------- Open Specific Patient Invoice Directly from Search ----------------
+        function openPatientInvoiceFromSearch(phone) {
+            const cleanNum = String(phone).replace(/[^0-9]/g, '');
+            const patient = PHARMACY_PATIENTS_DATABASE.find(p => p.cleanPhone === cleanNum || p.phone.includes(phone) || (cleanNum.length >= 7 && p.cleanPhone.includes(cleanNum)));
+            
+            const dropdown = document.getElementById('pharmaLiveSearchResults');
+            if (dropdown) dropdown.style.display = 'none';
+
+            if (patient) {
+                if (patient.cleanPhone === '8297548660' || patient.isDefaultTapaswi) {
+                    renderInvoiceModal(DEFAULT_INVOICE_DATA);
+                    showPharmaToast(`Tax Invoice loaded for ${patient.name} (${patient.phone})`, 'success');
+                } else {
+                    const invoiceData = {
+                        invoiceNo: patient.invoiceNo || 'INV-2026-999',
+                        date: '28-SEP-2026',
+                        patient: patient.name,
+                        phone: patient.phone,
+                        address: patient.address,
+                        custGstin: '-',
+                        supplyPlace: 'Andhra Pradesh ( 37 )',
+                        doctor: patient.doctor || 'Dr. S. Kumar / Consultation',
+                        payment: 'PAID (UPI / Cash)',
+                        medicines: patient.items || [
+                            { name: "Dolo 650mg", exp: "05/27", hsn: "3004", qty: "2.00 SHT", mrp: 34.00, rate: 30.50, taxable: 61.00, gstPct: 5.0, gstAmt: 3.05, total: 64.05 },
+                            { name: "Azithromycin 500mg", exp: "08/27", hsn: "3004", qty: "1.00 SHT", mrp: 120.00, rate: 108.00, taxable: 108.00, gstPct: 5.0, gstAmt: 5.40, total: 113.40 }
+                        ]
+                    };
+                    renderInvoiceModal(invoiceData);
+                    showPharmaToast(`Tax Invoice loaded for ${patient.name} (${patient.phone})`, 'success');
+                }
+            } else {
+                renderInvoiceModal(DEFAULT_INVOICE_DATA);
+            }
+        }
+
+        // Click outside listener for search results dropdown
+        document.addEventListener('click', function(e) {
+            const searchBox = document.querySelector('.pharma-search-box');
+            const resultsContainer = document.getElementById('pharmaLiveSearchResults');
+            if (resultsContainer && searchBox && !searchBox.contains(e.target)) {
+                resultsContainer.style.display = 'none';
+            }
+        });
 
         // ---------------- Orders View Filters ----------------
         let currentOrdersTab = 'all';
@@ -3606,48 +4013,126 @@
             }
         }
 
+        const DEFAULT_INVOICE_DATA = {
+            invoiceNo: "294",
+            date: "06-SEP-2026",
+            patient: "Sikhakolli Purushothama Rao",
+            phone: "8297548660",
+            address: "NRT, Andhra Pradesh",
+            custGstin: "-",
+            supplyPlace: "Andhra Pradesh ( 37 )",
+            doctor: "Dr. Consultation / Self",
+            payment: "PAID (Cash / UPI)",
+            medicines: [
+                { name: "Metro 400", exp: "04/27", hsn: "3004", qty: "1.00 SHT", mrp: 34.50, rate: 32.38, taxable: 32.38, gstPct: 5.0, gstAmt: 1.62, total: 34.00 },
+                { name: "Reclame 625", exp: "11/26", hsn: "3004", qty: "1.00 Aht", mrp: 204.50, rate: 194.76, taxable: 194.76, gstPct: 5.0, gstAmt: 9.74, total: 204.50 },
+                { name: "PANTODEX", exp: "10/2026", hsn: "3004", qty: "1.00 SHT", mrp: 149.00, rate: 141.90, taxable: 141.90, gstPct: 5.0, gstAmt: 7.10, total: 149.00 },
+                { name: "Cremafine", exp: "6/27", hsn: "3004", qty: "2.00 BTL", mrp: 398.00, rate: 379.04, taxable: 758.10, gstPct: 5.0, gstAmt: 37.90, total: 796.00 },
+                { name: "Chymorel fortw", exp: "12/27", hsn: "3004", qty: "1.00 SHT", mrp: 396.00, rate: 377.14, taxable: 377.14, gstPct: 5.0, gstAmt: 18.86, total: 396.00 },
+                { name: "Beta-din lotuin", exp: "03/27", hsn: "2004", qty: "2.00 BTL", mrp: 102.50, rate: 97.61, taxable: 195.24, gstPct: 5.0, gstAmt: 9.76, total: 205.00 },
+                { name: "Vitc disp tab", exp: "12/28", hsn: "3004", qty: "2.00 BTL", mrp: 467.00, rate: 444.76, taxable: 889.52, gstPct: 5.0, gstAmt: 44.48, total: 934.00 },
+                { name: "Caldura d3", exp: "04/27", hsn: "3004", qty: "1.00 SHT", mrp: 185.00, rate: 176.19, taxable: 176.19, gstPct: 5.0, gstAmt: 8.81, total: 185.00 },
+                { name: "Renerve cap", exp: "04/27", hsn: "3004", qty: "1.00 SHT", mrp: 329.00, rate: 313.33, taxable: 313.33, gstPct: 5.0, gstAmt: 15.67, total: 329.00 },
+                { name: "Emisure powder", exp: "12/26", hsn: "3004", qty: "2.00", mrp: 1090.00, rate: 923.72, taxable: 1847.46, gstPct: 18.0, gstAmt: 332.54, total: 2180.00 },
+                { name: "Ryzodeg", exp: "12/2026", hsn: "3004", qty: "2.00 SHT", mrp: 1595.00, rate: 1595.00, taxable: 3038.10, gstPct: 5.0, gstAmt: 151.90, total: 3190.00 }
+            ]
+        };
+
+        function numberToWords(num) {
+            const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            
+            num = Math.round(num);
+            if (num === 0) return 'ZERO RUPEES ONLY';
+            if ((num = num.toString()).length > 9) return 'OVERFLOW';
+            const n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!n) return '';
+            let str = '';
+            str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+            str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+            str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+            str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+            str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Rupees Only' : 'Rupees Only';
+            return str.toUpperCase();
+        }
+
         function renderInvoiceModal(inv) {
-            document.getElementById('invPrintId').textContent = inv.invoiceNo || 'INV-2026-0841';
+            const data = inv || DEFAULT_INVOICE_DATA;
+            const items = (data.medicines && data.medicines.length > 0) ? data.medicines : DEFAULT_INVOICE_DATA.medicines;
+
+            document.getElementById('invPrintId').textContent = data.invoiceNo || '294';
             if (document.getElementById('invDate')) {
-                document.getElementById('invDate').textContent = inv.date || new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                document.getElementById('invDate').textContent = data.date || '06-SEP-2026';
             }
-            document.getElementById('invPatient').textContent = inv.patient || 'Patient Name';
+            document.getElementById('invPatient').textContent = data.patient || 'Sikhakolli Purushothama Rao';
             if (document.getElementById('invPhone')) {
-                document.getElementById('invPhone').textContent = inv.phone || '+91 98765 43210';
+                document.getElementById('invPhone').textContent = data.phone || '8297548660';
             }
             if (document.getElementById('invAddress')) {
-                document.getElementById('invAddress').textContent = inv.address || 'Address Not Provided';
+                document.getElementById('invAddress').textContent = data.address || 'NRT, Andhra Pradesh';
             }
             if (document.getElementById('invDoctor')) {
-                document.getElementById('invDoctor').textContent = inv.doctor || 'Dr. S. Kumar (APMC/88219)';
+                document.getElementById('invDoctor').textContent = data.doctor || 'Self / Dr. Consultation';
             }
 
             const tbody = document.getElementById('invoiceItemsTbody');
             tbody.innerHTML = '';
 
-            let total = 0;
-            (inv.medicines || []).forEach((m, idx) => {
-                total += parseFloat(m.price) || 0;
+            let totalQtySum = 0;
+            let totalTaxableSum = 0;
+            let totalGstSum = 0;
+            let grandTotalSum = 0;
+
+            items.forEach((m, idx) => {
+                let qtyNum = parseFloat(String(m.qty).replace(/[^0-9.]/g, '')) || 1;
+                totalQtySum += qtyNum;
+
+                let rate = m.rate ? parseFloat(m.rate) : (parseFloat(m.price) || 50);
+                let mrp = m.mrp ? parseFloat(m.mrp) : (rate * 1.05);
+                let gstPct = m.gstPct ? parseFloat(m.gstPct) : 5.0;
+                let taxable = m.taxable ? parseFloat(m.taxable) : (rate * qtyNum);
+                let gstAmt = m.gstAmt ? parseFloat(m.gstAmt) : (taxable * (gstPct / 100));
+                let lineTotal = m.total ? parseFloat(m.total) : (taxable + gstAmt);
+
+                totalTaxableSum += taxable;
+                totalGstSum += gstAmt;
+                grandTotalSum += lineTotal;
+
                 const tr = document.createElement('tr');
-                tr.style.borderBottom = '1px solid #f1f5f9';
                 tr.innerHTML = `
-                    <td style="padding: 8px; color: #64748b;">${idx + 1}</td>
-                    <td style="padding: 8px; font-weight: 700; color: #0f172a;">${m.name}</td>
-                    <td style="padding: 8px; color: #475569;">${m.unit || 'Strip'}</td>
-                    <td style="padding: 8px; color: #334155;">${m.qty || '1'}</td>
-                    <td style="padding: 8px; text-align: right; color: #475569;">₹${parseFloat(m.price).toFixed(2)}</td>
-                    <td style="padding: 8px; text-align: right; font-weight: 800; color: #0f172a;">₹${parseFloat(m.price).toFixed(2)}</td>
+                    <td style="text-align: center;">${idx + 1}</td>
+                    <td style="font-weight: 700; padding-left: 6px;">${m.name}</td>
+                    <td style="text-align: center;">${m.exp || '04/27'}</td>
+                    <td style="text-align: center;">${m.hsn || '3004'}</td>
+                    <td style="text-align: center;">${m.qty || '1.00 SHT'}</td>
+                    <td style="text-align: right;">${mrp.toFixed(2)}</td>
+                    <td style="text-align: right;">${rate.toFixed(2)}</td>
+                    <td style="text-align: right; font-weight: 600;">${taxable.toFixed(2)}</td>
+                    <td style="text-align: center;">${gstPct.toFixed(2)}</td>
+                    <td style="text-align: right;">${gstAmt.toFixed(2)}</td>
+                    <td style="text-align: right; font-weight: 800;">${lineTotal.toFixed(2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            const gst = total * 0.05;
-            const subtotal = total - gst;
+            // Update Table Footer Totals
+            if (document.getElementById('invTableQtyTotal')) document.getElementById('invTableQtyTotal').textContent = totalQtySum.toFixed(2);
+            if (document.getElementById('invTableTaxableTotal')) document.getElementById('invTableTaxableTotal').textContent = totalTaxableSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (document.getElementById('invTableGstTotal')) document.getElementById('invTableGstTotal').textContent = totalGstSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (document.getElementById('invTableGrandTotal')) document.getElementById('invTableGrandTotal').textContent = grandTotalSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-            if (document.getElementById('invSubtotal')) document.getElementById('invSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
-            if (document.getElementById('invCgst')) document.getElementById('invCgst').textContent = `₹${(gst / 2).toFixed(2)}`;
-            if (document.getElementById('invSgst')) document.getElementById('invSgst').textContent = `₹${(gst / 2).toFixed(2)}`;
-            document.getElementById('invoiceTotalVal').textContent = `₹${total.toFixed(2)}`;
+            // Update Right Box Totals (Unified GST Only, NO CGST/SGST)
+            if (document.getElementById('invTaxableAmount')) document.getElementById('invTaxableAmount').textContent = totalTaxableSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (document.getElementById('invAddGst')) document.getElementById('invAddGst').textContent = totalGstSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (document.getElementById('invTotalTax')) document.getElementById('invTotalTax').textContent = totalGstSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            const roundedGrandTotal = Math.round(grandTotalSum);
+            document.getElementById('invoiceTotalVal').textContent = `₹${roundedGrandTotal.toLocaleString('en-IN')}.00`;
+            
+            // Total in Words
+            if (document.getElementById('invTotalInWords')) {
+                document.getElementById('invTotalInWords').textContent = numberToWords(roundedGrandTotal);
+            }
 
             document.getElementById('invoiceModal').classList.add('active');
         }
@@ -3659,8 +4144,7 @@
             } else if (DOCTOR_PRESCRIPTIONS['rx1']) {
                 generateInvoiceFromRx('rx1');
             } else {
-                document.getElementById('invPrintId').textContent = orderId || 'INV-2026-0841';
-                document.getElementById('invoiceModal').classList.add('active');
+                renderInvoiceModal(DEFAULT_INVOICE_DATA);
             }
         }
 
