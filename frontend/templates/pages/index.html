@@ -38,7 +38,7 @@
                     <div class="dropdown-panel" id="servicesDropdownMenu">
                         <div class="dropdown-grid">
                             {% for service in services %}
-                            <a href="javascript:void(0)" class="dropdown-service-card" onclick="openBookingModal('{{ service.title }}')">
+                            <a href="/service/{{ service.id }}" class="dropdown-service-card">
                                 <div class="dropdown-icon" style="background: {{ service.bg_tint }}; color: {{ service.color }};">
                                     <i class="fa-solid fa-{{ service.icon }}"></i>
                                 </div>
@@ -91,7 +91,7 @@
             </a>
             <div class="mobile-submenu" id="mobileSubmenu">
                 {% for service in services %}
-                <a href="javascript:void(0)" onclick="openBookingModal('{{ service.title }}'); closeMobileDrawer();" class="m-sublink">
+                <a href="/service/{{ service.id }}" class="m-sublink">
                     {{ service.title }}
                 </a>
                 {% endfor %}
@@ -226,7 +226,7 @@
                 <div class="services-card-bar">
                     
                     <!-- 1. Online Doctor Consultation -->
-                    <div class="service-item" onclick="openBookingModal('Online Doctor Consultation')" title="Book Online Doctor Consultation">
+                    <div class="service-item" onclick="window.location.href='/service/online-consult'" title="View Details & Book Online Doctor Consultation">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_online_consult.png') }}" alt="Online Doctor Consultation" class="service-thumb-img">
                         </div>
@@ -234,7 +234,7 @@
                     </div>
 
                     <!-- 2. Doctor Home Visits -->
-                    <div class="service-item" onclick="openBookingModal('Doctor Home Visits')" title="Book Doctor Home Visit">
+                    <div class="service-item" onclick="window.location.href='/service/doctor-home-visit'" title="View Details & Book Doctor Home Visit">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_doctor_visit.png') }}" alt="Doctor Home Visits" class="service-thumb-img">
                         </div>
@@ -242,7 +242,7 @@
                     </div>
 
                     <!-- 3. Lab Tests at Home -->
-                    <div class="service-item" onclick="openBookingModal('Lab Tests at Home')" title="Book Blood &amp; Lab Tests">
+                    <div class="service-item" onclick="window.location.href='/service/lab-tests-home'" title="View Details & Book Blood &amp; Lab Tests">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_lab_tests.png') }}" alt="Lab Tests at Home" class="service-thumb-img">
                         </div>
@@ -250,7 +250,7 @@
                     </div>
 
                     <!-- 4. X-Ray at Home -->
-                    <div class="service-item" onclick="openBookingModal('X-Ray at Home')" title="Book Portable Digital X-Ray">
+                    <div class="service-item" onclick="window.location.href='/service/xray-at-home'" title="View Details & Book Portable Digital X-Ray">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_xray.png') }}" alt="X-Ray at Home" class="service-thumb-img">
                         </div>
@@ -258,7 +258,7 @@
                     </div>
 
                     <!-- 5. Pharmacy to Home -->
-                    <div class="service-item" onclick="openBookingModal('Pharmacy to Home')" title="Order Medicines to Home">
+                    <div class="service-item" onclick="window.location.href='/service/pharmacy-home'" title="View Details & Order Medicines to Home">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_pharmacy.png') }}" alt="Pharmacy to Home" class="service-thumb-img">
                         </div>
@@ -266,7 +266,7 @@
                     </div>
 
                     <!-- 6. Premium OPD Memberships -->
-                    <div class="service-item" onclick="openBookingModal('Premium OPD Memberships')" title="Explore Premium OPD Plans">
+                    <div class="service-item" onclick="window.location.href='/service/premium-opd'" title="View Details & Explore Premium OPD Plans">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_premium_opd.png') }}" alt="Premium OPD Memberships" class="service-thumb-img">
                         </div>
@@ -274,7 +274,7 @@
                     </div>
 
                     <!-- 7. Eldercare -->
-                    <div class="service-item" onclick="openBookingModal('Eldercare')" title="Book Eldercare Nursing Support">
+                    <div class="service-item" onclick="window.location.href='/service/eldercare'" title="View Details & Book Eldercare Nursing Support">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_eldercare.png') }}" alt="Eldercare" class="service-thumb-img">
                         </div>
@@ -282,7 +282,7 @@
                     </div>
 
                     <!-- 8. Bedside Assistant -->
-                    <div class="service-item" onclick="openBookingModal('Bedside Assistant')" title="Book Bedside Medical Attendant">
+                    <div class="service-item" onclick="window.location.href='/service/bedside-assistant'" title="View Details & Book Bedside Medical Attendant">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_bedside.png') }}" alt="Bedside Assistant" class="service-thumb-img">
                         </div>
@@ -290,7 +290,7 @@
                     </div>
 
                     <!-- 9. Physiotherapy -->
-                    <div class="service-item" onclick="openBookingModal('Physiotherapy')" title="Book Home Physiotherapy">
+                    <div class="service-item" onclick="window.location.href='/service/physiotherapy'" title="View Details & Book Home Physiotherapy">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_physio.png') }}" alt="Physiotherapy" class="service-thumb-img">
                         </div>
@@ -311,7 +311,7 @@
                 <div class="services-card-bar services-card-bar-row2">
                     
                     <!-- 1. Dental Care -->
-                    <div class="service-item" onclick="openBookingModal('Dental Care')" title="Book Dental Care">
+                    <div class="service-item" onclick="window.location.href='/service/dental-care'" title="View Details & Book Dental Care">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_dental_care.png') }}" alt="Dental Care" class="service-thumb-img">
                         </div>
@@ -319,7 +319,7 @@
                     </div>
 
                     <!-- 2. Blood Bank -->
-                    <div class="service-item" onclick="openBookingModal('Blood Bank')" title="Blood Bank &amp; Assistance">
+                    <div class="service-item" onclick="window.location.href='/service/blood-bank'" title="View Details & Check Blood Availability">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_blood_bank.png') }}" alt="Blood Bank" class="service-thumb-img">
                         </div>
@@ -327,7 +327,7 @@
                     </div>
 
                     <!-- 3. Diagnostics & Imaging -->
-                    <div class="service-item" onclick="openBookingModal('Diagnostics and Imaging')" title="Diagnostics &amp; Imaging">
+                    <div class="service-item" onclick="window.location.href='/service/diagnostics-imaging'" title="View Details & Book Diagnostics &amp; Imaging">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_diagnostics_imaging.png') }}" alt="Diagnostics and Imaging" class="service-thumb-img">
                         </div>
@@ -335,7 +335,7 @@
                     </div>
 
                     <!-- 4. Ambulance Services 24/7 -->
-                    <div class="service-item" onclick="openBookingModal('Ambulance Services 24/7')" title="Ambulance Services 24/7">
+                    <div class="service-item" onclick="window.location.href='/service/ambulance-services-247'" title="View Details & Dispatch Ambulance 24/7">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_ambulance_247.png') }}" alt="Ambulance Services 24/7" class="service-thumb-img">
                         </div>
@@ -343,7 +343,7 @@
                     </div>
 
                     <!-- 5. Home Vaccination Service -->
-                    <div class="service-item" onclick="openBookingModal('Home Vaccination Service')" title="Home Vaccination Service">
+                    <div class="service-item" onclick="window.location.href='/service/home-vaccination'" title="View Details & Book Home Vaccination">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_vaccination.png') }}" alt="Home Vaccination Service" class="service-thumb-img">
                         </div>
@@ -351,7 +351,7 @@
                     </div>
 
                     <!-- 6. Health Checkups -->
-                    <div class="service-item" onclick="openBookingModal('Health Checkups')" title="Health Checkups">
+                    <div class="service-item" onclick="window.location.href='/service/health-checkups'" title="View Details & Book Health Checkups">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_health_checkups.png') }}" alt="Health Checkups" class="service-thumb-img">
                         </div>
@@ -359,7 +359,7 @@
                     </div>
 
                     <!-- 7. Care Programmes -->
-                    <div class="service-item" onclick="openBookingModal('Care Programmes')" title="Care Programmes">
+                    <div class="service-item" onclick="window.location.href='/service/care-programmes'" title="View Details & Enroll in Care Programmes">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_care_programmes.png') }}" alt="Care Programmes" class="service-thumb-img">
                         </div>
@@ -367,7 +367,7 @@
                     </div>
 
                     <!-- 8. Mental Health Support -->
-                    <div class="service-item" onclick="openBookingModal('Mental Health Support')" title="Mental Health Support">
+                    <div class="service-item" onclick="window.location.href='/service/mental-health'" title="View Details & Book Mental Health Support">
                         <div class="service-img-wrap">
                             <img src="{{ url_for('static', filename='images/services/srv_mental_health.png') }}" alt="Mental Health Support" class="service-thumb-img">
                         </div>
@@ -1428,7 +1428,7 @@
             <div class="m-services-grid-4">
                 
                 <!-- 1. Online Doctor Consultation -->
-                <div class="m-service-card" onclick="openBookingModal('Online Doctor Consultation')">
+                <div class="m-service-card" onclick="window.location.href='/service/online-consult'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_online_doctor.png') }}" alt="Online Doctor Consultation" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1437,7 +1437,7 @@
                 </div>
 
                 <!-- 2. Doctor Home Visits -->
-                <div class="m-service-card" onclick="openBookingModal('Doctor Home Visits')">
+                <div class="m-service-card" onclick="window.location.href='/service/doctor-home-visit'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_doctor_home_visit.png') }}" alt="Doctor Home Visits" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1446,7 +1446,7 @@
                 </div>
 
                 <!-- 3. Bedside Assistant -->
-                <div class="m-service-card" onclick="openBookingModal('Bedside Assistant')">
+                <div class="m-service-card" onclick="window.location.href='/service/bedside-assistant'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_bedside_assistant.png') }}" alt="Bedside Assistant" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1455,7 +1455,7 @@
                 </div>
 
                 <!-- 4. Lab Tests at Home -->
-                <div class="m-service-card" onclick="openBookingModal('Lab Tests at Home')">
+                <div class="m-service-card" onclick="window.location.href='/service/lab-tests-home'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_lab_tests.png') }}" alt="Lab Tests at Home" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1464,7 +1464,7 @@
                 </div>
 
                 <!-- 5. X-Ray at Home -->
-                <div class="m-service-card" onclick="openBookingModal('X-Ray at Home')">
+                <div class="m-service-card" onclick="window.location.href='/service/xray-at-home'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_xray_at_home.png') }}" alt="X-Ray at Home" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1473,7 +1473,7 @@
                 </div>
 
                 <!-- 6. Pharmacy to Home -->
-                <div class="m-service-card" onclick="openBookingModal('Pharmacy to Home')">
+                <div class="m-service-card" onclick="window.location.href='/service/pharmacy-home'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_pharmacy_to_home.png') }}" alt="Pharmacy to Home" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1482,7 +1482,7 @@
                 </div>
 
                 <!-- 7. Premium OPD Memberships -->
-                <div class="m-service-card" onclick="openBookingModal('Premium OPD Memberships')">
+                <div class="m-service-card" onclick="window.location.href='/service/premium-opd'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_premium_opd.png') }}" alt="Premium OPD Memberships" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1491,7 +1491,7 @@
                 </div>
 
                 <!-- 8. Eldercare -->
-                <div class="m-service-card" onclick="openBookingModal('Eldercare')">
+                <div class="m-service-card" onclick="window.location.href='/service/eldercare'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_eldercare.png') }}" alt="Eldercare" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1500,7 +1500,7 @@
                 </div>
 
                 <!-- 9. Physiotherapy -->
-                <div class="m-service-card" onclick="openBookingModal('Physiotherapy')">
+                <div class="m-service-card" onclick="window.location.href='/service/physiotherapy'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_physiotherapy.png') }}" alt="Physiotherapy" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1509,7 +1509,7 @@
                 </div>
 
                 <!-- 10. Nursing Services -->
-                <div class="m-service-card" onclick="openBookingModal('Nursing Services')">
+                <div class="m-service-card" onclick="window.location.href='/service/nursing-services'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_nursing_services.png') }}" alt="Nursing Services" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1518,7 +1518,7 @@
                 </div>
 
                 <!-- 11. Dental Care -->
-                <div class="m-service-card" onclick="openBookingModal('Dental Care')">
+                <div class="m-service-card" onclick="window.location.href='/service/dental-care'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_dental_care.png') }}" alt="Dental Care" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1527,7 +1527,7 @@
                 </div>
 
                 <!-- 12. Blood Bank -->
-                <div class="m-service-card" onclick="openBookingModal('Blood Bank')">
+                <div class="m-service-card" onclick="window.location.href='/service/blood-bank'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_blood_bank.png') }}" alt="Blood Bank" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1536,7 +1536,7 @@
                 </div>
 
                 <!-- 13. Diagnostics and Imaging -->
-                <div class="m-service-card" onclick="openBookingModal('Diagnostics and Imaging')">
+                <div class="m-service-card" onclick="window.location.href='/service/diagnostics-imaging'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_diagnostics_imaging.png') }}" alt="Diagnostics and Imaging" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1545,7 +1545,7 @@
                 </div>
 
                 <!-- 14. Ambulance Services 24/7 -->
-                <div class="m-service-card" onclick="openBookingModal('Ambulance Services 24/7')">
+                <div class="m-service-card" onclick="window.location.href='/service/ambulance-services-247'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_ambulance_247.png') }}" alt="Ambulance Services 24/7" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1554,7 +1554,7 @@
                 </div>
 
                 <!-- 15. Home Vaccination Service -->
-                <div class="m-service-card" onclick="openBookingModal('Home Vaccination Service')">
+                <div class="m-service-card" onclick="window.location.href='/service/home-vaccination'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_home_vaccination.png') }}" alt="Home Vaccination Service" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1563,7 +1563,7 @@
                 </div>
 
                 <!-- 16. Health Checkups -->
-                <div class="m-service-card" onclick="openBookingModal('Health Checkups')">
+                <div class="m-service-card" onclick="window.location.href='/service/health-checkups'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_health_checkups.png') }}" alt="Health Checkups" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1572,7 +1572,7 @@
                 </div>
 
                 <!-- 17. Care Programmes -->
-                <div class="m-service-card" onclick="openBookingModal('Care Programmes')">
+                <div class="m-service-card" onclick="window.location.href='/service/care-programmes'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_care_programmes.png') }}" alt="Care Programmes" class="m-srv-art-img" loading="lazy">
                     </div>
@@ -1581,7 +1581,7 @@
                 </div>
 
                 <!-- 18. Mental Health Support -->
-                <div class="m-service-card" onclick="openBookingModal('Mental Health Support')">
+                <div class="m-service-card" onclick="window.location.href='/service/mental-health'">
                     <div class="m-srv-art-wrap">
                         <img src="{{ url_for('static', filename='images/services/art_mental_health.png') }}" alt="Mental Health Support" class="m-srv-art-img" loading="lazy">
                     </div>

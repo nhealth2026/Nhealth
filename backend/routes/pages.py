@@ -50,6 +50,42 @@ def get_locations():
     })
 
 
+@pages_bp.route('/service/<service_slug>')
+@pages_bp.route('/services/<service_slug>')
+def service_detail(service_slug):
+    """Render the dedicated page for a specific healthcare service."""
+    service = None
+    slug_lower = service_slug.strip().lower()
+    
+    # 1. Match by id or slug
+    for s in SERVICES:
+        if s.get('id', '').lower() == slug_lower or s.get('slug', '').lower() == slug_lower:
+            service = s
+            break
+            
+    # 2. Match by title slug
+    if not service:
+        for s in SERVICES:
+            title_slug = s.get('title', '').lower().replace(' ', '-').replace('&', 'and')
+            if title_slug == slug_lower or slug_lower in title_slug:
+                service = s
+                break
+                
+    # 3. Fallback to first service if not found
+    if not service:
+        service = SERVICES[0]
+        
+    related = [s for s in SERVICES if s['id'] != service['id']][:4]
+    return render_template(
+        'pages/service_detail.html',
+        service=service,
+        related_services=related,
+        services=SERVICES,
+        locations=AP_LOCATIONS,
+        stats=STATS
+    )
+
+
 @pages_bp.route('/api/stats', methods=['GET'])
 def get_stats():
     """Return platform statistics."""
