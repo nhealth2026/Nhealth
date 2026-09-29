@@ -62,10 +62,10 @@
                     </button>
                 </li>
                 <li>
-                    <a href="/opd-dashboard" class="doc-nav-item" id="nav-opd" style="color: #f59e0b; text-decoration: none;">
+                    <button type="button" class="doc-nav-item" id="nav-opd" onclick="showDocScreen('screen-opd', this)" style="color: #f59e0b;">
                         <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
                         <span>Premium OPD</span>
-                    </a>
+                    </button>
                 </li>
                 <li>
                     <button type="button" class="doc-nav-item" id="nav-videocalls" onclick="showDocScreen('screen-videocalls', this)">
@@ -1163,6 +1163,222 @@
                 </div>
             </section>
 
+            <!-- ==================== 4B. SCREEN: PREMIUM OPD MEMBERSHIPS ==================== -->
+            <section id="screen-opd" class="doc-screen">
+                <div class="doc-screen-header">
+                    <div class="doc-screen-title-group">
+                        <h2 class="doc-screen-title"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Premium OPD Management &amp; Queue</h2>
+                        <span class="doc-screen-sub">Manage cashless OPD appointments, token queues, and VIP healthcare passholders.</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="doc-btn-outline" id="btnRefreshOpdQueue" onclick="refreshOpdQueue()">
+                            <i class="fa-solid fa-arrows-rotate"></i> Refresh Queue
+                        </button>
+                        <button type="button" class="doc-btn-solid" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;" onclick="openDoctorModal('addOpdTokenModal')">
+                            <i class="fa-solid fa-plus"></i> Add OPD Token
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 STAT METRIC CARDS -->
+                <div class="doc-stats-grid" style="margin-bottom: 24px;">
+                    <!-- Stat 1: Active OPD Passholders -->
+                    <div class="doc-stat-card" style="cursor: pointer;" onclick="filterOpdTable('vip', document.getElementById('pillOpdVip'))">
+                        <div class="doc-stat-top">
+                            <div class="doc-stat-icon-wrap orange">
+                                <i class="fa-solid fa-crown"></i>
+                            </div>
+                            <span class="doc-stat-lbl">Active OPD Passholders</span>
+                        </div>
+                        <div class="doc-stat-num" id="statOpdPassholders">142</div>
+                        <div class="doc-stat-trend">
+                            <i class="fa-solid fa-arrow-up"></i>
+                            <strong>18%</strong>
+                            <span>vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Stat 2: Today's OPD Tokens -->
+                    <div class="doc-stat-card" style="cursor: pointer;" onclick="filterOpdTable('all', document.getElementById('pillOpdAll'))">
+                        <div class="doc-stat-top">
+                            <div class="doc-stat-icon-wrap blue">
+                                <i class="fa-solid fa-ticket"></i>
+                            </div>
+                            <span class="doc-stat-lbl">Today's OPD Tokens</span>
+                        </div>
+                        <div class="doc-stat-num" id="statTodayTokens">18</div>
+                        <div class="doc-stat-trend">
+                            <i class="fa-regular fa-clock"></i>
+                            <span id="statWaitingCount">4 waiting in queue</span>
+                        </div>
+                    </div>
+
+                    <!-- Stat 3: Cashless Consults Done -->
+                    <div class="doc-stat-card" style="cursor: pointer;" onclick="filterOpdTable('completed', document.getElementById('pillOpdCompleted'))">
+                        <div class="doc-stat-top">
+                            <div class="doc-stat-icon-wrap green">
+                                <i class="fa-solid fa-stethoscope"></i>
+                            </div>
+                            <span class="doc-stat-lbl">Cashless Consults Done</span>
+                        </div>
+                        <div class="doc-stat-num" id="statDoneCount">86</div>
+                        <div class="doc-stat-trend">
+                            <i class="fa-solid fa-check"></i>
+                            <strong>100%</strong>
+                            <span>verified</span>
+                        </div>
+                    </div>
+
+                    <!-- Stat 4: Monthly OPD Retainer -->
+                    <div class="doc-stat-card" style="cursor: pointer;" onclick="openDoctorModal('opdPayoutModal')">
+                        <div class="doc-stat-top">
+                            <div class="doc-stat-icon-wrap purple">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                            <span class="doc-stat-lbl">Monthly OPD Retainer</span>
+                        </div>
+                        <div class="doc-stat-num">₹48,500</div>
+                        <div class="doc-stat-trend">
+                            <i class="fa-solid fa-arrow-up"></i>
+                            <strong>Auto-settled</strong>
+                            <span>weekly</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Pills -->
+                <div class="doc-filter-pills" style="margin-bottom: 16px;">
+                    <button type="button" class="doc-filter-pill-btn active" id="pillOpdAll" onclick="filterOpdTable('all', this)">All OPD Tokens (18)</button>
+                    <button type="button" class="doc-filter-pill-btn" id="pillOpdWaiting" onclick="filterOpdTable('waiting', this)">In Waiting Room (4)</button>
+                    <button type="button" class="doc-filter-pill-btn" id="pillOpdVip" onclick="filterOpdTable('vip', this)">VIP Passholders (8)</button>
+                    <button type="button" class="doc-filter-pill-btn" id="pillOpdCompleted" onclick="filterOpdTable('completed', this)">Completed Today (14)</button>
+                </div>
+
+                <!-- Premium OPD Active Queue Table -->
+                <div class="doc-card" style="margin-bottom: 24px;">
+                    <div class="doc-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 class="doc-card-title"><i class="fa-solid fa-list-ol" style="color: #f59e0b; margin-right: 6px;"></i> Live OPD Token Queue</h3>
+                        <span id="opdLiveSyncBadge" style="background: #ecfdf5; color: #059669; font-size: 0.76rem; font-weight: 800; padding: 4px 10px; border-radius: 20px;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; color: #10b981; margin-right: 4px;"></i> Live Sync Active</span>
+                    </div>
+                    <div class="doc-table-wrap">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Token</th>
+                                    <th>Patient Details</th>
+                                    <th>Plan Tier</th>
+                                    <th>Consult Type</th>
+                                    <th>Wait Time</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="opdQueueTableBody">
+                                <!-- Row 1: Suresh Kumar -->
+                                <tr data-category="waiting vip" data-token="1">
+                                    <td><span style="background: #0e1b38; color: #f59e0b; font-weight: 800; padding: 4px 10px; border-radius: 8px;">#01</span></td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">Suresh Kumar</div>
+                                        <div style="font-size: 0.74rem; color: #64748b;">32 / M &bull; NH-OPD-78901</div>
+                                    </td>
+                                    <td><span style="background: #fef3c7; color: #b45309; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-crown"></i> Gold Family</span></td>
+                                    <td><span style="font-size: 0.8rem; font-weight: 600;"><i class="fa-solid fa-video" style="color: #0284c7;"></i> Video Call</span></td>
+                                    <td><span style="color: #64748b; font-size: 0.8rem;">2 mins</span></td>
+                                    <td><span class="doc-pill in-progress">Ready to Connect</span></td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="doc-btn-solid" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startDoctorVideoCall('Suresh Kumar', '32 / Male')">
+                                            <i class="fa-solid fa-video"></i> Start Call
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 2: Lakshmi Devi -->
+                                <tr data-category="waiting vip" data-token="2">
+                                    <td><span style="background: #0e1b38; color: #f59e0b; font-weight: 800; padding: 4px 10px; border-radius: 8px;">#02</span></td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">Lakshmi Devi</div>
+                                        <div style="font-size: 0.74rem; color: #64748b;">48 / F &bull; NH-OPD-78902</div>
+                                    </td>
+                                    <td><span style="background: #f3e8ff; color: #6b21a8; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-gem"></i> Platinum VIP</span></td>
+                                    <td><span style="font-size: 0.8rem; font-weight: 600;"><i class="fa-solid fa-hospital-user" style="color: #7c3aed;"></i> Clinic Visit</span></td>
+                                    <td><span style="color: #64748b; font-size: 0.8rem;">8 mins</span></td>
+                                    <td><span class="doc-pill upcoming">In Waiting Room</span></td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="doc-btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openNoteModal('Lakshmi Devi')">
+                                            <i class="fa-solid fa-file-waveform"></i> Clinical Note
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 3: Ramesh Babu -->
+                                <tr data-category="waiting" data-token="3">
+                                    <td><span style="background: #0e1b38; color: #f59e0b; font-weight: 800; padding: 4px 10px; border-radius: 8px;">#03</span></td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">Ramesh Babu</div>
+                                        <div style="font-size: 0.74rem; color: #64748b;">56 / M &bull; NH-OPD-78903</div>
+                                    </td>
+                                    <td><span style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-shield"></i> Silver Individual</span></td>
+                                    <td><span style="font-size: 0.8rem; font-weight: 600;"><i class="fa-solid fa-phone" style="color: #059669;"></i> Audio Consult</span></td>
+                                    <td><span style="color: #64748b; font-size: 0.8rem;">15 mins</span></td>
+                                    <td><span class="doc-pill upcoming">Scheduled</span></td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="doc-btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startDoctorAudioCall('Ramesh Babu', '+91 91234 56780')">
+                                            <i class="fa-solid fa-phone"></i> Call
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 4: Sita Ram (Completed) -->
+                                <tr data-category="completed vip" data-token="4">
+                                    <td><span style="background: #f1f5f9; color: #64748b; font-weight: 800; padding: 4px 10px; border-radius: 8px;">#04</span></td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">Sita Ram</div>
+                                        <div style="font-size: 0.74rem; color: #64748b;">62 / M &bull; NH-OPD-78894</div>
+                                    </td>
+                                    <td><span style="background: #fef3c7; color: #b45309; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-crown"></i> Gold Family</span></td>
+                                    <td><span style="font-size: 0.8rem; font-weight: 600;"><i class="fa-solid fa-video" style="color: #0284c7;"></i> Video Call</span></td>
+                                    <td><span style="color: #64748b; font-size: 0.8rem;">Done</span></td>
+                                    <td><span class="doc-pill completed">Completed</span></td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="doc-btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openPrescriptionModal('Sita Ram')">
+                                            <i class="fa-solid fa-prescription"></i> View e-Rx
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 5: Anitha Reddy (Completed) -->
+                                <tr data-category="completed vip" data-token="5">
+                                    <td><span style="background: #f1f5f9; color: #64748b; font-weight: 800; padding: 4px 10px; border-radius: 8px;">#05</span></td>
+                                    <td>
+                                        <div style="font-weight: 700; color: #0f172a;">Anitha Reddy</div>
+                                        <div style="font-size: 0.74rem; color: #64748b;">38 / F &bull; NH-OPD-78891</div>
+                                    </td>
+                                    <td><span style="background: #f3e8ff; color: #6b21a8; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-gem"></i> Platinum VIP</span></td>
+                                    <td><span style="font-size: 0.8rem; font-weight: 600;"><i class="fa-solid fa-hospital-user" style="color: #7c3aed;"></i> Clinic Visit</span></td>
+                                    <td><span style="color: #64748b; font-size: 0.8rem;">Done</span></td>
+                                    <td><span class="doc-pill completed">Completed</span></td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="doc-btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openPrescriptionModal('Anitha Reddy')">
+                                            <i class="fa-solid fa-prescription"></i> View e-Rx
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- OPD Doctor Benefits Info Banner -->
+                <div style="background: linear-gradient(135deg, #0e1b38 0%, #0369a1 100%); border-radius: 16px; padding: 22px 26px; color: #ffffff; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 16px rgba(14, 27, 56, 0.25);">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span style="background: rgba(245, 158, 11, 0.25); color: #f59e0b; padding: 3px 10px; border-radius: 20px; font-size: 0.74rem; font-weight: 800;"><i class="fa-solid fa-crown"></i> Nhealth Partner Doctor Benefits</span>
+                        </div>
+                        <h3 style="font-size: 1.2rem; font-weight: 800; margin: 6px 0 4px 0;">Guaranteed Monthly OPD Retainer &amp; Fast Cashless Payouts</h3>
+                        <p style="font-size: 0.82rem; opacity: 0.9; margin: 0; max-width: 600px;">Every Premium OPD consultation is 100% pre-paid by Nhealth. Zero payment collection hassle with automated direct bank settlement every Monday.</p>
+                    </div>
+                    <button type="button" class="doc-btn-solid" style="background: #f59e0b; color: #0e1b38; font-weight: 800; padding: 12px 20px; white-space: nowrap; border: none; border-radius: 10px;" onclick="openDoctorModal('opdPayoutModal')">
+                        <i class="fa-solid fa-receipt"></i> View Payout Statement
+                    </button>
+                </div>
+            </section>
+
             <!-- ==================== 5. SCREEN: VIDEO CALLS ==================== -->
             <section id="screen-videocalls" class="doc-screen">
                 <div class="doc-screen-header">
@@ -1667,36 +1883,10 @@
                             <span style="color: #64748b;">&bull;</span>
                             <span>1080p Encrypted HD</span>
                         </div>
-
-                        <!-- Floating Chat Button on the LEFT side of video screen -->
-                        <button type="button" class="video-floating-left-chat-btn" onclick="toggleDoctorVideoChat()" title="Live Chat with Patient">
-                            <i class="fa-solid fa-comments"></i>
-                            <span class="chat-badge-dot" id="docChatBadgeDot"></span>
-                        </button>
-
-                        <!-- In-Video Live Chat Drawer -->
-                        <div class="doc-invideo-chat-drawer" id="docInVideoChatDrawer">
-                            <div class="doc-chat-drawer-header">
-                                <h4><i class="fa-regular fa-comment-dots" style="color: #38bdf8;"></i> <span id="docChatDrawerPatientName">Patient Chat</span></h4>
-                                <button type="button" class="doc-chat-drawer-close" onclick="toggleDoctorVideoChat()"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                            <div class="doc-chat-messages-box" id="docChatMessagesBox">
-                                <div class="doc-chat-msg doctor">Hello! I am Dr. Priya Sharma. I have received your symptoms and vitals. How are you feeling today?</div>
-                                <div class="doc-chat-msg patient">Doctor, I have high fever since yesterday night and throat pain.</div>
-                            </div>
-                            <div class="doc-chat-input-bar">
-                                <input type="text" id="docChatInputText" placeholder="Type message..." onkeydown="if(event.key==='Enter') sendDoctorChatMessage();">
-                                <button type="button" onclick="sendDoctorChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-                            </div>
-                        </div>
                     </div>
 
-                    <!-- Video Controls Toolbar (with Chat on the Left) -->
+                    <!-- Video Controls Toolbar -->
                     <div class="doc-video-suite-controls">
-                        <!-- Chat button on the left side of controls -->
-                        <button type="button" class="doc-ctrl-btn btn-chat-left" onclick="toggleDoctorVideoChat()" title="Chat with Patient">
-                            <i class="fa-solid fa-comments"></i>
-                        </button>
                         <!-- Mic button -->
                         <button type="button" class="doc-ctrl-btn" id="docCallMicBtn" onclick="toggleDoctorCallMic()" title="Mute/Unmute Mic">
                             <i class="fa-solid fa-microphone"></i>
@@ -2431,6 +2621,123 @@
         </div>
     </div>
 
+    <!-- MODAL 10: ADD OPD TOKEN MODAL -->
+    <div class="doc-modal-backdrop" id="addOpdTokenModal">
+        <div class="doc-modal-paper" style="max-width: 520px;">
+            <div class="doc-modal-header">
+                <div class="doc-modal-title">
+                    <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+                    <span>Issue Premium OPD Token</span>
+                </div>
+                <button type="button" class="doc-modal-close-btn" onclick="closeDoctorModal('addOpdTokenModal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="addOpdTokenForm" onsubmit="submitNewOpdToken(event)">
+                <div class="doc-modal-body">
+                    <div class="doc-form-group">
+                        <label class="doc-form-label" for="newOpdPatName">Patient Full Name</label>
+                        <input type="text" id="newOpdPatName" class="doc-form-input" placeholder="e.g. Rajesh Varma" required>
+                    </div>
+                    <div class="doc-form-group">
+                        <label class="doc-form-label" for="newOpdPatAgeGender">Age / Gender</label>
+                        <input type="text" id="newOpdPatAgeGender" class="doc-form-input" placeholder="e.g. 42 / Male" value="42 / Male" required>
+                    </div>
+                    <div class="doc-form-group">
+                        <label class="doc-form-label" for="newOpdPatTier">Healthcare Pass / Tier</label>
+                        <select id="newOpdPatTier" class="doc-form-select">
+                            <option value="Platinum VIP (Passholder)">💎 Platinum VIP (Passholder)</option>
+                            <option value="Gold Family" selected>👑 Gold Family Plan</option>
+                            <option value="Silver Individual">🛡️ Silver Individual</option>
+                            <option value="Corporate Wellness Pass">🏢 Corporate Wellness Pass</option>
+                        </select>
+                    </div>
+                    <div class="doc-form-group">
+                        <label class="doc-form-label" for="newOpdPatMode">Consultation Mode</label>
+                        <select id="newOpdPatMode" class="doc-form-select">
+                            <option value="Video Call" selected>📹 Video Call</option>
+                            <option value="Clinic Visit">🏥 In-Clinic Visit</option>
+                            <option value="Audio Consult">📞 Audio Consult</option>
+                        </select>
+                    </div>
+                    <div class="doc-form-group">
+                        <label class="doc-form-label" for="newOpdWaitTime">Estimated Wait Time</label>
+                        <select id="newOpdWaitTime" class="doc-form-select">
+                            <option value="Immediate (< 2 mins)" selected>Immediate (&lt; 2 mins)</option>
+                            <option value="5 mins">5 mins</option>
+                            <option value="10 mins">10 mins</option>
+                            <option value="15 mins">15 mins</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="doc-modal-footer">
+                    <button type="button" class="doc-btn-outline" onclick="closeDoctorModal('addOpdTokenModal')">Cancel</button>
+                    <button type="submit" class="doc-btn-solid" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none;">
+                        <i class="fa-solid fa-plus"></i> Generate Token
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 11: OPD PAYOUT STATEMENT MODAL -->
+    <div class="doc-modal-backdrop" id="opdPayoutModal">
+        <div class="doc-modal-paper" style="max-width: 620px;">
+            <div class="doc-modal-header">
+                <div class="doc-modal-title">
+                    <i class="fa-solid fa-receipt" style="color: #f59e0b;"></i>
+                    <span>OPD Retainer &amp; Payout Statement</span>
+                </div>
+                <button type="button" class="doc-modal-close-btn" onclick="closeDoctorModal('opdPayoutModal')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="doc-modal-body">
+                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Current Month Retainer Earnings</span>
+                        <span style="font-size: 1.3rem; font-weight: 800; color: #0f172a;">₹48,500.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #059669; font-weight: 700;">
+                        <span><i class="fa-solid fa-circle-check"></i> Next Auto-Settlement: Monday, 26 May</span>
+                        <span>Bank: HDFC Bank (••••4892)</span>
+                    </div>
+                </div>
+                
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin-bottom: 10px;">Recent OPD Settled Sessions</h4>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <div>
+                            <strong>#04 Sita Ram (Gold Family)</strong>
+                            <div style="font-size: 0.74rem; color: #64748b;">Video Consult &bull; 18 May 2025</div>
+                        </div>
+                        <span style="font-weight: 800; color: #059669;">+ ₹650.00 (Settled)</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <div>
+                            <strong>#05 Anitha Reddy (Platinum VIP)</strong>
+                            <div style="font-size: 0.74rem; color: #64748b;">Clinic Visit &bull; 20 May 2025</div>
+                        </div>
+                        <span style="font-weight: 800; color: #059669;">+ ₹900.00 (Settled)</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <div>
+                            <strong>#02 Lakshmi Devi (Platinum VIP)</strong>
+                            <div style="font-size: 0.74rem; color: #64748b;">Clinic Visit &bull; 20 May 2025</div>
+                        </div>
+                        <span style="font-weight: 800; color: #f59e0b;">+ ₹900.00 (Processing)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="doc-modal-footer">
+                <button type="button" class="doc-btn-outline" onclick="showDocToast('Downloading Detailed GST Settlement PDF...', 'info')">
+                    <i class="fa-solid fa-download"></i> Download GST Tax Invoice
+                </button>
+                <button type="button" class="doc-btn-solid" onclick="closeDoctorModal('opdPayoutModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Custom Toast Container -->
     <div id="docToast" class="doc-toast"></div>
 
@@ -3115,9 +3422,105 @@
         }
 
         // Modal Helpers
+        function openDoctorModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'flex';
+        }
+
         function closeDoctorModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
+        }
+
+        function refreshOpdQueue() {
+            const btn = document.getElementById('btnRefreshOpdQueue');
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing...';
+            }
+            setTimeout(() => {
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Refresh Queue';
+                showDocToast('✓ OPD Token Queue refreshed (4 active tokens)', 'success');
+            }, 400);
+        }
+
+        function filterOpdTable(category, btnElement) {
+            document.querySelectorAll('.doc-filter-pill-btn').forEach(b => b.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+            const rows = document.querySelectorAll('#opdQueueTableBody tr');
+            rows.forEach(row => {
+                const cat = row.getAttribute('data-category') || '';
+                if (category === 'all' || cat.includes(category)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function submitNewOpdToken(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const name = document.getElementById('newOpdPatName')?.value.trim();
+            const ageGender = document.getElementById('newOpdPatAgeGender')?.value.trim() || '30 / M';
+            const tier = document.getElementById('newOpdPatTier')?.value || 'Gold Family';
+            const mode = document.getElementById('newOpdPatMode')?.value || 'Video Call';
+            const wait = document.getElementById('newOpdWaitTime')?.value || '5 mins';
+            if (!name) {
+                showDocToast('Please enter patient name', 'warning');
+                return;
+            }
+            
+            const tbody = document.getElementById('opdQueueTableBody');
+            const tokenNum = String((tbody ? tbody.children.length : 0) + 1).padStart(2, '0');
+            let tierBadge = '<span style="background: #fef3c7; color: #b45309; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-crown"></i> ' + tier + '</span>';
+            if (tier.includes('Platinum') || tier.includes('VIP')) {
+                tierBadge = '<span style="background: #f3e8ff; color: #6b21a8; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-gem"></i> ' + tier + '</span>';
+            } else if (tier.includes('Silver')) {
+                tierBadge = '<span style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-shield"></i> ' + tier + '</span>';
+            }
+            
+            let modeIcon = 'fa-video';
+            let modeColor = '#0284c7';
+            if (mode.includes('Clinic')) {
+                modeIcon = 'fa-hospital-user';
+                modeColor = '#7c3aed';
+            } else if (mode.includes('Audio')) {
+                modeIcon = 'fa-phone';
+                modeColor = '#059669';
+            }
+
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-category', 'waiting ' + (tier.toLowerCase().includes('vip') || tier.toLowerCase().includes('platinum') || tier.toLowerCase().includes('gold') ? 'vip' : ''));
+            tr.setAttribute('data-token', tokenNum);
+            tr.innerHTML = `
+                <td><span style="background: #0e1b38; color: #f59e0b; font-weight: 800; padding: 4px 10px; border-radius: 8px;">#${tokenNum}</span></td>
+                <td>
+                    <div style="font-weight: 700; color: #0f172a;">${name}</div>
+                    <div style="font-size: 0.74rem; color: #64748b;">${ageGender} &bull; NH-OPD-${Math.floor(78900 + Math.random()*90)}</div>
+                </td>
+                <td>${tierBadge}</td>
+                <td><span style="font-size: 0.8rem; font-weight: 600;"><i class="fa-solid ${modeIcon}" style="color: ${modeColor};"></i> ${mode}</span></td>
+                <td><span style="color: #64748b; font-size: 0.8rem;">${wait}</span></td>
+                <td><span class="doc-pill in-progress">Ready to Connect</span></td>
+                <td style="text-align: right;">
+                    <button type="button" class="doc-btn-solid" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startDoctorVideoCall('${name.replace(/'/g, "\\'")}', '${ageGender.replace(/'/g, "\\'")}')">
+                        <i class="fa-solid fa-video"></i> Start Call
+                    </button>
+                </td>
+            `;
+            if (tbody) tbody.prepend(tr);
+            closeDoctorModal('addOpdTokenModal');
+            
+            const form = document.getElementById('addOpdTokenForm');
+            if (form) form.reset();
+            
+            showDocToast(`✓ Token #${tokenNum} issued for ${name} (${tier})!`, 'success');
+        }
+
+        function startDoctorAudioCall(name, phone) {
+            showDocToast(`📞 Initiating encrypted audio consult with ${name} (${phone})...`, 'info');
+            setTimeout(() => {
+                startDoctorVideoCall(name, phone);
+            }, 800);
         }
 
         function openPrescriptionModal(patName) {
