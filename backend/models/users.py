@@ -111,7 +111,8 @@ def update_user(user_id, updated_fields):
             with conn.cursor() as cur:
                 known_keys = {
                     'email', 'phone', 'name', 'lab_name', 'owner_name',
-                    'address', 'city', 'state', 'pincode', 'reg_number', 'gst_number'
+                    'address', 'city', 'state', 'pincode', 'reg_number', 'gst_number',
+                    'password', 'is_active'
                 }
                 set_clauses = []
                 values = {'id': user_id}
@@ -122,7 +123,7 @@ def update_user(user_id, updated_fields):
                         values[k] = v
                 
                 # Check for extra data fields
-                extra_updates = {k: v for k, v in updated_fields.items() if k not in known_keys and k not in ('id', 'password')}
+                extra_updates = {k: v for k, v in updated_fields.items() if k not in known_keys and k != 'id'}
                 if extra_updates:
                     set_clauses.append("extra_data = COALESCE(extra_data, '{}'::jsonb) || %(extra_json)s::jsonb")
                     values['extra_json'] = json.dumps(extra_updates)
@@ -147,7 +148,7 @@ def update_user(user_id, updated_fields):
     for u in users:
         if u.get('id') == user_id:
             for k, v in updated_fields.items():
-                if k != 'id' and k != 'password':
+                if k != 'id':
                     u[k] = v
             updated = True
             break

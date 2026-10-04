@@ -262,6 +262,7 @@ def auth_signup():
         # Set session for seamless login
         clean_user = {k: v for k, v in user_record.items() if k != 'password'}
         ensure_patient_fields(clean_user)
+        session.clear()
         session['user_id'] = user_record["id"]
         session['user'] = clean_user
 
@@ -335,206 +336,8 @@ def auth_login():
                 matched = u
                 break
 
-        # Guaranteed fallback for official demo credentials
-        if not matched:
-            if identifier_lower in ['pharmacy@nhealth.in', 'pharma@gmail.com', 'pharma@nhealth.in', 'saimedicals@gmail.com'] or clean_digits in ['9876543290', '9988776655']:
-                matched = {
-                    "id": "USR-PHA-001",
-                    "role": "pharmacy",
-                    "name": "Sai Medicals",
-                    "owner_name": "Sai Medicals & Pharmacy",
-                    "email": identifier_lower if '@' in identifier_lower else "pharmacy@nhealth.in",
-                    "phone": clean_digits or "9876543290",
-                    "whatsapp": clean_digits or "9876543290",
-                    "specialization": "Doorstep E-Pharmacy",
-                    "clinic_name": "Sai Medicals",
-                    "reg_number": "PHA-000123",
-                    "gst_number": "37CCCC1234A1Z3",
-                    "city": "Narasaraopeta",
-                    "state": "Andhra Pradesh",
-                    "pincode": "522601",
-                    "address": "Main Road, Near Gandhi Chowk, Narasaraopeta",
-                    "password": "password123",
-                    "created_at": "2026-01-15T10:00:00"
-                }
-            elif identifier_lower in ['lab@nhealth.in', 'lab@gmail.com'] or clean_digits in ['9876543299']:
-                matched = {
-                    "id": "USR-LAB-001",
-                    "role": "lab",
-                    "name": "Apollo Diagnostics & Pathology Lab",
-                    "owner_name": "Dr. K. Srinivas Rao",
-                    "email": identifier_lower if '@' in identifier_lower else "lab@nhealth.in",
-                    "phone": clean_digits or "9876543299",
-                    "whatsapp": clean_digits or "9876543299",
-                    "specialization": "Diagnostic Pathology & Blood Tests",
-                    "clinic_name": "Apollo Diagnostics & Pathology Lab",
-                    "reg_number": "AP-LAB-2026-001",
-                    "city": "Vijayawada",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['priya.sharma@nhealth.in', 'dr.priya@nhealth.in', 'priya@gmail.com', 'priya@nhealth.in', 'priya'] or clean_digits in ['9848011223']:
-                matched = {
-                    "id": "USR-DOC-002",
-                    "role": "doctor",
-                    "name": "Dr. Priya Sharma",
-                    "doctor_id": "DOC-NH-74892",
-                    "qualification": "MBBS, MD (General Medicine)",
-                    "specialization": "General Physician & Internal Medicine",
-                    "experience": "9+ Years",
-                    "reg_number": "APMC/74892",
-                    "clinic_name": "Nhealth Prime Care Center",
-                    "email": identifier_lower if '@' in identifier_lower else "priya.sharma@nhealth.in",
-                    "phone": clean_digits or "9848011223",
-                    "city": "Vijayawada",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['doctor@nhealth.in', 'doctor@gmail.com', 'dr.arjun@nhealth.in'] or clean_digits in ['9876543210']:
-                matched = {
-                    "id": "USR-DOC-001",
-                    "role": "doctor",
-                    "name": "Dr. Arjun Reddy",
-                    "doctor_id": "DOC78456",
-                    "qualification": "MBBS, MD (General Medicine)",
-                    "specialization": "General Physician",
-                    "experience": "8+ Years",
-                    "reg_number": "APMC/12345",
-                    "email": identifier_lower if '@' in identifier_lower else "doctor@nhealth.in",
-                    "phone": clean_digits or "9876543210",
-                    "city": "Vijayawada",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['opd@nhealth.in', 'premium@nhealth.in', 'opd', 'premium'] or clean_digits in ['9988001122']:
-                matched = {
-                    "id": "USR-OPD-7788",
-                    "role": "premium-opd",
-                    "name": "Shiva Pendala (Premium OPD)",
-                    "email": identifier_lower if '@' in identifier_lower else "opd@nhealth.in",
-                    "phone": clean_digits or "9988001122",
-                    "city": "Hyderabad",
-                    "age": 28,
-                    "gender": "Male",
-                    "blood_group": "O+",
-                    "address": "Flat 402, Royal Residency, Madhapur, Hyderabad",
-                    "membership_id": "NH-OPD-2026-7788",
-                    "membership_plan": "Premium OPD Platinum",
-                    "membership_status": "Active",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['shiva@nhealth.in', 'shiva.pendala@nhealth.in', 'shiva@gmail.com', 'shiva'] or clean_digits in ['9848099887', '9988998899']:
-                matched = {
-                    "id": "USR-OPD-4587",
-                    "role": "premium-opd" if role == "premium-opd" else "patient",
-                    "name": "Shiva Pendala",
-                    "email": identifier_lower if '@' in identifier_lower else "shiva.pendala@nhealth.in",
-                    "phone": clean_digits or "9848099887",
-                    "city": "Hyderabad",
-                    "age": 28,
-                    "gender": "Male",
-                    "blood_group": "O+",
-                    "address": "Flat 402, Royal Residency, Madhapur, Hyderabad",
-                    "membership_id": "NH-OPD-2026-4587",
-                    "membership_plan": "Premium OPD Individual",
-                    "membership_status": "Active",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['raviteja@nhealth.in', 'ravi@nhealth.in'] or clean_digits in ['9876543211']:
-                matched = {
-                    "id": "USR-OPD-9912",
-                    "role": "premium-opd" if role == "premium-opd" else "patient",
-                    "name": "Ravi Teja",
-                    "email": identifier_lower if '@' in identifier_lower else "raviteja@nhealth.in",
-                    "phone": clean_digits or "9876543211",
-                    "city": "Vijayawada",
-                    "age": 34,
-                    "gender": "Male",
-                    "blood_group": "B+",
-                    "address": "Plot 45, Benz Circle, Vijayawada, Andhra Pradesh",
-                    "membership_id": "NH-OPD-2026-9912",
-                    "membership_plan": "Premium OPD Family Plus",
-                    "membership_status": "Active",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['ananya@nhealth.in', 'ananya.sharma@nhealth.in'] or clean_digits in ['9876500001']:
-                matched = {
-                    "id": "USR-OPD-3341",
-                    "role": "patient",
-                    "name": "Ananya Sharma",
-                    "email": identifier_lower if '@' in identifier_lower else "ananya@nhealth.in",
-                    "phone": clean_digits or "9876500001",
-                    "city": "Visakhapatnam",
-                    "age": 26,
-                    "gender": "Female",
-                    "blood_group": "A+",
-                    "address": "Beach Road, MVP Colony, Visakhapatnam",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['kiran@nhealth.in', 'kiran.kumar@nhealth.in'] or clean_digits in ['9876500002']:
-                matched = {
-                    "id": "USR-OPD-7720",
-                    "role": "patient",
-                    "name": "Kiran Kumar",
-                    "email": identifier_lower if '@' in identifier_lower else "kiran@nhealth.in",
-                    "phone": clean_digits or "9876500002",
-                    "city": "Guntur",
-                    "age": 42,
-                    "gender": "Male",
-                    "blood_group": "O+",
-                    "address": "Lakshmipuram Main Road, Guntur",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['suresh@nhealth.in', 'suresh.varma@nhealth.in'] or clean_digits in ['9876500003']:
-                matched = {
-                    "id": "USR-OPD-5509",
-                    "role": "patient",
-                    "name": "Suresh Varma",
-                    "email": identifier_lower if '@' in identifier_lower else "suresh@nhealth.in",
-                    "phone": clean_digits or "9876500003",
-                    "city": "Tirupati",
-                    "age": 38,
-                    "gender": "Male",
-                    "blood_group": "AB+",
-                    "address": "Air Bypass Road, Tirupati",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['patient@nhealth.in', 'patient@gmail.com'] or clean_digits in ['9123456780']:
-                matched = {
-                    "id": "USR-PAT-001",
-                    "role": "patient",
-                    "name": "Ananya Sharma",
-                    "email": identifier_lower if '@' in identifier_lower else "patient@nhealth.in",
-                    "phone": clean_digits or "9123456780",
-                    "city": "Hyderabad",
-                    "age": 26,
-                    "gender": "Female",
-                    "blood_group": "A+",
-                    "address": "Madhapur, Hyderabad - 500081",
-                    "password": "password123"
-                }
-            elif identifier_lower in ['rider@nhealth.in', 'rider@gmail.com'] or clean_digits in ['9876543288']:
-                matched = {
-                    "id": "USR-RID-001",
-                    "role": "rider",
-                    "name": "Bharat Verified Rider",
-                    "email": identifier_lower if '@' in identifier_lower else "rider@nhealth.in",
-                    "phone": clean_digits or "9876543288",
-                    "city": "Vijayawada",
-                    "age": 30,
-                    "gender": "Male",
-                    "password": "password123"
-                }
-
-        # Robust password check (supports hashed passwords, plaintext demo passwords, and fallback passwords)
-        is_pwd_valid = False
-        if matched:
-            stored_pwd = matched.get('password', '')
-            if verify_password(stored_pwd, password):
-                is_pwd_valid = True
-            elif password.strip().lower() in ['password123', 'password', '123456', 'nhealth123', 'admin']:
-                is_pwd_valid = True
-            elif stored_pwd.strip() == password.strip():
-                is_pwd_valid = True
-
-        if not matched or not is_pwd_valid:
+        # Strictly authenticate credentials using secure cryptographic verification
+        if not matched or not verify_password(matched.get('password', ''), password):
             record_failed_attempt(rate_key)
             return jsonify({
                 "status": "error",
@@ -553,6 +356,9 @@ def auth_login():
 
         clean_user = {k: v for k, v in matched.items() if k != 'password'}
         ensure_patient_fields(clean_user)
+
+        # Prevent session fixation: clean session prior to assignment
+        session.clear()
         session['user_id'] = matched['id']
         session['user'] = clean_user
 

@@ -394,7 +394,7 @@
     "email": "rider@nhealth.in",
     "phone": "9876543222",
     "role": "rider",
-    "password": "password123",
+    "password": "scrypt:32768:8:1$6QW20c3Hsm9w76Ar$2b5d6d13cc29d8d659a452db4642f70c89bf77cb7387209ad828b1f7ead155962fe6424f2276da20cf8782a5210f0e0724d351395f68d68df2da7337337e867d",
     "name": "Ravi Varma",
     "lab_name": null,
     "owner_name": null,
@@ -443,7 +443,7 @@
     "state": "Andhra Pradesh",
     "pincode": "522601",
     "address": "Main Road, Near Gandhi Chowk, Narasaraopeta",
-    "password": "password123",
+    "password": "scrypt:32768:8:1$wnXoSptcJJOirKRd$8bcdeecf5df4a07709e6a3cc2e7ccfae1ec96ccdcc029db792fc15238963a795cdd64597da2f0e079855a340715aa9efc96a9016e0b2b4bb6f119d10e9211c2c",
     "created_at": "2026-01-15T10:00:00"
   },
   {
@@ -470,7 +470,7 @@
     "email": "patient@nhealth.in",
     "phone": "9123456780",
     "role": "patient",
-    "password": "password123",
+    "password": "scrypt:32768:8:1$55BrUdibSg8DKVFN$195499b06b6c94a6f9dc8d032ca1ded79fb8ad9bbbcc276ef8126c9ea506e36e20df0e79e6ea1951085dec8662da38a1bbf869056edbd4e116f0f43e8dd97ddd",
     "name": "Suresh Kumar",
     "lab_name": null,
     "owner_name": null,
@@ -492,7 +492,7 @@
     "email": "doctor@nhealth.in",
     "phone": "9876543210",
     "role": "doctor",
-    "password": "password123",
+    "password": "scrypt:32768:8:1$M3bVv28NyhLsO3AO$fd190073537627792bb4a03a8037d843863ea090989cc503ecf32531e25efe9946e587d1f5a628fe3ad1aa4775a59cdd321fc19c695fc3a0bb84e6fe9cf501aa",
     "name": "Dr. Arjun Reddy",
     "doctor_id": "DOC78456",
     "qualification": "MBBS, MD (General Medicine)",
@@ -521,7 +521,7 @@
     "email": "lab@nhealth.in",
     "phone": "9876543299",
     "role": "lab",
-    "password": "password123",
+    "password": "scrypt:32768:8:1$0YsacleB4zKYpZCE$967d5443efcff8b17bfdefe40f50720b08462e7657a8a3c1a0a705187a2685d17e4d1f7031c9fb6c314511dc53a721887ed26545f8ca6cccacca1c9cea56337b",
     "name": "Apollo Diagnostics & Pathology Lab",
     "lab_name": null,
     "owner_name": "Dr. K. Srinivas Rao",
@@ -764,5 +764,23 @@
     "membership_status": "Active",
     "password": "scrypt:32768:8:1$m2iu1iQ9aGSgmRKK$8d5760424d8a187517aececf2cfd54303387d7c19f86613f8a637c5405638346fef22cdedc8191b2c15e4a964866d1cd256deb297ac0a84e66d1d65d86fba066",
     "created_at": "2024-09-28T10:00:00"
+  },
+  {
+    "id": "USR-OPD-7788",
+    "email": "opd@nhealth.in",
+    "phone": "9988001122",
+    "role": "premium-opd",
+    "password": "scrypt:32768:8:1$ZtJlIcHI2A6gFXkZ$92bea9b4ca6112059ad8b9f4cf006644b9bbc41709fd9adb3fc13ba1dba9e90e084ee214bef0fbbbc2a0bab56c23ab100201a0cd8ccef2c7f2d369762e205c6a",
+    "name": "Shiva Pendala",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "age": 28,
+    "gender": "Male",
+    "blood_group": "O+",
+    "address": "Flat 402, Royal Residency, Madhapur, Hyderabad",
+    "membership_id": "NH-OPD-2026-7788",
+    "membership_plan": "Premium OPD Platinum",
+    "membership_status": "Active",
+    "is_active": true
   }
 ]

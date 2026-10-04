@@ -45,6 +45,11 @@ def init_db():
     if not DATABASE_URL:
         print("[DB] No DATABASE_URL found. Using local JSON file storage (data/).")
         _init_json_files()
+        try:
+            from backend.seeds.demo_accounts import _seed_demo_accounts
+            _seed_demo_accounts()
+        except Exception as err:
+            print(f"[DB Seed Warning]: {err}")
         return False
 
     try:
@@ -159,6 +164,11 @@ def init_db():
         print("[DB] Falling back to local JSON files.")
         _db_connected = False
         _init_json_files()
+        try:
+            from backend.seeds.demo_accounts import _seed_demo_accounts
+            _seed_demo_accounts()
+        except Exception:
+            pass
         return False
 
 def _init_json_files():

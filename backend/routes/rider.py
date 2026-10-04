@@ -1,9 +1,11 @@
 """
 Rider dashboard and rider operational APIs.
+Protected with session authentication and role validation.
 """
 
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 from backend.data import SERVICES, AP_LOCATIONS, STATS
+from backend.services import role_required, login_required
 from backend.models import (
     update_rider_duty_status,
     update_rider_location,
@@ -20,20 +22,22 @@ rider_bp = Blueprint('rider', __name__)
 
 
 @rider_bp.route('/rider/dashboard')
+@role_required('rider')
 def rider_dashboard():
     """Render Rider Cockpit Dashboard with session authentication protection."""
     user = session.get('user')
-    if not user or user.get('role') != 'rider':
-        return redirect(url_for('auth.login_rider_page'))
     return render_template('dashboards/rider_dashboard.html', user=user, services=SERVICES, locations=AP_LOCATIONS, stats=STATS)
 
 
 @rider_bp.route('/api/rider/status', methods=['POST'])
+@login_required
 def api_rider_status():
     """Toggle online/offline duty status for rider."""
     data = request.get_json() or {}
     user = session.get('user')
-    rider_id = data.get('rider_id') or (user.get('id') if user else 'USR-RIDER-001')
+    rider_id = user.get('id') if user else data.get('rider_id')
+    if not rider_id:
+        return jsonify({"status": "error", "message": "Authentication required."}), 401
     is_online = data.get('is_online', True)
     update_rider_duty_status(rider_id, is_online)
     if user and user.get('id') == rider_id:
@@ -42,11 +46,14 @@ def api_rider_status():
 
 
 @rider_bp.route('/api/rider/location', methods=['POST'])
+@login_required
 def api_rider_location():
     """Update live GPS location stream from rider phone."""
     data = request.get_json() or {}
     user = session.get('user')
-    rider_id = data.get('rider_id') or (user.get('id') if user else 'USR-RIDER-001')
+    rider_id = user.get('id') if user else data.get('rider_id')
+    if not rider_id:
+        return jsonify({"status": "error", "message": "Authentication required."}), 401
     lat = data.get('lat', 16.5020)
     lng = data.get('lng', 80.6430)
     heading = data.get('heading', 0)
@@ -56,10 +63,11 @@ def api_rider_location():
 
 
 @rider_bp.route('/api/rider/tasks', methods=['GET'])
+@login_required
 def api_rider_tasks():
     """Get active trip and available dispatch task queue for rider cockpit."""
     user = session.get('user')
-    rider_id = request.args.get('rider_id') or (user.get('id') if user else 'USR-RIDER-001')
+    rider_id = user.get('id') if user else request.args.get('rider_id')
     
     all_trips = get_all_trips()
     active_trip = None
@@ -77,18 +85,19 @@ def api_rider_tasks():
 
 
 @rider_bp.route('/api/rider/accept_task', methods=['POST'])
+@login_required
 def api_rider_accept_task():
     """Rider accepts an incoming task."""
     data = request.get_json() or {}
     trip_id = data.get('trip_id')
     user = session.get('user') or {}
-    rider_id = data.get('rider_id') or user.get('id', 'USR-RIDER-001')
+    rider_id = user.get('id')
+    if not rider_id:
+        return jsonify({"status": "error", "message": "Rider authentication required."}), 401
     rider_name = user.get('name', 'Ravi Varma')
     rider_phone = user.get('phone', '9876543222')
-    # Try to get vehicle from various fields
     rider_vehicle = (user.get('vehicle_number') or 
                      user.get('extra_data', {}).get('vehicle_number') if isinstance(user.get('extra_data'), dict) else None) or 'AP 16 CK 4589'
-    # Rider current GPS position (sent from cockpit)
     rider_lat = data.get('rider_lat')
     rider_lng = data.get('rider_lng')
     
@@ -102,6 +111,7 @@ def api_rider_accept_task():
 
 
 @rider_bp.route('/api/rider/update_task_status', methods=['POST'])
+@login_required
 def api_rider_update_task_status():
     """Update task lifecycle state (arrived, in_progress, completed, ended, cancelled)."""
     data = request.get_json() or {}
@@ -113,10 +123,11 @@ def api_rider_update_task_status():
 
 
 @rider_bp.route('/api/rider/history', methods=['GET'])
+@login_required
 def api_rider_history():
     """Fetch completed, ended, and cancelled trip history for rider cockpit."""
     user = session.get('user')
-    rider_id = request.args.get('rider_id') or (user.get('id') if user else None)
+    rider_id = user.get('id') if user else None
     if not rider_id:
         return jsonify({"status": "error", "message": "Rider authentication required."}), 401
     history = get_rider_trip_history(rider_id)
@@ -127,6 +138,7 @@ def api_rider_history():
 
 
 @rider_bp.route('/api/rider/verify_otp', methods=['POST'])
+@login_required
 def api_rider_verify_otp():
     """Verify 4-digit start OTP provided by patient."""
     data = request.get_json() or {}

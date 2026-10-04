@@ -1,45 +1,50 @@
 """
 User profile management APIs.
+Protected with session authentication (prevents IDOR and unauthorized profile modification).
 """
 
 from datetime import datetime, date
 from flask import Blueprint, request, jsonify, session
 from backend.models import get_all_users, update_user
-from backend.services import get_current_patient, ensure_patient_fields
+from backend.services import get_current_patient, ensure_patient_fields, login_required
 
 profile_bp = Blueprint('profile', __name__)
 
 
 @profile_bp.route('/api/user/profile', methods=['GET', 'POST'])
+@login_required
 def user_profile():
     """Retrieve or update logged-in patient profile."""
     try:
         if request.method == 'GET':
             patient = get_current_patient()
+            if not patient:
+                return jsonify({"status": "error", "message": "User profile not found."}), 404
             return jsonify({"status": "success", "user": patient}), 200
 
-        # POST: update profile
-        data = request.get_json() if request.is_json else request.form.to_dict()
-        user_id = data.get('id') or session.get('user_id')
-        
+        # POST: update profile of authenticated user only
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({"status": "error", "message": "Authentication required."}), 401
+
         users = get_all_users()
         target_user = None
-        if user_id:
-            for u in users:
-                if u.get('id') == user_id:
-                    target_user = u
-                    break
-        if not target_user and users:
-            target_user = users[-1]
-            user_id = target_user['id']
+        for u in users:
+            if u.get('id') == user_id:
+                target_user = u
+                break
 
+        if not target_user:
+            return jsonify({"status": "error", "message": "User account not found."}), 404
+
+        data = request.get_json() if request.is_json else request.form.to_dict()
         updates = {}
         if 'name' in data and data['name'].strip():
             updates['name'] = data['name'].strip()
         if 'phone' in data and data['phone'].strip():
             updates['phone'] = data['phone'].strip()
         if 'email' in data and data['email'].strip():
-            updates['email'] = data['email'].strip()
+            updates['email'] = data['email'].strip().lower()
         if 'city' in data and data['city'].strip():
             updates['city'] = data['city'].strip()
         if 'age' in data:
@@ -62,13 +67,12 @@ def user_profile():
         if 'address' in data and data['address'].strip():
             updates['address'] = data['address'].strip()
 
-        if user_id and updates:
+        if updates:
             update_user(user_id, updates)
             for k, v in updates.items():
                 target_user[k] = v
             clean_user = {k: v for k, v in target_user.items() if k != 'password'}
             ensure_patient_fields(clean_user)
-            session['user_id'] = clean_user['id']
             session['user'] = clean_user
             return jsonify({
                 "status": "success",
